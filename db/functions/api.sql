@@ -1,5 +1,5 @@
 /* API - create_mailserver */
-CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_domain text, input_preference integer, input_ttl integer) RETURNS VOID $$ AS
+CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_domain text, input_preference integer, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
 		SELECT api.create_log_entry('API','DEBUG','begin api.create_mailserver');
 		
