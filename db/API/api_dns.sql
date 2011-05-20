@@ -130,3 +130,16 @@ CREATE OR REPLACE FUNCTION "api"."delete_mailserver"(input_hostname text, input_
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."delete_mailserver"() IS 'Delete an existing MX record for a zone';
+
+/* API - get_reverse_domain */
+CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$
+	use strict;
+	use warnings;
+	use Net::IP;
+	use Net::IP qw(:PROC);
+	
+	# Return the rdns string for nsupdate from the given address. Automagically figures out IPv4 and IPv6.
+	return new Net::IP ($_[0])->reverse_ip() or die (Net::IP::Error());
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_reverse_domain"() IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
+
