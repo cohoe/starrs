@@ -1,0 +1,151 @@
+== API Reference ==
+
+=== Create new system ===
+ api.create_system([system_name],[owner_username OR NULL],[system_type],[os_name],[comment OR NULL]);
+
+ -- Create a server called Totoro for user root running Debian with no comment.
+ select api.create_system('Totoro','root','Server','Debian', NULL);
+
+=== Delete system ===
+ api.delete_system([system_name]);
+
+ -- Delete system Totoro
+ select api.delete_system('Totoro');
+
+=== Create new subnet ===
+ api.create_subnet([subnet],[name],[autogenerate],[comment OR NULL]);
+
+ -- Create a subnet of 2001:db8::129:21:49:0/126 with name CSHv6 no comment and autogenerating its addresses
+ select api.create_subnet('2001:db8::129:21:49:0/126','CSHv6','TRUE',NULL);
+
+=== Delete subnet ===
+ api.delete_subnet([subnet]);
+
+ -- Delete subnet 2001:db8::129:21:49:0/126
+ select api.delete_subnet('2001:db8::129:21:49:0/126');
+
+=== Create new IP range ===
+ api.create_ip_range([first_ip],[last_ip],[subnet],[use],[comment OR NULL]);
+
+ -- Create a range of IP's 10.0.0.1 thru 10.0.0.10 for autoregistration
+ select api.create_ip_range('10.0.0.1','10.0.0.10','10.0.0.0/24','AREG',NULL);
+
+=== Delete IP range ===
+ api.delete_ip_range([first_ip],[last_ip]);
+
+ -- Delete range 10.0.0.1 thru 10.0.0.10
+ select api.delete_ip_range('10.0.0.1','10.0.0.10');
+
+=== Create new DHCP Class ===
+ api.create_dhcp_class([class],[comment OR NULL]);
+
+ -- Create a range called netboot
+ select api.create_dhcp_class('netboot','Anthonys netboot server');
+
+=== Delete DHCP class ===
+ api.delete_dhcp_class([class]);
+
+ -- Delete netboot class
+ select api.delete_dhcp_class('netboot');
+
+=== Create DHCP class option ===
+ api.create_dhcp_class_option([class],[option],[value]);
+
+ -- Create a next-server of 129.21.50.103 for default
+ select api.create_dhcp_class_option('default','next-server','"129.21.50.103"');
+
+=== Delete DHCP class option ===
+ api.delete_dhcp_class_option([class],[option],[value])
+
+ -- Delete next-server 129.21.50.103 on default
+ select api.delete_dhcp_class_option('default','next-server','"129.21.50.103"');
+
+=== Create DHCP subnet option ===
+ api.create_dhcp_subnet_option([subnet],[option],[value]);
+
+ -- Create a next-server of 129.21.50.103 for 129.21.50.0/24
+ select api.create_dhcp_subnet_option('129.21.50.0/24','next-server','"129.21.50.103"');
+
+=== Delete DHCP subnet option ===
+ api.delete_dhcp_subnet_option([subnet],[option],[value])
+
+ -- Delete next-server 129.21.50.103 on 129.21.50.0/24
+ select api.delete_dhcp_subnet_option('129.21.50.0/24','next-server','"129.21.50.103"');
+
+=== Create DNS Key ===
+ api.create_dns_key([keyname],[key],[comment OR NULL],[last_modifier])
+
+ -- Create a key of asdfghjkl;' with name csh
+ select api.create_dns_key('csh','asdfghjkl;'',NULL);
+
+=== Delete DNS Key ===
+ api.delete_dns_key([keyname])
+
+ -- Delete key csh
+ select api.delete_dns_key('csh');
+
+=== Create DNS zone ===
+ api.create_dns_zone([zone],[keyname],[forward],[comment OR NULL],[last_modifier])
+
+ -- Create forward zone csh.rit.edu with key csh 
+ select api.create_dns_zone('csh.rit.edu','csh',TRUE,NULL);
+
+=== Delete DNS zone ===
+ api.delete_dns_zone([zone])
+
+ -- Delete zone csh.rit.edu
+ select api.delete_dns_zone('csh.rit.edu');
+
+=== Create Log Entry ===
+ api.create_log_entry([source], [INFO|DEBUG|ERROR], [message])
+
+ -- Create a debug log message from the CLI
+ select api.create_log_entry('CLI','DEBUG','Hello world!';
+
+=== Get Current User ===
+ api.get_current_user();
+
+ -- See who the database thinks you are (webauth or syscall)
+ select api.get_current_user();
+
+=== Create New Interface ===
+ api.create_interface([system_name],[interface_name],[mac_address],[comment OR NULL])
+
+ -- Create interface eth0 on Totoro
+ select api.create_interface('Totoro','eth0','fa:ce:b0:0c:20:11','Lolol interface');
+
+=== Delete Interface ===
+ api.delete_interface([mac_address])
+
+ -- Delete that interface
+ select api.delete_interface('fa:ce:b0:0c:20:11');
+
+=== Create Interface Address (manually) ===
+ api.create_interface_address_manual([interface_mac_address],[ip_address],[configuration],[class],[comment OR NULL])
+
+ -- Place address 129.21.50.1 on interface fa:ce:b0:0c:20:11 as DHCP and default settings
+ select api.create_interface_address_manual('fa:ce:b0:0c:20:11','129.21.50.1','DHCP','default',NULL);
+
+=== Create Interface Address (automatically) ===
+ api.create_interface_address_manual([interface_mac_address],[range_name],[configuration],[class],[comment OR NULL])
+
+ -- Place address an address from range Servers on interface fa:ce:b0:0c:20:11 as DHCPv6 and default settings
+ select api.create_interface_address_manual('fa:ce:b0:0c:20:11','Servers','DHCPv6','default',NULL);
+
+=== Delete Interface Address ===
+ api.delete_interface_address([ip_address])
+
+ -- Remove address 129.21.50.1 from use
+ select api.delete_interface_address('129.21.50.1');
+
+=== Create DNS Address Record ===
+ api.create_dns_address([ip_address],[hostname],[domain (zone)],[TTL OR NULL],[owner OR NULL])
+
+ -- Create A record for totoro.csh.rit.edu @ 129.21.50.1 with default TTL for myself
+ select api.create_dns_address('129.21.50.1','totoro','csh.rit.edu',NULL,NULL;
+
+=== Delete DNS Address Record ===
+ api.delete_dns_address([ip_address])
+
+ -- Delete A record for 129.21.50.1
+ select api.delete_dns_address('129.21.50.1');
