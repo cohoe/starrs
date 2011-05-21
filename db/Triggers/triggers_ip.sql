@@ -157,7 +157,7 @@ BEGIN
 	-- Looks like it does not. Insert it with the default value to DENY.
 	ELSIF (RowCount = 0) THEN
 		SELECT api.create_log_entry('database','INFO','Creating firewall default action');
-		INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (NEW."address", TRUE);
+		INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (NEW."address", DEFAULT);
 	-- Not sure what is going on here. There's some funky crap going on.
 	ELSE
 		SELECT api.create_log_entry('database','ERROR','Program fault');
