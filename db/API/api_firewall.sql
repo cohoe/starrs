@@ -1,5 +1,5 @@
-/* API - add_firewall_metahost_member */
-CREATE OR REPLACE FUNCTION "api"."add_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
+/* API - create_firewall_metahost_member */
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
 	BEGIN
 		SELECT api.create_log_entry('API','DEBUG','begin api.add_firewall_metahost_member');
 		input_metahost := api.sanitize_general(input_metahost);

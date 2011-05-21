@@ -17,20 +17,20 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_subnet"() IS 'Create/activate a new subnet';
 
-/*Trigger Function API - delete_subnet*/
-CREATE OR REPLACE FUNCTION "api"."delete_subnet"(input_subnet cidr) RETURNS VOID AS $$
+/*Trigger Function API - remove_subnet*/
+CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID AS $$
 	DECLARE
 		RowCount	INTEGER;
 		WasAuto		BOOLEAN;
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.delete_subnet');
+		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_subnet');
 		input_subnet := api.sanitize_general(input_subnet);
 
 		SELECT api.create_log_entry('API', 'INFO', 'Deleting subnet');
 		DELETE FROM "ip"."subnets" WHERE "subnet" = input_subnet;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_subnet"() IS 'Delete/deactivate an existing subnet';
+COMMENT ON FUNCTION "api"."remove_subnet"() IS 'Delete/deactivate an existing subnet';
 
 /*Trigger Function API - create_ip_range*/
 CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_comment text) RETURNS VOID AS $$
@@ -50,17 +50,17 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_la
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_range"() IS 'Create a new range of IP addresses';
 
-/*Trigger Function API - delete_ip_range*/
-CREATE OR REPLACE FUNCTION "api"."delete_ip_range"(input_first_ip inet, input_last_ip inet) RETURNS VOID AS $$
+/*Trigger Function API - remove_ip_range*/
+CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_last_ip inet) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.delete_ip_range');
+		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
 		input_first_ip := api.sanitize_general(input_first_ip);
 		input_last_ip := api.sanitize_general(input_last_ip);
 		SELECT api.create_log_entry('API', 'INFO', 'Deleting range');
 		DELETE FROM "ip"."ranges" WHERE "first_ip" = input_first_ip AND "last_ip" = input_last_ip;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_ip_range"() IS 'Delete an existing IP range';
+COMMENT ON FUNCTION "api"."remove_ip_range"() IS 'Delete an existing IP range';
 
 /* API - get_address_from_range */
 CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text) RETURNS INET AS $$
@@ -129,5 +129,4 @@ CREATE OR REPLACE FUNCTION "api"."get_subnet_addresses"(CIDR) RETURNS SETOF INET
 	# Spit them all back out
 	return \@addresses;
 $$ LANGUAGE plperlu;
-
 COMMENT ON FUNCTION "api"."get_subnet_addresses"() IS 'Given a subnet, return an array of all acceptable addresses within that subnet.';

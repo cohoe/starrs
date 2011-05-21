@@ -14,16 +14,16 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_key"() IS 'Create new DNS key';
 
-/*Trigger Function API - delete_dns_key*/
-CREATE OR REPLACE FUNCTION "api"."delete_dns_key"(input_keyname text) RETURNS VOID AS $$
+/*Trigger Function API - remove_dns_key*/
+CREATE OR REPLACE FUNCTION "api"."remove_dns_key"(input_keyname text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.delete_dns_key');
+		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_key');
 		input_keyname := api.sanitize_general(input_keyname);
 		SELECT api.create_log_entry('API', 'INFO', 'Deleting dns key');
 		DELETE FROM "dns"."keys" WHERE "keyname" = input_keyname;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_dns_key"() IS 'Delete existing DNS key';
+COMMENT ON FUNCTION "api"."remove_dns_key"() IS 'Delete existing DNS key';
 
 /*Trigger Function API - create_dns_zone*/
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean,input_comment text) RETURNS VOID AS $$
@@ -43,10 +43,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_zone"() IS 'Create a new DNS zone';
 
-/*Trigger Function API - delete_dns_zone*/
-CREATE OR REPLACE FUNCTION "api"."delete_dns_zone"(input_zone text) RETURNS VOID AS $$
+/*Trigger Function API - remove_dns_zone*/
+CREATE OR REPLACE FUNCTION "api"."remove_dns_zone"(input_zone text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.delete_dns_zone');
+		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_zone');
 		input_zone := api.sanitize_general(input_zone);
 
 		SELECT api.create_log_entry('API', 'INFO', 'Deleting dns zone');
@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION "api"."delete_dns_zone"(input_zone text) RETURNS VOID
 		WHERE "zone" = input_zone;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_dns_zone"() IS 'Delete existing DNS zone';
+COMMENT ON FUNCTION "api"."remove_dns_zone"() IS 'Delete existing DNS zone';
 
 /*Trigger Function API - create_dns_address*/
 CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS VOID AS $$
@@ -85,10 +85,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_address"() IS 'create a new A or AAAA record';
 
-/*Trigger Function API - delete_dns_address*/
-CREATE OR REPLACE FUNCTION "api"."delete_dns_address"(input_address inet) RETURNS VOID AS $$
+/*Trigger Function API - remove_dns_address*/
+CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'begin api.delete_dns_address');
+		SELECT api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_address');
 
 		input_address := api.sanitize_general(input_address);
 		
@@ -118,10 +118,10 @@ CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_mailserver"() IS 'Create a new mailserver MX record for a zone';
 
-/* API - delete_mailserver */
-CREATE OR REPLACE FUNCTION "api"."delete_mailserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
+/* API - remove_mailserver */
+CREATE OR REPLACE FUNCTION "api"."remove_mailserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.delete_mailserver');
+		SELECT api.create_log_entry('API','DEBUG','begin api.remove_mailserver');
 		input_hostname := api.sanitize_general(input_hostname);
 		input_domain := api.sanitize_general(input_domain);
 
@@ -129,7 +129,7 @@ CREATE OR REPLACE FUNCTION "api"."delete_mailserver"(input_hostname text, input_
 		DELETE FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_domain;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_mailserver"() IS 'Delete an existing MX record for a zone';
+COMMENT ON FUNCTION "api"."remove_mailserver"() IS 'Delete an existing MX record for a zone';
 
 /* API - get_reverse_domain */
 CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$

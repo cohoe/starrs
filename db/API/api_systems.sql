@@ -17,16 +17,16 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_u
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_system"() IS 'Create a new system';
 
-/*Trigger Function API - delete_system*/
-CREATE OR REPLACE FUNCTION "api"."delete_system"(input_system_name text) RETURNS VOID AS $$
+/*Trigger Function API - remove_system*/
+CREATE OR REPLACE FUNCTION "api"."remove_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.delete_system');
+		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_system');
 		input_system_name := api.sanitize_general(input_system_name);
 		SELECT api.create_log_entry('API', 'INFO', 'Deleting system');
 		DELETE FROM "systems"."systems" WHERE "system_name" = input_system_name;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."delete_system"() IS 'Delete an existing system';
+COMMENT ON FUNCTION "api"."remove_system"() IS 'Delete an existing system';
 
 /*Trigger Function API - create_interface*/
 CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_interface_name text, input_mac macaddr, input_comment text) RETURNS VOID AS $$
@@ -46,10 +46,10 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface"() IS 'Create a new interface on a system';
 
-/*Trigger Function API - delete_interface*/
-CREATE OR REPLACE FUNCTION "api"."delete_interface"(input_mac macaddr) RETURNS VOID AS $$
+/*Trigger Function API - remove_interface*/
+CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.delete_interface');
+		SELECT api.create_log_entry('API','DEBUG','begin api.remove_interface');
 		
 		input_mac := api.sanitize_general(input_mac);
 		
@@ -57,7 +57,7 @@ CREATE OR REPLACE FUNCTION "api"."delete_interface"(input_mac macaddr) RETURNS V
 		DELETE FROM "systems"."interfaces" WHERE "mac" = input_mac;
 	END;
 $$ LANGUAGE 'plpgqsql';
-COMMENT ON FUNCTION "api"."delete_interface"() IS 'delete an interface based on MAC address';
+COMMENT ON FUNCTION "api"."remove_interface"() IS 'delete an interface based on MAC address';
 
 /*Trigger Function API - create_interface_address_manual*/
 CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac macaddr, input_address inet, input_config text, input_class text, input_comment text) RETURNS VOID AS $$
@@ -95,10 +95,10 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface_address_auto"() IS 'create a new address on interface from a range';
 
-/*Trigger Function API - delete_interface_address*/
-CREATE OR REPLACE FUNCTION "api"."delete_interface_address"(input_address inet) RETURNS VOID AS $$
+/*Trigger Function API - remove_interface_address*/
+CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.delete_interface_address');
+		SELECT api.create_log_entry('API','DEBUG','begin api.remove_interface_address');
 		
 		input_address := api.sanitize_general(input_address);
 		
@@ -106,4 +106,4 @@ CREATE OR REPLACE FUNCTION "api"."delete_interface_address"(input_address inet) 
 		DELETE FROM "systems"."interface_addresses" WHERE "address" = input_address;
 	END;
 $$ LANGUAGE 'plpgqsql';
-COMMENT ON FUNCTION "api"."delete_interface_address"() IS 'delete an interface address';
+COMMENT ON FUNCTION "api"."remove_interface_address"() IS 'delete an interface address';
