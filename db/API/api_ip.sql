@@ -1,12 +1,11 @@
-/*  API - create_subnet
-
+/* API - create_subnet
 	1) Sanitize input
 	2) Create RDNS zone (since for this purpose you are authoritative for that zone)
 	3) Create new subnet
 */
 CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean) RETURNS VOID AS $$
 	DECLARE
-		RowCount	INTEGER;
+		RowCount INTEGER;
 	BEGIN
 		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
 		-- Sanitize input
@@ -26,16 +25,15 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_subnet"() IS 'Create/activate a new subnet';
 
-/*  API - remove_subnet
-
+/* API - remove_subnet
 	1) Sanitize input
 	2) Delete RDNS zone
 	3) Delete subnet record
 */
 CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID AS $$
 	DECLARE
-		RowCount	INTEGER;
-		WasAuto		BOOLEAN;
+		RowCount INTEGER;
+		WasAuto BOOLEAN;
 	BEGIN
 		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_subnet');
 		-- Sanitize input
@@ -50,8 +48,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_subnet"() IS 'Delete/deactivate an existing subnet';
 
-/*  API - create_ip_range
-
+/* API - create_ip_range
 	1) Sanitize input
 	2) Create new range (triggers checking to make sure the range is valid
 */
@@ -74,8 +71,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_la
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_range"() IS 'Create a new range of IP addresses';
 
-/*  API - remove_ip_range
-
+/* API - remove_ip_range
 	1) Sanitize input
 	2) Delete range
 */
@@ -93,8 +89,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_la
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"() IS 'Delete an existing IP range';
 
-/*  API - get_address_from_range 
-
+/* API - get_address_from_range 
 	1) Sanitize input
 	2) Get range bounds
 	3) Get address from range
@@ -102,9 +97,9 @@ COMMENT ON FUNCTION "api"."remove_ip_range"() IS 'Delete an existing IP range';
 */
 CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text) RETURNS INET AS $$
 	DECLARE
-		LowerBound	INET;
-		UpperBound	INET;
-		AddressToUse	INET;
+		LowerBound INET;
+		UpperBound INET;
+		AddressToUse INET;
 	BEGIN
 		-- Sanitize input
 		input_range_name := api.sanitize_general(input_range_name);
@@ -130,8 +125,7 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_address_from_range"() IS 'get the first available address in a range';
 
-/*  API - get_subnet_addresses 
-
+/* API - get_subnet_addresses 
 	1) Define basic network
 	2) Create range
 	3) Loop through range
@@ -158,7 +152,7 @@ CREATE OR REPLACE FUNCTION "api"."get_subnet_addresses"(CIDR) RETURNS SETOF INET
 		when (/4/) { 
 			while (++$range) {
 				# While they technically work, .255 and .0 addresses in multi-range wide networks
-				# can cause confusion and possibly device problems. We'll just avoid them alltogether.
+				# can cause confusion and possibly device problems. Well just avoid them alltogether.
 				if($range->ip() !~ m/\.0$|\.255$/) {
 					push(@addresses, $range->ip());
 				}
