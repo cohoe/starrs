@@ -1,10 +1,15 @@
-/*Trigger Function API - create_log_entry*/
+/* API - create_log_entry
+ 	1) Sanitize input
+ 	2) Create log entry
+*/
 CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_severity text, input_message text) RETURNS VOID AS $$
 	BEGIN
+		-- Sanitize input
 		input_source := api.sanitize_general(input_source);
 		input_severity := api.sanitize_general(input_severity);
 		input_message := api.sanitize_general(input_message);
-		
+
+		-- Create log entry
 		INSERT INTO "management"."log_master"
 		("source","user","severity","message") VALUES
 		(input_source,api.get_current_user(),input_severity,input_message);
@@ -12,10 +17,10 @@ CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_sev
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_log_entry"() IS 'Function to insert a log entry';
 
-/*Trigger Function API - sanitize_general*/
+/* API - sanitize_general */
 CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS $$
 	DECLARE
-		BadCrap	TEXT;
+		BadCrap TEXT;
 	BEGIN
 		BadCrap = regexp_replace(input, E'[a-z0-9\_\.\-\:]*', '', 'gi');
 		IF BadCrap != '' THEN
@@ -26,7 +31,7 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."sanitize_general"() IS 'Allow only certain characters for most common objects';
 
-/*Trigger Function API - sanitize_dhcp*/
+/* API - sanitize_dhcp*/
 CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
 	DECLARE
 		BadCrap	TEXT;
@@ -40,10 +45,10 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."sanitize_dhcp"() IS 'Only allow certain characters in DHCP options';
 
-/*Trigger Function API - get_current_user*/
+/* API - get_current_user */
 CREATE OR REPLACE FUNCTION "api"."get_current_user" RETURNS TEXT AS $$
 	DECLARE
-		Username	TEXT;
+		Username TEXT;
 	BEGIN
 		-- Do stuff to check the table
 		Username := 'cohoe_debug';
@@ -52,7 +57,7 @@ CREATE OR REPLACE FUNCTION "api"."get_current_user" RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_current_user"() IS 'Get the username of the current session';
 
-/*Trigger Function API - validate_domain (DOCUMENT)*/
+/* API - validate_domain (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) RETURNS BOOLEAN AS $$
 	use strict;
 	use warnings;
@@ -93,7 +98,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."validate_domain"() IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
 
-/*Trigger Function API - renew_system (DOCUMENT)*/
+/* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
 		SELECT api.create_log_entry('API','DEBUG','begin api.renew_system');
