@@ -109,3 +109,47 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_system"() IS 'Renew a registered system for the next year';
+
+/* API - create_site_configuration
+	1) Sanitize input
+	2) Check privileges
+	3) Create directive
+*/
+CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive text, input_value text) RETURNS VOID AS $$
+	BEGIN
+		SELECT api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
+		
+		-- Sanitize input
+		input_directive := api.sanitize_general(input_directive);
+		input_value := api.sanitize_general(input_value);
+		
+		-- Create directive
+		SELECT api.create_log_entry('API','INFO','creating directive');
+		INSERT INTO "management"."configuration" VALUES (input_directive, input_value);
+		
+		SELECT api.create_log_entry('API','DEBUG','finish api.create_site_configuration');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_site_configuration"() IS 'Create a new site configuration directive';
+
+/* API - remove_site_configuration
+	1) Sanitize input
+	2) Check privileges
+	3) Create directive
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive text) RETURNS VOID AS $$
+	BEGIN
+		SELECT api.create_log_entry('API','DEBUG','begin api.remove_site_configuration');
+		
+		-- Sanitize input
+		input_directive := api.sanitize_general(input_directive);
+		
+		-- Create directive
+		SELECT api.create_log_entry('API','INFO','creating directive');
+		DELETE FROM "management"."configuration" WHERE "option" = input_directive;
+		
+		SELECT api.create_log_entry('API','DEBUG','finish api.remove_site_configuration');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_site_configuration"() IS 'Remove a site configuration directive';
+
