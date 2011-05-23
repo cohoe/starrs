@@ -174,3 +174,15 @@ CREATE OR REPLACE FUNCTION "dns"."ns_update" RETURNS TRIGGER AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."ns_update"() IS 'Check that the new settings provide for a primary nameserver for the zone';
+
+/* Trigger - dns_autopopulate_address */
+CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"() RETURNS TRIGGER AS $$
+	BEGIN
+		SELECT "address" INTO NEW."address"
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = NEW."hostname"
+		AND "dns"."a"."zone" = NEW."zone";
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."dns_autopopulate_address"() IS 'Fill in the address portion of the foreign key relationship';
