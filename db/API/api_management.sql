@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_sev
 		(input_source,api.get_current_user(),input_severity,input_message);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_log_entry"() IS 'Function to insert a log entry';
+COMMENT ON FUNCTION "api"."create_log_entry"(text, text, text) IS 'Function to insert a log entry';
 
 /* API - sanitize_general */
 CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS $$
@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."sanitize_general"() IS 'Allow only certain characters for most common objects';
+COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects';
 
 /* API - sanitize_dhcp*/
 CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
@@ -43,10 +43,10 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."sanitize_dhcp"() IS 'Only allow certain characters in DHCP options';
+COMMENT ON FUNCTION "api"."sanitize_dhcp"(text) IS 'Only allow certain characters in DHCP options';
 
 /* API - get_current_user */
-CREATE OR REPLACE FUNCTION "api"."get_current_user" RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
 	DECLARE
 		Username TEXT;
 	BEGIN
@@ -96,7 +96,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 		return 'FALSE';
 	}
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."validate_domain"() IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
+COMMENT ON FUNCTION "api"."validate_domain"(hostname, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
 
 /* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
@@ -108,7 +108,7 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 		UPDATE "systems"."systems" SET "renew_date" = date(current_date + interval '1 year');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."renew_system"() IS 'Renew a registered system for the next year';
+COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for the next year';
 
 /* API - create_site_configuration
 	1) Sanitize input
@@ -130,7 +130,7 @@ CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive tex
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_site_configuration');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_site_configuration"() IS 'Create a new site configuration directive';
+COMMENT ON FUNCTION "api"."create_site_configuration"(text, text) IS 'Create a new site configuration directive';
 
 /* API - remove_site_configuration
 	1) Sanitize input
@@ -151,5 +151,5 @@ CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive tex
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_site_configuration');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_site_configuration"() IS 'Remove a site configuration directive';
+COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
 
