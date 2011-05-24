@@ -4,7 +4,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		RowCount	INTEGER;	-- Placeholder
 		ConfigFamily	INTEGER;	-- Family of config type
 	BEGIN
-		SELECT api.create_log_entry('database','DEBUG','Begin systems.interface_addresses_insert');
 		-- Set address family
 		NEW."family" := family(NEW."address");
 
@@ -14,8 +13,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		WHERE NEW."address" << "ip"."subnets"."subnet";
 		
 		IF (RowCount < 1) THEN
-			SELECT api.create_log_entry('database','ERROR','IP not in subnets');
-			SELECT api.create_log_entry('database','ERROR',NEW);
 			RAISE EXCEPTION 'IP address (%) must be within a managed subnet.',NEW."address";
 		END IF;
 		
@@ -27,13 +24,9 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 
 		IF NEW."isprimary" IS TRUE AND RowCount > 0 THEN
 			-- There is a primary address already registered and this was supposed to be one.
-			SELECT api.create_log_entry('database','ERROR','Primary interface already exists');
-			SELECT api.create_log_entry('database','ERROR','NEW');
 			RAISE EXCEPTION 'Primary address for this interface and family already exists';
 		ELSIF NEW."isprimary" IS FALSE AND RowCount = 0 THEN
 			-- There is no primary and this is set to not be one.
-			SELECT api.create_log_entry('database','ERROR','Primary interface does not exist');
-			SELECT api.create_log_entry('database','ERROR',NEW);
 			RAISE EXCEPTION 'No primary address exists for this interface and family';
 		END IF;
 
@@ -47,8 +40,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			AND "systems"."interface_addresses"."config" NOT LIKE 'static';
 
 			IF (RowCount > 0) THEN
-				SELECT api.create_log_entry('database','ERROR','Only one stateful address per MAC allowed');
-				SELECT api.create_log_entry('database','ERROR',NEW);
 				RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
 			END IF;
 		END IF;
@@ -60,8 +51,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			WHERE "dhcp"."config_types"."config" = NEW."config";
 
 			IF NEW."family" != ConfigFamily THEN
-				SELECT api.create_log_entry('database','ERROR','Configuration/family mismatch');
-				SELECT api.create_log_entry('database','ERROR',NEW);
 				RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)'NEW."config",NEW."family";
 			END IF;
 		END IF;
@@ -73,14 +62,10 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			WHERE "ip"."addresses"."address" = NEW."address";
 
 			IF (RowCount > 0) THEN
-				SELECT api.create_log_entry('database','ERROR','Autoconf address already exists');
-				SELECT api.create_log_entry('database','ERROR',NEW);
 				RAISE EXCEPTION 'Existing address (%) detected. Cannot continue.',NEW."address";
 			END IF;
 
 			INSERT INTO "ip"."addresses" ("address") VALUES (NEW."address");
-			SELECT api.create_log_entry('database','INFO','Autoconf address created');
-			SELECT api.create_log_entry('database','INFO',NEW);
 		END IF;
 
 		RETURN NEW;
@@ -94,7 +79,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 		RowCount	INTEGER;	-- Placeholder
 		ConfigFamily	INTEGER;	-- Family of config type
 	BEGIN
-		SELECT api.create_log_entry('database','DEBUG','Begin systems.interface_addresses_update');
 		-- Set address family
 		NEW."family" := family(NEW."address");
 
@@ -105,8 +89,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 			WHERE NEW."address" << "ip"."subnets"."subnet";
 			
 			IF (RowCount < 1) THEN
-				SELECT api.create_log_entry('database','ERROR','IP not in subnets');
-				SELECT api.create_log_entry('database','ERROR',NEW);
 				RAISE EXCEPTION 'IP address (%) must be within a managed subnet.',NEW."address";
 			END IF;
 		END IF;
@@ -120,13 +102,9 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 
 			IF NEW."isprimary" IS TRUE AND RowCount > 0 THEN
 				-- There is a primary address already registered and this was supposed to be one.
-				SELECT api.create_log_entry('database','ERROR','Primary interface already exists');
-				SELECT api.create_log_entry('database','ERROR','NEW');
 				RAISE EXCEPTION 'Primary address for this interface and family already exists';
 			ELSIF NEW."isprimary" IS FALSE AND RowCount = 0 THEN
 				-- There is no primary and this is set to not be one.
-				SELECT api.create_log_entry('database','ERROR','Primary interface does not exist');
-				SELECT api.create_log_entry('database','ERROR',NEW);
 				RAISE EXCEPTION 'No primary address exists for this interface and family';
 			END IF;
 		END IF;
@@ -142,8 +120,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				AND "systems"."interface_addresses"."config" NOT LIKE 'static';
 
 				IF (RowCount > 0) THEN
-					SELECT api.create_log_entry('database','ERROR','Only one stateful address per MAC allowed');
-					SELECT api.create_log_entry('database','ERROR',NEW);
 					RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
 				END IF;
 			END IF;
@@ -155,8 +131,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				WHERE "dhcp"."config_types"."config" = NEW."config";
 
 				IF NEW."family" != ConfigFamily THEN
-					SELECT api.create_log_entry('database','ERROR','Configuration/family mismatch');
-					SELECT api.create_log_entry('database','ERROR',NEW);
 					RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)'NEW."config",NEW."family";
 				END IF;
 			END IF;
@@ -168,14 +142,10 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				WHERE "ip"."addresses"."address" = NEW."address";
 
 				IF (RowCount > 0) THEN
-					SELECT api.create_log_entry('database','ERROR','Autoconf address already exists');
-					SELECT api.create_log_entry('database','ERROR',NEW);
 					RAISE EXCEPTION 'Existing address (%) detected. Cannot continue.',NEW."address";
 				END IF;
 
 				INSERT INTO "ip"."addresses" ("address") VALUES (NEW."address");
-				SELECT api.create_log_entry('database','INFO','Autoconf address created');
-				SELECT api.create_log_entry('database','INFO',NEW);
 			END IF;
 		END IF;
 		RETURN NEW;
