@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport"(input_port_name text, input
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_switchport');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_switchport"() IS 'Create a new network switchport';
+COMMENT ON FUNCTION "api"."create_switchport"(text, text, text, text) IS 'Create a new network switchport';
 
 /* API - remove_switchport
 	1) Sanitize input
@@ -43,4 +43,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_switchport"(input_port_name text, input
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_switchport');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_switchport"() IS 'Remove a network switchport';
+COMMENT ON FUNCTION "api"."remove_switchport"(text, text) IS 'Remove a network switchport';
