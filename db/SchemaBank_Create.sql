@@ -1,41 +1,3 @@
-/*
-Database              pg 8_0
-Project Name        TestDB
-Project Version      Branch trunk - Version 24
-Version Date         2011-05-23 0:27 GMT
-Generated on        2011-05-23 0:29 GMT
-*/
-
-
-/*
-The simplest way to execute this script is to run "psql -e -f <filename>"
-See http://www.postgresql.org/docs/current/interactive/app-psql.html for more detailed options.
-*/
-
-/*
-Uncomment the below set command if the default schema already exists in your database.
-*/
-
--- set search_path TO "public";
-
-/*
-This section drops existing database objects before re-creating them, if so configured under the Options tab in SchemaBank.
-Note that dropping a database object (e.g. table) will remove all its data as well. Make sure you have a full backup of the database in case there is any problem that requires a recovery.
-See http://www.postgresql.org/docs/current/static/backup.html for reference.
-*/
-
-/*
-This section creates all database objects defined in your project. 
-If any of the objects already exists in the database, the psql client program may raise an error while continuing the execution of the rest of the script.
-*/
-
-CREATE DATABASE "start" ENCODING 'UTF8';
-
-\connect start;
-
-/*Schema public*/
-CREATE SCHEMA "public";
-
 set search_path TO "public";
 
 /*Schema firewall*/
@@ -61,6 +23,9 @@ CREATE SCHEMA "network";
 
 /*Schema api*/
 CREATE SCHEMA "api";
+
+/*Sequence Output ID*/
+CREATE SEQUENCE "output_id_seq";
 
 /*Language plperl*/
 CREATE LANGUAGE "plperl";
@@ -162,7 +127,7 @@ CREATE TABLE "ip"."subnets"(
 "last_modifier" TEXT NOT NULL,
 "name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
-"zone" TEXT DEFAULT localdomain,
+"zone" TEXT DEFAULT 'localdomain',
 CONSTRAINT "subnets_pkey" PRIMARY KEY ("subnet")
 )
 WITHOUT OIDS;
@@ -189,10 +154,9 @@ CREATE TABLE "dns"."ns"(
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 3600,
-"username" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT localdomain,
-"record_zone" TEXT NOT NULL DEFAULT localdomain,
-CONSTRAINT "ns_pkey" PRIMARY KEY ("isprimary","hostname","address","zone","record_zone")
+"owner" TEXT NOT NULL,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
+CONSTRAINT "ns_pkey" PRIMARY KEY ("isprimary","hostname","address","zone")
 )
 WITHOUT OIDS;
 
@@ -230,7 +194,7 @@ CREATE TABLE "systems"."interface_addresses"(
 "renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
 "mac" MACADDR,
 "class" TEXT,
-CONSTRAINT "interfaces_pkey" PRIMARY KEY ("address")
+CONSTRAINT "interface_addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
 
@@ -311,8 +275,8 @@ CREATE TABLE "dns"."pointers"(
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 300,
-"username" TEXT NOT NULL,
-"zone" TEXT DEFAULT localdomain,
+"owner" TEXT NOT NULL,
+"zone" TEXT DEFAULT 'localdomain',
 CONSTRAINT "pointers_pkey" PRIMARY KEY ("alias"),
 CONSTRAINT "dns_pointers_type_check" CHECK ("type" ~ '^CNAME|SRV$')
 )
@@ -335,14 +299,14 @@ CREATE TABLE "dns"."mx"(
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 3600,
-"username" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT localdomain,
+"owner" TEXT NOT NULL,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
 CONSTRAINT "mx_pkey" PRIMARY KEY ("hostname","address","zone")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "dns"."zones"(
-"zone" TEXT NOT NULL DEFAULT localdomain,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
 "forward" BOOLEAN NOT NULL,
 "keyname" TEXT NOT NULL,
 "date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
@@ -381,8 +345,8 @@ CREATE TABLE "dns"."txt"(
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 300,
-"username" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT localdomain,
+"owner" TEXT NOT NULL,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
 CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone"),
 CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^SPF|TXT$')
 )
@@ -407,7 +371,7 @@ CREATE TABLE "dns"."a"(
 "type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 300,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT localdomain,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
 CONSTRAINT "a_pkey" PRIMARY KEY ("hostname","address","zone"),
 CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$')
 )
@@ -479,74 +443,74 @@ CREATE TABLE "firewall"."metahost_rules"(
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL DEFAULT Database Root,
+"last_modifier" TEXT NOT NULL DEFAULT 'Database Root',
 "transport" TEXT NOT NULL,
 "name" TEXT NOT NULL,
 CONSTRAINT "metahost_rules_pkey" PRIMARY KEY ("port","transport","name")
 )
 WITHOUT OIDS;
 
-COMMENT ON TABLE "metahosts" IS 'Groups of addresses with similar firewall rules';
+COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
-COMMENT ON TABLE "transports" IS 'TCP, UDP, or Both';
+COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
 
-COMMENT ON TABLE "class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
+COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
 
-COMMENT ON TABLE "programs" IS 'Common programs to easily block.';
+COMMENT ON TABLE "firewall"."programs" IS 'Common programs to easily block.';
 
-COMMENT ON TABLE "defaults" IS 'Address default action';
+COMMENT ON TABLE "firewall"."defaults" IS 'Address default action';
 
-COMMENT ON TABLE "rules" IS 'The actual rules that get put into the firewall.';
+COMMENT ON TABLE "firewall"."rules" IS 'The actual rules that get put into the firewall.';
 
-COMMENT ON TABLE "range_uses" IS 'Ranges are intended for a specific purpose.';
+COMMENT ON TABLE "ip"."range_uses" IS 'Ranges are intended for a specific purpose.';
 
-COMMENT ON TABLE "device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
+COMMENT ON TABLE "systems"."device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
 
-COMMENT ON TABLE "subnets" IS 'Subnets for which this application has control';
+COMMENT ON TABLE "ip"."subnets" IS 'Subnets for which this application has control';
 
-COMMENT ON TABLE "ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
+COMMENT ON TABLE "ip"."ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
 
-COMMENT ON TABLE "ns" IS 'Nameservers (to be inserted as NS records)';
+COMMENT ON TABLE "dns"."ns" IS 'Nameservers (to be inserted as NS records)';
 
-COMMENT ON TABLE "os_family" IS 'General classification for operating systems.';
+COMMENT ON TABLE "systems"."os_family" IS 'General classification for operating systems.';
 
-COMMENT ON TABLE "switchports" IS 'Certain network devices have ports that can be marked with special options.';
+COMMENT ON TABLE "network"."switchports" IS 'Certain network devices have ports that can be marked with special options.';
 
-COMMENT ON TABLE "interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
+COMMENT ON TABLE "systems"."interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
 
-COMMENT ON TABLE "classes" IS 'DHCP classes allow configuration of hosts in certain ways';
+COMMENT ON TABLE "dhcp"."classes" IS 'DHCP classes allow configuration of hosts in certain ways';
 
-COMMENT ON TABLE "systems" IS 'Systems are devices that connect to the network.';
+COMMENT ON TABLE "systems"."systems" IS 'Systems are devices that connect to the network.';
 
-COMMENT ON TABLE "subnet_options" IS 'Options to apply to an entire subnet';
+COMMENT ON TABLE "dhcp"."subnet_options" IS 'Options to apply to an entire subnet';
 
-COMMENT ON TABLE "metahost_members" IS 'Map addresses to metahosts';
+COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
 
-COMMENT ON TABLE "config_types" IS 'List of ways to configure your address';
+COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
 
-COMMENT ON TABLE "os" IS 'Track what primary operating systems are in use on the network.';
+COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
 
-COMMENT ON TABLE "pointers" IS 'CNAMEs and SRV records';
+COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
 
-COMMENT ON TABLE "switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
+COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
 
-COMMENT ON TABLE "mx" IS 'Mail servers (MX records)';
+COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
 
-COMMENT ON TABLE "zones" IS 'Authoritative DNS zones';
+COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
 
-COMMENT ON TABLE "keys" IS 'Zone keys';
+COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
 
-COMMENT ON TABLE "addresses" IS 'Master list of all controlled addresses in the application';
+COMMENT ON TABLE "ip"."addresses" IS 'Master list of all controlled addresses in the application';
 
-COMMENT ON TABLE "txt" IS 'TXT records for hosts';
+COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
 
-COMMENT ON TABLE "log_master" IS 'Record every single transaction that occurs in this application.';
+COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
 
-COMMENT ON TABLE "systems" IS 'Firewall boxes on the network';
+COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
 
-COMMENT ON TABLE "output" IS 'Destination of the output functions rather than write a file to disk.';
+COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
 
-COMMENT ON TABLE "interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
 
 ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "class_options_class_option_value_key" UNIQUE ("option","value","class");
 
@@ -559,10 +523,6 @@ COMMENT ON CONSTRAINT "ranges_first_ip_key" ON "ip"."ranges" IS 'Unique starting
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "ranges_last_ip_key" UNIQUE ("last_ip");
 
 COMMENT ON CONSTRAINT "ranges_last_ip_key" ON "ip"."ranges" IS 'Unique ending IP''s';
-
-ALTER TABLE "dns"."ns" ADD CONSTRAINT "ns_controlled_zone_hostname_key" UNIQUE ("controlled_zone","hostname");
-
-COMMENT ON CONSTRAINT "ns_controlled_zone_hostname_key" ON "dns"."ns" IS 'No duplicate NS records for a zone';
 
 ALTER TABLE "network"."switchports" ADD CONSTRAINT "switchports_system_name_port_name_key" UNIQUE ("system_name","port_name");
 
@@ -621,15 +581,14 @@ ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_use" FOREIGN KEY ("use") 
 
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "dns"."ns" ADD CONSTRAINT "fk_dns_servers_zone" FOREIGN KEY ("record_zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE "dns"."ns" ADD CONSTRAINT "fk_ns_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "network"."switchports" ADD CONSTRAINT "fk_network_switchports_type" FOREIGN KEY ("type") REFERENCES "network"."switchport_types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "network"."switchports" ADD CONSTRAINT "fk_switchports_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
-ALTER TABLE "systems"."interface_addresses" ADD CONSTRAINT "fk_systems_interfaces_address" FOREIGN KEY ("address") REFERENCES "ip"."addresses"("address") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE "systems"."interface_addresses" ADD CONSTRAINT "fk_systems_interfaces_address" FOREIGN KEY ("address") REFERENCES "ip"."addresses"("address") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT
+DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "systems"."interface_addresses" ADD CONSTRAINT "fk_systems_interface_address_config" FOREIGN KEY ("config") REFERENCES "dhcp"."config_types"("config") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
@@ -674,71 +633,6 @@ ALTER TABLE "management"."user_privileges" ADD CONSTRAINT "fk_user_privileges_pr
 ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_transport" FOREIGN KEY ("transport") REFERENCES "firewall"."transports"("transport") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-/*Trigger IP - Subnets (Insert) Activate*/
-CREATE TRIGGER "ip_subnets_insert"
-BEFORE INSERT ON "ip"."subnets"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."subnets_insert"();
-
-/*Trigger IP - Subnets (Delete) Deactivate*/
-CREATE TRIGGER "ip_subnets_delete"
-BEFORE DELETE ON "ip"."subnets"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."subnets_delete"();
-
-/*Trigger IP - Subnets (Update) Modify*/
-CREATE TRIGGER "ip_subnets_update"
-BEFORE UPDATE ON "ip"."subnets"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."subnets_update"();
-
-/*Trigger DNS - A (Insert) New A*/
-CREATE TRIGGER "dns_a_insert"
-BEFORE INSERT ON "dns"."a"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."a_insert"();
-
-/*Trigger DNS - A (Update) Modify A*/
-CREATE TRIGGER "dns_a_update"
-BEFORE UPDATE ON "dns"."a"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."a_update"();
-
-/*Trigger IP - Addresses (Insert) New*/
-CREATE TRIGGER "ip_addresses_insert"
-BEFORE INSERT ON "ip"."addresses"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."addresses_insert"();
-
-/*Trigger IP - Addresses (Update) Modify*/
-CREATE TRIGGER "ip_addresses_update"
-BEFORE UPDATE ON "ip"."addresses"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."addresses_update"();
-
-/*Trigger DNS - NS (Insert) New*/
-CREATE TRIGGER "dns_ns_insert"
-BEFORE INSERT ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_insert"();
-
-/*Trigger DNS - NS (Update) Modify*/
-CREATE TRIGGER "dns_ns_update"
-BEFORE UPDATE ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_update"();
-
-/*Trigger DNS - Pointers (Insert) New*/
-CREATE TRIGGER "dns_pointers_insert"
-BEFORE INSERT ON "dns"."pointers"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_pointers"();
-
-/*Trigger DNS - Pointers (Update) Modify*/
-CREATE TRIGGER "dns_pointers_update"
-BEFORE UPDATE ON "dns"."pointers"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_pointers"();
-
-/*Trigger IP - Ranges (Insert) New*/
-CREATE TRIGGER "ip_ranges_insert"
-BEFORE INSERT ON "ip"."ranges"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."ranges_insert"();
-
-/*Trigger IP - Ranges (Update) Modify*/
-CREATE TRIGGER "ip_ranges_update"
-BEFORE UPDATE ON "ip"."ranges"
-FOR EACH ROW EXECUTE PROCEDURE "ip"."ranges_update"();
 
 /*View Log - Master Debug*/
 CREATE OR REPLACE VIEW "management"."log_master_debug" AS SELECT * FROM "management"."log_master" WHERE "severity" LIKE 'DEBUG';
