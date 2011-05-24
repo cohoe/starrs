@@ -110,7 +110,7 @@ COMMENT ON FUNCTION "dns"."pointers_update"() IS 'Check if the new alias already
 	1) Check for primary NS existance
 	2) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."ns_insert" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."ns_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
@@ -136,7 +136,7 @@ COMMENT ON FUNCTION "dns"."ns_insert"() IS 'Check that there is only one primary
 	1) Check for primary NS
 	2) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."ns_update" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."ns_update"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
@@ -165,50 +165,50 @@ COMMENT ON FUNCTION "dns"."ns_update"() IS 'Check that the new settings provide 
 /* Trigger - mx_insert
 	1) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."mx_insert" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."mx_insert"() RETURNS TRIGGER AS $$
 	BEGIN
 		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."mx_insert" IS 'Create new MX record';
+COMMENT ON FUNCTION "dns"."mx_insert"() IS 'Create new MX record';
 
 /* Trigger - mx_update
 	1) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."mx_update" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."mx_update"() RETURNS TRIGGER AS $$
 	BEGIN
-		IF NEW."address" != OLD."address"
+		IF NEW."address" != OLD."address" THEN
 			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		END IF;
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."mx_update" IS 'Modify a MX record';
+COMMENT ON FUNCTION "dns"."mx_update"() IS 'Modify a MX record';
 
 /* Trigger - txt_insert
 	1) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."txt_insert" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."txt_insert"() RETURNS TRIGGER AS $$
 	BEGIN
 		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."txt_insert" IS 'Create new TXT record';
+COMMENT ON FUNCTION "dns"."txt_insert"() IS 'Create new TXT record';
 
 /* Trigger - txt_update
 	1) Autopopulate address
 */
-CREATE OR REPLACE FUNCTION "dns"."txt_update" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "dns"."txt_update"() RETURNS TRIGGER AS $$
 	BEGIN
-		IF NEW."address" != OLD."address"
+		IF NEW."address" != OLD."address" THEN
 			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		END IF;
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."txt_update" IS 'Modify a TXT record';
+COMMENT ON FUNCTION "dns"."txt_update"() IS 'Modify a TXT record';
 
 /* Trigger - dns_autopopulate_address */
 CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text, input_zone text) RETURNS INET AS $$
@@ -222,4 +222,4 @@ CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text,
 		RETURN Address;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."dns_autopopulate_address"() IS 'Fill in the address portion of the foreign key relationship';
+COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
