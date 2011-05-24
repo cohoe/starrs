@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 		SELECT api.create_log_entry('API','DEBUG','Finish api.add_firewall_metahost_member');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."add_firewall_metahost_member"() IS 'add a member to a metahost. this deletes all previous rules.';
+COMMENT ON FUNCTION "api"."add_firewall_metahost_member"(inet, text) IS 'add a member to a metahost. this deletes all previous rules.';
 
 /* API - remove_firewall_metahost_member
 	1) Check privileges
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_firewall_metahost_member');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_metahost_member"() IS 'remove a member from a metahost. this deletes all previous rules.';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost_member"(inet, text) IS 'remove a member from a metahost. this deletes all previous rules.';
 
 /* API - modify_firewall_default
 	1) Check privileges
@@ -55,7 +55,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_default"(input_address inet, i
 		SELECT api.create_log_entry('API','DEBUG','finish api.modify_firewall_default');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_firewall_default"() IS 'modify an addresses default firewall action';
+COMMENT ON FUNCTION "api"."modify_firewall_default"(inet, boolean) IS 'modify an addresses default firewall action';
 
 /* API - create_metahost
 	1) Check privileges
@@ -78,7 +78,7 @@ CREATE OR REPLACE FUNCTION "api"."create_metahost"(input_name text, input_commen
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_metahost"() IS 'create a firewall metahost';
+COMMENT ON FUNCTION "api"."create_metahost"(text, text) IS 'create a firewall metahost';
 
 /* API - remove_metahost
 	1) Check privileges
@@ -98,7 +98,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost"(input_name text) RETURNS VOID
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_metahost"() IS 'remove a firewall metahost';
+COMMENT ON FUNCTION "api"."remove_metahost"(text) IS 'remove a firewall metahost';
 
 /* API - create_metahost_rule
 	1) Check privileges
@@ -121,7 +121,7 @@ CREATE OR REPLACE FUNCTION "api"."create_metahost_rule"(input_name text, input_p
 		SELECT api.create_log_entry('API','DEBUG','finish create_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_metahost_rule"() IS 'Create a firewall metahost rule';
+COMMENT ON FUNCTION "api"."create_metahost_rule"(text, integer, text, boolean, text) IS 'Create a firewall metahost rule';
 
 /* API - remove_metahost_rule
 	1) Check privileges
@@ -142,7 +142,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost_rule"(input_name text, input_p
 		SELECT api.create_log_entry('API','DEBUG','finish remove_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "remove_metahost_rule"() IS 'Remove a firewall metahost rule';
+COMMENT ON FUNCTION "remove_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
 
 /* API - create_firewall_system
 	1) Check privileges
@@ -163,7 +163,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input
 		SELECT api.create_log_entry('API','DEBUG','finish create_firewall_system');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_firewall_system"() IS 'Firewall systems are the devices that receive rules for a subnet';
+COMMENT ON FUNCTION "api"."create_firewall_system"(text, cidr, text) IS 'Firewall systems are the devices that receive rules for a subnet';
 
 /* API - remove_firewall_system
 	1) Check privileges
@@ -183,7 +183,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETUR
 		SELECT api.create_log_entry('API','DEBUG','finish remove_firewall_system');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_system"() IS 'Remove a firewall system';
+COMMENT ON FUNCTION "api"."remove_firewall_system"(text) IS 'Remove a firewall system';
 
 /* API - create_firewall_rule
 	1) Check privileges
@@ -205,7 +205,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		SELECT api.create_log_entry('API','DEBUG','finish create_firewall_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_firewall_rule"() IS 'Create a standalone firewall rule';
+COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, text, boolean, text) IS 'Create a standalone firewall rule';
 
 /* API - remove_firewall_rule
 	1) Check privileges
@@ -225,4 +225,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule"(input_address inet, inpu
 		SELECT api.create_log_entry('API','DEBUG','finish remove_firewall_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_rule"() IS 'Remove a standalone firewall rule';
+COMMENT ON FUNCTION "api"."remove_firewall_rule"(inet, integer, text) IS 'Remove a standalone firewall rule';
