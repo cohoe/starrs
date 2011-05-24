@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_u
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_system');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system"() IS 'Create a new system';
+COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Create a new system';
 
 /* API - remove_system
 	1) Check privileges
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_system"(input_system_name text) RETURNS
 		SELECT api.create_log_entry('API', 'DEBUG', 'finish api.remove_system');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_system"() IS 'Delete an existing system';
+COMMENT ON FUNCTION "api"."remove_system"(text) IS 'Delete an existing system';
 
 /* API - create_interface
 	1) Check privileges
@@ -73,7 +73,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_interface');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface"() IS 'Create a new interface on a system';
+COMMENT ON FUNCTION "api"."create_interface"(text, text, macaddr, text) IS 'Create a new interface on a system';
 
 /* API - remove_interface
 	1) Check privileges
@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS V
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_interface');
 	END;
 $$ LANGUAGE 'plpgqsql';
-COMMENT ON FUNCTION "api"."remove_interface"() IS 'delete an interface based on MAC address';
+COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface based on MAC address';
 
 /* API - create_interface_address_manual
 	1) Check privileges
@@ -120,7 +120,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		SELECT api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_manual');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_manual"() IS 'create a new address on interface manually';
+COMMENT ON FUNCTION "api"."create_interface_address_manual"(macaddr, inet, text, text, text) IS 'create a new address on interface manually';
 
 /* API - create_interface_address_auto
 	1) Check privileges
@@ -148,7 +148,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 		SELECT api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_auto"() IS 'create a new address on interface from a range';
+COMMENT ON FUNCTION "api"."create_interface_address_auto"(macaddr, text, text, text, text) IS 'create a new address on interface from a range';
 
 /* API - remove_interface_address
 	1) Check privileges
@@ -169,4 +169,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) 
 		SELECT api.create_log_entry('API','DEBUG','begin api.remove_interface_address');
 	END;
 $$ LANGUAGE 'plpgqsql';
-COMMENT ON FUNCTION "api"."remove_interface_address"() IS 'delete an interface address';
+COMMENT ON FUNCTION "api"."remove_interface_address"(inet) IS 'delete an interface address';
