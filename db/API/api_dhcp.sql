@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dhcp_class"() IS 'Create a new DHCP class';
+COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP class';
 
 /* API - remove_dhcp_clas
 	1) Check privileges
@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dhcp_class"() IS 'Delete existing DHCP class';
+COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP class';
 
 /* API - create_dhcp_class_option
 	1) Check privileges
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dhcp_class_option"() IS 'Create a new DHCP class option';
+COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Create a new DHCP class option';
 
 /* API - remove_dhcp_class_option
 	1) Check privileges
@@ -88,7 +88,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dhcp_class_option"() IS 'Delete existing DHCP class option';
+COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delete existing DHCP class option';
 
 /* API - create_dhcp_subnet_option
 	1) Check privileges
@@ -113,7 +113,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"() IS 'Create DHCP subnet option';
+COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Create DHCP subnet option';
 
 /* API - remove_dhcp_subnet_option
 	1) Check privileges
@@ -137,4 +137,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"() IS 'Delete existing DHCP subnet option';
+COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete existing DHCP subnet option';
