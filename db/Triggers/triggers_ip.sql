@@ -140,7 +140,7 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "ip"."addresses_insert"() IS 'Activate a new IP address in the application';
 
 /* TRIGGER - ranges_insert */
-CREATE OR REPLACE FUNCTION "ip"."ranges_insert" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "ip"."ranges_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		LowerBound	INET;
 		UpperBound	INET;
@@ -166,7 +166,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert" RETURNS TRIGGER AS $$
 		
 		IF (RowCount != 1) THEN
 			RAISE EXCEPTION 'First address (%) not found in address pool.',input_first_ip;
-		END IF
+		END IF;
 		
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."addresses"
@@ -174,7 +174,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert" RETURNS TRIGGER AS $$
 		
 		IF (RowCount != 1) THEN
 			RAISE EXCEPTION 'Last address (%) not found in address pool.',input_last_ip;
-		END IF
+		END IF;
 
 		-- Loop through all ranges and find what is near the new range
 		FOR result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = input_subnet LOOP
@@ -209,7 +209,7 @@ COMMENT ON FUNCTION "ip"."ranges_insert"() IS 'Insert a new range of addresses f
 
 
 /* TRIGGER - ranges_update */
-CREATE OR REPLACE FUNCTION "ip"."ranges_update" RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "ip"."ranges_update"() RETURNS TRIGGER AS $$
 	DECLARE
 		LowerBound	INET;
 		UpperBound	INET;
@@ -236,7 +236,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update" RETURNS TRIGGER AS $$
 			
 			IF (RowCount != 1) THEN
 				RAISE EXCEPTION 'First address (%) not found in address pool.',input_first_ip;
-			END IF
+			END IF;
 			
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."addresses"
@@ -244,7 +244,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update" RETURNS TRIGGER AS $$
 			
 			IF (RowCount != 1) THEN
 				RAISE EXCEPTION 'Last address (%) not found in address pool.',input_last_ip;
-			END IF
+			END IF;
 
 			-- Loop through all ranges and find what is near the new range
 			FOR result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = input_subnet LOOP
