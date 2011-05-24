@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_key"() IS 'Create new DNS key';
+COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text) IS 'Create new DNS key';
 
 /* API - remove_dns_key
 	1) Check privileges
@@ -42,14 +42,14 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_key"(input_keyname text) RETURNS VO
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_key');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_key"() IS 'Delete existing DNS key';
+COMMENT ON FUNCTION "api"."remove_dns_key"(text) IS 'Delete existing DNS key';
 
 /* API - create_dns_zone
 	1) Check privileges
 	2) Input sanitization
 	3) Create zone (domain)
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean,input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
 
@@ -67,7 +67,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_zone"() IS 'Create a new DNS zone';
+COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, text) IS 'Create a new DNS zone';
 
 /* API - remove_dns_zone
 	1) Check privileges
@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone"(input_zone text) RETURNS VOID
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_zone');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_zone"() IS 'Delete existing DNS zone';
+COMMENT ON FUNCTION "api"."remove_dns_zone"(text) IS 'Delete existing DNS zone';
 
 /* API - create_dns_address
 	1) Check privileges
@@ -129,7 +129,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_address"() IS 'create a new A or AAAA record';
+COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
 
 /* API - remove_dns_address
 	1) Check privileges
@@ -150,7 +150,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURN
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_address"() IS 'delete an A or AAAA record';
+COMMENT ON FUNCTION "api"."create_dns_address"(inet) IS 'delete an A or AAAA record';
 
 /* API - create_mailserver
 	1) Check privileges
@@ -178,7 +178,7 @@ CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_
 		SELECT api.create_log_entry('API','DEBUG','Finish api.create_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_mailserver"() IS 'Create a new mailserver MX record for a zone';
+COMMENT ON FUNCTION "api"."create_mailserver"(text, text, integer, integer) IS 'Create a new mailserver MX record for a zone';
 
 /* API - remove_mailserver 
 	1) Check privileges
@@ -200,7 +200,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_mailserver"(input_hostname text, input_
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_mailserver"() IS 'Delete an existing MX record for a zone';
+COMMENT ON FUNCTION "api"."remove_mailserver"(text, text) IS 'Delete an existing MX record for a zone';
 
 /* API - get_reverse_domain 
 	1) Return reverse string
@@ -214,7 +214,7 @@ CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$
 	# Return the rdns string for nsupdate from the given address. Automagically figures out IPv4 and IPv6.
 	return new Net::IP ($_[0])->reverse_ip() or die (Net::IP::Error());
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."get_reverse_domain"() IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
+COMMENT ON FUNCTION "api"."get_reverse_domain"(inet) IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
 
 /* API - create_nameserver
 	1) Sanitize input
@@ -242,7 +242,7 @@ CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_nameserver"() IS 'create a new NS record for the zone';
+COMMENT ON FUNCTION "api"."create_nameserver"(text, text, boolean, integer) IS 'create a new NS record for the zone';
 
 /* API - remove_nameserver
 	1) Sanitize input
@@ -265,7 +265,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_nameserver"() IS 'remove a NS record from the zone';
+COMMENT ON FUNCTION "api"."remove_nameserver"(text, text, text) IS 'remove a NS record from the zone';
 
 
 /* API - create_dns_srv
@@ -296,7 +296,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_srv"() IS 'create a new dns srv record for a zone';
+COMMENT ON FUNCTION "api"."create_dns_srv"(text, text, text, integer, integer, integer, integer) IS 'create a new dns srv record for a zone';
 
 /* API - remove_dns_srv
 	1) Sanitize input
@@ -319,7 +319,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_srv"(input_alias text, input_target
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_srv');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_srv"() IS 'remove a dns srv record';
+COMMENT ON FUNCTION "api"."remove_dns_srv"(text, text, text) IS 'remove a dns srv record';
 
 /* API - create_dns_cname
 	1) Sanitize input
@@ -349,7 +349,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_cname"() IS 'create a new dns cname record for a host';
+COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer) IS 'create a new dns cname record for a host';
 
 /* API - remove_dns_cname
 	1) Sanitize input
@@ -372,7 +372,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_cname');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_cname"() IS 'remove a dns cname record for a host';
+COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns cname record for a host';
 
 /* API - create_dns_txt
 	1) Sanitize input
@@ -403,7 +403,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_txt"() IS 'create a new dns txt record for a host';
+COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer) IS 'create a new dns txt record for a host';
 
 /* API - remove_dns_txt
 	1) Sanitize input
@@ -426,4 +426,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zon
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_txt"() IS 'remove a dns txt record for a host';
+COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns txt record for a host';
