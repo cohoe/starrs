@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_subnet"() IS 'Create/activate a new subnet';
+COMMENT ON FUNCTION "api"."create_subnet"(cidr, text, text, boolean) IS 'Create/activate a new subnet';
 
 /* API - remove_subnet
 	1) Check privileges
@@ -58,7 +58,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_subnet');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_subnet"() IS 'Delete/deactivate an existing subnet';
+COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existing subnet';
 
 /* API - create_ip_range
 	1) Check privileges
@@ -84,7 +84,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_la
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_ip_range"() IS 'Create a new range of IP addresses';
+COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) IS 'Create a new range of IP addresses';
 
 /* API - remove_ip_range
 	1) Check privileges
@@ -106,7 +106,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_la
 		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_ip_range"() IS 'Delete an existing IP range';
+COMMENT ON FUNCTION "api"."remove_ip_range"(inet, inet) IS 'Delete an existing IP range';
 
 /* API - get_address_from_range
 	1) Sanitize input
@@ -142,7 +142,7 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 		RETURN AddressToUse;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_address_from_range"() IS 'get the first available address in a range';
+COMMENT ON FUNCTION "api"."get_address_from_range"(text) IS 'get the first available address in a range';
 
 /* API - get_subnet_addresses
 	1) Define basic network
@@ -188,4 +188,4 @@ CREATE OR REPLACE FUNCTION "api"."get_subnet_addresses"(CIDR) RETURNS SETOF INET
 	# Spit them all back out
 	return \@addresses;
 $$ LANGUAGE plperlu;
-COMMENT ON FUNCTION "api"."get_subnet_addresses"() IS 'Given a subnet, return an array of all acceptable addresses within that subnet.';
+COMMENT ON FUNCTION "api"."get_subnet_addresses"(cidr) IS 'Given a subnet, return an array of all acceptable addresses within that subnet.';
