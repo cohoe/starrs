@@ -89,7 +89,13 @@ BEGIN
 		-- Check to see if there are inuse addresses from your old subnet. All addresses must be set not inuse before you can proceed.
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."addresses"
-		WHERE "ip"."addresses"."address" << OLD."subnet" AND "ip"."addresses"."inuse"=TRUE;
+		WHERE EXISTS (
+			SELECT "address" 
+			FROM "systems"."interface_addresses" 
+			WHERE "systems"."interface_addresses"."address" = "ip"."addresses"."address"
+		)
+		AND "ip"."addresses"."address" << OLD."subnet";
+		
 		IF (RowCount >= 1) THEN
 			RAISE EXCEPTION 'Inuse addresses found. Aborting delete.';
 		ELSE
