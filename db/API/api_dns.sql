@@ -150,7 +150,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURN
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_address"(inet) IS 'delete an A or AAAA record';
+COMMENT ON FUNCTION "api"."remove_dns_address"(inet) IS 'delete an A or AAAA record';
 
 /* API - create_mailserver
 	1) Check privileges
@@ -166,7 +166,7 @@ CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_
 		input_domain := api.sanitize_general(input_domain);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','creating new mailserver (MX)');https://github.com/cohoe/impulse/wiki/Tables
+		SELECT api.create_log_entry('API','INFO','creating new mailserver (MX)');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner") VALUES
 			(input_hostname,input_domain,input_preference,DEFAULT,api.get_current_user());
@@ -233,9 +233,9 @@ CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_
 		SELECT api.create_log_entry('API','INFO','creating new NS record');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
-			(input_hostname,input_zone,,input_isprimary,DEFAULT,api.get_current_user());
+			(input_hostname,input_zone,input_isprimary,DEFAULT,api.get_current_user());
 		ELSE
-			INSERT INTO "dns"."ns" ("hostname","zone",,"isprimary","ttl","owner") VALUES
+			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
 			(input_hostname,input_zone,input_isprimary,input_ttl,api.get_current_user());
 		END IF;
 		
