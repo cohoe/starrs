@@ -27,7 +27,7 @@ BEGIN
 	END IF;
 	
 	-- Create RDNS zone for new subnet
-	INSERT INTO "dns"."zones" ("zone","forward","keyname") VALUES (dns.rdns_generation(NEW."subnet"),FALSE,'Default');
+	INSERT INTO "dns"."zones" ("zone","forward","keyname") VALUES (api.get_reverse_domain(NEW."subnet"),FALSE,'Default');
 	
 	-- Autogenerate all IP addresses if told to
 	IF NEW."autogen" IS TRUE THEN
@@ -69,8 +69,8 @@ BEGIN
 		END IF;
 		
 		-- Modify DNS
-		DELETE FROM "dns"."zones" WHERE "dns"."zones"."zone" = dns.rdns_generation(OLD."subnet");
-		INSERT INTO "dns"."zones" ("zone","forward","keyname") VALUES (dns.rdns_generation(NEW."subnet"),FALSE,'Default');
+		DELETE FROM "dns"."zones" WHERE "dns"."zones"."zone" = api.get_reverse_domain(OLD."subnet");
+		INSERT INTO "dns"."zones" ("zone","forward","keyname") VALUES (api.get_reverse_domain(NEW."subnet"),FALSE,'Default');
 	END IF;
 
 	-- Autogenerate all IP addresses if told to
@@ -108,7 +108,7 @@ BEGIN
 	END IF;
 
 	-- Delete RDNS zone for old subnet
-	DELETE FROM "dns"."zones" WHERE "dns"."zones"."zone" = dns.rdns_generation(OLD."subnet");
+	DELETE FROM "dns"."zones" WHERE "dns"."zones"."zone" = api.get_reverse_domain(OLD."subnet");
 	RETURN OLD;
 END;
 $$ LANGUAGE 'plpgsql';
