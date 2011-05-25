@@ -63,7 +63,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 	use warnings;
 	use Data::Validate::Domain qw(is_domain);
 
-	# Usage: SELECT api.validate_domain([hostname OR NULL],[domain OR NULL]);
+	# Usage: PERFORM api.validate_domain([hostname OR NULL],[domain OR NULL]);
 
 	# Declare the string to check later on
 	my $domain;
@@ -101,10 +101,10 @@ COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, d
 /* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.renew_system');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
 		input_system_name := api.sanitize_general(input_system_name);
 		
-		SELECT api.create_log_entry('API','INFO','renewing system');
+		PERFORM api.create_log_entry('API','INFO','renewing system');
 		UPDATE "systems"."systems" SET "renew_date" = date(current_date + interval '1 year');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -117,17 +117,17 @@ COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for
 */
 CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
 		
 		-- Sanitize input
 		input_directive := api.sanitize_general(input_directive);
 		input_value := api.sanitize_general(input_value);
 		
 		-- Create directive
-		SELECT api.create_log_entry('API','INFO','creating directive');
+		PERFORM api.create_log_entry('API','INFO','creating directive');
 		INSERT INTO "management"."configuration" VALUES (input_directive, input_value);
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.create_site_configuration');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_site_configuration');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_site_configuration"(text, text) IS 'Create a new site configuration directive';
@@ -139,16 +139,16 @@ COMMENT ON FUNCTION "api"."create_site_configuration"(text, text) IS 'Create a n
 */
 CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_site_configuration');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_site_configuration');
 		
 		-- Sanitize input
 		input_directive := api.sanitize_general(input_directive);
 		
 		-- Create directive
-		SELECT api.create_log_entry('API','INFO','creating directive');
+		PERFORM api.create_log_entry('API','INFO','creating directive');
 		DELETE FROM "management"."configuration" WHERE "option" = input_directive;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.remove_site_configuration');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_site_configuration');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
