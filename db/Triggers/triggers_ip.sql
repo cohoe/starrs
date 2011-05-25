@@ -34,7 +34,8 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 
 		-- Autogenerate addresses
 		IF NEW."autogen" IS TRUE THEN
-			INSERT INTO "ip"."addresses" ("address","last_modifier") SELECT "get_subnet_addresses",api.get_current_user() FROM api.get_subnet_addresses(NEW."subnet");
+			INSERT INTO "ip"."addresses" ("address","last_modifier") 
+			SELECT "get_subnet_addresses",NEW."last_modifier" FROM api.get_subnet_addresses(NEW."subnet");
 		END IF;
 		
 		-- Done
@@ -83,7 +84,8 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 		IF NEW."autogen" != OLD."autogen" THEN
 			IF NEW."autogen" IS TRUE THEN
 				DELETE FROM "ip"."addresses" WHERE "ip"."addresses"."address" << OLD."subnet";
-				INSERT INTO "ip"."addresses" ("address") SELECT * FROM ip_address_autopopulation(NEW."subnet");
+				INSERT INTO "ip"."addresses" ("address","last_modifier") 
+				SELECT "get_subnet_addresses",NEW."last_modifier" FROM api.get_subnet_addresses(NEW."subnet");
 			END IF;
 		END IF;
 		
