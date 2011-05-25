@@ -17,8 +17,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		input_autogen  := api.sanitize_general(input_autogen);
 
 		-- Create RDNS zone
-		SELECT api.create_log_entry('API','INFO','creating reverse zone for subnet';
-		SELECT api.create_dns_zone(api.get_reverse_domain(input_subnet), DEFAULT, FALSE,'Reverse zone for subnet '||text(input_subnet));
+		SELECT api.create_log_entry('API','INFO','creating reverse zone for subnet');
+		SELECT api.create_dns_zone(api.get_reverse_domain(input_subnet),NULL,FALSE,'Reverse zone for subnet '||text(input_subnet));
 
 		-- Create new subnet
 		SELECT api.create_log_entry('API', 'INFO', 'creating new subnet');
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 		input_subnet := api.sanitize_general(input_subnet);
 
 		-- Delete RDNS zone
-		SELECT api.create_log_entry('API', 'INFO', 'removing rdns zone for subnet';
+		SELECT api.create_log_entry('API', 'INFO', 'removing rdns zone for subnet');
 		SELECT api.remove_dns_zone(api.get_reverse_domain(input_subnet));
 
 		-- Delete subnet
