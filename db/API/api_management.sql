@@ -96,7 +96,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 		return 'FALSE';
 	}
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."validate_domain"(hostname, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
+COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
 
 /* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
