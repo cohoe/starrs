@@ -100,7 +100,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
 
 		-- Input sanitization
-		input_subnet := api.sanitize_general(input_subnet);
 		input_option := api.sanitize_dhcp(input_option);
 		input_value := api.sanitize_dhcp(input_value);
 
@@ -125,7 +124,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
 
 		-- Sanitize input
-		input_subnet := api.sanitize_general(input_subnet);
 		input_option := api.sanitize_dhcp(input_option);
 		input_value := api.sanitize_dhcp(input_value);
 
