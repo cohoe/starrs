@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create interface
-		SELECT api.create_log_entry('API','INFO','creating new interface';
+		SELECT api.create_log_entry('API','INFO','creating new interface');
 		INSERT INTO "systems"."interfaces"
 		("system_name","interface_name","mac","comment","last_modifier") VALUES
 		(input_system_name,input_interface_name,input_mac,input_comment,api.get_current_user());
@@ -88,12 +88,12 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS V
 		input_mac := api.sanitize_general(input_mac);
 		
 		-- Remove interface
-		SELECT api.create_log_entry('API','INFO','deleting interface';
+		SELECT api.create_log_entry('API','INFO','deleting interface');
 		DELETE FROM "systems"."interfaces" WHERE "mac" = input_mac;
 		
 		SELECT api.create_log_entry('API','DEBUG','finish api.remove_interface');
 	END;
-$$ LANGUAGE 'plpgqsql';
+$$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface based on MAC address';
 
 /* API - create_interface_address_manual
@@ -163,10 +163,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) 
 		input_address := api.sanitize_general(input_address);
 		
 		-- Remove address
-		SELECT api.create_log_entry('API','INFO','deleting interface address';
+		SELECT api.create_log_entry('API','INFO','deleting interface address');
 		DELETE FROM "systems"."interface_addresses" WHERE "address" = input_address;
 		
 		SELECT api.create_log_entry('API','DEBUG','begin api.remove_interface_address');
 	END;
-$$ LANGUAGE 'plpgqsql';
+$$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_interface_address"(inet) IS 'delete an interface address';
