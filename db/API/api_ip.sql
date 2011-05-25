@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
 
 		-- Sanitize input
 		input_subnet := api.sanitize_general(input_subnet);
@@ -17,16 +17,16 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		input_autogen  := api.sanitize_general(input_autogen);
 
 		-- Create RDNS zone
-		SELECT api.create_log_entry('API','INFO','creating reverse zone for subnet');
-		SELECT api.create_dns_zone(api.get_reverse_domain(input_subnet),NULL,FALSE,'Reverse zone for subnet '||text(input_subnet));
+		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
+		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),NULL,FALSE,'Reverse zone for subnet '||text(input_subnet));
 
 		-- Create new subnet
-		SELECT api.create_log_entry('API', 'INFO', 'creating new subnet');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
 			("subnet","name","comment","autogen","last_modifier") VALUES
 			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user());
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_subnet"(cidr, text, text, boolean) IS 'Create/activate a new subnet';
@@ -42,20 +42,20 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 		RowCount INTEGER;
 		WasAuto BOOLEAN;
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_subnet');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_subnet');
 
 		-- Sanitize input
 		input_subnet := api.sanitize_general(input_subnet);
 
 		-- Delete RDNS zone
-		SELECT api.create_log_entry('API', 'INFO', 'removing rdns zone for subnet');
-		SELECT api.remove_dns_zone(api.get_reverse_domain(input_subnet));
+		PERFORM api.create_log_entry('API', 'INFO', 'removing rdns zone for subnet');
+		PERFORM api.remove_dns_zone(api.get_reverse_domain(input_subnet));
 
 		-- Delete subnet
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting subnet');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting subnet');
 		DELETE FROM "ip"."subnets" WHERE "subnet" = input_subnet;
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_subnet');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_subnet');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existing subnet';
@@ -67,7 +67,7 @@ COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existin
 */
 CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_comment text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
 		-- Sanitize input
 		input_first_ip := api.sanitize_general(input_first_ip);
@@ -77,11 +77,11 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_la
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create new IP range		
-		SELECT api.create_log_entry('API', 'INFO', 'creating new range');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
 		INSERT INTO "ip"."ranges" ("first_ip", "last_ip", "subnet", "use", "comment", "last_modifier") VALUES 
 		(input_first_ip,input_last_ip,input_subnet,input_use,input_comment,api.get_current_user());
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) IS 'Create a new range of IP addresses';
@@ -93,17 +93,17 @@ COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) 
 */
 CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_last_ip inet) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
 
 		-- Sanitize input
 		input_first_ip := api.sanitize_general(input_first_ip);
 		input_last_ip := api.sanitize_general(input_last_ip);
 		
 		-- Delete range		
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting range');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting range');
 		DELETE FROM "ip"."ranges" WHERE "first_ip" = input_first_ip AND "last_ip" = input_last_ip;
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_ip_range');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"(inet, inet) IS 'Delete an existing IP range';
@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 		
 		-- Check if range was full (AddressToUse will be NULL)
 		IF AddressToUse IS NULL THEN
-			SELECT api.create_log_entry('IP', 'ERROR', 'range full');
+			PERFORM api.create_log_entry('IP', 'ERROR', 'range full');
 			RAISE EXCEPTION 'All addresses in range % are in use',input_range_name;
 		END IF;
 		
