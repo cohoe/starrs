@@ -25,10 +25,7 @@ BEGIN
 	IF RowCount >= 1 THEN
 		RAISE EXCEPTION 'Existing addresses detected for your subnet. Modify the existing subnet.';
 	END IF;
-	
-	-- Create RDNS zone for new subnet
-	INSERT INTO "dns"."zones" ("zone","forward","keyname","last_modifier","owner") VALUES (api.get_reverse_domain(NEW."subnet"),FALSE,'Default',api.get_current_user(),api.get_current_user());
-	
+
 	-- Autogenerate all IP addresses if told to
 	IF NEW."autogen" IS TRUE THEN
 		INSERT INTO "ip"."addresses" ("address") SELECT * FROM api.get_subnet_addresses(NEW."subnet");
@@ -67,10 +64,6 @@ BEGIN
 		IF RowCount >= 1 THEN
 			RAISE EXCEPTION 'Existing addresses detected for your subnet. Modify the existing subnet.';
 		END IF;
-		
-		-- Modify DNS
-		DELETE FROM "dns"."zones" WHERE "dns"."zones"."zone" = api.get_reverse_domain(OLD."subnet");
-		INSERT INTO "dns"."zones" ("zone","forward","keyname","last_modifier","owner") VALUES (api.get_reverse_domain(NEW."subnet"),FALSE,'Default',api.get_current_user(),api.get_current_user());
 	END IF;
 
 	-- Autogenerate all IP addresses if told to
