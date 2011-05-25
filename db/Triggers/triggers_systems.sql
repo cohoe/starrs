@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			WHERE "dhcp"."config_types"."config" = NEW."config";
 
 			IF NEW."family" != ConfigFamily THEN
-				RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)'NEW."config",NEW."family";
+				RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)',NEW."config",NEW."family";
 			END IF;
 		END IF;
 
@@ -131,7 +131,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				WHERE "dhcp"."config_types"."config" = NEW."config";
 
 				IF NEW."family" != ConfigFamily THEN
-					RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)'NEW."config",NEW."family";
+					RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)',NEW."config",NEW."family";
 				END IF;
 			END IF;
 			
