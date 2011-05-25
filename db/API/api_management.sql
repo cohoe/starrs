@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
 			--RAISE EXCEPTION 'Invalid characters detected in string "%"',BadCrap;
 			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
 		END IF;
+		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."sanitize_dhcp"(text) IS 'Only allow certain characters in DHCP options';
