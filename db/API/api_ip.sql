@@ -11,10 +11,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
 
 		-- Sanitize input
-		input_subnet := api.sanitize_general(input_subnet);
 		input_name := api.sanitize_general(input_name);
 		input_comment := api.sanitize_general(input_comment);
-		input_autogen  := api.sanitize_general(input_autogen);
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
