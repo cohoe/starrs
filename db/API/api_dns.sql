@@ -5,7 +5,7 @@
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_comment text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_key');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_key');
 
 		-- Sanitize input
 		input_keyname := api.sanitize_general(input_keyname);
@@ -13,12 +13,12 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		input_comment := api.sanitize_general(input_comment);
 
 		-- Create new key
-		SELECT api.create_log_entry('API', 'INFO', 'creating new dns key');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns key');
 		INSERT INTO "dns"."keys"
 		("keyname","key","comment","last_modifier") VALUES
 		(input_keyname,input_key,input_comment,api.get_current_user());
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text) IS 'Create new DNS key';
@@ -30,16 +30,16 @@ COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text) IS 'Create new DNS 
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_key"(input_keyname text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_key');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_key');
 
 		-- Sanitize input
 		input_keyname := api.sanitize_general(input_keyname);
 
 		-- Remove key		
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting dns key');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dns key');
 		DELETE FROM "dns"."keys" WHERE "keyname" = input_keyname;
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_key');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_key');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_key"(text) IS 'Delete existing DNS key';
@@ -51,7 +51,7 @@ COMMENT ON FUNCTION "api"."remove_dns_key"(text) IS 'Delete existing DNS key';
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
 
 		-- Sanitize input
 		input_zone := api.sanitize_general(input_zone);
@@ -60,11 +60,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		input_comment := api.sanitize_general(input_comment);
 
 		-- Create zone
-		SELECT api.create_log_entry('API', 'INFO', 'creating new dns zone');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns zone');
 		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","last_modifier") VALUES
 		(input_zone,input_keyname,input_forward,input_comment,api.get_current_user());
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, text) IS 'Create a new DNS zone';
@@ -76,17 +76,17 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, text) IS 'Creat
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_zone"(input_zone text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_zone');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_zone');
 
 		-- Sanitize input
 		input_zone := api.sanitize_general(input_zone);
 
 		-- Delete zone
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting dns zone');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dns zone');
 		DELETE FROM "dns"."zones"
 		WHERE "zone" = input_zone;
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_zone');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_zone');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_zone"(text) IS 'Delete existing DNS zone';
@@ -100,7 +100,7 @@ COMMENT ON FUNCTION "api"."remove_dns_zone"(text) IS 'Delete existing DNS zone';
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
 		-- Sanitize input
 		input_address := api.sanitize_general(input_address);
@@ -114,10 +114,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		END IF;
 		
 		-- Validate hostname
-		SELECT api.validate_hostname(input_hostname || '.' || input_zone);
+		PERFORM api.validate_hostname(input_hostname || '.' || input_zone);
 		
 		-- Create record
-		SELECT api.create_log_entry('API', 'INFO', 'Creating new address record');
+		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","last_modifier","owner") VALUES 
 			(input_hostname,input_zone,input_address,DEFAULT,api.get_current_user(),input_owner);
@@ -126,7 +126,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 			(input_hostname,input_zone,input_address,input_ttl,api.get_current_user(),input_owner);
 		END IF;
 		
-		SELECT api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
@@ -138,16 +138,16 @@ COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) 
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_address');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_address');
 
 		-- Sanitize input
 		input_address := api.sanitize_general(input_address);
 
 		-- Remove record
-		SELECT api.create_log_entry('API', 'INFO', 'deleting address record');
+		PERFORM api.create_log_entry('API', 'INFO', 'deleting address record');
 		DELETE FROM "dns"."a" WHERE "address" = input_address;
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_dns_address');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_address"(inet) IS 'delete an A or AAAA record';
@@ -159,14 +159,14 @@ COMMENT ON FUNCTION "api"."remove_dns_address"(inet) IS 'delete an A or AAAA rec
 */
 CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_domain text, input_preference integer, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_mailserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
 		input_domain := api.sanitize_general(input_domain);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','creating new mailserver (MX)');
+		PERFORM api.create_log_entry('API','INFO','creating new mailserver (MX)');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner") VALUES
 			(input_hostname,input_domain,input_preference,DEFAULT,api.get_current_user());
@@ -175,7 +175,7 @@ CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_
 			(input_hostname,input_domain,input_preference,input_ttl,api.get_current_user());
 		END IF;
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.create_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_mailserver"(text, text, integer, integer) IS 'Create a new mailserver MX record for a zone';
@@ -187,17 +187,17 @@ COMMENT ON FUNCTION "api"."create_mailserver"(text, text, integer, integer) IS '
 */
 CREATE OR REPLACE FUNCTION "api"."remove_mailserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_mailserver');
 
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
 		input_domain := api.sanitize_general(input_domain);
 
 		-- Remove record
-		SELECT api.create_log_entry('API','INFO','deleting mailserver (MX)');
+		PERFORM api.create_log_entry('API','INFO','deleting mailserver (MX)');
 		DELETE FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_domain;
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_mailserver"(text, text) IS 'Delete an existing MX record for a zone';
@@ -223,14 +223,14 @@ COMMENT ON FUNCTION "api"."get_reverse_domain"(inet) IS 'Use a convenient Perl m
 */
 CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_domain text, input_isprimary boolean, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_nameserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
 		input_domain := api.sanitize_general(input_domain);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','creating new NS record');
+		PERFORM api.create_log_entry('API','INFO','creating new NS record');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
 			(input_hostname,input_zone,input_isprimary,DEFAULT,api.get_current_user());
@@ -239,7 +239,7 @@ CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_
 			(input_hostname,input_zone,input_isprimary,input_ttl,api.get_current_user());
 		END IF;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.create_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_nameserver"(text, text, boolean, integer) IS 'create a new NS record for the zone';
@@ -251,7 +251,7 @@ COMMENT ON FUNCTION "api"."create_nameserver"(text, text, boolean, integer) IS '
 */
 CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_domain text, input_record_zone text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_nameserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -259,10 +259,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_
 		input_record_zone := api.sanitize_general(input_record_zone);
 
 		-- Remove record
-		SELECT api.create_log_entry('API','INFO','remove NS record');
+		PERFORM api.create_log_entry('API','INFO','remove NS record');
 		DELETE FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_domain AND "record_zone" = input_record_zone;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_nameserver"(text, text, text) IS 'remove a NS record from the zone';
@@ -275,7 +275,7 @@ COMMENT ON FUNCTION "api"."remove_nameserver"(text, text, text) IS 'remove a NS 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target text, input_zone text, input_priority integer, input_weight integer, input_port integer, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
 
 		-- Sanitize input
 		input_alias := api.sanitize_general(input_alias);
@@ -283,7 +283,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		input_zone := api.sanitize_general(input_zone);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','create new SRV record');
+		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","username","type") VALUES
@@ -293,7 +293,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,api.get_current_user(),'SRV');
 		END IF;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_srv"(text, text, text, integer, integer, integer, integer) IS 'create a new dns srv record for a zone';
@@ -305,7 +305,7 @@ COMMENT ON FUNCTION "api"."create_dns_srv"(text, text, text, integer, integer, i
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_srv"(input_alias text, input_target text, input_zone text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_dns_srv');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_srv');
 		
 		-- Sanitize input
 		input_alias := api.sanitize_general(input_alias);
@@ -313,10 +313,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_srv"(input_alias text, input_target
 		input_zone := api.sanitize_general(input_zone);
 
 		-- Remove record
-		SELECT api.create_log_entry('API','INFO','remove SRV record');
+		PERFORM api.create_log_entry('API','INFO','remove SRV record');
 		DELETE FROM "dns"."pointers" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "type" = 'SRV';
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_srv');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_srv');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_srv"(text, text, text) IS 'remove a dns srv record';
@@ -328,7 +328,7 @@ COMMENT ON FUNCTION "api"."remove_dns_srv"(text, text, text) IS 'remove a dns sr
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_target text, input_zone text, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_dns_cname');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_cname');
 
 		-- Sanitize input
 		input_alias := api.sanitize_general(input_alias);
@@ -336,7 +336,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		input_zone := api.sanitize_general(input_zone);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','create new SRV record');
+		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","username","type") VALUES
@@ -346,7 +346,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 			(input_alias, input_target, input_zone, input_ttl,api.get_current_user(),'CNAME');
 		END IF;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer) IS 'create a new dns cname record for a host';
@@ -358,7 +358,7 @@ COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer) IS 'crea
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_target text, input_zone text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_dns_cname');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_cname');
 		
 		-- Sanitize input
 		input_alias := api.sanitize_general(input_alias);
@@ -366,10 +366,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 		input_zone := api.sanitize_general(input_zone);
 
 		-- Remove record
-		SELECT api.create_log_entry('API','INFO','remove CNAME record');
+		PERFORM api.create_log_entry('API','INFO','remove CNAME record');
 		DELETE FROM "dns"."pointers" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "type" = 'CNAME';
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_cname');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_cname');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns cname record for a host';
@@ -381,7 +381,7 @@ COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zone text, input_text text, input_type text, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.create_dns_txt');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_txt');
 
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -390,7 +390,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		input_text := api.sanitize_general(input_text);
 		
 		-- Create record
-		SELECT api.create_log_entry('API','INFO','create new TXT record');
+		PERFORM api.create_log_entry('API','INFO','create new TXT record');
 
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","username","type") VALUES
@@ -400,7 +400,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 			(input_hostname,input_zone,input_text,input_ttl,api.get_current_user(),input_type);	
 		END IF;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer) IS 'create a new dns txt record for a host';
@@ -412,7 +412,7 @@ COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer) IS '
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zone text, input_type text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.remove_dns_txt');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_txt');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -420,10 +420,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zon
 		input_type := api.sanitize_general(input_type);
 
 		-- Remove record
-		SELECT api.create_log_entry('API','INFO','remove TXT record');
+		PERFORM api.create_log_entry('API','INFO','remove TXT record');
 		DELETE FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "type" = input_type;
 		
-		SELECT api.create_log_entry('API','DEBUG','finish api.remove_dns_txt');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns txt record for a host';
