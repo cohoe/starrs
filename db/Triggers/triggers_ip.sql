@@ -31,7 +31,7 @@ BEGIN
 	
 	-- Autogenerate all IP addresses if told to
 	IF NEW."autogen" IS TRUE THEN
-		INSERT INTO "ip"."addresses" ("address") SELECT * FROM ip_address_autopopulation(NEW."subnet");
+		INSERT INTO "ip"."addresses" ("address") SELECT * FROM api.get_subnet_addresses(NEW."subnet");
 	END IF;
 	
 RETURN NEW;
