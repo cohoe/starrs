@@ -21,8 +21,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		-- Create new subnet
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
-			("subnet","name","comment","autogen","last_modifier") VALUES
-			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user());
+			("subnet","name","comment","autogen","last_modifier","owner") VALUES
+			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user(),api.get_current_user());
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
 	END;
