@@ -56,7 +56,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		-- Sanitize input
 		input_zone := api.sanitize_general(input_zone);
 		input_keyname := api.sanitize_general(input_keyname);
-		input_forward := api.sanitize_general(input_forward);
 		input_comment := api.sanitize_general(input_comment);
 
 		-- Create zone
