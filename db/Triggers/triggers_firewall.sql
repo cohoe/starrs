@@ -73,7 +73,7 @@ COMMENT ON FUNCTION "firewall"."metahost_members_delete"() IS 'Delete an address
 	1) Remove old address rules
 	2) Apply metahost rules
 */
-CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "firewall"."metahost_members_update"() RETURNS TRIGGER AS $$
 	DECLARE
 		result record;
 	BEGIN
@@ -90,4 +90,4 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGE
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "firewall"."metahost_members_insert"() IS 'Alter a metahost member';
+COMMENT ON FUNCTION "firewall"."metahost_members_update"() IS 'Alter a metahost member';
