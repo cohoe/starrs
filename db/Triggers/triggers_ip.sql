@@ -28,13 +28,11 @@ BEGIN
 
 	-- Autogenerate all IP addresses if told to
 	IF NEW."autogen" IS TRUE THEN
-		INSERT INTO "ip"."addresses" ("address") SELECT * FROM api.get_subnet_addresses(NEW."subnet");
+		INSERT INTO "ip"."addresses" ("address","last_modifier") SELECT "get_subnet_addresses",api.get_current_user() FROM api.get_subnet_addresses(NEW."subnet");
 	END IF;
-	
 RETURN NEW;
 END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "ip"."subnets_insert"() IS 'Create a new subnet';
 
 /* TRIGGER - subnets_update */
 CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
@@ -122,12 +120,12 @@ BEGIN
 		RAISE EXCEPTION 'Address % is already has a firewall default action?',NEW."address";
 	-- Looks like it does not. Insert it with the default value to DENY.
 	ELSIF (RowCount = 0) THEN
-		INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (NEW."address", DEFAULT);
+		RETURN NEW;
+		INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (NEW."address", DEFAULT, NEW."last_modifier");
 	-- Not sure what is going on here. There's some funky crap going on.
 	ELSE
 		RAISE EXCEPTION 'Could not activate firewall address %',NEW."address";
 	END IF;
-RETURN NEW;
 END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "ip"."addresses_insert"() IS 'Activate a new IP address in the application';
