@@ -32,7 +32,7 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects';
 
 /* API - sanitize_dhcp*/
-CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS TEXT AS $$
 	DECLARE
 		BadCrap	TEXT;
 	BEGIN
