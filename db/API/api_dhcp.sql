@@ -5,17 +5,17 @@
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_comment text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
 		-- Sanitize input
 		input_class := api.sanitize_general(input_class);
 		input_comment := api.sanitize_general(input_comment);
 
 		-- Create new class		
-		SELECT api.create_log_entry('API', 'INFO', 'creating new dhcp class');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class');
 		INSERT INTO "dhcp"."classes" ("class","comment","last_modifier") VALUES (input_class,input_comment,api.get_current_user());
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP class';
@@ -27,16 +27,16 @@ COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP 
 s*/
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
 
 		-- Sanitize input
 		input_class := api.sanitize_general(input_class);
 
 		-- Remove class
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
 		DELETE FROM "dhcp"."classes" WHERE "class" = input_class;
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP class';
@@ -48,7 +48,7 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP cla
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
 
 		-- Sanitize input
 		input_class := api.sanitize_general(input_class);
@@ -56,12 +56,12 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		input_value := api.sanitize_dhcp(input_value);
 
 		-- Create class option		
-		SELECT api.create_log_entry('API', 'INFO', 'creating new dhcp class option');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class option');
 		INSERT INTO "dhcp"."class_options" 
 		("class","option","value","last_modifier") VALUES
 		(input_class,input_option,input_value,api.get_current_user());
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Create a new DHCP class option';
@@ -73,7 +73,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Creat
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class_option');
 
 		-- Sanitize input
 		input_class := api.sanitize_general(input_class);
@@ -81,11 +81,11 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 		input_value := api.sanitize_dhcp(input_value);
 
 		-- Remove option		
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting dhcp class option');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class option');
 		DELETE FROM "dhcp"."class_options"
 		WHERE "class" = input_class AND "option" = input_option AND "value" = input_value;
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delete existing DHCP class option';
@@ -97,7 +97,7 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delet
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
 
 		-- Input sanitization
 		input_subnet := api.sanitize_general(input_subnet);
@@ -105,12 +105,12 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		input_value := api.sanitize_dhcp(input_value);
 
 		-- Create option		
-		SELECT api.create_log_entry('API', 'INFO', 'creating dhcp subnet option');
+		PERFORM api.create_log_entry('API', 'INFO', 'creating dhcp subnet option');
 		INSERT INTO "dhcp"."subnet_options" 
 		("subnet","option","value","last_modifier") VALUES
 		(input_subnet,input_option,input_value,api.get_current_user());
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Create DHCP subnet option';
@@ -122,7 +122,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Crea
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
 
 		-- Sanitize input
 		input_subnet := api.sanitize_general(input_subnet);
@@ -130,11 +130,11 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 		input_value := api.sanitize_dhcp(input_value);
 
 		-- Delete option		
-		SELECT api.create_log_entry('API', 'INFO', 'Deleting dhcp subnet option');
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp subnet option');
 		DELETE FROM "dhcp"."subnet_options"
 		WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value;
 
-		SELECT api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_subnet_option');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete existing DHCP subnet option';
