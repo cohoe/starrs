@@ -60,8 +60,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Create zone
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns zone');
-		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","last_modifier") VALUES
-		(input_zone,input_keyname,input_forward,input_comment,api.get_current_user());
+		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","last_modifier","owner") VALUES
+		(input_zone,input_keyname,input_forward,input_comment,api.get_current_user(),api.get_current_user());
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
 	END;
