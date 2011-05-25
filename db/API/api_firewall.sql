@@ -5,7 +5,7 @@
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
 	BEGIN
-		SELECT api.create_log_entry('API','DEBUG','begin api.add_firewall_metahost_member');
+		SELECT api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost_member');
 
 		-- Sanitize Input
 		input_metahost := api.sanitize_general(input_metahost);
@@ -14,10 +14,10 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 		SELECT api.create_log_entry('API','INFO','adding new member to metahost');
 		INSERT INTO "firewall"."metahost_members" ("address","metahost_name") VALUES (input_address,input_metahost);
 
-		SELECT api.create_log_entry('API','DEBUG','Finish api.add_firewall_metahost_member');
+		SELECT api.create_log_entry('API','DEBUG','Finish api.create_firewall_metahost_member');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."add_firewall_metahost_member"(inet, text) IS 'add a member to a metahost. this deletes all previous rules.';
+COMMENT ON FUNCTION "api"."create_firewall_metahost_member"(inet, text) IS 'add a member to a metahost. this deletes all previous rules.';
 
 /* API - remove_firewall_metahost_member
 	1) Check privileges
@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address
 
 		-- Remove membership
 		SELECT api.create_log_entry('API','INFO','removing member from metahost');
-		DELETE FROM "firewall"."metahost_members" WHERE "address" = input_address AND "metahost_name" = input_metahost);
+		DELETE FROM "firewall"."metahost_members" WHERE "address" = input_address AND "metahost_name" = input_metahost;
 
 		SELECT api.create_log_entry('API','DEBUG','Finish api.remove_firewall_metahost_member');
 	END;
@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_default"(input_address inet, i
 		SELECT api.create_log_entry('API','DEBUG','begin api.modify_firewall_default');
 
 		-- Alter default action
-		SELECT api.create_log_entry('API','INFO','altering default action';
+		SELECT api.create_log_entry('API','INFO','altering default action');
 		UPDATE "firewall"."defaults" SET "deny" = input_action WHERE "address" = input_address;
 
 		SELECT api.create_log_entry('API','DEBUG','finish api.modify_firewall_default');
@@ -142,7 +142,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost_rule"(input_name text, input_p
 		SELECT api.create_log_entry('API','DEBUG','finish remove_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "remove_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
+COMMENT ON FUNCTION "api"."remove_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
 
 /* API - create_firewall_system
 	1) Check privileges
