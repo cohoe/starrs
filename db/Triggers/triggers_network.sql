@@ -2,10 +2,15 @@
 	1) Check for proper system types
 */
 CREATE OR REPLACE FUNCTION "network"."switchports_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		DeviceType TEXT;
 	BEGIN
 		-- Check for system types
-		IF NEW."type" NOT LIKE 'Router|Switch|Hub|Wireless Access Point' THEN
-			RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',NEW."type";
+		SELECT "type" INTO DeviceType
+		FROM "systems"."systems"
+		WHERE "systems"."systems"."system_name" = NEW."system_name";
+		IF DeviceType NOT LIKE 'Router|Switch|Hub|Wireless Access Point' THEN
+			RAISE EXCEPTION 'Cannot create a switchport on non-network device type (%)',DeviceType;
 		END IF;
 		RETURN NEW;
 	END;
@@ -16,11 +21,16 @@ COMMENT ON FUNCTION "network"."switchports_insert"() IS 'verifications for netwo
 	1) Check for proper system types
 */
 CREATE OR REPLACE FUNCTION "network"."switchports_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		DeviceType TEXT;
 	BEGIN
 		-- Check for system types
-		IF NEW."type" != OLD."type" THEN
+		SELECT "type" INTO DeviceType
+		FROM "systems"."systems"
+		WHERE "systems"."systems"."system_name" = NEW."system_name";
+		IF DeviceType NOT LIKE 'Router|Switch|Hub|Wireless Access Point' THEN
 			IF NEW."type" NOT LIKE 'Router|Switch|Hub|Wireless Access Point' THEN
-				RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',NEW."type";
+				RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',DeviceType;
 			END IF;
 		END IF;
 		RETURN NEW;
