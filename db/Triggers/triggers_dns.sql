@@ -1,5 +1,6 @@
 /* Trigger a_insert 
 	1) Check for zone mismatch
+	2) Autofill type
 */
 CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
 	DECLARE
@@ -12,6 +13,13 @@ CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
 		AND NEW."address" << "ip"."subnets"."subnet";
 		IF (RowCount < 1) THEN 
 			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+		END IF;
+		
+		-- Autofill type
+		IF family(NEW."address") = 4 THEN
+			NEW."type" := 'A';
+		ELSIF family(NEW."address") = 6 THEN
+			NEW."type" := 'AAAA';
 		END IF;
 		
 		RETURN NEW;
@@ -35,6 +43,13 @@ BEGIN
 			
 		IF (RowCount < 1) THEN 
 			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+		END IF;
+		
+		-- Autofill Type
+		IF family(NEW."address") = 4 THEN
+			NEW."type" := 'A';
+		ELSIF family(NEW."address") = 6 THEN
+			NEW."type" := 'AAAA';
 		END IF;
 	END IF;
 	-- New zone mismatch
