@@ -29,9 +29,7 @@ CREATE OR REPLACE FUNCTION "network"."switchports_update"() RETURNS TRIGGER AS $
 		FROM "systems"."systems"
 		WHERE "systems"."systems"."system_name" = NEW."system_name";
 		IF DeviceType !~* 'Router|Switch|Hub|Wireless Access Point' THEN
-			IF NEW."type" NOT LIKE 'Router|Switch|Hub|Wireless Access Point' THEN
-				RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',DeviceType;
-			END IF;
+			RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',DeviceType;
 		END IF;
 		RETURN NEW;
 	END;
