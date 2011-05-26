@@ -40,18 +40,18 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		END IF;
 
 		-- Check for one DHCPable address per MAC
-		IF NEW."config" NOT LIKE 'static' THEN
+		IF NEW."config" NOT ~* 'static' THEN
 			SELECT COUNT(*) INTO RowCount
 			FROM "systems"."interfaces"
 			WHERE "systems"."interface_addresses"."family" = NEW."family"
-			AND "systems"."interface_addresses"."config" LIKE 'dhcp';
+			AND "systems"."interface_addresses"."config" ~* 'dhcp';
 			IF (RowCount > 0) THEN
 				RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
 			END IF;
 		END IF;
 
 		-- Check address family against config type
-		IF NEW."config" NOT LIKE 'static' THEN
+		IF NEW."config" NOT ~* 'static' THEN
 			SELECT "family" INTO ConfigFamily
 			FROM "dhcp"."config_types"
 			WHERE "dhcp"."config_types"."config" = NEW."config";
@@ -81,7 +81,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		END IF;
 		
 		-- IPv6 Autoconfiguration
-		IF NEW."family" = 6 AND NEW."config" LIKE 'autoconf' THEN
+		IF NEW."family" = 6 AND NEW."config" ~* 'autoconf' THEN
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."addresses"
 			WHERE "ip"."addresses"."address" = NEW."address";
@@ -136,13 +136,13 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 
 		-- Check for only one DHCPable address per MAC address
 		IF NEW."config" != OLD."config" THEN
-			IF NEW."config" NOT LIKE 'static' THEN
+			IF NEW."config" NOT ~* 'static' THEN
 				SELECT COUNT(*) INTO RowCount
 				FROM "systems"."interfaces"
 				JOIN "systems"."interface_addresses" ON 
 				"systems"."interface_addresses"."interface_id" = "systems"."interfaces"."interface_id"
 				WHERE "systems"."interface_addresses"."family" = NEW."family"
-				AND "systems"."interface_addresses"."config" NOT LIKE 'static';
+				AND "systems"."interface_addresses"."config" NOT ~* 'static';
 
 				IF (RowCount > 0) THEN
 					RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
@@ -150,7 +150,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 			END IF;
 
 			-- Check address family against config type
-			IF NEW."config" NOT LIKE 'static' THEN
+			IF NEW."config" NOT ~* 'static' THEN
 				SELECT "family" INTO ConfigFamily
 				FROM "dhcp"."config_types"
 				WHERE "dhcp"."config_types"."config" = NEW."config";
@@ -161,7 +161,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 			END IF;
 			
 			-- IPv6 Autoconfiguration
-			IF NEW."family" = 6 AND NEW."config" LIKE 'autoconf' THEN
+			IF NEW."family" = 6 AND NEW."config" ~* 'autoconf' THEN
 				SELECT COUNT(*) INTO RowCount
 				FROM "ip"."addresses"
 				WHERE "ip"."addresses"."address" = NEW."address";
