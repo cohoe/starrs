@@ -227,10 +227,10 @@ CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_
 		PERFORM api.create_log_entry('API','INFO','creating new NS record');
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
-			(input_hostname,input_zone,input_isprimary,DEFAULT,api.get_current_user());
+			(input_hostname,input_domain,input_isprimary,DEFAULT,api.get_current_user());
 		ELSE
 			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
-			(input_hostname,input_zone,input_isprimary,input_ttl,api.get_current_user());
+			(input_hostname,input_domain,input_isprimary,input_ttl,api.get_current_user());
 		END IF;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_nameserver');
