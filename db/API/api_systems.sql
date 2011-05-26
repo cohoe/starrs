@@ -113,21 +113,17 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_manual');
 	END;
 $$ LANGUAGE 'plpgsql';
-C
 
 /* API - create_interface_address_auto
 	1) Check privileges
 	2) Sanitize input
 	3) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macaddr, input_range_name text, input_config text, input_class text, input_comment text) RETURNS VOID AS $$
-	DECLARE
-		Address INET;
+CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macaddr, input_name text, input_range_name text, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address_range');
 		
 		-- Sanitize input
-		input_mac := api.sanitize_general(input_mac);
 		input_range_name := api.sanitize_general(input_range_name);
 		input_config := api.sanitize_general(input_config);
 		input_class := api.sanitize_general(input_class);
@@ -135,8 +131,8 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address registration');
-		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier") VALUES
-		(input_mac,ip.get_address_from_range(input_range_name),input_config,input_class,input_comment,api.get_current_user());
+		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
+		(input_mac,input_name,api.get_address_from_range(input_range_name),input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
 		
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_range');
 	END;
