@@ -102,7 +102,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
 		-- Sanitize input
-		input_address := api.sanitize_general(input_address);
 		input_hostname := api.sanitize_general(input_hostname);
 		input_zone := api.sanitize_general(input_zone);
 		input_owner := api.sanitize_general(input_owner);
@@ -113,7 +112,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		END IF;
 		
 		-- Validate hostname
-		PERFORM api.validate_hostname(input_hostname || '.' || input_zone);
+		PERFORM api.validate_domain(input_hostname,input_zone);
 		
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
@@ -132,15 +131,11 @@ COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) 
 
 /* API - remove_dns_address
 	1) Check privileges
-	2) Input sanitization
-	3) Remove record
+	2) Remove record
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_address');
-
-		-- Sanitize input
-		input_address := api.sanitize_general(input_address);
 
 		-- Remove record
 		PERFORM api.create_log_entry('API', 'INFO', 'deleting address record');
