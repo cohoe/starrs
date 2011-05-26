@@ -332,8 +332,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'CNAME');
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
+			(input_alias, input_target, input_zone, DEFAULT,api.get_current_user(),'CNAME');
 		ELSE
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
 			(input_alias, input_target, input_zone, input_ttl,api.get_current_user(),'CNAME');
