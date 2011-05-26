@@ -12,6 +12,9 @@ CREATE OR REPLACE FUNCTION "firewall"."rules_insert"() RETURNS TRIGGER AS $$
 		IF (RowCount > 0) THEN
 			RAISE EXCEPTION 'Rules cannot be applied to members of a metahost';
 		END IF;
+		
+		-- Done
+		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rules_insert"() IS 'Firewall rule verification';
@@ -32,7 +35,11 @@ CREATE OR REPLACE FUNCTION "firewall"."rules_update"() RETURNS TRIGGER AS $$
 				RAISE EXCEPTION 'Rules cannot be applied to members of a metahost';
 			END IF;
 		END IF;
+		
+		-- Done
+		RETURN NEW;
 	END;
+
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rules_update"() IS 'Firewall rule verification';
 
@@ -52,6 +59,9 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGE
 			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner") VALUES 
 			(NEW."address",result.port,result.transport,result.deny,api.get_current_user());
 		END LOOP;
+		
+		-- Done
+		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_insert"() IS 'Add an address to a firewall metahost';
@@ -60,11 +70,12 @@ COMMENT ON FUNCTION "firewall"."metahost_members_insert"() IS 'Add an address to
 	1) Remove old rules
 */
 CREATE OR REPLACE FUNCTION "firewall"."metahost_members_delete"() RETURNS TRIGGER AS $$
-	DECLARE
-		result record;
 	BEGIN
 		-- Remove old rules
-		DELETE FROM "firewall"."rules" WHERE "address" = NEW."address";
+		DELETE FROM "firewall"."rules" WHERE "address" = OLD."address";
+		
+		-- Done
+		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_delete"() IS 'Delete an address from a firewall metahost';
@@ -88,6 +99,9 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_update"() RETURNS TRIGGE
 				(NEW."address",result.port,result.transport,result.deny,api.get_current_user());
 			END LOOP;
 		END IF;
+		
+		-- Done
+		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_update"() IS 'Alter a metahost member';
