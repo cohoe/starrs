@@ -170,44 +170,44 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert"() RETURNS TRIGGER AS $$
 		RowCount INTEGER;
 	BEGIN
 		-- Check for illegal addresses
-		IF host(input_subnet) = host(input_first_ip) THEN
+		IF host(NEW."subnet") = host(NEW."first_ip") THEN
 			RAISE EXCEPTION 'You cannot have a boundry that is the network identifier';
 		END IF;
 		
 		-- Check address vs subnet
-		IF NOT input_first_ip << input_subnet OR NOT input_last_ip << input_subnet THEN
+		IF NOT NEW."first_ip" << NEW."subnet" OR NOT NEW."last_ip" << NEW."subnet" THEN
 			RAISE EXCEPTION 'Range addresses must be inside the specified subnet';
 		END IF;
 
 		-- Check valid range
-		IF input_first_ip >= input_last_ip THEN
+		IF NEW."first_ip" >= NEW."last_ip" THEN
 			RAISE EXCEPTION 'First address is larger or equal to last address.';
 		END IF;
 		
 		-- Check address existance
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."addresses"
-		WHERE "ip"."addresses"."address" = input_first_ip;
+		WHERE "ip"."addresses"."address" = NEW."first_ip";
 		IF (RowCount != 1) THEN
-			RAISE EXCEPTION 'First address (%) not found in address pool.',input_first_ip;
+			RAISE EXCEPTION 'First address (%) not found in address pool.',NEW."first_ip";
 		END IF;
 		
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."addresses"
-		WHERE "ip"."addresses"."address" = input_last_ip;
+		WHERE "ip"."addresses"."address" = NEW."last_ip";
 		IF (RowCount != 1) THEN
-			RAISE EXCEPTION 'Last address (%) not found in address pool.',input_last_ip;
+			RAISE EXCEPTION 'Last address (%) not found in address pool.',NEW."last_ip";
 		END IF;
 
 		-- Define lower boundary for range
 		-- Loop through all ranges and find what is near the new range
-		FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = input_subnet LOOP
-			IF input_first_ip >= query_result.first_ip AND input_first_ip <= query_result.last_ip THEN
+		FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" LOOP
+			IF NEW."first_ip" >= query_result.first_ip AND NEW."first_ip" <= query_result.last_ip THEN
 				RAISE EXCEPTION 'First address out of bounds.';
-			ELSIF input_first_ip > query_result.last_ip THEN
+			ELSIF NEW."first_ip" > query_result.last_ip THEN
 				LowerBound := query_result.last_ip;
 			END IF;
-			IF input_last_ip >= query_result.first_ip AND input_last_ip <= query_result.last_ip THEN
+			IF NEW."last_ip" >= query_result.first_ip AND NEW."last_ip" <= query_result.last_ip THEN
 				RAISE EXCEPTION 'Last address is out of bounds';
 			END IF;
 		END LOOP;
@@ -219,7 +219,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert"() RETURNS TRIGGER AS $$
 		ORDER BY "first_ip" LIMIT 1;
 
 		-- Check for range spanning
-		IF input_last_ip >= UpperBound THEN
+		IF NEW."last_ip" >= UpperBound THEN
 			RAISE EXCEPTION 'Last address is out of bounds';
 		END IF;
 
@@ -247,44 +247,44 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW."first_ip" != OLD."first_ip" OR NEW."last_ip" != OLD."last_ip" THEN
 			-- Check for illegal addresses
-			IF host(input_subnet) = host(input_first_ip) THEN
+			IF host(NEW."subnet") = host(NEW."first_ip") THEN
 				RAISE EXCEPTION 'You cannot have a boundry that is the network identifier';
 			END IF;
 			
 			-- Check address vs subnet
-			IF NOT input_first_ip << input_subnet OR NOT input_last_ip << input_subnet THEN
+			IF NOT NEW."first_ip" << NEW."subnet" OR NOT NEW."last_ip" << NEW."subnet" THEN
 				RAISE EXCEPTION 'Range addresses must be inside the specified subnet';
 			END IF;
 
 			-- Check valid range
-			IF input_first_ip >= input_last_ip THEN
+			IF NEW."first_ip" >= NEW."last_ip" THEN
 				RAISE EXCEPTION 'First address is larger or equal to last address.';
 			END IF;
 			
 			-- Check address existance
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."addresses"
-			WHERE "ip"."addresses"."address" = input_first_ip;
+			WHERE "ip"."addresses"."address" = NEW."first_ip";
 			IF (RowCount != 1) THEN
-				RAISE EXCEPTION 'First address (%) not found in address pool.',input_first_ip;
+				RAISE EXCEPTION 'First address (%) not found in address pool.',NEW."first_ip";
 			END IF;
 			
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."addresses"
-			WHERE "ip"."addresses"."address" = input_last_ip;
+			WHERE "ip"."addresses"."address" = NEW."last_ip";
 			IF (RowCount != 1) THEN
-				RAISE EXCEPTION 'Last address (%) not found in address pool.',input_last_ip;
+				RAISE EXCEPTION 'Last address (%) not found in address pool.',NEW."last_ip";
 			END IF;
 
 			-- Define lower boundary for range
 			-- Loop through all ranges and find what is near the new range
-			FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = input_subnet LOOP
-				IF input_first_ip >= query_result.first_ip AND input_first_ip <= query_result.last_ip THEN
+			FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" LOOP
+				IF NEW."first_ip" >= query_result.first_ip AND NEW."first_ip" <= query_result.last_ip THEN
 					RAISE EXCEPTION 'First address out of bounds.';
-				ELSIF input_first_ip > query_result.last_ip THEN
+				ELSIF NEW."first_ip" > query_result.last_ip THEN
 					LowerBound := query_result.last_ip;
 				END IF;
-				IF input_last_ip >= query_result.first_ip AND input_last_ip <= query_result.last_ip THEN
+				IF NEW."last_ip" >= query_result.first_ip AND NEW."last_ip" <= query_result.last_ip THEN
 					RAISE EXCEPTION 'Last address is out of bounds';
 				END IF;
 			END LOOP;
@@ -296,7 +296,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update"() RETURNS TRIGGER AS $$
 			ORDER BY "first_ip" LIMIT 1;
 
 			-- Check for range spanning
-			IF input_last_ip >= UpperBound THEN
+			IF NEW."last_ip" >= UpperBound THEN
 				RAISE EXCEPTION 'Last address is out of bounds';
 			END IF;
 		END IF;
