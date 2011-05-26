@@ -36,8 +36,8 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 		-- Autogenerate addresses & firewall default
 		IF NEW."autogen" IS TRUE THEN
 			FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
-				INSERT INTO "ip"."addresses" ("address","last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, NEW."last_modifier");
-				INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT, NEW."last_modifier");
+				INSERT INTO "ip"."addresses" ("address") VALUES (SubnetAddresses.get_subnet_addresses);
+				INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT);
 			END LOOP;
 		END IF;
 		
@@ -89,8 +89,8 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 			IF NEW."autogen" IS TRUE THEN
 				DELETE FROM "ip"."addresses" WHERE "ip"."addresses"."address" << OLD."subnet";
 				FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
-					INSERT INTO "ip"."addresses" ("address","last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, NEW."last_modifier");
-					INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT, NEW."last_modifier");
+					INSERT INTO "ip"."addresses" ("address") VALUES (SubnetAddresses.get_subnet_addresses);
+					INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT);
 				END LOOP;
 			END IF;
 		END IF;
