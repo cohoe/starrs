@@ -15,8 +15,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		-- Create new key
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns key');
 		INSERT INTO "dns"."keys"
-		("keyname","key","comment","last_modifier") VALUES
-		(input_keyname,input_key,input_comment,api.get_current_user());
+		("keyname","key","comment") VALUES
+		(input_keyname,input_key,input_comment);
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
 	END;
@@ -60,8 +60,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Create zone
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns zone');
-		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","last_modifier","owner") VALUES
-		(input_zone,input_keyname,input_forward,input_comment,api.get_current_user(),api.get_current_user());
+		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","owner") VALUES
+		(input_zone,input_keyname,input_forward,input_comment,api.get_current_user());
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
 	END;
@@ -117,11 +117,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","last_modifier","owner") VALUES 
-			(input_hostname,input_zone,input_address,DEFAULT,api.get_current_user(),input_owner);
+			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
+			(input_hostname,input_zone,input_address,DEFAULT,input_owner);
 		ELSE
-			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","last_modifier","owner") VALUES 
-			(input_hostname,input_zone,input_address,input_ttl,api.get_current_user(),input_owner);
+			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
+			(input_hostname,input_zone,input_address,input_ttl,input_owner);
 		END IF;
 		
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
@@ -258,7 +258,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_nameserver"(text, text, text) IS 'remove a NS record from the zone';
+COMMENT ON FUNCTION "api"."remove_nameserver"(text, text) IS 'remove a NS record from the zone';
 
 
 /* API - create_dns_srv
@@ -279,10 +279,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","username","type") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
 			(input_alias || '.' || input_zone, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'SRV');
 		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","username","TYPE") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","TYPE") VALUES
 			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,api.get_current_user(),'SRV');
 		END IF;
 		
@@ -332,10 +332,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","username","type") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
 			(input_alias || '.' || input_zone, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'CNAME');
 		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","username","TYPE") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
 			(input_alias, input_target, input_zone, input_ttl,api.get_current_user(),'CNAME');
 		END IF;
 		
@@ -386,10 +386,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		PERFORM api.create_log_entry('API','INFO','create new TXT record');
 
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","username","type") VALUES
+			INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner","type") VALUES
 			(input_hostname,input_zone,input_text,DEFAULT,api.get_current_user(),input_type);
 		ELSE
-			INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","username","TYPE") VALUES
+			INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
 			(input_hostname,input_zone,input_text,input_ttl,api.get_current_user(),input_type);	
 		END IF;
 		
