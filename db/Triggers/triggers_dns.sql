@@ -230,7 +230,7 @@ CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text,
 	DECLARE
 		Address INET;
 	BEGIN
-		SELECT "address" INTO Address
+		SELECT "dns"."a"."address" INTO Address
 		FROM "dns"."a"
 		WHERE "dns"."a"."hostname" = input_hostname
 		AND "dns"."a"."zone" = input_zone;
