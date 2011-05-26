@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 
 		-- Create new class		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class');
-		INSERT INTO "dhcp"."classes" ("class","comment","last_modifier") VALUES (input_class,input_comment,api.get_current_user());
+		INSERT INTO "dhcp"."classes" ("class","comment") VALUES (input_class,input_comment);
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
 	END;
@@ -58,8 +58,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		-- Create class option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class option');
 		INSERT INTO "dhcp"."class_options" 
-		("class","option","value","last_modifier") VALUES
-		(input_class,input_option,input_value,api.get_current_user());
+		("class","option","value") VALUES
+		(input_class,input_option,input_value);
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
 	END;
@@ -106,8 +106,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		-- Create option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating dhcp subnet option');
 		INSERT INTO "dhcp"."subnet_options" 
-		("subnet","option","value","last_modifier") VALUES
-		(input_subnet,input_option,input_value,api.get_current_user());
+		("subnet","option","value") VALUES
+		(input_subnet,input_option,input_value);
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
 	END;
