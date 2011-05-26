@@ -63,18 +63,19 @@ COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existin
 	2) Sanitize input
 	3) Create new range (triggers checking to make sure the range is valid
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
 		-- Sanitize input
+		input_name := api.sanitize_general(input_name);
 		input_use := api.sanitize_general(input_use);
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create new IP range		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
-		INSERT INTO "ip"."ranges" ("first_ip", "last_ip", "subnet", "use", "comment", "last_modifier") VALUES 
-		(input_first_ip,input_last_ip,input_subnet,input_use,input_comment,api.get_current_user());
+		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment", "last_modifier") VALUES 
+		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,api.get_current_user());
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 	END;
@@ -83,15 +84,19 @@ COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) 
 
 /* API - remove_ip_range
 	1) Check privileges
-	2) Delete range
+	2) Sanitize input
+	3) Delete range
 */
-CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_last_ip inet) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
+	
+		-- Sanitize input
+		input_name := api.sanitize_general(input_name);
 		
 		-- Delete range		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting range');
-		DELETE FROM "ip"."ranges" WHERE "first_ip" = input_first_ip AND "last_ip" = input_last_ip;
+		DELETE FROM "ip"."ranges" WHERE "name" = input_name;
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_ip_range');
 	END;
