@@ -17,8 +17,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		-- Create new subnet
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
-			("subnet","name","comment","autogen","last_modifier","owner") VALUES
-			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user(),api.get_current_user());
+			("subnet","name","comment","autogen","owner") VALUES
+			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user());
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
@@ -74,13 +74,13 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		
 		-- Create new IP range		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
-		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment", "last_modifier") VALUES 
-		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,api.get_current_user());
+		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment") VALUES 
+		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment);
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) IS 'Create a new range of IP addresses';
+COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), text) IS 'Create a new range of IP addresses';
 
 /* API - remove_ip_range
 	1) Check privileges
@@ -101,7 +101,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_ip_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_ip_range"(inet, inet) IS 'Delete an existing IP range';
+COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP range';
 
 /* API - get_address_from_range
 	1) Sanitize input
