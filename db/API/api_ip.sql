@@ -68,9 +68,6 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_first_ip inet, input_la
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
 		-- Sanitize input
-		input_first_ip := api.sanitize_general(input_first_ip);
-		input_last_ip := api.sanitize_general(input_last_ip);
-		input_subnet := api.sanitize_general(input_subnet);
 		input_use := api.sanitize_general(input_use);
 		input_comment := api.sanitize_general(input_comment);
 		
@@ -86,16 +83,11 @@ COMMENT ON FUNCTION "api"."create_ip_range"(inet, inet, cidr, varchar(4), text) 
 
 /* API - remove_ip_range
 	1) Check privileges
-	2) Sanitize input
-	3) Delete range
+	2) Delete range
 */
 CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_first_ip inet, input_last_ip inet) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
-
-		-- Sanitize input
-		input_first_ip := api.sanitize_general(input_first_ip);
-		input_last_ip := api.sanitize_general(input_last_ip);
 		
 		-- Delete range		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting range');
