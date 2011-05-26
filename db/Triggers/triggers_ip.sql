@@ -2,11 +2,12 @@
 	1) Check for larger subnets
 	2) Check for smaller subnets
 	3) Check for existing addresses
-	4) Autogenerate addresses
+	4) Autogenerate addresses & firewall default
 */
 CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
+		SubnetAddresses RECORD;
 	BEGIN
 		-- Check for larger subnets
 		SELECT COUNT(*) INTO RowCount
@@ -32,10 +33,12 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 			RAISE EXCEPTION 'Existing addresses detected for your subnet. Modify the existing subnet.';
 		END IF;
 
-		-- Autogenerate addresses
+		-- Autogenerate addresses & firewall default
 		IF NEW."autogen" IS TRUE THEN
-			INSERT INTO "ip"."addresses" ("address","last_modifier") 
-			SELECT "get_subnet_addresses",NEW."last_modifier" FROM api.get_subnet_addresses(NEW."subnet");
+			FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
+				INSERT INTO "ip"."addresses" ("address","last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, NEW."last_modifier");
+				INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT, NEW."last_modifier");
+			END LOOP;
 		END IF;
 		
 		-- Done
@@ -53,6 +56,7 @@ COMMENT ON FUNCTION "ip"."subnets_insert"() IS 'Create a subnet';
 CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
+		SubnetAddresses RECORD;
 	BEGIN
 		IF NEW."subnet" != OLD."subnet" THEN
 			-- Check for larger subnets
@@ -84,8 +88,10 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 		IF NEW."autogen" != OLD."autogen" THEN
 			IF NEW."autogen" IS TRUE THEN
 				DELETE FROM "ip"."addresses" WHERE "ip"."addresses"."address" << OLD."subnet";
-				INSERT INTO "ip"."addresses" ("address","last_modifier") 
-				SELECT "get_subnet_addresses",NEW."last_modifier" FROM api.get_subnet_addresses(NEW."subnet");
+				FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
+					INSERT INTO "ip"."addresses" ("address","last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, NEW."last_modifier");
+					INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT, NEW."last_modifier");
+				END LOOP;
 			END IF;
 		END IF;
 		
@@ -128,7 +134,6 @@ COMMENT ON FUNCTION "ip"."subnets_delete"() IS 'You can only delete a subnet if 
 
 /* Trigger - addresses_insert 
 	1) Check for existing default action (should never happen)
-	2) Create action
 */
 CREATE OR REPLACE FUNCTION "ip"."addresses_insert"() RETURNS TRIGGER AS $$
 	DECLARE
@@ -138,17 +143,12 @@ CREATE OR REPLACE FUNCTION "ip"."addresses_insert"() RETURNS TRIGGER AS $$
 		SELECT COUNT(*) INTO RowCount
 		FROM "firewall"."defaults"
 		WHERE "firewall"."defaults"."address" = NEW."address";
-		
-		-- Create action
 		IF (RowCount >= 1) THEN
 			RAISE EXCEPTION 'Address % is already has a firewall default action?',NEW."address";
-		ELSIF (RowCount = 0) THEN
-			-- Insert the new address record, then the firewall. (Foreign keys)
-			RETURN NEW;
-			INSERT INTO "firewall"."defaults" ("address", "deny", "last_modifier") VALUES (NEW."address", DEFAULT, NEW."last_modifier");
-		ELSE
-			RAISE EXCEPTION 'Could not activate firewall address %',NEW."address";
 		END IF;
+		
+		-- Done
+		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "ip"."addresses_insert"() IS 'Activate a new IP address in the application';
