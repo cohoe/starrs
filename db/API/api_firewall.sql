@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 
 		-- Create new member
 		PERFORM api.create_log_entry('API','INFO','adding new member to metahost');
-		INSERT INTO "firewall"."metahost_members" ("address","metahost_name") VALUES (input_address,input_metahost);
+		INSERT INTO "firewall"."metahost_members" ("address","name") VALUES (input_address,input_metahost);
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_firewall_metahost_member');
 	END;
@@ -21,24 +21,20 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost_member"(inet, text) IS 'add 
 
 /* API - remove_firewall_metahost_member
 	1) Check privileges
-	2) Sanitize input
-	3) Delete member (Deletion triggers metahost rules to be deleted)
+	2) Delete member (Deletion triggers metahost rules to be deleted)
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address inet) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost_member');
 
-		-- Sanitize Input
-		input_metahost := api.sanitize_general(input_metahost);
-
 		-- Remove membership
 		PERFORM api.create_log_entry('API','INFO','removing member from metahost');
-		DELETE FROM "firewall"."metahost_members" WHERE "address" = input_address AND "metahost_name" = input_metahost;
+		DELETE FROM "firewall"."metahost_members" WHERE "address" = input_address;
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_firewall_metahost_member');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_metahost_member"(inet, text) IS 'remove a member from a metahost. this deletes all previous rules.';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost_member"(inet) IS 'remove a member from a metahost. this deletes all previous rules.';
 
 /* API - modify_firewall_default
 	1) Check privileges
@@ -158,7 +154,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input
 		input_software := api.sanitize_general(input_software);
 		
 		-- Create system
-		INSERT INTO "firewall"."systems" ("name","subnet","software") VALUES (input_name, input_subnet, input_software);
+		INSERT INTO "firewall"."systems" ("system_name","subnet","software_name") VALUES (input_name, input_subnet, input_software);
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_system');
 	END;
@@ -178,7 +174,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETUR
 		input_name := api.sanitize_general(input_name);
 		
 		-- Remove system
-		DELETE FROM "firewall"."systems" WHERE "name" = input_name;
+		DELETE FROM "firewall"."systems" WHERE "system_name" = input_name;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_system');
 	END;
