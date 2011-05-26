@@ -280,7 +280,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-			(input_alias || '.' || input_zone, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'SRV');
+			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'SRV');
 		ELSE
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","TYPE") VALUES
 			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,api.get_current_user(),'SRV');
@@ -333,7 +333,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 
 		IF input_ttl IS NULL THEN
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-			(input_alias || '.' || input_zone, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'CNAME');
+			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,api.get_current_user(),'CNAME');
 		ELSE
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
 			(input_alias, input_target, input_zone, input_ttl,api.get_current_user(),'CNAME');
