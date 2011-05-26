@@ -243,18 +243,17 @@ COMMENT ON FUNCTION "api"."create_nameserver"(text, text, boolean, integer) IS '
 	2) Check privileges
 	3) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_domain text, input_record_zone text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_nameserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
 		input_domain := api.sanitize_general(input_domain);
-		input_record_zone := api.sanitize_general(input_record_zone);
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','remove NS record');
-		DELETE FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_domain AND "record_zone" = input_record_zone;
+		DELETE FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_domain;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
 	END;
