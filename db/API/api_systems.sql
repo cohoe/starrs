@@ -4,24 +4,24 @@
 	3) Fill in username
 	4) Insert new system
 */
-CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_username text, input_type text, input_os_name text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system');
 		-- Sanitize input
 		input_system_name := api.sanitize_general(input_system_name);
-		input_username := api.sanitize_general(input_username);
+		input_owner := api.sanitize_general(input_owner);
 		input_comment := api.sanitize_general(input_comment);
 
 		-- Fill in username
-		IF input_username IS NULL THEN
-			input_username := api.get_current_user();
+		IF input_owner IS NULL THEN
+			input_owner := api.get_current_user();
 		END IF;
 		
 		-- Insert new system
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new system');
 		INSERT INTO "systems"."systems"
-			("system_name","username","type","os_name","comment","last_modifier") VALUES
-			(input_system_name,input_username,input_type,input_os_name,input_comment,api.get_current_user());
+			("system_name","owner","type","os_name","comment","last_modifier") VALUES
+			(input_system_name,input_owner,input_type,input_os_name,input_comment,api.get_current_user());
 			
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system');
 	END;
