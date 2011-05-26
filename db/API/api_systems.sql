@@ -54,38 +54,32 @@ COMMENT ON FUNCTION "api"."remove_system"(text) IS 'Delete an existing system';
 	2) Sanitize input
 	3) Create interface
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_interface_name text, input_mac macaddr, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
 		
 		-- Sanitize input
 		input_system_name := api.sanitize_general(input_system_name);
-		input_interface_name := api.sanitize_general(input_interface_name);
-		input_mac := api.sanitize_general(input_mac);
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create interface
 		PERFORM api.create_log_entry('API','INFO','creating new interface');
 		INSERT INTO "systems"."interfaces"
-		("system_name","interface_name","mac","comment","last_modifier") VALUES
-		(input_system_name,input_interface_name,input_mac,input_comment,api.get_current_user());
+		("system_name","mac","comment","last_modifier") VALUES
+		(input_system_name,input_mac,input_comment,api.get_current_user());
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_interface');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface"(text, text, macaddr, text) IS 'Create a new interface on a system';
+COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text) IS 'Create a new interface on a system';
 
 /* API - remove_interface
 	1) Check privileges
-	2) Sanitize input
-	3) Remove interface
+	2) Remove interface
 */
 CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_interface');
-		
-		-- Sanitize input
-		input_mac := api.sanitize_general(input_mac);
 		
 		-- Remove interface
 		PERFORM api.create_log_entry('API','INFO','deleting interface');
@@ -101,26 +95,25 @@ COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface ba
 	2) Sanitize input
 	3) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac macaddr, input_address inet, input_config text, input_class text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address_manual');
 		
 		-- Sanitize input
-		input_mac := api.sanitize_general(input_mac);
-		input_address := api.sanitize_general(input_address);
+		input_name := api.sanitize_general(input_name);
 		input_config := api.sanitize_general(input_config);
 		input_class := api.sanitize_general(input_class);
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
-		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier") VALUES
-		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user());
+		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
+		(input_mac,input_name,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
 		
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_manual');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_manual"(macaddr, inet, text, text, text) IS 'create a new address on interface manually';
+C
 
 /* API - create_interface_address_auto
 	1) Check privileges
@@ -152,15 +145,11 @@ COMMENT ON FUNCTION "api"."create_interface_address_auto"(macaddr, text, text, t
 
 /* API - remove_interface_address
 	1) Check privileges
-	2) Sanitize input
-	3) Remove address
+	2) Remove address
 */
 CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_interface_address');
-		
-		-- Sanitize input
-		input_address := api.sanitize_general(input_address);
 		
 		-- Remove address
 		PERFORM api.create_log_entry('API','INFO','deleting interface address');
