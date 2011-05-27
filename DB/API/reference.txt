@@ -28,35 +28,154 @@ Table of Contents (line number)
       3.5 Management  . . . . . . . . . . . . . . . . . . . . . . . . . . .  XX
       3.6 Network . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  XX
       3.7 Systems  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . XX
-	4. Function Quick Index . . . . . . . . . . . . . . . . . . . . . . . .  XX
+    4. Function Quick Index . . . . . . . . . . . . . . . . . . . . . . . .  XX
     5. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . . . . XX
     6. References . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  XX
     7. Contacts  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . XX
+
+
+-------------------------------------------------------------------------------
+1. Abstract
+-------------------------------------------------------------------------------
+
+1.1 Project Origin
+
+    IMPULSE came about as a result of the growing need to replace the machine 
+    registration system of the Computer Science House, called Start. Written 
+    by user Joe Sunday (sunday) Start has served our needs very well. However 
+    lately there have been a few issues with things breaking over the years, 
+    and a lack of IPv6 support has caused many other members to attempt to 
+    it. However all previous attempts have failed due to lack of interest, 
+    failure to understand the complexity of all requirements, and a general 
+    pessimistic attitude. 
     
+    To avoid these complications, IMPULSE was developed in secret with only 
+    a few select people knowing of its existance. Being on co-op with 
+    Anheuser-Busch in Baldwinsville NY, I had a lot more time available to 
+    work on this project. The people brought on board to help were people I 
+    trusted to be able to complete their tasks by a given deadline and who 
+    would take the initiative to help out when needed. 
     
+    If all goes according to plan, IMPULSE will be released to the CSH public 
+    the first week of 2011-1. 
     
+    Grant Cohoe
+    Project Lead - IMPULSE
+    
+1.2 Project Design
+
+    Previous incarnations and attempts at this project have usually revolved 
+    around a complication web application and a moderately simple database 
+    backend. This is perfect acceptable in that it keeps the communication to 
+    the backend database to a minimum. 
+    
+    IMPULSE goes about this a completely different way. To provide for easy 
+    access by potential clients across multiple operating systems, interfaces, 
+    and other applications, IMPULSE is designed to remove all thought from 
+    the client. All core logic and functions exist within the database. 
+    This allows for clients to be very simple and dumb, letting the backend 
+    handle all data validation, rules, and backend processes. 
+    
+    This is accomplished with the advanced features of PostgreSQL, an open-
+    source RDBMS with a lot of cool stuff. Most notably, the INET and CIDR 
+    datatypes. This allows for easy manipulation of IP address data without 
+    having to write custom functions. It's ability to also have functions 
+    written in other languages is also vital to our success. For example, 
+    Postgres functions can be written in Perl, and take advantage of 
+    everything that Perl can offer. So in a nutshell, you can have Perl 
+    in your database. How cool is that?
+    
+1.3 Client Interaction
+
+    Client can interact with the database via a set of API functions. These 
+    functions handle all interaction in and out of the application, and 
+    provide a standard set of instructions across any client. This ensures 
+    that everyone is getting the same data, and there are no large queries 
+    from the clients. 
+    
+1.4 Official Clients
+
+    The following clients are officially "supported":
+    
+    1) Desktop Web - all features, all information
+    2) Mobile Web - Critical features, most information
+    3) Command Line - all features, all information
+
+-------------------------------------------------------------------------------
+2. Conventions
+-------------------------------------------------------------------------------
+
+2.1 SQL Syntax
+
+    Clients should execute queries in the following format:
+
+        SELECT schema.function();
+    
+    The inclusion of the schema is critical since all functions are 
+    catagorized into the appropriate schemas. The default search path is set 
+    to "public", which contains nothing.
+    
+2.2 Arguments
+
+    Certain arguments can be NULL, which will trigger either a default value 
+    or some other function to occur. NULL should be placed in the function 
+    without any ' or " marks around it. 
+    
+        SELECT schema.function('regular_arg',NULL);
+        
+    There is a difference between " and ' marks. Quotation marks (") are used 
+    to identify schemas, tables, and columns. Single quote marks (') are used 
+    for strings. 
     
 
+2.3 Information Retreval
+
+    All information is provided in Views. A Postgres View is a template for 
+    information that you can easy get. It can be made up of a very complex 
+    SQL query, but referenced in a single word. For example, the query
     
+        SELECT * FROM "public"."table1" 
+            JOIN "private"."table5" ON
+            "public"."table1"."index" = 
+            "private"."table5"."index"
+            ORDER BY "private"."table5"."value"
+            LIMIT 1 DESC;
+            
+    This query can be made into a view, which would then look like:
     
+        SELECT * FROM "public"."myview";
+        
+    Same information, much easier to work with in your application.
     
-
-
-
-
-
-
-
-
-
+    You can specify certain columns to select to make your query perform more 
+    optimal. This applies to both Views and Tables. 
     
-Cohoe                     IMPULSE - API Reference                      [Page 1]
+        SELECT "index","value","comment" FROM "public"."myview";
+        
+-------------------------------------------------------------------------------
+3. Functions
+-------------------------------------------------------------------------------
 
+    All of the API functions are provided in the API schema. This is the only 
+    way you should interact with this application. While there is no 
+    technical enforcement, it is how this application was intended to 
+    function. Not using the API functions can lead to incorrect or incomplete 
+    data being entered. 
+    
+    Functions are broken down into the schemas they affect. The schemas in 
+    this application are:
+    
+        1) DHCP
+        2) DNS
+        3) Firewall
+        4) IP
+        5) Management
+        6) Network
+        7) Systems
 
-
-API Reference Guide                IMPULSE                            June 2011
-
+-------------------------------------------------------------------------------
 3.1 DHCP (Stateful configuration of addresses)
+-------------------------------------------------------------------------------
 
 3.1.1 Overview
 
@@ -104,12 +223,6 @@ API Reference Guide                IMPULSE                            June 2011
     application does not verify if the option you pass to it is valid. Check 
     the system logs to make sure the server started correctly.
 
-Cohoe                     IMPULSE - API Reference                      [Page X]
-
-
-
-API Reference Guide                IMPULSE                            June 2011
-
 3.1.3 Functions
         
 3.1.3.1 Create DHCP Class
@@ -144,25 +257,6 @@ API Reference Guide                IMPULSE                            June 2011
 
     Example:
         SELECT api.remove_dhcp_class('netboot');
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-Cohoe                     IMPULSE - API Reference                      [Page X]
-
-
-
-API Reference Guide                IMPULSE                            June 2011
 
 3.1.3.3 Create DHCP Class Option
 
@@ -201,24 +295,6 @@ API Reference Guide                IMPULSE                            June 2011
     Example:
         SELECT api.remove_dhcp_class_option('netboot','next-server',
         '"10.0.0.1"');
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-Cohoe                     IMPULSE - API Reference                      [Page X]
-
-
-
-API Reference Guide                IMPULSE                            June 2011
 
 3.1.3.5 Create DHCP Subnet Option
 
@@ -259,44 +335,379 @@ API Reference Guide                IMPULSE                            June 2011
         SELECT api.remove_dhcp_subnet_option('10.0.0.0/24','option-routers',
         '"10.0.0.254"');
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-Cohoe                     IMPULSE - API Reference                      [Page X]
+-------------------------------------------------------------------------------
+3.2 DNS (Domain name resolution and records)
+-------------------------------------------------------------------------------
 
+3.2.1 Overview
 
+    DNS records are more than just names. They can point to services, and help
+    maintain uptime by having backup service machines on the network. 
+    IMPULSE was designed to interface with the BIND DNS server to provide all 
+    common record types for a number of different domains. 
 
-API Reference Guide                IMPULSE                            June 2011
+3.2.2 Record Types
 
-2. DNS (Domain name resolution and records)
+    IMPULSE has the ability to maintain the following records:
+    
+    A - IPv4 address
+    AAAA - IPv6 address
+    TXT - Textual information about a host
+    SPF - Textual information about a host
+    MX - Mail server
+    NS - Name server (DNS server)
+    SRV - Service record
+    CNAME - Alias to another A or AAAA
+    
+    There are various rules in effect governing what records can be created 
+    in a given zone. This is to ensure no funky DNS shenanigans and other 
+    bad practices.
+    
+    1) A single hostname can only have one A and/or one AAAA record
+    2) There may only be one TXT or SPF record per hostname
+    3) No two MX records can have the same preference in the same zone
+    4) Only one NS may be elected the Primary NS of a zone
+    5) Records in IMPULSE cannot traverse zones
 
-api.create_dns_key(keyname text, key text, comment text)
-api.remove_dns_key(keyname text)
-api.create_dns_zone(zone text, keyname text, forward boolean, comment text)
-api.remove_dns_zone(zone text)
-api.create_dns_address(address inet, hostname text, zone text, ttl integer, owner text)
-api.remove_dns_address(address inet)
-api.create_mailserver(hostname text, domain text, preference integer, ttl integer)
-api.remove_mailserver(hostname text, domain text)
-api.get_reverse_domain(INET)
-api.create_nameserver(hostname text, domain text, isprimary boolean, ttl integer)
-api.remove_nameserver(hostname text, domain text)
-api.create_dns_srv(alias text, target text, zone text, priority integer, weight integer, port integer, ttl integer)
-api.remove_dns_srv(alias text, target text, zone text)
-api.create_dns_cname(alias text, target text, zone text, ttl integer)
-api.remove_dns_cname(alias text, target text, zone text)
-api.create_dns_txt(hostname text, zone text, text text, type text, ttl integer)
-api.remove_dns_txt(hostname text, zone text, type text)
+3.2.3 Terminology
 
-3. Firewall (Access control from the outside world)
+    Throughout this application, the terms "domain" and "zone" are used 
+    interchangably. However they mean the same thing. Zone is frequently 
+    used in the configuration of the DNS server, whily domain is frequently 
+    used in outside applications and internet terminology. 
+
+    Zones may be updated via the 'nsupdate' utility, however to prevent 
+    just anyone from updating, DNS Keys are used. These are strings of 
+    characters that are used to authenticate to a DNS server to allow 
+    dynamic updates to occur. Each zone has one key that allows access. 
+
+3.2.4 Functions
+
+3.2.4.1 Create DNS Key
+
+    Create a new DNS key. 
+
+    Definition:
+        api.create_dns_key(keyname text, key text, comment text)
+        
+    Arguments:
+        keyname - The name of the key to create
+        key - The string that is the key
+        comment - A comment on the key (or NULL for no comment)
+
+    Rules:
+        Key names must be unique (primary key)
+        
+    Example:
+        SELECT api.create_dns_key('example_key','oi0idf0sajfke9ur93',
+        'example.com zone key');
+
+3.2.4.2 Remove DNS Key
+
+    Remove a DNS key from use
+
+    Definition:
+        api.remove_dns_key(keyname text)
+        
+    Arguments:
+        keyname - The name of the key to remove
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_key('example_key');
+    
+3.2.4.3 Create DNS Zone
+
+    Create a new DNS zone
+    
+    Definition:
+        api.create_dns_zone(zone text, keyname text, forward boolean, 
+        comment text)
+
+    Arguments:
+        zone - The domain to create
+        keyname - The DNS key to use for updates
+        forward - Is this a forward or reverse zone
+        comment - A comment on the zone (or NULL for no comment)
+        
+    Rules:
+        Zone names must be unique (primary key)
+        Keyname must exist in "dns"."keys" (foreign key)
+        
+    Example:
+        EXAMPLE api.create_dns_zone('example.com','example_key',TRUE,
+        'example.com domain');
+    
+3.2.4.4 Remove DNS Zone
+
+    Remove a DNS zone from the database
+    
+    Definition:
+        api.remove_dns_zone(zone text)
+
+    Arguments:
+        zone - The name of the zone to remove
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_zone('example.com');
+    
+3.2.4.5 Create DNS A or AAAA Record (Resource)
+
+    Register a new host address record
+    
+    Definition:
+        api.create_dns_address(address inet, hostname text, zone text, 
+        ttl integer, owner text)
+
+    Arguments:
+        address - The IP address of this record
+        hostname - The specific hostname that owns the record
+        zone - The DNS domain the record is for
+        ttl - Time to Live (or NULL for the default value)
+        owner - The username who owns this resource
+        
+    Rules:
+        Only one A or AAAA record per hostname (unique)
+        Addresses can have either an A or AAAA record, not both (unique)
+        
+    Example:
+        SELECT api.create_dns_address('10.0.0.1', 'hostname', 'example.com', 
+        NULL, 'john.doe');
+    
+3.2.4.6 Remove DNS A or AAAA Record
+
+    Remove a host address record
+    
+    Definition:
+        api.remove_dns_address(address inet)
+
+    Arguments:
+        address - The address of the record to remove
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_address('10.0.0.1');
+    
+3.2.4.7 Create DNS Mailserver Record
+
+    Create a new MX record for a mailserver
+    
+    Definition:
+        api.create_mailserver(hostname text, domain text, preference integer, 
+        ttl integer)
+
+    Arguments:
+        hostname - The name of the mailserver (from "dns"."a")
+        domain - The domain of the record
+        preference - The preference level of the record (lower is more)
+        ttl - Time to Live (or NULL for default)
+        
+    Rules:
+        No two records in a zone can have the same preference (unique)
+        
+    Example:
+        SELECT api.create_mailserver('mail','example.com',10,36500);
+    
+3.2.4.8 Remove DNS Mailserver Record
+
+    Remove a MX record for a mailserver
+    
+    Definition:
+        api.remove_mailserver(hostname text, domain text)
+        
+    Arguments:
+        hostname - The name of the mailserver
+        domain - The zone of the record
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_mailserver('mail','example.com');
+    
+3.2.4.9 Create DNS Nameserver Record
+
+    Creata a new NS record for a nameserver
+    
+    Definition:
+        api.create_nameserver(hostname text, domain text, isprimary boolean, ttl integer)
+
+    Arguments:
+        hostname - Name of the nameserver
+        domain - Zone of the record
+        isprimary - Is this the primary nameserver for the zone
+        ttl - Time to Live (or NULL for default)
+        
+    Rules:
+        Only one primary NS per zone (trigger)
+        
+    Example:
+        SELECT api.create_nameserver('ns1','example.com',TRUE,NULL);
+    
+3.2.4.10 Remove DNS Nameserver Record
+
+    Remove a NS nameserver record
+    
+    Definition:
+        api.remove_nameserver(hostname text, domain text)
+
+    Arguments:
+        hostname - The name of the nameserver
+        domain - The zone of the record
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_nameserver('ns1','example.com');
+    
+3.2.4.11 Create DNS SRV Record
+
+    Create a DNS service record. This does not provide syntax checking of 
+    your record, so you must ensure that the alias behaves the way you 
+    expected. 
+    
+    Definition:
+        api.create_dns_srv(alias text, target text, zone text, 
+        priority integer, weight integer, port integer, ttl integer)
+
+    Arguments:
+        alias - The name of this record
+        target - The target A or AAAA of this record
+        zone - The zone of this record
+        priority - SRV priority (lower is more)
+        weight - SRV weight (higher is more)
+        port - The port of the service
+        ttl - Time to Live (or NULL for default)
+        
+    Rules:
+        Target A or AAAA must exist
+        
+    Example:
+        SELECT api.create_dns_srv('_ldap._tcp','ldap','example.com',
+        0,0,389,NULL);
+    
+3.2.4.12 Remove DNS SRV Record
+
+    Remove a service record
+    
+    Definition:
+        api.remove_dns_srv(alias text, target text, zone text)
+
+    Arguments:
+        alias - The alias of the record
+        target - The target of the record
+        zone - The zone of the record
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_srv('_ldap._tcp','ldap','example.com');
+    
+3.2.4.13 Create DNS CNAME Record
+
+    Create a new alias name record
+    
+    Definition:
+        api.create_dns_cname(alias text, target text, zone text, ttl integer)
+
+    Arguments:
+        alias - The name of the new record
+        target - The target of this pointer
+        zone - The zone of the record
+        ttl - Time to Live (or NULL for default)
+        
+    Rules:
+        Target must exist
+        
+    Example:
+        SELECT api.create_dns_cname('www','webserver','example.com',NULL);
+    
+3.2.4.14 Remove DNS CNAME Record
+
+    Remove an alias name record
+    
+    Definition:
+        api.remove_dns_cname(alias text, target text, zone text)
+
+    Arguments:
+        alias - The name of the record
+        target - The target of the pointer
+        zone - The zone of the record
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_cname('www','webserver','example.com');
+    
+3.2.4.15 Create DNS TXT Record
+
+    Create a new TXT or SPF record
+    
+    Definition:
+        api.create_dns_txt(hostname text, zone text, text text, type text, ttl integer)
+
+    Arguments:
+        hostname - The hostname of the record
+        zone - The zone of the record
+        text - The text to be placed in the record
+        type - TXT or SPF (subtle differences)
+        ttl - Time to Live (or NULL for default)
+        
+    Rules:
+        Only one TXT or SPF record per hostname (unique)
+        
+    Example:
+        SELECT api.create_dns_txt('webserver','example.com',
+        'located in a black hole','TXT',NULL);
+    
+3.2.4.16 Remove DNS TXT Record
+
+    Remove a TXT or SPF record
+    
+    Definition:
+        api.remove_dns_txt(hostname text, zone text, type text)
+
+    Arguments:
+        hostname - Hostname of the record to remove
+        zone - Zone of the record
+        type - Type of record to remove
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dns_txt('webserver','example.com','TXT');
+    
+3.2.4.17 Get Reverse Domain From IP Address
+
+    Generate the reverse DNS string from a given IP address. This uses an 
+    external Perl module to easily return the reverse string.
+    
+    Definition:
+        api.get_reverse_domain(INET);
+        
+    Arguments:
+        INET - An IP address (either v4 or v6)
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.get_reverse_domain('2001:db0::dead:beef:cafe');
+    
+-------------------------------------------------------------------------------
+3.3 Firewall (Access control from the outside world)
+-------------------------------------------------------------------------------
 
 api.create_firewall_metahost_member(address inet, metahost text)
 api.remove_firewall_metahost_member(address inet)
@@ -310,7 +721,9 @@ api.remove_firewall_system(name text)
 api.create_firewall_rule(address inet, port integer, transport text, deny boolean, comment text)
 api.remove_firewall_rule(address inet, port integer, transport text)
 
-4. IP (Network address resources)
+-------------------------------------------------------------------------------
+3.4 IP (Network address resources)
+-------------------------------------------------------------------------------
 
 api.create_subnet(subnet cidr, name text, comment text, autogen boolean)
 api.remove_subnet(subnet cidr)
@@ -319,7 +732,9 @@ api.remove_ip_range(name text)
 api.get_address_from_range(range_name text)
 api.get_subnet_addresses(CIDR)
 
-5. Management (IMPULSE confiugration and data)
+-------------------------------------------------------------------------------
+3.5 Management (IMPULSE confiugration and data)
+-------------------------------------------------------------------------------
 
 api.create_log_entry(source text, severity text, message text)
 api.sanitize_general(input text)
@@ -330,12 +745,16 @@ api.renew_system(system_name text)
 api.create_site_configuration(directive text, value text)
 api.remove_site_configuration(directive text)
 
-6. Network (Network device architecture
+-------------------------------------------------------------------------------
+3.6 Network (Network device architecture
+-------------------------------------------------------------------------------
 
 api.create_switchport(port_name text, system_name text, port_type text, description text)
 api.remove_switchport(port_name text, system_name text)
 
-7. Systems (User machine data)
+-------------------------------------------------------------------------------
+3.7 Systems (User machine data)
+-------------------------------------------------------------------------------
 
 api.create_system(system_name text, owner text, type text, os_name text, comment text)
 api.remove_system(system_name text)
