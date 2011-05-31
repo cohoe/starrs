@@ -93,7 +93,8 @@ COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface ba
 /* API - create_interface_address_manual
 	1) Check privileges
 	2) Sanitize input
-	3) Create address
+	3) Fill in class
+	4) Create address
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
@@ -104,6 +105,11 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		input_config := api.sanitize_general(input_config);
 		input_class := api.sanitize_general(input_class);
 		input_comment := api.sanitize_general(input_comment);
+		
+		-- Fill in class
+		IF input_class IS NULL THEN
+			input_class = api.get_dhcp_default_class();
+		END IF;
 		
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
@@ -117,7 +123,8 @@ $$ LANGUAGE 'plpgsql';
 /* API - create_interface_address_auto
 	1) Check privileges
 	2) Sanitize input
-	3) Create address
+	3) Fill in class
+	4) Create address
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macaddr, input_name text, input_range_name text, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
@@ -129,6 +136,11 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 		input_class := api.sanitize_general(input_class);
 		input_comment := api.sanitize_general(input_comment);
 
+		-- Fill in class
+		IF input_class IS NULL THEN
+			input_class = api.get_dhcp_default_class();
+		END IF;
+		
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address registration');
 		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
