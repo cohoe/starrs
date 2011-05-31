@@ -66,7 +66,7 @@ Table of Contents (line number)
 
     Previous incarnations and attempts at this project have usually revolved 
     around a complication web application and a moderately simple database 
-    backend. This is perfect acceptable in that it keeps the communication to 
+    backend. This is perfectly acceptable in that it keeps the communication to 
     the backend database to a minimum. 
     
     IMPULSE goes about this a completely different way. To provide for easy 
