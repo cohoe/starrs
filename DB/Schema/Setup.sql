@@ -1,41 +1,52 @@
-/* Database Installer
-	1) Schemas
-	2) Languages
-	3) Sequences
-*/
+/*Schema public*/
+--CREATE SCHEMA "public";
 
--- Schemas
-CREATE SCHEMA "api";
-COMMENT ON SCHEMA "api" IS 'All API functions that clients should use to interface with this application';
+set search_path TO "public";
 
-CREATE SCHEMA "dhcp";
-COMMENT ON SCHEMA "dhcp" IS 'Configuration for the DHCP environment';
-
-CREATE SCHEMA "dns";
-COMMENT ON SCHEMA "dns" IS 'DNS records and configuration for BIND';
-
+/*Schema firewall*/
 CREATE SCHEMA "firewall";
-COMMENT ON SCHEMA "firewall" IS 'Firewall rules for hosts';
 
-CREATE SCHEMA "ip";
-COMMENT ON SCHEMA "ip" IS 'Network resources that are available for use';
-
-CREATE SCHEMA "management";
-COMMENT ON SCHEMA "management" IS 'Application data, logging, and output';
-
-CREATE SCHEMA "network";
-COMMENT ON SCHEMA "network" IS 'SNMP information for SwitchTalk';
-
+/*Schema systems*/
 CREATE SCHEMA "systems";
-COMMENT ON SCHEMA "systems" IS 'User machine information';
 
-CREATE SCHEMA "public";
-COMMENT ON SCHEMA "public" IS 'All the generic crap';
+/*Schema dhcp*/
+CREATE SCHEMA "dhcp";
 
--- Languages
+/*Schema ip*/
+CREATE SCHEMA "ip";
+
+/*Schema dns*/
+CREATE SCHEMA "dns";
+
+/*Schema management*/
+CREATE SCHEMA "management";
+
+/*Schema network*/
+CREATE SCHEMA "network";
+
+/*Schema api*/
+CREATE SCHEMA "api";
+
+/*Sequence Output ID*/
+CREATE SEQUENCE "management"."output_id_seq";
+
+/*Language plperl*/
 CREATE LANGUAGE "plperl";
 
+/*Language plperlu*/
 CREATE LANGUAGE "plperlu";
 
--- Sequences
-CREATE SEQUENCE "management"."output_id_seq";
+/*View Log - Master Debug*/
+CREATE OR REPLACE VIEW "management"."log_master_debug" AS SELECT * FROM "management"."log_master" WHERE "severity" LIKE 'DEBUG';
+
+COMMENT ON VIEW "management"."log_master_debug" IS 'View all DEBUG level data (all function calls and data)';
+
+/*View Log - Master Info*/
+CREATE OR REPLACE VIEW "management"."log_master_info" AS SELECT * FROM "management"."log_master" WHERE "severity" LIKE 'INFO';
+
+COMMENT ON VIEW "management"."log_master_info" IS 'View all INFO level data (when something happens)';
+
+/*View Log - Master Error*/
+CREATE OR REPLACE VIEW "management"."log_master_error" AS SELECT * FROM "management"."log_master" WHERE "severity" LIKE 'ERROR';
+
+COMMENT ON VIEW "management"."log_master_error" IS 'View all ERROR level data (there was an exception in some function)';
