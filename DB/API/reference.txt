@@ -537,7 +537,8 @@ Table of Contents (line number)
     Creata a new NS record for a nameserver
     
     Definition:
-        api.create_nameserver(hostname text, domain text, isprimary boolean, ttl integer)
+        api.create_nameserver(hostname text, domain text, isprimary boolean, 
+        ttl integer)
 
     Arguments:
         hostname - Name of the nameserver
@@ -654,7 +655,8 @@ Table of Contents (line number)
     Create a new TXT or SPF record
     
     Definition:
-        api.create_dns_txt(hostname text, zone text, text text, type text, ttl integer)
+        api.create_dns_txt(hostname text, zone text, text text, type text,
+        ttl integer)
 
     Arguments:
         hostname - The hostname of the record
@@ -927,20 +929,20 @@ Table of Contents (line number)
 
 3.3.2.12 Get Site Default Action
 
-	Get the default action configured for the site
-	
-	Definition:
-		api.get_firewall_site_default()
-		
-	Arguments:
-		None
-	
-	Rules
-		None:
-		
-	Example:
-		SELECT api.get_firewall_site_default();
-		
+    Get the default action configured for the site
+    
+    Definition:
+        api.get_firewall_site_default()
+        
+    Arguments:
+        None
+    
+    Rules
+        None:
+        
+    Example:
+        SELECT api.get_firewall_site_default();
+        
 -------------------------------------------------------------------------------
 3.4 IP (Network address resources)
 -------------------------------------------------------------------------------
@@ -1102,54 +1104,54 @@ api.remove_site_configuration(directive text)
 
 3.6.1 Overview
 
-	IMPULSE was intended to offer a full view of the network, including 
-	control over SNMP compatible switches. This would allow for the management 
-	to easily disable problem machines and see detailed infomation to make 
-	debugging easier. 
-	
-	Network devices can be created in IMPULSE, then have switchports 
-	associated with them. These ports are then used to figure out how the 
-	network is physically and logically constructed. 
+    IMPULSE was intended to offer a full view of the network, including 
+    control over SNMP compatible switches. This would allow for the management 
+    to easily disable problem machines and see detailed infomation to make 
+    debugging easier. 
+    
+    Network devices can be created in IMPULSE, then have switchports 
+    associated with them. These ports are then used to figure out how the 
+    network is physically and logically constructed. 
 
 3.6.2 Functions
 
 3.6.2.1 Create Switchport
 
-	Create a switchport on a network device
-	
-	Definition:
-		api.create_switchport(port_name text, system_name text, 
-		port_type text, description text)
+    Create a switchport on a network device
+    
+    Definition:
+        api.create_switchport(port_name text, system_name text, 
+        port_type text, description text)
 
-	Arguments:
-		port_name - Name of the port to create
-		system_name - Name of the system to create the port on
-		port_type - Type of port (access, uplink, trunk, etc)
-		description - A description of the port
+    Arguments:
+        port_name - Name of the port to create
+        system_name - Name of the system to create the port on
+        port_type - Type of port (access, uplink, trunk, etc)
+        description - A description of the port
 
-	Rules:
-		Only network systems can have switchports (trigger)
-		
-	Example:
-		SELECT api.create_switchport('Gi0/1','Head Switch','Uplink',
-		'Master Uplink');
+    Rules:
+        Only network systems can have switchports (trigger)
+        
+    Example:
+        SELECT api.create_switchport('Gi0/1','Head Switch','Uplink',
+        'Master Uplink');
 
 3.6.2.1 Remove Switchport
 
-	Remove a switchport from a system
-	
-	Definition:
-		api.remove_switchport(port_name text, system_name text)
-		
-	Arguments
-		port_name - Name of the port to remove
-		system_name - Name of the system to remove the port from
-		
-	Rules:
-		None
-		
-	Example: 
-		api.remove_switchport('Gi0/1','Head Switch');
+    Remove a switchport from a system
+    
+    Definition:
+        api.remove_switchport(port_name text, system_name text)
+        
+    Arguments
+        port_name - Name of the port to remove
+        system_name - Name of the system to remove the port from
+        
+    Rules:
+        None
+        
+    Example: 
+        SELECT api.remove_switchport('Gi0/1','Head Switch');
 
 
 -------------------------------------------------------------------------------
