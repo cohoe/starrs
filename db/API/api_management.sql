@@ -160,7 +160,6 @@ COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site co
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_default_class"() RETURNS TEXT AS $$
 	DECLARE
 		ClassName TEXT;
-
 	BEGIN
 		-- Get value
 		SELECT "value" INTO ClassName
