@@ -1474,3 +1474,86 @@ Table of Contents (line number)
 
     Example:
         SELECT api.remove_interface_address('10.0.0.1');
+
+-------------------------------------------------------------------------------        
+4. Function Quick Index
+-------------------------------------------------------------------------------
+
+4.1 DHCP
+
+    Create DHCP Class - 3.1.3.1
+    Remove DHCP Class - 3.1.3.2
+    Create DHCP Class Option - 3.1.3.3
+    Remove DHCP Class Option - 3.1.3.4
+    Create DHCP Subnet Option - 3.1.3.5
+    Remove DHCP Subnet Option - 3.1.3.6
+
+4.2 DNS
+
+    Create DNS Key - 3.2.4.1
+    Remove DNS Key - 3.2.4.2
+    Create DNS Zone - 3.2.4.3
+    Remove DNS Zone - 3.2.4.4
+    Create DNS A or AAAA Record (Resource) - 3.2.4.5
+    Remove DNS A or AAAA Record - 3.2.4.6
+    Create DNS Mailserver Record - 3.2.4.7
+    Remove DNS Mailserver Record - 3.2.4.8
+    Create DNS Nameserver Record - 3.2.4.9
+    Remove DNS Nameserver Record - 3.2.4.10
+    Create DNS SRV Record - 3.2.4.11
+    Remove DNS SRV Record - 3.2.4.12
+    Create DNS CNAME Record - 3.2.4.13
+    Remove DNS CNAME Record - 3.2.4.14
+    Create DNS TXT Record - 3.2.4.15
+    Remove DNS TXT Record - 3.2.4.16
+    Get Reverse Domain From IP Address - 3.2.4.17
+
+4.3 Firewall
+
+    Create metahost membership - 3.3.2.1
+    Remove metahost membership - 3.3.2.2
+    Modify device default action - 3.3.2.3
+    Create metahost - 3.3.2.4
+    Remove metahost - 3.3.2.5
+    Create metahost rule - 3.3.2.6
+    Remove metahost rule - 3.3.2.7
+    Create Firewall System - 3.3.2.8
+    Remove Firewall System - 3.3.2.9
+    Create Rule - 3.3.2.10
+    Remove a Rule - 3.3.2.11
+    Get Site Default Action - 3.3.2.12
+
+4.4 IP
+
+    Create subnet - 3.4.3.1
+    Remove Subnet - 3.4.3.2
+    Create IP Range - 3.4.3.3
+    Remove IP Range - 3.4.3.4
+    Get Address from Range - 3.4.3.5
+    Get Subnet Addresses - 3.4.3.6
+
+4.5 Management
+
+    Create Log Entry - 3.5.2.1
+    General Sanitization - 3.5.2.2
+    Sanitize input for DHCP configuration - 3.5.2.3
+    Get Current User - 3.5.2.4
+    Validate DNS Domain - 3.5.2.5
+    Renew System - 3.5.2.6
+    Create Site Configuration Directive - 3.5.2.7
+    Remove Site Configuration Directive - 3.5.2.8
+
+4.6 Network
+
+    Create Switchport - 3.6.2.1
+    Remove Switchport - 3.6.2.1
+
+4.7 Systems
+
+    Create System - 3.7.4.1
+    Remove System - 3.7.4.2
+    Create Interface - 3.7.4.3
+    Remove Interface - 3.7.4.4
+    Create Interface Address (manual) - 3.7.4.5
+    Create Interface Address (auto) - 3.7.4.6
+    Remove Interface Address - 3.7.4.7
