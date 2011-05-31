@@ -1091,151 +1091,151 @@ Table of Contents (line number)
 
 3.5.1 Overview
 
-	IMPULSE has site configuration directives that can make certain 
-	configuration settings easier to manage. There are also validation 
-	functions to make sure funky characters don't make it into the database 
-	where they should not be. 
-	
-	Logging is also a feature in this application, and should be used for all 
-	major events. Errors are also a useful thing to record to see what is 
-	going on.
-	
+    IMPULSE has site configuration directives that can make certain 
+    configuration settings easier to manage. There are also validation 
+    functions to make sure funky characters don't make it into the database 
+    where they should not be. 
+    
+    Logging is also a feature in this application, and should be used for all 
+    major events. Errors are also a useful thing to record to see what is 
+    going on.
+    
 3.5.2 Functions
 
 3.5.2.1 Create Log Entry
 
-	Record an entry in the master log
+    Record an entry in the master log
 
-	Definition:
-		api.create_log_entry(source text, severity text, message text)
+    Definition:
+        api.create_log_entry(source text, severity text, message text)
 
-	Arguments:
-		source - Where the message is coming from
-		severity - Severity for viewing purposes
-		message - The message to log
+    Arguments:
+        source - Where the message is coming from
+        severity - Severity for viewing purposes
+        message - The message to log
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.create_log_entry('CLI','DEBUG','Doing something');
+    Example:
+        SELECT api.create_log_entry('CLI','DEBUG','Doing something');
 
 3.5.2.2 General Sanitization
 
-	Clean up data input to protect against things like HTML injections
+    Clean up data input to protect against things like HTML injections
 
-	Definition:
-		api.sanitize_general(input text)
+    Definition:
+        api.sanitize_general(input text)
 
-	Arguments:
-		input - String to parse
+    Arguments:
+        input - String to parse
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.sanitize_general('This string has &*@!&$*#&');
+    Example:
+        SELECT api.sanitize_general('This string has &*@!&$*#&');
 
 3.5.2.3 Sanitize input for DHCP configuration
 
-	Since DHCP outputs data to a text file, clean up data to ensure it is 
-	valid to go in there. 
+    Since DHCP outputs data to a text file, clean up data to ensure it is 
+    valid to go in there. 
 
-	Definition:
-		api.sanitize_dhcp(input text)
+    Definition:
+        api.sanitize_dhcp(input text)
 
-	Arguments:
-		input - String to parse
+    Arguments:
+        input - String to parse
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.sanitize_dhcp('"option here"');
+    Example:
+        SELECT api.sanitize_dhcp('"option here"');
 
 3.5.2.4 Get Current User
 
-	Get the current authenticated user (who the application thinks you are)
+    Get the current authenticated user (who the application thinks you are)
 
-	Definition:
-		api.get_current_user()
+    Definition:
+        api.get_current_user()
 
-	Arguments:
-		None
+    Arguments:
+        None
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.get_current_user();
+    Example:
+        SELECT api.get_current_user();
 
 3.5.2.5 Validate DNS Domain
 
-	Validate a DNS hostname or domain. Can take either a hostname, domain, 
-	or FQDN. 
+    Validate a DNS hostname or domain. Can take either a hostname, domain, 
+    or FQDN. 
 
-	Definition:
-		api.validate_domain(hostname text, domain text)
+    Definition:
+        api.validate_domain(hostname text, domain text)
 
-	Arguments:
-		hostname - Hostname to check (or NULL for Domain check only)
-		domain - Domain to checl (or NULL for Hostname check only)
+    Arguments:
+        hostname - Hostname to check (or NULL for Domain check only)
+        domain - Domain to checl (or NULL for Hostname check only)
 
-	Rules:
-		Both arguments cannot be null
+    Rules:
+        Both arguments cannot be null
 
-	Example:
-		SELECT api.validate_domain('server','example.com');
+    Example:
+        SELECT api.validate_domain('server','example.com');
 
 3.5.2.6 Renew System
 
-	Systems must be renewed every year or they and all their records expire 
-	and are removed. 
+    Systems must be renewed every year or they and all their records expire 
+    and are removed. 
 
-	Definition:
-		api.renew_system(system_name text)
+    Definition:
+        api.renew_system(system_name text)
 
-	Arguments:
-		system_name - Name of the system to renew
+    Arguments:
+        system_name - Name of the system to renew
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.renew_system('server1');
+    Example:
+        SELECT api.renew_system('server1');
 
 3.5.2.7 Create Site Configuration Directive
 
-	Enter a new site configuration directive in the table
+    Enter a new site configuration directive in the table
 
-	Definition:
-		api.create_site_configuration(directive text, value text)
+    Definition:
+        api.create_site_configuration(directive text, value text)
 
-	Arguments:
-		directive - Directive to create
-		value - Value to assign to the new directive
+    Arguments:
+        directive - Directive to create
+        value - Value to assign to the new directive
 
-	Rules:
-		No duplicate directives (primary key)
+    Rules:
+        No duplicate directives (primary key)
 
-	Example:
-		SELECT api.create_site_configuration('EXAMPLE_OPTION','something');
+    Example:
+        SELECT api.create_site_configuration('EXAMPLE_OPTION','something');
 
 3.5.2.8 Remove Site Configuration Directive
 
-	Remove an existing site configuration directive
+    Remove an existing site configuration directive
 
-	Definition: 
-		api.remove_site_configuration(directive text)
+    Definition: 
+        api.remove_site_configuration(directive text)
 
-	Arguments:
-		directive - Directive to remove
+    Arguments:
+        directive - Directive to remove
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.remove_site_configuration('EXAMPLE_OPTION');
+    Example:
+        SELECT api.remove_site_configuration('EXAMPLE_OPTION');
 
 -------------------------------------------------------------------------------
 3.6 Network (Network device architecture)
@@ -1299,178 +1299,178 @@ Table of Contents (line number)
 
 3.7.1 Overview
 
-	System data is the core of the user controlled data in this application. 
-	A system is defined as a sngle computer box. Since computers often have 
-	multiple network interfaces, the ability to do this has been a core 
-	feature of IMPULSE. 
-	
-	An interface is defined as a single device physically connected to the 
-	network. It is identified by the MAC address. If anyone spoofs their MAC 
-	address, find a stick and beat them with it.
-	
+    System data is the core of the user controlled data in this application. 
+    A system is defined as a sngle computer box. Since computers often have 
+    multiple network interfaces, the ability to do this has been a core 
+    feature of IMPULSE. 
+    
+    An interface is defined as a single device physically connected to the 
+    network. It is identified by the MAC address. If anyone spoofs their MAC 
+    address, find a stick and beat them with it.
+    
 3.7.2 Process Flow
 
-	1) Create a system
-	2) Create one or more interfaces on that system
-	3) Associate one or more addresses with each interface
+    1) Create a system
+    2) Create one or more interfaces on that system
+    3) Associate one or more addresses with each interface
 
 3.7.3 Advanced IP Concepts
 
 3.7.3.1 IPv4
 
-	IPv4 addressing allowed for "aliases". An alias is another IP address 
-	on a shared MAC address. So for example, the interface has addresses 
-	'10.0.0.1', '10.0.0.2', '10.0.0.3'. Each respectively corresponds 
-	(in Linux), to 'eth0','eth0:1','eth0:2', etc. As such it is required 
-	to name your alias addresses something similar to the primary. 
+    IPv4 addressing allowed for "aliases". An alias is another IP address 
+    on a shared MAC address. So for example, the interface has addresses 
+    '10.0.0.1', '10.0.0.2', '10.0.0.3'. Each respectively corresponds 
+    (in Linux), to 'eth0','eth0:1','eth0:2', etc. As such it is required 
+    to name your alias addresses something similar to the primary. 
 
 3.7.3.2 IPv6
 
-	IPv6 employes the concept of Secondary addresses, which are similar to 
-	IPv4 aliases. They differ in that secondaries are assigned to the 
-	interface and not to a "sub-interface". For example, eth0:1 will never 
-	occur in IPv6. 
+    IPv6 employes the concept of Secondary addresses, which are similar to 
+    IPv4 aliases. They differ in that secondaries are assigned to the 
+    interface and not to a "sub-interface". For example, eth0:1 will never 
+    occur in IPv6. 
 
 3.7.4 Functions
 
 3.7.4.1 Create System
 
-	Register a new system on the network. There was discussion of allowing 
-	multiple operating systems to be associated, however this feature was 
-	removed due to unncessesary complexity. 
+    Register a new system on the network. There was discussion of allowing 
+    multiple operating systems to be associated, however this feature was 
+    removed due to unncessesary complexity. 
 
-	Definition:
-		api.create_system(system_name text, owner text, type text, 
-		os_name text, comment text)
+    Definition:
+        api.create_system(system_name text, owner text, type text, 
+        os_name text, comment text)
 
-	Arguments:
-		system_name - Name of the system
-		owner - Owning user (NULL for current authenticated user)
-		type - Server, Desktop, Laptop, etc
-		os_name - Primary operating system
-		comment - Comment on the system (or NULL for no comment)
+    Arguments:
+        system_name - Name of the system
+        owner - Owning user (NULL for current authenticated user)
+        type - Server, Desktop, Laptop, etc
+        os_name - Primary operating system
+        comment - Comment on the system (or NULL for no comment)
 
-	Rules:
-		System names must be unique (primary key)
+    Rules:
+        System names must be unique (primary key)
 
-	Example:
-		SELECT api.create_system('Server1',NULL,'Server',
-		'Windows Server 2003','Windows webserver');
+    Example:
+        SELECT api.create_system('Server1',NULL,'Server',
+        'Windows Server 2003','Windows webserver');
 
 3.7.4.2 Remove System
 
-	Remove a system (and all associated records)
+    Remove a system (and all associated records)
 
-	Definition:
-		api.remove_system(system_name text)
+    Definition:
+        api.remove_system(system_name text)
 
-	Arguments:
-		system_name - The name of the system to remove
+    Arguments:
+        system_name - The name of the system to remove
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.remove_system('Server1');
+    Example:
+        SELECT api.remove_system('Server1');
 
 3.7.4.3 Create Interface
 
-	Create an interface on a system
+    Create an interface on a system
 
-	Definition:
-		api.create_interface(system_name text, mac macaddr, comment text)
+    Definition:
+        api.create_interface(system_name text, mac macaddr, comment text)
 
-	Arguments:
-		system_name - Name of the system to create the interface on
-		mac - MAC address of the interface
-		comment - Comment on the interface (or NULL for no comment)
+    Arguments:
+        system_name - Name of the system to create the interface on
+        mac - MAC address of the interface
+        comment - Comment on the interface (or NULL for no comment)
 
-	Rules:
-		MAC addresses must be unique (primary key)
+    Rules:
+        MAC addresses must be unique (primary key)
 
-	Example:
-		SELECT api.create_interface('Server1','00:09:6b:12:34:56',NULL);
+    Example:
+        SELECT api.create_interface('Server1','00:09:6b:12:34:56',NULL);
 
 3.7.4.4 Remove Interface
 
-	Remove an interface from a system
+    Remove an interface from a system
 
-	Definition: 
-		api.remove_interface(mac macaddr)
+    Definition: 
+        api.remove_interface(mac macaddr)
 
-	Arguments:
-		mac - MAC address of the interface
+    Arguments:
+        mac - MAC address of the interface
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.remove_interface('00:09:6b:12:34:56');
+    Example:
+        SELECT api.remove_interface('00:09:6b:12:34:56');
 
 3.7.4.5 Create Interface Address (manual)
 
-	Associate an address with an interface by specifying the IP address
+    Associate an address with an interface by specifying the IP address
 
-	Definition:
-		api.create_interface_address_manual(mac macaddr, name text, 
-		address inet, config text, class text, isprimary boolean, 
-		comment text)
+    Definition:
+        api.create_interface_address_manual(mac macaddr, name text, 
+        address inet, config text, class text, isprimary boolean, 
+        comment text)
 
-	Arguments:
-		mac - MAC address to associate with
-		name - Name of the interface
-		address - Address to register
-		config - Configuration type of the address
-		class - Class of the configuration (or NULL for default)
-		isprimary - Is this address the primary of the interface
-		comment - Comment on the address (or NULL for no comment)
+    Arguments:
+        mac - MAC address to associate with
+        name - Name of the interface
+        address - Address to register
+        config - Configuration type of the address
+        class - Class of the configuration (or NULL for default)
+        isprimary - Is this address the primary of the interface
+        comment - Comment on the address (or NULL for no comment)
 
-	Rules:
-		Only one primary address per MAC (trigger)
-		Config type must match address family (trigger)
+    Rules:
+        Only one primary address per MAC (trigger)
+        Config type must match address family (trigger)
 
-	Example:
-		SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
-		'Local Area Connection','10.0.0.1','DHCP',NULL,TRUE,'Main network');
-		
+    Example:
+        SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
+        'Local Area Connection','10.0.0.1','DHCP',NULL,TRUE,'Main network');
+        
 3.7.4.6 Create Interface Address (auto)
 
-	Pick an address from a given range to associate to an interface
+    Pick an address from a given range to associate to an interface
 
-	Definition:
-		api.create_interface_address_auto(mac macaddr, name text, 
-		range_name text, config text, class text, isprimary boolean, 
-		comment text)
+    Definition:
+        api.create_interface_address_auto(mac macaddr, name text, 
+        range_name text, config text, class text, isprimary boolean, 
+        comment text)
 
-	Arguments:
-		mac - MAC address to associate with
-		name - Name of the interface
-		range_name - Name of the address range to pull from
-		config - Configuration type of the address
-		class - Class of the configuration (or NULL for default)
-		isprimary - Is this address the primary of the interface
-		comment - Comment on the address (or NULL for no comment)
+    Arguments:
+        mac - MAC address to associate with
+        name - Name of the interface
+        range_name - Name of the address range to pull from
+        config - Configuration type of the address
+        class - Class of the configuration (or NULL for default)
+        isprimary - Is this address the primary of the interface
+        comment - Comment on the address (or NULL for no comment)
 
-	Rules:
-		Only one primary address per MAC (trigger)
-		Config type must match address family (trigger)
+    Rules:
+        Only one primary address per MAC (trigger)
+        Config type must match address family (trigger)
 
-	Example:
-		SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
-		'Local Area Connection','Servers','DHCP',NULL,TRUE,'Main network');
-		
+    Example:
+        SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
+        'Local Area Connection','Servers','DHCP',NULL,TRUE,'Main network');
+        
 3.7.4.7 Remove Interface Address
 
-	Remove an associated address from an interface
+    Remove an associated address from an interface
 
-	Definition:
-		api.remove_interface_address(address inet)
+    Definition:
+        api.remove_interface_address(address inet)
 
-	Arguments:
-		address - IP address to deregister
+    Arguments:
+        address - IP address to deregister
 
-	Rules:
-		None
+    Rules:
+        None
 
-	Example:
-		SELECT api.remove_interface_address('10.0.0.1');
+    Example:
+        SELECT api.remove_interface_address('10.0.0.1');
