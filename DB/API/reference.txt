@@ -709,17 +709,221 @@ Table of Contents (line number)
 3.3 Firewall (Access control from the outside world)
 -------------------------------------------------------------------------------
 
-api.create_firewall_metahost_member(address inet, metahost text)
-api.remove_firewall_metahost_member(address inet)
-api.modify_firewall_default(address inet, action boolean)
-api.create_metahost(name text, comment text)
-api.remove_metahost(name text)
-api.create_metahost_rule(name text, port integer, transport text, deny boolean, comment text)
-api.remove_metahost_rule(name text, port integer, transport text)
-api.create_firewall_system(name text, subnet cidr, software text)
-api.remove_firewall_system(name text)
-api.create_firewall_rule(address inet, port integer, transport text, deny boolean, comment text)
-api.remove_firewall_rule(address inet, port integer, transport text)
+3.3.1 Overview
+
+	IMPULSE allows for the management of firewall rules for configured 
+	addresses. Addresses (interfaces) can have individual firewall rules 
+	or be a member of a Metahost, or group of hosts. A metahost will apply 
+	its rules to all members equally, thus providing for a single set of 
+	rules for all devices. 
+
+	Different firewall software packages have differences in syntax, so 
+	IMPULSE tracks what firewall systems run what software to provide for the 
+	proper output. 
+
+3.3.2 Functions
+
+3.3.2.1 Create metahost membership
+	
+	Assign an IP address to a metahost
+	
+	Definition:
+		api.create_firewall_metahost_member(address inet, metahost text)
+	
+	Arguments:
+		address - The address to assign
+		metahost - The metahost name to assign the address to
+	
+	Rules:
+		Once you are a member of a metahost, you cannot have other rules
+		You can only be a member of one metahost
+	
+	Example:
+		SELECT api.create_firewall_metahost_member('10.0.0.1','Servers');
+		
+3.3.2.2 Remove metahost membership
+	
+	Remove an address from any metahost it might be attached to
+	
+	Definition:
+		api.remove_firewall_metahost_member(address inet)
+	
+	Arguments:
+		address - The IP address to remove
+	
+	Rules:
+		None
+	
+	Example:
+		SELECT api.remove_firewall_metahost_member('10.0.0.1');
+	
+3.3.2.3 Modify device default action
+	
+	Change the default firewall action for an address
+	
+	Definition:
+		api.modify_firewall_default(address inet, action boolean)
+	
+	Arguments:
+		address - The address to alter
+		action - TRUE for block all traffic, FALSE for allow all traffic
+	
+	Rules:
+		Cannot remove a default action, only modify
+	
+	Example:
+		SELECT pi.modify_firewall_default('10.0.0.1',TRUE);
+	
+3.3.2.4 Create metahost
+	
+	Create a new metahost
+	
+	Definition:
+		api.create_metahost(name text, comment text)
+	
+	Arguments:
+		name - The name of the metahost
+		comment - A comment on the new metahost (or NULL for no comment)
+	
+	Rules:
+		Names must be unique (primary key)
+	
+	Example:
+		SELECT api.create_metahost('Servers','All servers on the network');
+	
+3.3.2.5 Remove metahost
+	
+	Remove a metahost from the database. This will also erase all rules 
+	associated with its members.
+	
+	Definition:
+		api.remove_metahost(name text)
+	
+	Arguments:
+		name - The name of the metahost to remove
+	
+	Rules:
+		None
+	
+	Example:
+		SELECT api.remove_metahost('Servers');
+	
+3.3.2.6 Create metahost rule
+	
+	Create a new rule for a metahost to be applied to all members.
+	
+	Definition:
+		api.create_metahost_rule(name text, port integer, transport text, 
+		deny boolean, comment text)
+	
+	Arguments:
+		name - Metahost name to apply to
+		port - Port to perform the action on
+		transport - TCP or UDP or BOTH
+		deny - TRUE or FALSE to deny traffic
+		comment - A comment on the rule
+	
+	Rules:
+		No conflicting rules (Deny and Allow a port?) (primary key)
+	
+	Example:
+		SELECT api.create_metahost_rule('Servers',22,'TCP',FALSE,
+		'Allow SSH traffic');
+	
+3.3.2.7 Remove metahost rule
+
+	Delete a metahost rule and erase all references to it.
+	
+	Definition:
+		api.remove_metahost_rule(name text, port integer, transport text)
+	
+	Arguments:
+		name - The metahost name this rule applied to
+		port - The port of the rule
+		transport - TCP or UDP or BOTH
+	
+	Rules:
+		None
+	
+	Example:
+		SELECT api.remove_metahost_rule('Servers',22,'TCP');
+	
+3.3.2.8 Create Firewall System
+
+	Establish a system as a firewall and specify its software so the proper 
+	rule syntax can be used.
+	
+	Definition:
+		api.create_firewall_system(name text, subnet cidr, software text)
+	
+	Arguments:
+		name - The system name of the firewall
+		subnet - The subnet for which this system controls
+		software - The system software
+	
+	Rules:
+		A system may control more than 1 subnet
+	
+	Example:
+		SELECT api.create_firewall_system('Firewall1','10.0.0.0/24',
+		'Cisco IOS');
+	
+3.3.2.9 Remove Firewall System
+	
+	Delete a firewall system from the database
+	
+	Definition:
+		api.remove_firewall_system(name text)
+	
+	Arguments:
+		name - Name of the firewall system to remove
+	
+	Rules:
+		None
+	
+	Example:
+		SELECT pi.remove_firewall_system('Firewall1');
+	
+3.3.2.10 Create Rule
+	
+	Create a new standalone firewall rule
+	
+	Definition:
+		api.create_firewall_rule(address inet, port integer, transport text, 
+		deny boolean, comment text)
+	
+	Arguments:
+		address - Address to apply the rule to
+		port - Port to perform on
+		transport - TCP or UDP or BOTH
+		deny - TRUE to Deny traffic, FALSE to allow traffic
+		comment - A comment on the rule (or NULL for no comment)
+	
+	Rules:
+		Unique actions per port/transport (primary key)
+		Cannot be a member of a metahost
+	
+	Example:
+		SELECT api.create_firewall_rule('10.0.0.1',22,'TCP',TRUE,
+		'Block SSH traffic');
+	
+3.3.2.11 Remove a Rule
+
+	Erase a standalone rule
+	
+	Definition:
+		api.remove_firewall_rule(address inet, port integer, transport text)
+	
+	Arguments:
+		address - Address of the rule to remove
+		port - Port to affect
+		transport - TCP or UDP or BOTH
+	
+	Rules:
+		None
+	
+	Example:
+		SELECT api.remove_firewall_rule('10.0.0.1',22,'TCP');
 
 -------------------------------------------------------------------------------
 3.4 IP (Network address resources)
