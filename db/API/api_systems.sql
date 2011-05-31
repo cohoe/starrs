@@ -137,7 +137,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_range');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_auto"(macaddr, text, text, text, text) IS 'create a new address on interface from a range';
+COMMENT ON FUNCTION "api"."create_interface_address_auto"(macaddr, text, text, text, text, boolean, text) IS 'create a new address on interface from a range';
 
 /* API - remove_interface_address
 	1) Check privileges
