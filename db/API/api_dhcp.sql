@@ -140,7 +140,7 @@ COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Dele
 /* API - get_dhcp_default_class
 	1) Get value
 */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_default_class"() RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_site_default_class"() RETURNS TEXT AS $$
 	DECLARE
 		ClassName TEXT;
 	BEGIN
@@ -153,4 +153,4 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcp_default_class"() RETURNS TEXT AS $$
 		RETURN ClassName;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcp_default_class"() IS 'Get the site default DHCP class';
+COMMENT ON FUNCTION "api"."get_dhcp_site_default_class"() IS 'Get the site default DHCP class';
