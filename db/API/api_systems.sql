@@ -108,7 +108,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		
 		-- Fill in class
 		IF input_class IS NULL THEN
-			input_class = api.get_dhcp_default_class();
+			input_class = api.get_dhcp_site_default_class();
 		END IF;
 		
 		-- Create address
@@ -138,7 +138,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macad
 
 		-- Fill in class
 		IF input_class IS NULL THEN
-			input_class = api.get_dhcp_default_class();
+			input_class = api.get_dhcp_site_default_class();
 		END IF;
 		
 		-- Create address
