@@ -154,3 +154,21 @@ CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive tex
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
 
+/* API - get_dhcp_default_class
+	1) Get value
+*/
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_default_class"() RETURNS TEXT AS $$
+	DECLARE
+		ClassName TEXT;
+
+	BEGIN
+		-- Get value
+		SELECT "value" INTO ClassName
+		FROM "management"."configuration"
+		WHERE "option" = 'DHCP_DEFAULT_CLASS';
+
+		-- Done
+		RETURN ClassName;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_default_class"() IS 'Get the site default DHCP class';
