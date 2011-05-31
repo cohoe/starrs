@@ -774,7 +774,7 @@ Table of Contents (line number)
         Cannot remove a default action, only modify
     
     Example:
-        SELECT pi.modify_firewall_default('10.0.0.1',TRUE);
+        SELECT api.modify_firewall_default('10.0.0.1',TRUE);
     
 3.3.2.4 Create metahost
     
