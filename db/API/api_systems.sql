@@ -119,6 +119,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_manual');
 	END;
 $$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_interface_address_manual"(macaddr, text, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
 
 /* API - create_interface_address_auto
 	1) Check privileges
