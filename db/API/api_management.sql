@@ -231,33 +231,3 @@ CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VO
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."unlock_process"(text) IS 'Unlock a process for a job';
-
-/* API - get_default_dns_key */
-CREATE OR REPLACE FUNCTION "api"."get_default_dns_key"() RETURNS TEXT AS $$
-	DECLARE
-		Keyname TEXT;
-		
-	BEGIN
-		SELECT "value" INTO Keyname
-		FROM "management"."configuration"
-		WHERE "option" = 'DNS_DEFAULT_KEY';
-		
-		RETURN Keyname;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_default_dns_key"() IS 'Return the site configured DNS key';
-
-/* API - get_default_zone */
-CREATE OR REPLACE FUNCTION "api"."get_default_zone"() RETURNS TEXT AS $$
-	DECLARE
-		Zone TEXT;
-		
-	BEGIN
-		SELECT "value" INTO Zone
-		FROM "management"."configuration"
-		WHERE "option" = 'DNS_DEFAULT_ZONE';
-		
-		RETURN Zone;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_default_zone"() IS 'Return the site configured default DNS zone';
