@@ -154,6 +154,28 @@ CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive tex
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
 
+/* API - modify_site_configuration
+	1) Sanitize input
+	2) Check privileges
+	3) Create directive
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive text, input_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_site_configuration');
+		
+		-- Sanitize input
+		input_directive := api.sanitize_general(input_directive);
+		input_value := api.sanitize_general(input_value);
+		
+		-- Create directive
+		PERFORM api.create_log_entry('API','INFO','modifying directive');
+		UPDATE "management"."configuration" SET "value" = input_value WHERE "option" = input_directive;
+		
+		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_site_configuration');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_site_configuration"(text, text) IS 'Modify a site configuration directive';
+
 /* API - lock_process
 	1) Sanitize input
 	2) Check privileges
