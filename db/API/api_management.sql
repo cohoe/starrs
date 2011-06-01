@@ -153,3 +153,59 @@ CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive tex
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
+
+/* API - lock_process
+	1) Sanitize input
+	2) Check privileges
+	3) Get current status
+	4) Update status
+*/
+CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID AS $$
+	DECLARE
+		Status BOOLEAN;
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.lock_process');
+	
+		-- Sanitize input
+		input_process := api.sanitize_general(input_process);
+
+		-- Get current status
+		SELECT "locked" INTO Status
+		FROM "management"."processes"
+		WHERE "management"."processes"."process" = input_process;
+		IF Status IS TRUE THEN
+			RAISE EXCEPTION 'Process is locked';
+		END IF;
+		
+		-- Update status
+		PERFORM api.create_log_entry('API','INFO','locking process '||input_process);
+		UPDATE "management"."processes" SET "locked" = TRUE WHERE "management"."processes"."process" = input_process;
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.lock_process');
+
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."lock_process"(text) IS 'Lock a process for a job';
+
+/* API - unlock_process
+	1) Sanitize input
+	2) Check privileges
+	3) Update status
+*/
+CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.unlock_process');
+		
+		-- Sanitize input
+		input_process := api.sanitize_general(input_process);
+		
+		-- Update status
+		PERFORM api.create_log_entry('API','INFO','unlocking process '||input_process);
+		UPDATE "management"."processes" SET "locked" = FALSE WHERE "management"."processes"."process" = input_process;
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.unlock_process');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."unlock_process"(text) IS 'Unlock a process for a job';
