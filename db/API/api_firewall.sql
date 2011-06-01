@@ -111,6 +111,7 @@ CREATE OR REPLACE FUNCTION "api"."create_metahost_rule"(input_name text, input_p
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','creating new rule');
 		INSERT INTO "firewall"."metahost_rules" ("name","port","transport","deny","comment")
 		VALUES (input_name, input_port, input_transport, input_deny, input_comment);
 		
@@ -133,6 +134,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost_rule"(input_name text, input_p
 		input_transport := api.sanitize_general(input_transport);
 		
 		-- Remove rule
+		PERFORM api.create_log_entry('API','INFO','removing rule');
 		DELETE FROM "firewall"."metahost_rules" WHERE "name" = input_name AND "port" = input_port AND "transport" = input_transport;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_metahost_rule');
@@ -154,6 +156,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input
 		input_software := api.sanitize_general(input_software);
 		
 		-- Create system
+		PERFORM api.create_log_entry('API','INFO','creating new firewall system');
 		INSERT INTO "firewall"."systems" ("system_name","subnet","software_name") VALUES (input_name, input_subnet, input_software);
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_system');
@@ -174,6 +177,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETUR
 		input_name := api.sanitize_general(input_name);
 		
 		-- Remove system
+		PERFORM api.create_log_entry('API','INFO','removing firewall system');
 		DELETE FROM "firewall"."systems" WHERE "system_name" = input_name;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_system');
@@ -195,6 +199,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','creating firewall rule');
 		INSERT INTO "firewall"."rules" ("address","port","transport","deny","comment","owner")
 		VALUES (input_address, input_port, input_transport, input_deny, input_comment, api.get_current_user());
 		
@@ -216,6 +221,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule"(input_address inet, inpu
 		input_transport := api.sanitize_general(input_transport);
 		
 		-- Remove rule
+		PERFORM api.create_log_entry('API','INFO','removing firewall rule');
 		DELETE FROM "firewall"."rules" WHERE "address" = input_address AND "port" = input_port AND "transport" = input_transport;
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_rule');
@@ -252,6 +258,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		Port INTEGER;
 		Transport VARCHAR(4);
 	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule_program');
+
 		-- Sanitize input
 		input_program := api.sanitize_general(input_program);
 
@@ -261,9 +269,13 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		WHERE "name" = input_program;
 
 		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','creating new rule from program');
 		INSERT INTO "firewall"."rules"
 		("address","port","transport","deny","owner") VALUES
 		(input_address,Port,Transport,input_deny,api.get_current_user());
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule_program');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean) IS 'Create a firewall rule based on a common program.';
@@ -279,6 +291,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 		Port INTEGER;
 		Transport VARCHAR(4);
 	BEGIN
+			PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_rule_program');
+
 		-- Sanitize input
 		input_program := api.sanitize_general(input_program);
 
@@ -288,10 +302,14 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 		WHERE "name" = input_program;
 
 		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','removing rule based on program');
 		DELETE FROM "firewall"."rules"
 		WHERE "firewall"."rules"."address" = input_address
 		AND "firewall"."rules"."port" = Port
 		AND "firewall"."rules"."transport" = Transport;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_rule_program');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove a firewall rule based on a common program.';
