@@ -942,6 +942,42 @@ Table of Contents (line number)
         
     Example:
         SELECT api.get_firewall_site_default();
+		
+3.3.2.13 Create Rule From Program
+
+	Create a firewall rule from a common program registered in the application
+	
+	Definition:
+		api.create_firewall_rule_program(address inet, program text, 
+		deny boolean)
+	
+	Arguments:
+		address - The address to create the rule on
+		program - The name of the program to act upon
+		deny - TRUE to deny traffic, FALSE to allow
+		
+	Rules:
+		None
+		
+	Example:
+		SELECT api.create_firewall_rule_program('10.0.0.1','SSH',TRUE);
+		
+3.3.2.14 Remove Rule Based On Program
+
+	Remove a firewall rule from a common program registered in the application
+	
+	Definition:
+		api.remove_firewall_rule_program(address inet, program text)
+	
+	Arguments:
+		address - The address to create the rule on
+		program - The name of the program to act upon
+		
+	Rules:
+		None
+		
+	Example:
+		SELECT api.remove_firewall_rule_program('10.0.0.1','SSH');
         
 -------------------------------------------------------------------------------
 3.4 IP (Network address resources)
@@ -1522,6 +1558,8 @@ Table of Contents (line number)
     Create Rule - 3.3.2.10
     Remove a Rule - 3.3.2.11
     Get Site Default Action - 3.3.2.12
+	Create Rule From Program - 3.3.2.13
+	Remove Rule From Program - 3.3.2.14
 
 4.4 IP
 
