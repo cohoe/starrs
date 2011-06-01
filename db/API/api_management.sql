@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 	DECLARE
 		BadCrap TEXT;
 	BEGIN
-		BadCrap = regexp_replace(input, E'[a-z0-9\_\.\:\/ \(\)]*\-*', '', 'gi');
+		BadCrap = regexp_replace(input, E'[a-z0-9\_\,\.\:\/ \(\)]*\-*', '', 'gi');
 		IF BadCrap != '' THEN
 			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
 		END IF;
