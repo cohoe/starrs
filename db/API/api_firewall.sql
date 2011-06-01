@@ -267,3 +267,31 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean) IS 'Create a firewall rule based on a common program.';
+
+/* API - remove_firewall_rule_program
+	1) Sanitize input
+	2) Check privileges
+	3) Get program information
+	4) Remove rule
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address inet, input_program text) RETURNS VOID AS $$
+	DECLARE
+		Port INTEGER;
+		Transport VARCHAR(4);
+	BEGIN
+		-- Sanitize input
+		input_program := api.sanitize_general(input_program);
+
+		-- Get program information
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		FROM "firewall"."programs"
+		WHERE "name" = input_program;
+
+		-- Create rule
+		DELETE FROM "firewall"."rules"
+		WHERE "firewall"."rules"."address" = input_address
+		AND "firewall"."rules"."port" = Port
+		AND "firewall"."rules"."transport" = Transport;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove a firewall rule based on a common program.';
