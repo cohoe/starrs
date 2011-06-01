@@ -74,3 +74,31 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport_range"(input_prefix text, fi
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_switchport_range"(text, integer, integer, text, text, text) IS 'Create a range of switchports';
+
+/* API - remove_switchport_range
+	1) Sanitize input
+	2) Check privileges
+	3) Remove ports
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_switchport_range"(input_prefix text, first_port integer, last_port integer, input_system_name text) RETURNS VOID AS $$
+	DECLARE
+		Counter INTEGER;
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_switchport_range');
+
+		-- Sanitize input
+		input_prefix := api.sanitize_general(input_prefix);
+		input_system_name := api.sanitize_general(input_system_name);
+		Counter := first_port;
+
+		-- Create ports
+		PERFORM api.create_log_entry('API','INFO','removing lots of switchports');
+		WHILE Counter != last_port + 1 LOOP
+			PERFORM api.remove_switchport(input_prefix||Counter, input_system_name);
+			Counter := Counter + 1;
+		END LOOP;
+		
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_switchport_range');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_switchport_range"(text, integer, integer, text) IS 'Remove a range of switchports from a system';
