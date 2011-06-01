@@ -42,7 +42,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		-- Check for one DHCPable address per MAC
 		IF NEW."config" !~* 'static' THEN
 			SELECT COUNT(*) INTO RowCount
-			FROM "systems"."interfaces"
+			FROM "systems"."interface_addresses"
 			WHERE "systems"."interface_addresses"."family" = NEW."family"
 			AND "systems"."interface_addresses"."config" ~* 'dhcp';
 			IF (RowCount > 0) THEN
