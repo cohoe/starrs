@@ -942,42 +942,42 @@ Table of Contents (line number)
         
     Example:
         SELECT api.get_firewall_site_default();
-		
+        
 3.3.2.13 Create Rule From Program
 
-	Create a firewall rule from a common program registered in the application
-	
-	Definition:
-		api.create_firewall_rule_program(address inet, program text, 
-		deny boolean)
-	
-	Arguments:
-		address - The address to create the rule on
-		program - The name of the program to act upon
-		deny - TRUE to deny traffic, FALSE to allow
-		
-	Rules:
-		None
-		
-	Example:
-		SELECT api.create_firewall_rule_program('10.0.0.1','SSH',TRUE);
-		
+    Create a firewall rule from a common program registered in the application
+    
+    Definition:
+        api.create_firewall_rule_program(address inet, program text, 
+        deny boolean)
+    
+    Arguments:
+        address - The address to create the rule on
+        program - The name of the program to act upon
+        deny - TRUE to deny traffic, FALSE to allow
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.create_firewall_rule_program('10.0.0.1','SSH',TRUE);
+        
 3.3.2.14 Remove Rule Based On Program
 
-	Remove a firewall rule from a common program registered in the application
-	
-	Definition:
-		api.remove_firewall_rule_program(address inet, program text)
-	
-	Arguments:
-		address - The address to create the rule on
-		program - The name of the program to act upon
-		
-	Rules:
-		None
-		
-	Example:
-		SELECT api.remove_firewall_rule_program('10.0.0.1','SSH');
+    Remove a firewall rule from a common program registered in the application
+    
+    Definition:
+        api.remove_firewall_rule_program(address inet, program text)
+    
+    Arguments:
+        address - The address to create the rule on
+        program - The name of the program to act upon
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_firewall_rule_program('10.0.0.1','SSH');
         
 -------------------------------------------------------------------------------
 3.4 IP (Network address resources)
@@ -1311,14 +1311,14 @@ Table of Contents (line number)
         SELECT api.create_switchport('Gi0/1','Head Switch','Uplink',
         'Master Uplink');
 
-3.6.2.1 Remove Switchport
+3.6.2.2 Remove Switchport
 
     Remove a switchport from a system
     
     Definition:
         api.remove_switchport(port_name text, system_name text)
         
-    Arguments
+    Arguments:
         port_name - Name of the port to remove
         system_name - Name of the system to remove the port from
         
@@ -1327,7 +1327,50 @@ Table of Contents (line number)
         
     Example: 
         SELECT api.remove_switchport('Gi0/1','Head Switch');
+        
+3.6.2.3 Create Switchport Range
 
+    Create a large amount of ports between two number identifiers
+    
+    Definition:
+        api.create_switchport_range(prefix text, first_port integer, 
+        last_port integer, system_name text, port_type text, 
+        description text)
+        
+    Arguments:
+        prefix - Name prefix for ports
+        first_port - First port identifier
+        last_port - Last port identifer
+        system_name - Name of the system to create on
+        port_type - Type of the ports
+        description - Description of all ports
+
+    Rules:
+        None
+
+    Example:
+        SELECT api.create_switchport_range('Gi0/',1,48,'switch1','access',
+        'All machine ports');
+    
+3.6.2.4 Remove Switchport Range
+
+    Remove a large amount of ports
+    
+    Definition:
+        api.remove_switchport_range(input_prefix text, first_port integer, 
+        last_port integer, input_system_name text)
+        
+    Arguments:
+        input_prefix - Name prefix of the ports
+        first_port - First port identifier
+        last_port - Last port identifier
+        input_system_name - System name to remove from
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_switchport_range('Gi0/',1,48,'switch1');
 
 -------------------------------------------------------------------------------
 3.7 Systems (User machine data)
@@ -1558,8 +1601,8 @@ Table of Contents (line number)
     Create Rule - 3.3.2.10
     Remove a Rule - 3.3.2.11
     Get Site Default Action - 3.3.2.12
-	Create Rule From Program - 3.3.2.13
-	Remove Rule From Program - 3.3.2.14
+    Create Rule From Program - 3.3.2.13
+    Remove Rule From Program - 3.3.2.14
 
 4.4 IP
 
@@ -1584,7 +1627,9 @@ Table of Contents (line number)
 4.6 Network
 
     Create Switchport - 3.6.2.1
-    Remove Switchport - 3.6.2.1
+    Remove Switchport - 3.6.2.2
+    Create Switchport Range - 3.6.2.3
+    Remove Switchport Range - 3.6.2.4 
 
 4.7 Systems
 
