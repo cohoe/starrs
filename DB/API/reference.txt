@@ -1272,7 +1272,40 @@ Table of Contents (line number)
 
     Example:
         SELECT api.remove_site_configuration('EXAMPLE_OPTION');
+        
+3.5.2.9 Lock Process
 
+    Lock a process for an output job run
+    
+    Definition:
+        api.lock_process(input_process text)
+        
+    Arguments:
+        input_process - The name of the process
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.lock_process('NSUPDATE');
+    
+3.5.2.10 Unlock Process
+
+    Unlock a job process
+    
+    Definition:
+        api.unlock_process(input_process text)
+        
+    Arguments:
+        input_process - The name of the process
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.unlock_process('NSUPDATE');
+
+    
 -------------------------------------------------------------------------------
 3.6 Network (Network device architecture)
 -------------------------------------------------------------------------------
@@ -1623,6 +1656,8 @@ Table of Contents (line number)
     Renew System - 3.5.2.6
     Create Site Configuration Directive - 3.5.2.7
     Remove Site Configuration Directive - 3.5.2.8
+    Lock Process - 3.5.2.9
+    Unlock Process - 3.5.2.10
 
 4.6 Network
 
