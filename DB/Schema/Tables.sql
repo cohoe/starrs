@@ -41,7 +41,7 @@ CONSTRAINT "programs_pkey" PRIMARY KEY ("port")
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."defaults"(
-"deny" BOOLEAN NOT NULL DEFAULT TRUE,
+"deny" BOOLEAN NOT NULL DEFAULT api.get_firewall_site_default(),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
@@ -349,10 +349,10 @@ CREATE TABLE "firewall"."systems"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"system_name" TEXT NOT NULL,
+"system_name" TEXT,
 "subnet" CIDR NOT NULL,
 "software_name" TEXT NOT NULL,
-CONSTRAINT "systems_pkey" PRIMARY KEY ("system_name")
+CONSTRAINT "systems_pkey" PRIMARY KEY ("subnet")
 )
 WITHOUT OIDS;
 
@@ -423,6 +423,13 @@ CONSTRAINT "metahost_rules_pkey" PRIMARY KEY ("port","transport","name")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "management"."processes"(
+"process" TEXT NOT NULL,
+"locked" BOOLEAN NOT NULL,
+CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
+)
+WITHOUT OIDS;
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -484,3 +491,5 @@ COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
 COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
 
 COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+
+COMMENT ON TABLE "management"."processes" IS 'Process locking control'
