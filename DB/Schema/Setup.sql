@@ -1,5 +1,5 @@
 /* Public */
-DROP SCHEMA IF EXISTS "public"
+DROP SCHEMA IF EXISTS "public";
 
 /*Schema firewall*/
 CREATE SCHEMA "firewall";
