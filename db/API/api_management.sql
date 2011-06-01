@@ -224,3 +224,18 @@ CREATE OR REPLACE FUNCTION "api"."get_default_dns_key"() RETURNS TEXT AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_default_dns_key"() IS 'Return the site configured DNS key';
+
+/* API - get_default_zone */
+CREATE OR REPLACE FUNCTION "api"."get_default_zone"() RETURNS TEXT AS $$
+	DECLARE
+		Zone TEXT;
+		
+	BEGIN
+		SELECT "value" INTO Zone
+		FROM "management"."configuration"
+		WHERE "option" = 'DNS_DEFAULT_ZONE';
+		
+		RETURN Zone;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_default_zone"() IS 'Return the site configured default DNS zone';
