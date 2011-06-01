@@ -1,6 +1,3 @@
-/*Schema public*/
---CREATE SCHEMA "public";
-
 set search_path TO "public";
 
 /*Schema firewall*/
