@@ -31,9 +31,8 @@ COMMENT ON FUNCTION "api"."create_subnet"(cidr, text, text, boolean, boolean) IS
 
 /* API - remove_subnet
 	1) Check privileges
-	2) Sanitize input
-	3) Delete RDNS zone
-	4) Delete subnet record
+	2) Delete RDNS zone
+	3) Delete subnet record
 */
 CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID AS $$
 	DECLARE
@@ -41,9 +40,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 		WasAuto BOOLEAN;
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_subnet');
-
-		-- Sanitize input
-		input_subnet := api.sanitize_general(input_subnet);
 
 		-- Delete RDNS zone
 		PERFORM api.create_log_entry('API', 'INFO', 'removing rdns zone for subnet');
