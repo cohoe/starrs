@@ -25,7 +25,7 @@ CREATE SCHEMA "network";
 CREATE SCHEMA "api";
 
 /*Sequence Output ID*/
-CREATE SEQUENCE "output_id_seq";
+CREATE SEQUENCE "management"."output_id_seq";
 
 /*Language plperl*/
 CREATE LANGUAGE "plperl";
@@ -38,7 +38,7 @@ CREATE TABLE "firewall"."metahosts"(
 "comment" TEXT,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" VARCHAR NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 CONSTRAINT "metahosts_pkey" PRIMARY KEY ("name")
 )
@@ -48,7 +48,7 @@ CREATE TABLE "firewall"."transports"(
 "transport" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT,
+"last_modifier" TEXT DEFAULT api.get_current_user(),
 CONSTRAINT "transports_pkey" PRIMARY KEY ("transport")
 )
 WITHOUT OIDS;
@@ -58,7 +58,7 @@ CREATE TABLE "dhcp"."class_options"(
 "value" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "class" TEXT NOT NULL,
 CONSTRAINT "class_options_pkey" PRIMARY KEY ("option","value","class")
 )
@@ -70,16 +70,16 @@ CREATE TABLE "firewall"."programs"(
 "transport" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "programs_pkey" PRIMARY KEY ("port")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."defaults"(
-"deny" BOOLEAN NOT NULL DEFAULT TRUE,
+"deny" BOOLEAN NOT NULL DEFAULT api.get_firewall_site_default(),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "address" INET NOT NULL,
 CONSTRAINT "defaults_pkey" PRIMARY KEY ("address")
 )
@@ -93,7 +93,7 @@ CREATE TABLE "firewall"."rules"(
 "address" INET NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 CONSTRAINT "rules_pkey" PRIMARY KEY ("port","transport","address")
 )
@@ -104,14 +104,14 @@ CREATE TABLE "ip"."range_uses"(
 "comment" TEXT,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "range_uses_pkey" PRIMARY KEY ("use")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "systems"."device_types"(
 "type" TEXT NOT NULL,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 CONSTRAINT "device_types_pkey" PRIMARY KEY ("type")
@@ -124,10 +124,11 @@ CREATE TABLE "ip"."subnets"(
 "autogen" BOOLEAN NOT NULL DEFAULT TRUE,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
 "zone" TEXT DEFAULT 'localdomain',
+"dhcp_enable" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "subnets_pkey" PRIMARY KEY ("subnet")
 )
 WITHOUT OIDS;
@@ -139,7 +140,7 @@ CREATE TABLE "ip"."ranges"(
 "use" VARCHAR(4) NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "subnet" CIDR,
 CONSTRAINT "ranges_pkey" PRIMARY KEY ("name")
@@ -150,7 +151,7 @@ CREATE TABLE "dns"."ns"(
 "isprimary" BOOLEAN NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 3600,
@@ -164,7 +165,7 @@ CREATE TABLE "systems"."os_family"(
 "family" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "os_family_pkey" PRIMARY KEY ("family")
 )
 WITHOUT OIDS;
@@ -176,7 +177,7 @@ CREATE TABLE "network"."switchports"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "attached_mac" MACADDR,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT NOT NULL,
 CONSTRAINT "switchports_pkey" PRIMARY KEY ("port_name","system_name")
 )
@@ -187,13 +188,14 @@ CREATE TABLE "systems"."interface_addresses"(
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "comment" TEXT,
 "address" INET NOT NULL,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "config" TEXT NOT NULL,
-"family" VARCHAR NOT NULL,
-"isprimary" VARCHAR NOT NULL,
+"family" INTEGER NOT NULL,
+"isprimary" BOOLEAN NOT NULL,
 "renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
 "mac" MACADDR,
 "class" TEXT,
+"name" TEXT NOT NULL,
 CONSTRAINT "interface_addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
@@ -203,7 +205,7 @@ CREATE TABLE "dhcp"."classes"(
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "classes_pkey" PRIMARY KEY ("class")
 )
 WITHOUT OIDS;
@@ -227,7 +229,7 @@ CREATE TABLE "dhcp"."subnet_options"(
 "value" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "subnet" CIDR NOT NULL,
 CONSTRAINT "subnet_options_pkey" PRIMARY KEY ("option","value","subnet")
 )
@@ -237,7 +239,7 @@ CREATE TABLE "firewall"."metahost_members"(
 "address" INET NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT,
 CONSTRAINT "metahost_members_pkey" PRIMARY KEY ("address")
 )
@@ -246,10 +248,10 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."config_types"(
 "config" TEXT NOT NULL,
 "comment" TEXT,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"family" VARCHAR NOT NULL,
+"family" INTEGER NOT NULL,
 CONSTRAINT "config_types_pkey" PRIMARY KEY ("config")
 )
 WITHOUT OIDS;
@@ -260,7 +262,7 @@ CREATE TABLE "systems"."os"(
 "family" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "os_pkey" PRIMARY KEY ("name")
 )
 WITHOUT OIDS;
@@ -270,7 +272,7 @@ CREATE TABLE "dns"."pointers"(
 "extra" TEXT,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
@@ -286,7 +288,7 @@ CREATE TABLE "network"."switchport_types"(
 "type" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "switchport_types_pkey" PRIMARY KEY ("type")
 )
 WITHOUT OIDS;
@@ -295,7 +297,7 @@ CREATE TABLE "dns"."mx"(
 "preference" INTEGER NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 3600,
@@ -311,8 +313,9 @@ CREATE TABLE "dns"."zones"(
 "keyname" TEXT NOT NULL,
 "date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
+"comment" TEXT,
 CONSTRAINT "zones_pkey" PRIMARY KEY ("zone")
 )
 WITHOUT OIDS;
@@ -322,7 +325,8 @@ CREATE TABLE "dns"."keys"(
 "key" TEXT NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"comment" TEXT,
 CONSTRAINT "keys_pkey" PRIMARY KEY ("keyname")
 )
 WITHOUT OIDS;
@@ -331,7 +335,7 @@ CREATE TABLE "ip"."addresses"(
 "address" INET NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
@@ -340,7 +344,7 @@ CREATE TABLE "dns"."txt"(
 "text" TEXT NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
@@ -357,8 +361,7 @@ CREATE TABLE "management"."log_master"(
 "user" TEXT NOT NULL,
 "message" TEXT,
 "source" TEXT NOT NULL,
-"severity" VARCHAR NOT NULL,
-CONSTRAINT "log_master_pkey" PRIMARY KEY ("timestamp")
+"severity" TEXT NOT NULL
 )
 WITHOUT OIDS;
 
@@ -366,7 +369,7 @@ CREATE TABLE "dns"."a"(
 "hostname" VARCHAR(63) NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 300,
@@ -380,16 +383,16 @@ WITHOUT OIDS;
 CREATE TABLE "firewall"."systems"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
-"system_name" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"system_name" TEXT,
 "subnet" CIDR NOT NULL,
 "software_name" TEXT NOT NULL,
-CONSTRAINT "systems_pkey" PRIMARY KEY ("system_name")
+CONSTRAINT "systems_pkey" PRIMARY KEY ("subnet")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "management"."output"(
-"output_id" VARCHAR NOT NULL DEFAULT NEXTVAL('output_id_seq'),
+"output_id" INTEGER NOT NULL DEFAULT NEXTVAL('"management"."output_id_seq"'),
 "value" TEXT,
 "file" TEXT,
 "timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -399,18 +402,17 @@ WITHOUT OIDS;
 
 CREATE TABLE "systems"."interfaces"(
 "mac" MACADDR NOT NULL,
-"name" TEXT NOT NULL,
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT,
 CONSTRAINT "interfaces_pkey" PRIMARY KEY ("mac")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "management"."privileges"(
-"privilege" VARCHAR NOT NULL,
+"privilege" TEXT NOT NULL,
 "comment" TEXT,
 CONSTRAINT "privileges_pkey" PRIMARY KEY ("privilege")
 )
@@ -418,8 +420,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "management"."user_privileges"(
 "username" TEXT NOT NULL,
-"privilege" VARCHAR NOT NULL,
-"allow" VARCHAR NOT NULL DEFAULT FALSE,
+"privilege" TEXT NOT NULL,
+"allow" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "user_privileges_pkey" PRIMARY KEY ("username","privilege")
 )
 WITHOUT OIDS;
@@ -427,94 +429,113 @@ WITHOUT OIDS;
 CREATE TABLE "management"."configuration"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "configuration_pkey" PRIMARY KEY ("option")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."software"(
 "software_name" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "software_pkey" PRIMARY KEY ("software_name")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."metahost_rules"(
 "deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"port" VARCHAR NOT NULL,
+"port" INTEGER NOT NULL,
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL DEFAULT 'Database Root',
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "transport" TEXT NOT NULL,
 "name" TEXT NOT NULL,
 CONSTRAINT "metahost_rules_pkey" PRIMARY KEY ("port","transport","name")
 )
 WITHOUT OIDS;
 
-COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
+CREATE TABLE "management"."processes"(
+"process" TEXT NOT NULL,
+"locked" BOOLEAN NOT NULL DEFAULT FALSE,
+CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
+)
+WITHOUT OIDS;
 
-COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
+COMMENT ON TABLE "metahosts" IS 'Groups of addresses with similar firewall rules';
 
-COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
+COMMENT ON TABLE "transports" IS 'TCP, UDP, or Both';
 
-COMMENT ON TABLE "firewall"."programs" IS 'Common programs to easily block.';
+COMMENT ON TABLE "class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
 
-COMMENT ON TABLE "firewall"."defaults" IS 'Address default action';
+COMMENT ON TABLE "programs" IS 'Common programs to easily block.';
 
-COMMENT ON TABLE "firewall"."rules" IS 'The actual rules that get put into the firewall.';
+COMMENT ON TABLE "defaults" IS 'Address default action';
 
-COMMENT ON TABLE "ip"."range_uses" IS 'Ranges are intended for a specific purpose.';
+COMMENT ON TABLE "rules" IS 'The actual rules that get put into the firewall.';
 
-COMMENT ON TABLE "systems"."device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
+COMMENT ON TABLE "range_uses" IS 'Ranges are intended for a specific purpose.';
 
-COMMENT ON TABLE "ip"."subnets" IS 'Subnets for which this application has control';
+COMMENT ON TABLE "device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
 
-COMMENT ON TABLE "ip"."ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
+COMMENT ON TABLE "subnets" IS 'Subnets for which this application has control';
 
-COMMENT ON TABLE "dns"."ns" IS 'Nameservers (to be inserted as NS records)';
+COMMENT ON TABLE "ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
 
-COMMENT ON TABLE "systems"."os_family" IS 'General classification for operating systems.';
+COMMENT ON TABLE "ns" IS 'Nameservers (to be inserted as NS records)';
 
-COMMENT ON TABLE "network"."switchports" IS 'Certain network devices have ports that can be marked with special options.';
+COMMENT ON TABLE "os_family" IS 'General classification for operating systems.';
 
-COMMENT ON TABLE "systems"."interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
+COMMENT ON TABLE "switchports" IS 'Certain network devices have ports that can be marked with special options.';
 
-COMMENT ON TABLE "dhcp"."classes" IS 'DHCP classes allow configuration of hosts in certain ways';
+COMMENT ON TABLE "interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
 
-COMMENT ON TABLE "systems"."systems" IS 'Systems are devices that connect to the network.';
+COMMENT ON TABLE "classes" IS 'DHCP classes allow configuration of hosts in certain ways';
 
-COMMENT ON TABLE "dhcp"."subnet_options" IS 'Options to apply to an entire subnet';
+COMMENT ON TABLE "systems" IS 'Systems are devices that connect to the network.';
 
-COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
+COMMENT ON TABLE "subnet_options" IS 'Options to apply to an entire subnet';
 
-COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
+COMMENT ON TABLE "metahost_members" IS 'Map addresses to metahosts';
 
-COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
+COMMENT ON TABLE "config_types" IS 'List of ways to configure your address';
 
-COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
+COMMENT ON TABLE "os" IS 'Track what primary operating systems are in use on the network.';
 
-COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
+COMMENT ON TABLE "pointers" IS 'CNAMEs and SRV records';
 
-COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
+COMMENT ON TABLE "switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
 
-COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
+COMMENT ON TABLE "mx" IS 'Mail servers (MX records)';
 
-COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
+COMMENT ON TABLE "zones" IS 'Authoritative DNS zones';
 
-COMMENT ON TABLE "ip"."addresses" IS 'Master list of all controlled addresses in the application';
+COMMENT ON TABLE "keys" IS 'Zone keys';
 
-COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
+COMMENT ON TABLE "addresses" IS 'Master list of all controlled addresses in the application';
 
-COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
+COMMENT ON TABLE "txt" IS 'TXT records for hosts';
 
-COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
+COMMENT ON TABLE "log_master" IS 'Record every single transaction that occurs in this application.';
 
-COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
+COMMENT ON TABLE "systems" IS 'Firewall boxes on the network';
 
-COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+COMMENT ON TABLE "output" IS 'Destination of the output functions rather than write a file to disk.';
+
+COMMENT ON TABLE "interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+
+COMMENT ON TABLE "processes" IS 'Process locking control';
 
 ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "class_options_class_option_value_key" UNIQUE ("option","value","class");
 
 COMMENT ON CONSTRAINT "class_options_class_option_value_key" ON "dhcp"."class_options" IS 'No two directives can be the same';
+
+ALTER TABLE "firewall"."programs" ADD CONSTRAINT "firewall_programs_name_key" UNIQUE ("name");
+
+COMMENT ON CONSTRAINT "firewall_programs_name_key" ON "firewall"."programs" IS 'Program names must be unique';
 
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "ranges_first_ip_key" UNIQUE ("first_ip");
 
@@ -559,10 +580,6 @@ COMMENT ON CONSTRAINT "a_hostname_type_key" ON "dns"."a" IS 'Can only have 1 of 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_key" UNIQUE ("address");
 
 COMMENT ON CONSTRAINT "a_address_key" ON "dns"."a" IS 'Addresses in this table must be unique';
-
-ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "systems_interfaces_name_system_name_key" UNIQUE ("system_name","name");
-
-COMMENT ON CONSTRAINT "systems_interfaces_name_system_name_key" ON "systems"."interfaces" IS 'Unique interface names per system';
 
 ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "fk_dhcp_class_options_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
