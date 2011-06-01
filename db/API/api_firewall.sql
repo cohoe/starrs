@@ -240,3 +240,30 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_site_default"() RETURNS BOOLEAN A
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_site_default"() IS 'Return the value of the site firewall default configuration';
+
+/* API - create_firewall_rule_program
+	1) Sanitize input
+	2) Check privileges
+	3) Get program information
+	4) Create rule
+*/
+CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean) RETURNS VOID AS $$
+	DECLARE
+		Port INTEGER;
+		Transport VARCHAR(4);
+	BEGIN
+		-- Sanitize input
+		input_program := api.sanitize_general(input_program);
+
+		-- Get program information
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		FROM "firewall"."programs"
+		WHERE "name" = input_program;
+
+		-- Create rule
+		INSERT INTO "firewall"."rules"
+		("address","port","transport","deny","owner") VALUES
+		(input_address,Port,Transport,input_deny,api.get_current_user());
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean) IS 'Create a firewall rule based on a common program.';
