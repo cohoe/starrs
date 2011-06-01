@@ -17,8 +17,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		-- Create new subnet
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
-			("subnet","name","comment","autogen","owner","dhcp_enable") VALUES
-			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user(),input_dhcp);
+			("subnet","name","comment","autogen","owner","dhcp_enable","zone") VALUES
+			(input_subnet,input_name,input_comment,input_autogen,api.get_current_user(),input_dhcp,api.get_default_zone());
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
