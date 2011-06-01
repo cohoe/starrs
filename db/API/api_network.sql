@@ -73,3 +73,4 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport_range"(input_prefix text, fi
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_switchport_range');
 	END;
 $$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_switchport_range"(text, integer, integer, text, text, text) IS 'Create a range of switchports';
