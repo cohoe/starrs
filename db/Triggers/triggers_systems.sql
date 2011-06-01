@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			RAISE EXCEPTION 'Primary address for this interface and family already exists';
 		ELSIF NEW."isprimary" IS FALSE AND RowCount = 0 THEN
 			-- There is no primary and this is set to not be one.
-			RAISE EXCEPTION 'No primary address exists for this interface and family.';
+			RAISE EXCEPTION 'No primary address exists for this interface (%) and family (%).',NEW."name",NEW."family";
 		END IF;
 
 		-- Check for one DHCPable address per MAC
@@ -44,9 +44,10 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			SELECT COUNT(*) INTO RowCount
 			FROM "systems"."interface_addresses"
 			WHERE "systems"."interface_addresses"."family" = NEW."family"
-			AND "systems"."interface_addresses"."config" ~* 'dhcp';
+			AND "systems"."interface_addresses"."config" ~* 'dhcp'
+			AND "systems"."interface_addresses"."mac" = NEW."mac";
 			IF (RowCount > 0) THEN
-				RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
+				RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC (%) is allowed',NEW."mac";
 			END IF;
 		END IF;
 
@@ -145,7 +146,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				AND "systems"."interface_addresses"."config" !~* 'static';
 
 				IF (RowCount > 0) THEN
-					RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC is allowed';
+					RAISE EXCEPTION 'Only one DHCP/Autoconfig-able address per MAC (%) is allowed',NEW."mac";
 				END IF;
 			END IF;
 
