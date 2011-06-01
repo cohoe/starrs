@@ -420,3 +420,33 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zon
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns txt record for a host';
+
+/* API - get_default_dns_key */
+CREATE OR REPLACE FUNCTION "api"."get_default_dns_key"() RETURNS TEXT AS $$
+	DECLARE
+		Keyname TEXT;
+		
+	BEGIN
+		SELECT "value" INTO Keyname
+		FROM "management"."configuration"
+		WHERE "option" = 'DNS_DEFAULT_KEY';
+		
+		RETURN Keyname;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_default_dns_key"() IS 'Return the site configured DNS key';
+
+/* API - get_default_zone */
+CREATE OR REPLACE FUNCTION "api"."get_default_zone"() RETURNS TEXT AS $$
+	DECLARE
+		Zone TEXT;
+		
+	BEGIN
+		SELECT "value" INTO Zone
+		FROM "management"."configuration"
+		WHERE "option" = 'DNS_DEFAULT_ZONE';
+		
+		RETURN Zone;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_default_zone"() IS 'Return the site configured default DNS zone';
