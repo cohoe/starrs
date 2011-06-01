@@ -2,6 +2,10 @@ ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "class_options_class_option_va
 
 COMMENT ON CONSTRAINT "class_options_class_option_value_key" ON "dhcp"."class_options" IS 'No two directives can be the same';
 
+ALTER TABLE "firewall"."programs" ADD CONSTRAINT "firewall_programs_name_key" UNIQUE ("name");
+
+COMMENT ON CONSTRAINT "firewall_programs_name_key" ON "firewall"."programs" IS 'Program names must be unique';
+
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "ranges_first_ip_key" UNIQUE ("first_ip");
 
 COMMENT ON CONSTRAINT "ranges_first_ip_key" ON "ip"."ranges" IS 'Unique starting IP''s';
