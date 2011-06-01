@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
-		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),NULL,FALSE,'Reverse zone for subnet '||text(input_subnet));
+		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),api.get_default_dns_key(),FALSE,'Reverse zone for subnet '||text(input_subnet));
 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
 	END;
