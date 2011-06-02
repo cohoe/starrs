@@ -48,12 +48,10 @@ COMMENT ON FUNCTION "api"."sanitize_dhcp"(text) IS 'Only allow certain character
 
 /* API - get_current_user */
 CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
-	DECLARE
-		Username TEXT;
 	BEGIN
-		-- Do stuff to check the table
-		Username := 'cohoe_debug';
-		RETURN Username;
+		RETURN (SELECT "username"
+		FROM user_privileges
+		WHERE "privilege" = 'USERNAME');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_current_user"() IS 'Get the username of the current session';
