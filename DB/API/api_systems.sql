@@ -96,7 +96,7 @@ COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface ba
 	3) Fill in class
 	4) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address_manual');
 		
@@ -119,38 +119,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address_manual"(input_mac mac
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_manual');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_manual"(macaddr, text, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
-
-/* API - create_interface_address_auto
-	1) Check privileges
-	2) Sanitize input
-	3) Fill in class
-	4) Create address
-*/
-CREATE OR REPLACE FUNCTION "api"."create_interface_address_auto"(input_mac macaddr, input_name text, input_range_name text, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address_range');
-		
-		-- Sanitize input
-		input_range_name := api.sanitize_general(input_range_name);
-		input_config := api.sanitize_general(input_config);
-		input_class := api.sanitize_general(input_class);
-		input_comment := api.sanitize_general(input_comment);
-
-		-- Fill in class
-		IF input_class IS NULL THEN
-			input_class = api.get_dhcp_site_default_class();
-		END IF;
-		
-		-- Create address
-		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address registration');
-		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
-		(input_mac,input_name,api.get_address_from_range(input_range_name),input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
-		
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address_range');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address_auto"(macaddr, text, text, text, text, boolean, text) IS 'create a new address on interface from a range';
+COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, text, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
 
 /* API - remove_interface_address
 	1) Check privileges
