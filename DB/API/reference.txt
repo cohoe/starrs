@@ -1292,20 +1292,20 @@ Table of Contents (line number)
         
 3.5.2.10 Get Site Configuration Directive
 
-	Get the value of a configured site directive
-	
-	Definition:
-		api.get_site_configuration(input_directive text)
-		
-	Arguments:
-		input_directive - Directive to get the value of
-		
-	Rules:
-		None
-		
-	Example:
-		SELECT api.get_site_configuration('DNS_DEFAULT_ZONE');
-		
+    Get the value of a configured site directive
+    
+    Definition:
+        api.get_site_configuration(input_directive text)
+        
+    Arguments:
+        input_directive - Directive to get the value of
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.get_site_configuration('DNS_DEFAULT_ZONE');
+        
 3.5.2.11 Lock Process
 
     Lock a process for an output job run
@@ -1337,24 +1337,24 @@ Table of Contents (line number)
         
     Example:
         SELECT api.unlock_process('NSUPDATE');
-		
+        
 3.5.2.13 Initialize
 
-	Load all user privileges and set username in the database permissioning 
-	system. This function must be called at the start of every database 
-	connection. 
-	
-	Definition:
-		api.initialize(input_username text)
-		
-	Arguments:
-		input_username - The user who is logging in
-		
-	Rules:
-		None
-		
-	Example:
-		SELECT api.initialize('john.doe');
+    Load all user privileges and set username in the database permissioning 
+    system. This function must be called at the start of every database 
+    connection. 
+    
+    Definition:
+        api.initialize(input_username text)
+        
+    Arguments:
+        input_username - The user who is logging in
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.initialize('john.doe');
 
     
 -------------------------------------------------------------------------------
@@ -1682,10 +1682,10 @@ Table of Contents (line number)
     Create Site Configuration Directive - 3.5.2.7
     Remove Site Configuration Directive - 3.5.2.8
     Modify Site Configuration Directive - 3.5.2.9
-	Get Site Configuration Directive - 3.5.2.10
+    Get Site Configuration Directive - 3.5.2.10
     Lock Process - 3.5.2.11
     Unlock Process - 3.5.2.12
-	Initialize - 3.5.2.13
+    Initialize - 3.5.2.13
 
 4.6 Network
 
