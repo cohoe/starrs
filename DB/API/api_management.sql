@@ -231,3 +231,24 @@ CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VO
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."unlock_process"(text) IS 'Unlock a process for a job';
+
+/* API - initialize
+	1) Sanitize input
+	2) Create privilege table
+	3) Populate privileges
+*/
+CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS VOID AS $$
+	BEGIN
+		-- Sanitize input
+		input_username := api.sanitize_general(input_username);
+		
+		-- Create privilege table
+		CREATE TEMPORARY TABLE user_privileges
+		(username text NOT NULL,privilege text NOT NULL,
+		allow boolean NOT NULL DEFAULT false);
+
+		-- Populate privileges
+		INSERT INTO user_privileges VALUES (input_username,'USERNAME',TRUE);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."initialize"(text) IS 'Setup user access to the database';
