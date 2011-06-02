@@ -429,3 +429,67 @@ CREATE TABLE "management"."processes"(
 CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
 )
 WITHOUT OIDS;
+
+COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
+
+COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
+
+COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
+
+COMMENT ON TABLE "firewall"."programs" IS 'Common programs to easily block.';
+
+COMMENT ON TABLE "firewall"."defaults" IS 'Address default action';
+
+COMMENT ON TABLE "firewall"."rules" IS 'The actual rules that get put into the firewall.';
+
+COMMENT ON TABLE "ip"."range_uses" IS 'Ranges are intended for a specific purpose.';
+
+COMMENT ON TABLE "systems"."device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
+
+COMMENT ON TABLE "ip"."subnets" IS 'Subnets for which this application has control';
+
+COMMENT ON TABLE "ip"."ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
+
+COMMENT ON TABLE "dns"."ns" IS 'Nameservers (to be inserted as NS records)';
+
+COMMENT ON TABLE "systems"."os_family" IS 'General classification for operating systems.';
+
+COMMENT ON TABLE "network"."switchports" IS 'Certain network devices have ports that can be marked with special options.';
+
+COMMENT ON TABLE "systems"."interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
+
+COMMENT ON TABLE "dhcp"."classes" IS 'DHCP classes allow configuration of hosts in certain ways';
+
+COMMENT ON TABLE "systems"."systems" IS 'Systems are devices that connect to the network.';
+
+COMMENT ON TABLE "dhcp"."subnet_options" IS 'Options to apply to an entire subnet';
+
+COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
+
+COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
+
+COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
+
+COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
+
+COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
+
+COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
+
+COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
+
+COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
+
+COMMENT ON TABLE "ip"."addresses" IS 'Master list of all controlled addresses in the application';
+
+COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
+
+COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
+
+COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
+
+COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
+
+COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+
+COMMENT ON TABLE "management"."processes" IS 'Process locking control'
