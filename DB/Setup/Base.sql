@@ -9,7 +9,7 @@ Lets us see what all is on the network
 */
 INSERT INTO "systems"."device_types" 
 	("type") VALUES 
-	('Router'),('Firewall'),('Switch'),('Hub'),('Wireless Access Point'),('Desktop'),('Server'),('Virtual Machine');
+	('Router'),('Firewall'),('Switch'),('Hub'),('Wireless Access Point'),('Desktop'),('Server'),('Virtual Machine'),('Laptop');
 	
 /* Network Port Types
 For configuring views for Uplinks, trunks, and other such things
