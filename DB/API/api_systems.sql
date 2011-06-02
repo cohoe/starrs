@@ -111,6 +111,10 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			input_class = api.get_dhcp_site_default_class();
 		END IF;
 		
+		IF input_address << cidr(api.get_site_configuration('DYNAMIC_SUBNET')) AND input_config !~* 'dhcp' THEN
+			RAISE EXCEPTION 'Specifified address (%) is only for dynamic DHCP addresses',input_address;
+		END IF;
+		
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
 		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
