@@ -1,4 +1,4 @@
-psql -f 01-starter.sql
+psql -f Jumpstart.sql
 psql -f Setup.sql impulse
 psql -f api_dhcp.sql impulse
 psql -f api_dns.sql impulse
@@ -17,5 +17,5 @@ psql -f triggers_management.sql impulse
 psql -f triggers_network.sql impulse
 psql -f triggers_systems.sql impulse
 psql -f triggers.sql impulse
-psql -f views.sql impulse
-psql -f Insert_Base.sql impulse
+psql -f Views.sql impulse
+psql -f Base.sql impulse
