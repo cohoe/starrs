@@ -174,6 +174,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive tex
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_site_configuration"(text, text) IS 'Modify a site configuration directive';
 
+/* API - get_site_configuration
+	1) Sanitize input
+*/
+CREATE OR REPLACE FUNCTION "api"."get_site_configuration"(input_directive text) RETURNS TEXT AS $$
+	BEGIN		
+		-- Sanitize input
+		input_directive := api.sanitize_general(input_directive);
+		
+		RETURN (SELECT "value" FROM "management"."configuration" WHERE "option" = input_directive);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_site_configuration"(text) IS 'Get a site configuration directive';
+
 /* API - lock_process
 	1) Sanitize input
 	2) Check privileges
