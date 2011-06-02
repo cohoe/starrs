@@ -101,9 +101,10 @@ COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP rang
 
 /* API - get_address_from_range
 	1) Sanitize input
-	2) Get range bounds
-	3) Get address from range
-	4) Check if range was full
+	2) Dynamic addressing
+	3) Get range bounds
+	4) Get address from range
+	5) Check if range was full
 */
 CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text) RETURNS INET AS $$
 	DECLARE
@@ -113,6 +114,14 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 	BEGIN
 		-- Sanitize input
 		input_range_name := api.sanitize_general(input_range_name);
+
+		-- Dynamic Addressing
+		IF (SELECT "use" FROM "ip"."ranges" WHERE "name" = input_range_name) = 'ROAM' THEN
+			SELECT "address" INTO AddressToUse FROM "ip"."addresses" 
+			WHERE "address" << cidr(api.get_site_configuration('DYNAMIC_SUBNET'))
+			AND "address" NOT IN (SELECT "address" FROM "systems"."interface_addresses") ORDER BY "address" ASC LIMIT 1;
+			RETURN AddressToUse;
+		END IF;
 	
 		-- Get range bounds
 		SELECT "first_ip","last_ip" INTO LowerBound,UpperBound
