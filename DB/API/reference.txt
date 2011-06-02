@@ -706,38 +706,6 @@ Table of Contents (line number)
         
     Example:
         SELECT api.get_reverse_domain('2001:db0::dead:beef:cafe');
-        
-3.2.4.18 Get Default DNS Key
-
-    Get the site configured default DNS key name
-    
-    Definition:
-        api.get_default_dns_key()
-        
-    Arguments:
-        None
-        
-    Rules:
-        None
-        
-    Example:
-        SELECT api.get_default_dns_key();
-    
-3.2.4.19 Get Default DNS Zone
-
-    Get the site configured default DNS zone
-    
-    Definition:
-        api.get_default_dns_zone()
-
-    Arguments:
-        None
-        
-    Rules:
-        None
-        
-    Example:
-        SELECT api.get_default_dns_zone();
     
 -------------------------------------------------------------------------------
 3.3 Firewall (Access control from the outside world)
@@ -1322,7 +1290,23 @@ Table of Contents (line number)
     Example:
         SELECT api.modify_site_configuration('DNS_DEFAULT_ZONE','example.com');
         
-3.5.2.10 Lock Process
+3.5.2.10 Get Site Configuration Directive
+
+	Get the value of a configured site directive
+	
+	Definition:
+		api.get_site_configuration(input_directive text)
+		
+	Arguments:
+		input_directive - Directive to get the value of
+		
+	Rules:
+		None
+		
+	Example:
+		SELECT api.get_site_configuration('DNS_DEFAULT_ZONE');
+		
+3.5.2.11 Lock Process
 
     Lock a process for an output job run
     
@@ -1338,7 +1322,7 @@ Table of Contents (line number)
     Example:
         SELECT api.lock_process('NSUPDATE');
     
-3.5.2.11 Unlock Process
+3.5.2.12 Unlock Process
 
     Unlock a job process
     
@@ -1353,6 +1337,24 @@ Table of Contents (line number)
         
     Example:
         SELECT api.unlock_process('NSUPDATE');
+		
+3.5.2.13 Initialize
+
+	Load all user privileges and set username in the database permissioning 
+	system. This function must be called at the start of every database 
+	connection. 
+	
+	Definition:
+		api.initialize(input_username text)
+		
+	Arguments:
+		input_username - The user who is logging in
+		
+	Rules:
+		None
+		
+	Example:
+		SELECT api.initialize('john.doe');
 
     
 -------------------------------------------------------------------------------
@@ -1642,8 +1644,6 @@ Table of Contents (line number)
     Create DNS TXT Record - 3.2.4.15
     Remove DNS TXT Record - 3.2.4.16
     Get Reverse Domain From IP Address - 3.2.4.17
-    Get Default DNS Key - 3.2.4.18
-    Get Default DNS Zone - 3.2.4.19
 
 4.3 Firewall
 
@@ -1682,8 +1682,10 @@ Table of Contents (line number)
     Create Site Configuration Directive - 3.5.2.7
     Remove Site Configuration Directive - 3.5.2.8
     Modify Site Configuration Directive - 3.5.2.9
-    Lock Process - 3.5.2.10
-    Unlock Process - 3.5.2.11
+	Get Site Configuration Directive - 3.5.2.10
+    Lock Process - 3.5.2.11
+    Unlock Process - 3.5.2.12
+	Initialize - 3.5.2.13
 
 4.6 Network
 
