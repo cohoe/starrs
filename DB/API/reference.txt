@@ -1568,7 +1568,7 @@ Table of Contents (line number)
     Example:
         SELECT api.remove_interface('00:09:6b:12:34:56');
 
-3.7.4.5 Create Interface Address (manual)
+3.7.4.5 Create Interface Address
 
     Associate an address with an interface by specifying the IP address
 
@@ -1594,33 +1594,7 @@ Table of Contents (line number)
         SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
         'Local Area Connection','10.0.0.1','DHCP',NULL,TRUE,'Main network');
         
-3.7.4.6 Create Interface Address (auto)
-
-    Pick an address from a given range to associate to an interface
-
-    Definition:
-        api.create_interface_address_auto(mac macaddr, name text, 
-        range_name text, config text, class text, isprimary boolean, 
-        comment text)
-
-    Arguments:
-        mac - MAC address to associate with
-        name - Name of the interface
-        range_name - Name of the address range to pull from
-        config - Configuration type of the address
-        class - Class of the configuration (or NULL for default)
-        isprimary - Is this address the primary of the interface
-        comment - Comment on the address (or NULL for no comment)
-
-    Rules:
-        Only one primary address per MAC (trigger)
-        Config type must match address family (trigger)
-
-    Example:
-        SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
-        'Local Area Connection','Servers','DHCP',NULL,TRUE,'Main network');
-        
-3.7.4.7 Remove Interface Address
+3.7.4.6 Remove Interface Address
 
     Remove an associated address from an interface
 
@@ -1724,6 +1698,5 @@ Table of Contents (line number)
     Remove System - 3.7.4.2
     Create Interface - 3.7.4.3
     Remove Interface - 3.7.4.4
-    Create Interface Address (manual) - 3.7.4.5
-    Create Interface Address (auto) - 3.7.4.6
-    Remove Interface Address - 3.7.4.7
+    Create Interface Address - 3.7.4.5
+    Remove Interface Address - 3.7.4.6
