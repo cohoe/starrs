@@ -53,14 +53,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_default"(input_address inet, i
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_firewall_default"(inet, boolean) IS 'modify an addresses default firewall action';
 
-/* API - create_metahost
+/* API - create_firewall_metahost
 	1) Check privileges
 	2) Sanitize input
 	3) Create metahost
 */
-CREATE OR REPLACE FUNCTION "api"."create_metahost"(input_name text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, input_comment text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_metahost');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost');
 
 		-- Sanitize input
 		input_name := api.sanitize_general(input_name);
@@ -71,19 +71,19 @@ CREATE OR REPLACE FUNCTION "api"."create_metahost"(input_name text, input_commen
 		INSERT INTO "firewall"."metahosts" ("name","comment","owner") VALUES 
 		(input_name, input_comment, api.get_current_user());
 		
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_metahost');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_firewall_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_metahost"(text, text) IS 'create a firewall metahost';
+COMMENT ON FUNCTION "api"."create_firewall_metahost"(text, text) IS 'create a firewall metahost';
 
-/* API - remove_metahost
+/* API - remove_firewall_metahost
 	1) Check privileges
 	2) Sanitize input
 	3) Remove metahost
 */
-CREATE OR REPLACE FUNCTION "api"."remove_metahost"(input_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost"(input_name text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_metahost');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost');
 
 		-- Sanitize input
 		input_name := api.sanitize_general(input_name);
@@ -91,19 +91,19 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost"(input_name text) RETURNS VOID
 		-- Create metahost
 		PERFORM api.create_log_entry('API','INFO','removing metahost');
 		DELETE FROM "firewall"."metahosts" WHERE "name" = input_name;		
-		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_metahost');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_firewall_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_metahost"(text) IS 'remove a firewall metahost';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost"(text) IS 'remove a firewall metahost';
 
-/* API - create_metahost_rule
+/* API - create_firewall_metahost_rule
 	1) Check privileges
 	2) Sanitize input
 	3) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_metahost_rule"(input_name text, input_port integer, input_transport text, input_deny boolean, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport text, input_deny boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin create_metahost_rule');
+		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
 		
 		-- Sanitize input
 		input_name := api.sanitize_general(input_name);
@@ -115,19 +115,19 @@ CREATE OR REPLACE FUNCTION "api"."create_metahost_rule"(input_name text, input_p
 		INSERT INTO "firewall"."metahost_rules" ("name","port","transport","deny","comment")
 		VALUES (input_name, input_port, input_transport, input_deny, input_comment);
 		
-		PERFORM api.create_log_entry('API','DEBUG','finish create_metahost_rule');
+		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_metahost_rule"(text, integer, text, boolean, text) IS 'Create a firewall metahost rule';
+COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, text, boolean, text) IS 'Create a firewall metahost rule';
 
-/* API - remove_metahost_rule
+/* API - remove_firewall_metahost_rule
 	1) Check privileges
 	2) Sanitize input
 	3) Remove rule
 */
-CREATE OR REPLACE FUNCTION "api"."remove_metahost_rule"(input_name text, input_port integer, input_transport text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_name text, input_port integer, input_transport text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin remove_metahost_rule');
+		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule');
 		
 		-- Sanitize input
 		input_name := api.sanitize_general(input_name);
@@ -137,10 +137,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_metahost_rule"(input_name text, input_p
 		PERFORM api.create_log_entry('API','INFO','removing rule');
 		DELETE FROM "firewall"."metahost_rules" WHERE "name" = input_name AND "port" = input_port AND "transport" = input_transport;
 		
-		PERFORM api.create_log_entry('API','DEBUG','finish remove_metahost_rule');
+		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
 
 /* API - create_firewall_system
 	1) Check privileges
