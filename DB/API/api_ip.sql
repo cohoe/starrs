@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
 			("subnet","name","comment","autogen","owner","dhcp_enable","zone") VALUES
-			(input_subnet,input_name,input_comment,input_autogen,input_owner,input_dhcp,);
+			(input_subnet,input_name,input_comment,input_autogen,input_owner,input_dhcp,input_zone);
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
