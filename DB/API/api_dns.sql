@@ -457,7 +457,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer) IS 'create a new dns txt record for a host';
+COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer, text) IS 'create a new dns txt record for a host';
 
 /* API - remove_dns_txt
 	1) Sanitize input
