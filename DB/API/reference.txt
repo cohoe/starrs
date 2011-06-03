@@ -500,7 +500,7 @@ Table of Contents (line number)
     Create a new MX record for a mailserver
     
     Definition:
-        api.create_mailserver(hostname text, domain text, preference integer, 
+        api.create_dns_mailserver(hostname text, domain text, preference integer, 
         ttl integer)
 
     Arguments:
@@ -513,14 +513,14 @@ Table of Contents (line number)
         No two records in a zone can have the same preference (unique)
         
     Example:
-        SELECT api.create_mailserver('mail','example.com',10,36500);
+        SELECT api.create_dns_mailserver('mail','example.com',10,36500);
     
 3.2.4.8 Remove DNS Mailserver Record
 
     Remove a MX record for a mailserver
     
     Definition:
-        api.remove_mailserver(hostname text, domain text)
+        api.remove_dns_mailserver(hostname text, domain text)
         
     Arguments:
         hostname - The name of the mailserver
@@ -530,14 +530,14 @@ Table of Contents (line number)
         None
         
     Example:
-        SELECT api.remove_mailserver('mail','example.com');
+        SELECT api.remove_dns_mailserver('mail','example.com');
     
 3.2.4.9 Create DNS Nameserver Record
 
     Creata a new NS record for a nameserver
     
     Definition:
-        api.create_nameserver(hostname text, domain text, isprimary boolean, 
+        api.create_dns_nameserver(hostname text, domain text, isprimary boolean, 
         ttl integer)
 
     Arguments:
@@ -550,14 +550,14 @@ Table of Contents (line number)
         Only one primary NS per zone (trigger)
         
     Example:
-        SELECT api.create_nameserver('ns1','example.com',TRUE,NULL);
+        SELECT api.create_dns_nameserver('ns1','example.com',TRUE,NULL);
     
 3.2.4.10 Remove DNS Nameserver Record
 
     Remove a NS nameserver record
     
     Definition:
-        api.remove_nameserver(hostname text, domain text)
+        api.remove_dns_nameserver(hostname text, domain text)
 
     Arguments:
         hostname - The name of the nameserver
@@ -567,7 +567,7 @@ Table of Contents (line number)
         None
         
     Example:
-        SELECT api.remove_nameserver('ns1','example.com');
+        SELECT api.remove_dns_nameserver('ns1','example.com');
     
 3.2.4.11 Create DNS SRV Record
 
