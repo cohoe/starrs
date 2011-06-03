@@ -1,7 +1,8 @@
 /* API - create_firewall_metahost_member
 	1) Check privileges
 	2) Sanitize Input
-	3) Create member (Insertion triggers new rules to be applied and old rules to be deleted)
+	3) Check for dynamic
+	4) Create member (Insertion triggers new rules to be applied and old rules to be deleted)
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
 	BEGIN
@@ -9,6 +10,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 
 		-- Sanitize Input
 		input_metahost := api.sanitize_general(input_metahost);
+		
+		-- Check for dynamic
+		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
+			RAISE EXCEPTION 'Dynamic hosts cannot be a member of a metahost';
+		END IF;
 
 		-- Create new member
 		PERFORM api.create_log_entry('API','INFO','adding new member to metahost');
@@ -193,7 +199,8 @@ COMMENT ON FUNCTION "api"."remove_firewall_system"(text) IS 'Remove a firewall s
 /* API - create_firewall_rule
 	1) Check privileges
 	2) Sanitize input
-	3) Create rule
+	3) Check for dynamic
+	4) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
 	BEGIN
@@ -203,6 +210,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		input_transport := api.sanitize_general(input_transport);
 		input_comment := api.sanitize_general(input_comment);
 		input_owner := api.sanitize_general(input_owner);
+		
+		-- Check for dynamic
+		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
+			RAISE EXCEPTION 'Dynamic hosts cannot have firewall rules';
+		END IF;
 		
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating firewall rule');
@@ -256,8 +268,9 @@ COMMENT ON FUNCTION "api"."get_firewall_site_default"() IS 'Return the value of 
 /* API - create_firewall_rule_program
 	1) Sanitize input
 	2) Check privileges
-	3) Get program information
-	4) Create rule
+	3) Check for dynamic
+	4) Get program information
+	5) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS VOID AS $$
 	DECLARE
@@ -269,6 +282,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		-- Sanitize input
 		input_program := api.sanitize_general(input_program);
 		input_owner := api.sanitize_general(input_owner);
+		
+		-- Check for dynamic
+		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
+			RAISE EXCEPTION 'Dynamic hosts cannot be a member of a metahost';
+		END IF;
 
 		-- Get program information
 		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
