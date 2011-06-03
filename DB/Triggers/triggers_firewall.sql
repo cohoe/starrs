@@ -14,9 +14,9 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGE
 		WHERE "firewall"."metahosts"."name" = NEW."name";
 		
 		-- Apply metahost rules
-		FOR result IN SELECT "port","transport","deny" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
+		FOR result IN SELECT "port","transport","deny","comment" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
 			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
-			(NEW."address",result.port,result.transport,result.deny,Owner,'"'||NEW."name"||'" - '||NEW."comment");
+			(NEW."address",result.port,result.transport,result.deny,Owner,'"'||NEW."name"||'" - '||result.comment);
 		END LOOP;
 		
 		-- Done
