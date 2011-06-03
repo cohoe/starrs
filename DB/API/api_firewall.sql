@@ -338,3 +338,72 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove a firewall rule based on a common program.';
+
+/* API - create_firewall_metahost_rule_program
+	1) Sanitize input
+	2) Check privileges
+	4) Get program information
+	5) Create rule
+*/
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_name text, input_program text, input_deny boolean) RETURNS VOID AS $$
+	DECLARE
+		Port INTEGER;
+		Transport VARCHAR(4);
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
+
+		-- Sanitize input
+		input_name := api.sanitize_general(input_name);
+		input_program := api.sanitize_general(input_program);
+
+		-- Get program information
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		FROM "firewall"."programs"
+		WHERE "name" = input_program;
+
+		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','creating new metahost rule from program');
+		INSERT INTO "firewall"."metahost_rules"
+		("name","port","transport","deny","comment") VALUES
+		(input_name,Port,Transport,input_deny,'Program on port '||Port||' '||Transport);
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule_program');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_firewall_metahost_rule_program"(text, text, boolean) IS 'Create a firewall rule based on a common program.';
+
+/* API - remove_firewall_metahost_rule_program
+	1) Sanitize input
+	2) Check privileges
+	4) Get program information
+	5) Create rule
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_name text, input_program text) RETURNS VOID AS $$
+	DECLARE
+		Port INTEGER;
+		Transport VARCHAR(4);
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule_program');
+
+		-- Sanitize input
+		input_name := api.sanitize_general(input_name);
+		input_program := api.sanitize_general(input_program);
+
+		-- Get program information
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		FROM "firewall"."programs"
+		WHERE "name" = input_program;
+
+		-- Create rule
+		PERFORM api.create_log_entry('API','INFO','removing metahost rule from program');
+		DELETE FROM "firewall"."metahost_rules"
+		WHERE "firewall"."metahost_rules"."name" = input_name
+		AND "firewall"."metahost_rules"."port" = Port
+		AND "firewall"."metahost_rules"."transport" = Transport;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule_program');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule_program"(text, text) IS 'Create a firewall rule based on a common program.';
