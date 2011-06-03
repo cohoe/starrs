@@ -106,7 +106,7 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost"(text) IS 'remove a firewall
 	2) Sanitize input
 	3) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
 		
@@ -114,16 +114,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text
 		input_name := api.sanitize_general(input_name);
 		input_transport := api.sanitize_general(input_transport);
 		input_comment := api.sanitize_general(input_comment);
-		input_owner := api.sanitize_general(input_owner);
-		
-		IF input_owner IS NULL THEN
-			input_owner := api.get_current_user();
-		END IF;
 		
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating new rule');
-		INSERT INTO "firewall"."metahost_rules" ("name","port","transport","deny","comment","owner")
-		VALUES (input_name, input_port, input_transport, input_deny, input_comment, input_owner);
+		INSERT INTO "firewall"."metahost_rules" ("name","port","transport","deny","comment")
+		VALUES (input_name, input_port, input_transport, input_deny, input_comment);
 		
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule');
 	END;
