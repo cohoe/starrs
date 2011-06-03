@@ -781,7 +781,7 @@ Table of Contents (line number)
     Create a new metahost
     
     Definition:
-        api.create_metahost(name text, comment text)
+        api.create_firewall_metahost(name text, comment text)
     
     Arguments:
         name - The name of the metahost
@@ -791,7 +791,7 @@ Table of Contents (line number)
         Names must be unique (primary key)
     
     Example:
-        SELECT api.create_metahost('Servers','All servers on the network');
+        SELECT api.create_firewall_metahost('Servers','All servers on the network');
     
 3.3.2.5 Remove metahost
     
@@ -799,7 +799,7 @@ Table of Contents (line number)
     associated with its members.
     
     Definition:
-        api.remove_metahost(name text)
+        api.remove_firewall_metahost(name text)
     
     Arguments:
         name - The name of the metahost to remove
@@ -808,14 +808,14 @@ Table of Contents (line number)
         None
     
     Example:
-        SELECT api.remove_metahost('Servers');
+        SELECT api.remove_firewall_metahost('Servers');
     
 3.3.2.6 Create metahost rule
     
     Create a new rule for a metahost to be applied to all members.
     
     Definition:
-        api.create_metahost_rule(name text, port integer, transport text, 
+        api.create_firewall_metahost_rule(name text, port integer, transport text, 
         deny boolean, comment text)
     
     Arguments:
@@ -829,7 +829,7 @@ Table of Contents (line number)
         No conflicting rules (Deny and Allow a port?) (primary key)
     
     Example:
-        SELECT api.create_metahost_rule('Servers',22,'TCP',FALSE,
+        SELECT api.create_firewall_metahost_rule('Servers',22,'TCP',FALSE,
         'Allow SSH traffic');
     
 3.3.2.7 Remove metahost rule
@@ -837,7 +837,7 @@ Table of Contents (line number)
     Delete a metahost rule and erase all references to it.
     
     Definition:
-        api.remove_metahost_rule(name text, port integer, transport text)
+        api.remove_firewall_metahost_rule(name text, port integer, transport text)
     
     Arguments:
         name - The metahost name this rule applied to
@@ -848,7 +848,7 @@ Table of Contents (line number)
         None
     
     Example:
-        SELECT api.remove_metahost_rule('Servers',22,'TCP');
+        SELECT api.remove_firewall_metahost_rule('Servers',22,'TCP');
     
 3.3.2.8 Create Firewall System
 
