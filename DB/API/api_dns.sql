@@ -146,14 +146,14 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURN
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_address"(inet) IS 'delete an A or AAAA record';
 
-/* API - create_mailserver
+/* API - create_dns_mailserver
 	1) Check privileges
 	2) Input sanitization
 	3) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_domain text, input_preference integer, input_ttl integer) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, input_domain text, input_preference integer, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_mailserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -169,19 +169,19 @@ CREATE OR REPLACE FUNCTION "api"."create_mailserver"(input_hostname text, input_
 			(input_hostname,input_domain,input_preference,input_ttl,api.get_current_user());
 		END IF;
 
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_mailserver"(text, text, integer, integer) IS 'Create a new mailserver MX record for a zone';
+COMMENT ON FUNCTION "api"."create_dns_mailserver"(text, text, integer, integer) IS 'Create a new mailserver MX record for a zone';
 
-/* API - remove_mailserver 
+/* API - remove_dns_mailserver 
 	1) Check privileges
 	2) Input sanitization
 	3) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_mailserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_mailserver');
 
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -191,10 +191,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_mailserver"(input_hostname text, input_
 		PERFORM api.create_log_entry('API','INFO','deleting mailserver (MX)');
 		DELETE FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_domain;
 
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_mailserver');
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_mailserver"(text, text) IS 'Delete an existing MX record for a zone';
+COMMENT ON FUNCTION "api"."remove_dns_mailserver"(text, text) IS 'Delete an existing MX record for a zone';
 
 /* API - get_reverse_domain 
 	1) Return reverse string
@@ -210,14 +210,14 @@ CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_reverse_domain"(inet) IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
 
-/* API - create_nameserver
+/* API - create_dns_nameserver
 	1) Sanitize input
 	2) Check privileges
 	3) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_domain text, input_isprimary boolean, input_ttl integer) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, input_domain text, input_isprimary boolean, input_ttl integer) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_nameserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -233,19 +233,19 @@ CREATE OR REPLACE FUNCTION "api"."create_nameserver"(input_hostname text, input_
 			(input_hostname,input_domain,input_isprimary,input_ttl,api.get_current_user());
 		END IF;
 		
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_nameserver"(text, text, boolean, integer) IS 'create a new NS record for the zone';
+COMMENT ON FUNCTION "api"."create_dns_nameserver"(text, text, boolean, integer) IS 'create a new NS record for the zone';
 
-/* API - remove_nameserver
+/* API - remove_dns_nameserver
 	1) Sanitize input
 	2) Check privileges
 	3) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_nameserver"(input_hostname text, input_domain text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_nameserver');
 		
 		-- Sanitize input
 		input_hostname := api.sanitize_general(input_hostname);
@@ -255,10 +255,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_nameserver"(input_hostname text, input_
 		PERFORM api.create_log_entry('API','INFO','remove NS record');
 		DELETE FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_domain;
 		
-		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_nameserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_nameserver"(text, text) IS 'remove a NS record from the zone';
+COMMENT ON FUNCTION "api"."remove_dns_nameserver"(text, text) IS 'remove a NS record from the zone';
 
 
 /* API - create_dns_srv
