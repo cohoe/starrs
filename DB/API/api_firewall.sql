@@ -131,7 +131,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar(4), boolean, text, text) IS 'Create a firewall metahost rule';
+COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar(4), boolean, text) IS 'Create a firewall metahost rule';
 
 /* API - remove_firewall_metahost_rule
 	1) Check privileges
