@@ -1,48 +1,3 @@
-/* Trigger - rules_insert 
-	1) Check for metahost membership (there shouldnt be any)
-*/
-CREATE OR REPLACE FUNCTION "firewall"."rules_insert"() RETURNS TRIGGER AS $$
-	DECLARE
-		RowCount INTEGER;
-	BEGIN
-		-- Metahost membership
-		SELECT COUNT(*) INTO RowCount
-		FROM "firewall"."metahost_members"
-		WHERE "firewall"."metahost_members"."address" = NEW."address";
-		IF (RowCount > 0) THEN
-			RAISE EXCEPTION 'Rules cannot be applied to members of a metahost';
-		END IF;
-		
-		-- Done
-		RETURN NEW;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "firewall"."rules_insert"() IS 'Firewall rule verification';
-
-/* Trigger - rules_update 
-	1) Check for metahost membership (there shouldnt be any)
-*/
-CREATE OR REPLACE FUNCTION "firewall"."rules_update"() RETURNS TRIGGER AS $$
-	DECLARE
-		RowCount INTEGER;
-	BEGIN
-		-- Metahost membership
-		IF NEW."address" != OLD."address" THEN
-			SELECT COUNT(*) INTO RowCount
-			FROM "firewall"."metahost_members"
-			WHERE "firewall"."metahost_members"."address" = NEW."address";
-			IF (RowCount > 0) THEN
-				RAISE EXCEPTION 'Rules cannot be applied to members of a metahost';
-			END IF;
-		END IF;
-		
-		-- Done
-		RETURN NEW;
-	END;
-
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "firewall"."rules_update"() IS 'Firewall rule verification';
-
 /* Trigger - metahost_members_insert
 	1) Remove old rules
 	2) Apply metahost rules
@@ -105,3 +60,27 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_update"() RETURNS TRIGGE
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_update"() IS 'Alter a metahost member';
+
+/* Trigger - metahost_rules_insert
+	1) Get owner
+	2) Apply rule to members
+*/
+CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		result Record;
+		Owner TEXT;
+	BEGIN
+		-- Get owner
+		SELECT "firewall"."metahosts"."owner" INTO Owner
+		FROM "firewall"."metahosts"
+		WHERE "firewall"."metahosts"."name" = NEW."name";
+	
+		-- Apply metahost rules
+		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = NEW."name" LOOP
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
+			(result.address,NEW."port",NEW."transport",NEW."deny",Owner,'"'||NEW."name"||'" - '||NEW."comment");
+		END LOOP;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."metahost_rules_insert"() IS 'Apply rules to members of the metahost';
