@@ -1,15 +1,22 @@
 /* Trigger - metahost_members_insert
-	1) Apply metahost rules
+	1) Get owner
+	2) Apply metahost rules
 */
 CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		result record;
+		Owner TEXT;
 
 	BEGIN
+		-- Get owner
+		SELECT "firewall"."metahosts"."owner" INTO Owner
+		FROM "firewall"."metahosts"
+		WHERE "firewall"."metahosts"."name" = NEW."name";
+		
 		-- Apply metahost rules
 		FOR result IN SELECT "port","transport","deny" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
-			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner") VALUES 
-			(NEW."address",result.port,result.transport,result.deny,api.get_current_user());
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
+			(NEW."address",result.port,result.transport,result.deny,Owner,'"'||NEW."name"||'" - '||NEW."comment");
 		END LOOP;
 		
 		-- Done
