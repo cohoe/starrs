@@ -1,0 +1,42 @@
+impulse-sh (cohoe):~$ billybus									-- Easter egg
+ _________________
+| [][][][][][][]  |__ 
+|   BOOP! BOOP! ___  |
+|_______________|_|__|
+
+impulse-sh:(~)$ configure system PT-Boat
+System PT-Boat does not exist. You are creating a new system.
+
+impulse-sh:(PT-Boat)$ set <TAB>
+name	owner	type	operating-system	comment
+
+impulse-sh:(PT-Boat)$ set <TAB><TAB>
+name - The name of the system
+owner - The owner of the system
+type - A general type description of the system
+operating-system - The primary OS
+comment - A comment on the system
+
+impulse-sh:(PT-Boat)$ set name Fake-PT-Boat
+impulse-sh:(PT-Boat)$ set owner cohoe							-- Only RTPs and STPs can do this
+{DATABASE QUERY TO CHECK FOR ROOT-LEVEL PERMISSIONS}
+Only RTPs can change ownership of resources!
+
+impulse-sh:(PT-Boat)$ set type <TAB>
+{DATABASE QUERY FOR ALL AVAILABLE TYPES}
+laptop	desktop		virtual machine		switch
+router	hub
+
+impulse-sh:(PT-Boat)$ set type laptop
+impulse-sh:(PT-Boat)$ set operating-system <TAB>				-- Alias 'os' to 'operating-system'
+{DATABASE QUERY FOR ALL AVAILABLE OPERATING SYSTEMS
+Windows 7
+Windows Server 2003
+Fedora
+Debian
+
+impulse-sh:(PT-Boat)$ set operating-system Fedora
+impulse-sh:(PT-Boat)$ set comment 'IBM ThinkPad X201'
+impulse-sh:(PT-Boat)$ commit									-- Alias of 'cq' would be awesome for Commit and Quit
+{DATABASE QUERY OF SELECT api.create_system() and RELOAD}
+impulse-sh:(Fake-PT-Boat)$ 										-- Note that now the system name has changed. Need to be able to figure out the new system
