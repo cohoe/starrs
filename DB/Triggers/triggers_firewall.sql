@@ -1,14 +1,11 @@
 /* Trigger - metahost_members_insert
-	1) Remove old rules
-	2) Apply metahost rules
+	1) Apply metahost rules
 */
 CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		result record;
+
 	BEGIN
-		-- Remove old rules
-		DELETE FROM "firewall"."rules" WHERE "address" = NEW."address";
-		
 		-- Apply metahost rules
 		FOR result IN SELECT "port","transport","deny" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
 			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner") VALUES 
@@ -22,12 +19,19 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_insert"() IS 'Add an address to a firewall metahost';
 
 /* Trigger - metahost_members_delete
-	1) Remove old rules
+	1) Remove old metahost rules
 */
 CREATE OR REPLACE FUNCTION "firewall"."metahost_members_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		result Record;
 	BEGIN
-		-- Remove old rules
-		DELETE FROM "firewall"."rules" WHERE "address" = OLD."address";
+		-- Remove old metahost rules
+		FOR result IN SELECT "port","transport" FROM "firewall"."metahost_rules" WHERE "firewall"."metahost_rules"."name" = OLD."name" LOOP
+			DELETE FROM "firewall"."rules"
+			WHERE "firewall"."rules"."address" = OLD."address"
+			AND "firewall"."rules"."port" = result.port
+			AND "firewall"."rules"."transport" = result.transport;
+		END LOOP;
 		
 		-- Done
 		RETURN OLD;
