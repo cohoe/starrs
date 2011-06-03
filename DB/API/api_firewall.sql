@@ -62,7 +62,8 @@ COMMENT ON FUNCTION "api"."modify_firewall_default"(inet, boolean) IS 'modify an
 /* API - create_firewall_metahost
 	1) Check privileges
 	2) Sanitize input
-	3) Create metahost
+	3) Fill in owner
+	4) Create metahost
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, input_owner text, input_comment text) RETURNS VOID AS $$
 	BEGIN
@@ -73,6 +74,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 		input_comment := api.sanitize_general(input_comment);
 		input_owner := api.sanitize_general(input_owner);
 		
+		-- Fill in owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
 		END IF;
@@ -198,9 +200,10 @@ COMMENT ON FUNCTION "api"."remove_firewall_system"(text) IS 'Remove a firewall s
 
 /* API - create_firewall_rule
 	1) Check privileges
-	2) Sanitize input
-	3) Check for dynamic
-	4) Create rule
+	2) Fill in owner
+	3) Sanitize input
+	4) Check for dynamic
+	5) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
 	BEGIN
@@ -210,6 +213,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		input_transport := api.sanitize_general(input_transport);
 		input_comment := api.sanitize_general(input_comment);
 		input_owner := api.sanitize_general(input_owner);
+		
+		-- Fill in owner
+		IF input_owner IS NULL THEN
+			input_owner := api.get_current_user();
+		END IF;
 		
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
@@ -267,10 +275,11 @@ COMMENT ON FUNCTION "api"."get_firewall_site_default"() IS 'Return the value of 
 
 /* API - create_firewall_rule_program
 	1) Sanitize input
-	2) Check privileges
-	3) Check for dynamic
-	4) Get program information
-	5) Create rule
+	2) Fill in owner
+	3) Check privileges
+	4) Check for dynamic
+	5) Get program information
+	6) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS VOID AS $$
 	DECLARE
@@ -282,6 +291,11 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		-- Sanitize input
 		input_program := api.sanitize_general(input_program);
 		input_owner := api.sanitize_general(input_owner);
+		
+		-- Fill in owner
+		IF input_owner IS NULL THEN
+			input_owner := api.get_current_user();
+		END IF;
 		
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
