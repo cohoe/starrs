@@ -781,17 +781,18 @@ Table of Contents (line number)
     Create a new metahost
     
     Definition:
-        api.create_firewall_metahost(name text, comment text)
+        api.create_firewall_metahost(name text, comment text, owner text)
     
     Arguments:
         name - The name of the metahost
         comment - A comment on the new metahost (or NULL for no comment)
+		owner - The owning username (or NULL for current user)
     
     Rules:
         Names must be unique (primary key)
     
     Example:
-        SELECT api.create_firewall_metahost('Servers','All servers on the network');
+        SELECT api.create_firewall_metahost('Servers','All servers on the network',NULL);
     
 3.3.2.5 Remove metahost
     
@@ -816,13 +817,14 @@ Table of Contents (line number)
     
     Definition:
         api.create_firewall_metahost_rule(name text, port integer, transport text, 
-        deny boolean, comment text)
+        deny boolean, owner text, comment text)
     
     Arguments:
         name - Metahost name to apply to
         port - Port to perform the action on
         transport - TCP or UDP or BOTH
         deny - TRUE or FALSE to deny traffic
+		owner - The owning username (or NULL for current user)
         comment - A comment on the rule
     
     Rules:
@@ -830,7 +832,7 @@ Table of Contents (line number)
     
     Example:
         SELECT api.create_firewall_metahost_rule('Servers',22,'TCP',FALSE,
-        'Allow SSH traffic');
+        'root','Allow SSH traffic');
     
 3.3.2.7 Remove metahost rule
 
@@ -892,13 +894,14 @@ Table of Contents (line number)
     
     Definition:
         api.create_firewall_rule(address inet, port integer, transport text, 
-        deny boolean, comment text)
+        deny boolean,owner text, comment text)
     
     Arguments:
         address - Address to apply the rule to
         port - Port to perform on
         transport - TCP or UDP or BOTH
         deny - TRUE to Deny traffic, FALSE to allow traffic
+		owner - The owning username (or NULL for current user)
         comment - A comment on the rule (or NULL for no comment)
     
     Rules:
@@ -907,7 +910,7 @@ Table of Contents (line number)
     
     Example:
         SELECT api.create_firewall_rule('10.0.0.1',22,'TCP',TRUE,
-        'Block SSH traffic');
+        NULL,'Block SSH traffic');
     
 3.3.2.11 Remove a Rule
 
@@ -949,18 +952,19 @@ Table of Contents (line number)
     
     Definition:
         api.create_firewall_rule_program(address inet, program text, 
-        deny boolean)
+        deny boolean, owner text)
     
     Arguments:
         address - The address to create the rule on
         program - The name of the program to act upon
         deny - TRUE to deny traffic, FALSE to allow
+		owner - The owning username (or NULL for current user)
         
     Rules:
         None
         
     Example:
-        SELECT api.create_firewall_rule_program('10.0.0.1','SSH',TRUE);
+        SELECT api.create_firewall_rule_program('10.0.0.1','SSH',TRUE,'root');
         
 3.3.2.14 Remove Rule Based On Program
 
