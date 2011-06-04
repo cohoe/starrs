@@ -1,5 +1,17 @@
 /* Privileges */
 
+/* Schemas
+	Allow access to the schemas
+*/
+GRANT USAGE ON SCHEMA "api" TO "impulse_client";
+GRANT USAGE ON SCHEMA "dhcp" TO "impulse_client";
+GRANT USAGE ON SCHEMA "dns" TO "impulse_client";
+GRANT USAGE ON SCHEMA "firewall" TO "impulse_client";
+GRANT USAGE ON SCHEMA "ip" TO "impulse_client";
+GRANT USAGE ON SCHEMA "management" TO "impulse_client";
+GRANT USAGE ON SCHEMA "network" TO "impulse_client";
+GRANT USAGE ON SCHEMA "systems" TO "impulse_client";
+
 /* System Data
 	Clients should never be able to modify these. They are for administrators only (superuser)
 */
