@@ -56,47 +56,6 @@ CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_current_user"() IS 'Get the username of the current session';
 
-/* API - validate_domain (DOCUMENT)*/
-CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) RETURNS BOOLEAN AS $$
-	use strict;
-	use warnings;
-	use Data::Validate::Domain qw(is_domain);
-
-	# Usage: PERFORM api.validate_domain([hostname OR NULL],[domain OR NULL]);
-
-	# Declare the string to check later on
-	my $domain;
-
-	# This script can deal with just domain validation rather than host-domain. Note that the
-	# module this depends on requires a valid TLD, so one is picked for this purpose.
-	if (!$_[0])
-	{
-		# We are checking a domain name only
-		$domain = $_[1];
-	}
-	elsif (!$_[1])
-	{
-		# We are checking a hostname only
-		$domain = "$_[0].me";
-	}
-	else
-	{
-		# We have enough for a FQDN
-		$domain = "$_[0].$_[1]";
-	}
-
-	# Return a boolean value of whether the input forms a valid domain
-	if (is_domain($domain))
-	{
-		return 'TRUE';
-	}
-	else
-	{
-		return 'FALSE';
-	}
-$$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
-
 /* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
