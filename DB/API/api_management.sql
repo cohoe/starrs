@@ -222,3 +222,51 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS VOID 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."initialize"(text) IS 'Setup user access to the database';
+
+/* API - get_user_level
+	1) Load configuration
+	2) Bind to the LDAP server
+	3) Figure out permission level
+*/
+CREATE OR REPLACE FUNCTION "api"."get_user_level"(TEXT) RETURNS TEXT AS $$
+	use strict;
+	use warnings;
+	use Net::LDAP;
+
+	# Get the current authenticated username
+	my $username = $_[0] or die "Need to give a username";
+	my $host = spi_exec_query("SELECT api.get_site_configuration('LDAP_HOST')")->{rows}[0]->{"get_site_configuration"};
+	my $binddn = spi_exec_query("SELECT api.get_site_configuration('LDAP_BINDDN')")->{rows}[0]->{"get_site_configuration"};
+	my $password = spi_exec_query("SELECT api.get_site_configuration('LDAP_PASSWORD')")->{rows}[0]->{"get_site_configuration"};
+	my $group = spi_exec_query("SELECT api.get_site_configuration('LDAP_GROUP')")->{rows}[0]->{"get_site_configuration"};
+	my $basedn = spi_exec_query("SELECT api.get_site_configuration('LDAP_BASEDN')")->{rows}[0]->{"get_site_configuration"};
+
+	# The lowest status. Build from here.
+	my $status = "NONE";
+
+	# Bind to the LDAP server and search for the list of admins
+	my $srv = Net::LDAP->new ($host) or die "Could not connect to LDAP server ($host)\n";
+	my $mesg = $srv->bind($binddn,password=>$password) or die "Could not bind to LDAP server at $host\n";
+	$mesg = $srv->search(filter=>"($group)",base=>$basedn,attrs=>['member']);
+
+	# Go through the list and see if this user is an admin
+	foreach my $entry ($mesg->entries)
+	{
+		my @users = $entry->get_value("member");
+		foreach my $user (@users)
+		{
+			$user =~ s/^uid=(.*?)\,(.*?)$/$1/;
+			if ($user eq $username)
+			{
+				$status = "ADMIN";
+			}
+		}
+	}
+
+	# Disconnect from the LDAP server
+	$srv->unbind;
+
+	# Done
+	return $status;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_user_level"(text) IS 'Get the level of access for the authenticated user';
