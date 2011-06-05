@@ -25,11 +25,11 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 		BadCrap = regexp_replace(input, E'[a-z0-9\_\,\.\:\/ \(\)=\*\.]*\-*', '', 'gi');
 		IF BadCrap != '' THEN
 			--RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
-		END IF
+		END IF;
 		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects'
+COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects';
 
 /* API - sanitize_dhcp*/
 CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS TEXT AS $$
@@ -50,11 +50,22 @@ COMMENT ON FUNCTION "api"."sanitize_dhcp"(text) IS 'Only allow certain character
 CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
 	BEGIN
 		RETURN (SELECT "username"
-		FROM user_privileges
+		FROM "user_privileges"
 		WHERE "privilege" = 'USERNAME');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_current_user"() IS 'Get the username of the current session';
+
+/* API - get_current_user_level */
+CREATE OR REPLACE FUNCTION "api"."get_current_user_level"() RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "privilege"
+		FROM "user_privileges"
+		WHERE "allow" = TRUE
+		AND "privilege" ~* '^admin|program|user$');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_current_user_level"() IS 'Get the level of the current session user';
 
 /* API - renew_system (DOCUMENT)*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
@@ -215,7 +226,7 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		input_username := api.sanitize_general(input_username);
 
 		-- Get level
-		SELECT api.get_user_level(input_username) INTO Level;
+		SELECT api.get_ldap_user_level(input_username) INTO Level;
 		-- Done
 		IF Level='NONE' THEN
 			RAISE EXCEPTION 'Could not identify "%".',input_username;
@@ -228,6 +239,12 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 
 		-- Populate privileges
 		INSERT INTO "user_privileges" VALUES (input_username,'USERNAME',TRUE);
+		INSERT INTO "user_privileges" VALUES (input_username,'ADMIN',FALSE);
+		INSERT INTO "user_privileges" VALUES (input_username,'PROGRAM',FALSE);
+		INSERT INTO "user_privileges" VALUES (input_username,'USER',FALSE);
+	
+		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" = Level;
+
 		ALTER TABLE "user_privileges" ALTER COLUMN "username" SET DEFAULT api.get_current_user();
 
 		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
@@ -236,13 +253,13 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."initialize"(text) IS 'Setup user access to the database';
 
-/* API - get_user_level
+/* API - get_ldap_user_level
 	1) Load configuration
 	2) Bind to the LDAP server
 	3) Figure out permission level
 	4) Unbind from LDAP server
 */
-CREATE OR REPLACE FUNCTION "api"."get_user_level"(TEXT) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_ldap_user_level"(TEXT) RETURNS TEXT AS $$
 	use strict;
 	use warnings;
 	use Net::LDAP;
@@ -250,7 +267,7 @@ CREATE OR REPLACE FUNCTION "api"."get_user_level"(TEXT) RETURNS TEXT AS $$
 	# Get the current authenticated username
 	my $username = $_[0] or die "Need to give a username";
 	
-	# If this is the installer, we don't need to query the server
+	# If this is the installer, we dont need to query the server
 	if ($username eq "root")
 	{
 		return "ADMIN";
@@ -327,4 +344,4 @@ CREATE OR REPLACE FUNCTION "api"."get_user_level"(TEXT) RETURNS TEXT AS $$
 	# Done
 	return $status;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."get_user_level"(text) IS 'Get the level of access for the authenticated user';
+COMMENT ON FUNCTION "api"."get_ldap_user_level"(text) IS 'Get the level of access for the authenticated user';
