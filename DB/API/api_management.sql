@@ -22,10 +22,10 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 	DECLARE
 		BadCrap TEXT;
 	BEGIN
-		BadCrap = regexp_replace(input, E'[a-z0-9\_\,\.\:\/ \(\)=\*]*\-*', '', 'gi');
+		BadCrap = regexp_replace(input, E'[a-z0-9\_\,\.\:\/ \(\)=\*\.]*\-*', '', 'gi');
 		IF BadCrap != '' THEN
-			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
-		END IF;
+			--RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
+		END IF
 		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -213,22 +213,23 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 	BEGIN
 		-- Sanitize input
 		input_username := api.sanitize_general(input_username);
+
+		-- Get level
+		SELECT api.get_user_level(input_username) INTO Level;
+		-- Done
+		IF Level='NONE' THEN
+			RAISE EXCEPTION 'Could not identify "%".',input_username;
+		END IF;
 		
 		-- Create privilege table
 		CREATE TEMPORARY TABLE user_privileges
 		(username text NOT NULL,privilege text NOT NULL,
 		allow boolean NOT NULL DEFAULT false);
 
-		-- Get level
-		SELECT api.get_user_level(input_username) INTO Level;
-		
 		-- Populate privileges
 		INSERT INTO user_privileges VALUES (input_username,'USERNAME',TRUE);
 
-		-- Done
-		IF Level='NONE' THEN
-			RAISE EXCEPTION 'Could not identify "%".',input_username;
-		END IF;
+		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
 		RETURN 'Greetings '||lower(Level)||'!';
 	END;
 $$ LANGUAGE 'plpgsql';
