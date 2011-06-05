@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		RowCount INTEGER;
 		ConfigFamily INTEGER;
 		PrimaryName TEXT;
+		Owner TEXT;
 	BEGIN
 		-- Set address family
 		NEW."family" := family(NEW."address");
@@ -86,12 +87,17 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."addresses"
 			WHERE "ip"."addresses"."address" = NEW."address";
-
 			IF (RowCount > 0) THEN
 				RAISE EXCEPTION 'Existing address (%) detected. Cannot continue.',NEW."address";
 			END IF;
+			
+			SELECT "systems"."systems"."owner" INTO Owner
+			FROM "systems"."interfaces"
+			JOIN "systems"."systems" ON
+			"systems"."systems"."system_name" = "systems"."interfaces"."system_name"
+			WHERE "systems"."interfaces"."mac" = NEW."mac";
 
-			INSERT INTO "ip"."addresses" ("address") VALUES (NEW."address");
+			INSERT INTO "ip"."addresses" ("address","owner") VALUES (NEW."address",Owner);
 		END IF;
 
 		RETURN NEW;

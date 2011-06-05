@@ -222,12 +222,13 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		END IF;
 		
 		-- Create privilege table
-		CREATE TEMPORARY TABLE user_privileges
+		CREATE TEMPORARY TABLE "user_privileges"
 		(username text NOT NULL,privilege text NOT NULL,
 		allow boolean NOT NULL DEFAULT false);
 
 		-- Populate privileges
-		INSERT INTO user_privileges VALUES (input_username,'USERNAME',TRUE);
+		INSERT INTO "user_privileges" VALUES (input_username,'USERNAME',TRUE);
+		ALTER TABLE "user_privileges" ALTER COLUMN "username" SET DEFAULT api.get_current_user();
 
 		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
 		RETURN 'Greetings '||lower(Level)||'!';
@@ -245,9 +246,17 @@ CREATE OR REPLACE FUNCTION "api"."get_user_level"(TEXT) RETURNS TEXT AS $$
 	use strict;
 	use warnings;
 	use Net::LDAP;
-
+	
 	# Get the current authenticated username
 	my $username = $_[0] or die "Need to give a username";
+	
+	# If this is the installer, we don't need to query the server
+	if ($username eq "root")
+	{
+		return "ADMIN";
+	}
+	
+	# Get LDAP connection information
 	my $host = spi_exec_query("SELECT api.get_site_configuration('LDAP_HOST')")->{rows}[0]->{"get_site_configuration"};
 	my $binddn = spi_exec_query("SELECT api.get_site_configuration('LDAP_BINDDN')")->{rows}[0]->{"get_site_configuration"};
 	my $password = spi_exec_query("SELECT api.get_site_configuration('LDAP_PASSWORD')")->{rows}[0]->{"get_site_configuration"};
