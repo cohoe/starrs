@@ -1,14 +1,8 @@
 /* API - create_log_entry
- 	1) Sanitize input
- 	2) Create log entry
+ 	1) Create log entry
 */
 CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_severity text, input_message text) RETURNS VOID AS $$
 	BEGIN
-		-- Sanitize input
-		input_source := api.sanitize_general(input_source);
-		input_severity := api.sanitize_general(input_severity);
-		input_message := api.sanitize_general(input_message);
-
 		-- Create log entry
 		INSERT INTO "management"."log_master"
 		("source","user","severity","message") VALUES
@@ -30,21 +24,6 @@ CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects';
-
-/* API - sanitize_dhcp*/
-CREATE OR REPLACE FUNCTION "api"."sanitize_dhcp"(input text) RETURNS TEXT AS $$
-	DECLARE
-		BadCrap	TEXT;
-	BEGIN
-		BadCrap = regexp_replace(input, E'[a-z0-9\_\.\=\"\,\(\)\/\; ]*\-*', '', 'gi');
-		IF BadCrap != '' THEN
-			--RAISE EXCEPTION 'Invalid characters detected in string "%"',BadCrap;
-			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
-		END IF;
-		RETURN input;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."sanitize_dhcp"(text) IS 'Only allow certain characters in DHCP options';
 
 /* API - get_current_user */
 CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
@@ -71,7 +50,6 @@ COMMENT ON FUNCTION "api"."get_current_user_level"() IS 'Get the level of the cu
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
-		input_system_name := api.sanitize_general(input_system_name);
 		
 		PERFORM api.create_log_entry('API','INFO','renewing system');
 		UPDATE "systems"."systems" SET "renew_date" = date(current_date + interval '1 year');
@@ -80,7 +58,7 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for the next year';
 
 /* API - create_site_configuration
-	1) Sanitize input
+	1) Validate input
 	2) Check privileges
 	3) Create directive
 */
@@ -89,8 +67,7 @@ CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive tex
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
 		
 		-- Sanitize input
-		input_directive := api.sanitize_general(input_directive);
-		input_value := api.sanitize_general(input_value);
+		input_directive := api.validate_directive(input_directive);
 		
 		-- Create directive
 		PERFORM api.create_log_entry('API','INFO','creating directive');
@@ -102,16 +79,12 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_site_configuration"(text, text) IS 'Create a new site configuration directive';
 
 /* API - remove_site_configuration
-	1) Sanitize input
-	2) Check privileges
-	3) Create directive
+	1) Check privileges
+	2) Create directive
 */
 CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_site_configuration');
-		
-		-- Sanitize input
-		input_directive := api.sanitize_general(input_directive);
 		
 		-- Create directive
 		PERFORM api.create_log_entry('API','INFO','creating directive');
@@ -123,17 +96,12 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
 
 /* API - modify_site_configuration
-	1) Sanitize input
-	2) Check privileges
-	3) Create directive
+	1) Check privileges
+	2) Create directive
 */
 CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_site_configuration');
-		
-		-- Sanitize input
-		input_directive := api.sanitize_general(input_directive);
-		input_value := api.sanitize_general(input_value);
 		
 		-- Create directive
 		PERFORM api.create_log_entry('API','INFO','modifying directive');
@@ -144,33 +112,24 @@ CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive tex
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_site_configuration"(text, text) IS 'Modify a site configuration directive';
 
-/* API - get_site_configuration
-	1) Sanitize input
-*/
+/* API - get_site_configuration */
 CREATE OR REPLACE FUNCTION "api"."get_site_configuration"(input_directive text) RETURNS TEXT AS $$
 	BEGIN		
-		-- Sanitize input
-		input_directive := api.sanitize_general(input_directive);
-		
 		RETURN (SELECT "value" FROM "management"."configuration" WHERE "option" = input_directive);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration"(text) IS 'Get a site configuration directive';
 
 /* API - lock_process
-	1) Sanitize input
-	2) Check privileges
-	3) Get current status
-	4) Update status
+	1) Check privileges
+	2) Get current status
+	3) Update status
 */
 CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID AS $$
 	DECLARE
 		Status BOOLEAN;
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.lock_process');
-	
-		-- Sanitize input
-		input_process := api.sanitize_general(input_process);
 
 		-- Get current status
 		SELECT "locked" INTO Status
@@ -192,16 +151,12 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."lock_process"(text) IS 'Lock a process for a job';
 
 /* API - unlock_process
-	1) Sanitize input
-	2) Check privileges
-	3) Update status
+	1) Check privileges
+	2) Update status
 */
 CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.unlock_process');
-		
-		-- Sanitize input
-		input_process := api.sanitize_general(input_process);
 		
 		-- Update status
 		PERFORM api.create_log_entry('API','INFO','unlocking process '||input_process);
@@ -214,20 +169,17 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."unlock_process"(text) IS 'Unlock a process for a job';
 
 /* API - initialize
-	1) Sanitize input
+	1) Get level
 	2) Create privilege table
 	3) Populate privileges
+	4) Set level
 */
 CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT AS $$
 	DECLARE
 		Level TEXT;
 	BEGIN
-		-- Sanitize input
-		input_username := api.sanitize_general(input_username);
-
 		-- Get level
 		SELECT api.get_ldap_user_level(input_username) INTO Level;
-		-- Done
 		IF Level='NONE' THEN
 			RAISE EXCEPTION 'Could not identify "%".',input_username;
 		END IF;
@@ -242,10 +194,10 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		INSERT INTO "user_privileges" VALUES (input_username,'ADMIN',FALSE);
 		INSERT INTO "user_privileges" VALUES (input_username,'PROGRAM',FALSE);
 		INSERT INTO "user_privileges" VALUES (input_username,'USER',FALSE);
-	
-		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" = Level;
-
 		ALTER TABLE "user_privileges" ALTER COLUMN "username" SET DEFAULT api.get_current_user();
+	
+		-- Set level
+		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" = Level;
 
 		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
 		RETURN 'Greetings '||lower(Level)||'!';
