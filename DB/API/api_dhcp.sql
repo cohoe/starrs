@@ -7,6 +7,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
+
 		-- Validate input
 		input_class := api.validate_nospecial(input_class);
 
@@ -14,6 +19,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class');
 		INSERT INTO "dhcp"."classes" ("class","comment") VALUES (input_class,input_comment);
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -28,6 +34,11 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
 
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
+
 		-- Validate input
 		input_class := api.validate_dhcp_class(input_class);
 
@@ -35,6 +46,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
 		DELETE FROM "dhcp"."classes" WHERE "class" = input_class;
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -42,11 +54,16 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP cla
 
 /* API - create_dhcp_class_option
 	1) Check privileges
-	2) Create option
+	2) Create class option
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
 
 		-- Create class option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class option');
@@ -54,6 +71,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		("class","option","value") VALUES
 		(input_class,input_option,input_value);
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -61,17 +79,23 @@ COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Creat
 
 /* API - remove_dhcp_class_option
 	1) Check privileges
-	2) Remove option
+	2) Remove class option
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class_option');
 
-		-- Remove option		
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
+
+		-- Remove class option		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class option');
 		DELETE FROM "dhcp"."class_options"
 		WHERE "class" = input_class AND "option" = input_option AND "value" = input_value;
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -79,18 +103,24 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delet
 
 /* API - create_dhcp_subnet_option
 	1) Check privileges
-	2) Create option
+	2) Create subnet option
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
 
-		-- Create option		
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
+
+		-- Create subnet option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating dhcp subnet option');
 		INSERT INTO "dhcp"."subnet_options" 
 		("subnet","option","value") VALUES
 		(input_subnet,input_option,input_value);
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -98,36 +128,24 @@ COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Crea
 
 /* API - remove_dhcp_subnet_option
 	1) Check privileges
-	2) Remove option
+	2) Remove subnet option
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
 
-		-- Delete option		
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		END IF;
+
+		-- Delete subnet option		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp subnet option');
 		DELETE FROM "dhcp"."subnet_options"
 		WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value;
 
+		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete existing DHCP subnet option';
-
-/* API - get_dhcp_default_class
-	1) Get value
-*/
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_site_default_class"() RETURNS TEXT AS $$
-	DECLARE
-		ClassName TEXT;
-	BEGIN
-		-- Get value
-		SELECT "value" INTO ClassName
-		FROM "management"."configuration"
-		WHERE "option" = 'DHCP_DEFAULT_CLASS';
-
-		-- Done
-		RETURN ClassName;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcp_site_default_class"() IS 'Get the site default DHCP class';
