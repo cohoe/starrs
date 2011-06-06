@@ -1,15 +1,11 @@
 /* API - create_firewall_metahost_member
 	1) Check privileges
-	2) Sanitize Input
-	3) Check for dynamic
-	4) Create member (Insertion triggers new rules to be applied and old rules to be deleted)
+	2) Check for dynamic
+	3) Create member (Insertion triggers new rules to be applied and old rules to be deleted)
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost_member');
-
-		-- Sanitize Input
-		input_metahost := api.sanitize_general(input_metahost);
 		
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
@@ -61,7 +57,7 @@ COMMENT ON FUNCTION "api"."modify_firewall_default"(inet, boolean) IS 'modify an
 
 /* API - create_firewall_metahost
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Fill in owner
 	4) Create metahost
 */
@@ -69,10 +65,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost');
 
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_comment := api.sanitize_general(input_comment);
-		input_owner := api.sanitize_general(input_owner);
+		-- Validate input
+		input_name := api.validate_nospecial(input_name);
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
@@ -91,15 +85,11 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost"(text, text, text) IS 'creat
 
 /* API - remove_firewall_metahost
 	1) Check privileges
-	2) Sanitize input
-	3) Remove metahost
+	2) Remove metahost
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost"(input_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost');
-
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
 		
 		-- Create metahost
 		PERFORM api.create_log_entry('API','INFO','removing metahost');
@@ -111,17 +101,11 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost"(text) IS 'remove a firewall
 
 /* API - create_firewall_metahost_rule
 	1) Check privileges
-	2) Sanitize input
-	3) Create rule
+	2) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
-		
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_transport := api.sanitize_general(input_transport);
-		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating new rule');
@@ -135,16 +119,11 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar
 
 /* API - remove_firewall_metahost_rule
 	1) Check privileges
-	2) Sanitize input
-	3) Remove rule
+	2) Remove rule
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_name text, input_port integer, input_transport text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule');
-		
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_transport := api.sanitize_general(input_transport);
 		
 		-- Remove rule
 		PERFORM api.create_log_entry('API','INFO','removing rule');
@@ -157,16 +136,11 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule"(text, integer, text) I
 
 /* API - create_firewall_system
 	1) Check privileges
-	2) Sanitize input
-	3) Create system
+	2) Create system
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input_subnet cidr, input_software text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_system');
-		
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_software := api.sanitize_general(input_software);
 		
 		-- Create system
 		PERFORM api.create_log_entry('API','INFO','creating new firewall system');
@@ -179,15 +153,11 @@ COMMENT ON FUNCTION "api"."create_firewall_system"(text, cidr, text) IS 'Firewal
 
 /* API - remove_firewall_system
 	1) Check privileges
-	2) Sanitize input
-	3) Remove system
+	2) Remove system
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_system');
-		
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
 		
 		-- Remove system
 		PERFORM api.create_log_entry('API','INFO','removing firewall system');
@@ -201,18 +171,12 @@ COMMENT ON FUNCTION "api"."remove_firewall_system"(text) IS 'Remove a firewall s
 /* API - create_firewall_rule
 	1) Check privileges
 	2) Fill in owner
-	3) Sanitize input
-	4) Check for dynamic
-	5) Create rule
+	3) Check for dynamic
+	4) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule');
-		
-		-- Sanitize input
-		input_transport := api.sanitize_general(input_transport);
-		input_comment := api.sanitize_general(input_comment);
-		input_owner := api.sanitize_general(input_owner);
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
@@ -236,15 +200,11 @@ COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, varchar(4), bool
 
 /* API - remove_firewall_rule
 	1) Check privileges
-	2) Sanitize input
-	3) Remove rule
+	2) Remove rule
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule"(input_address inet, input_port integer, input_transport text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_rule');
-		
-		-- Sanitize input
-		input_transport := api.sanitize_general(input_transport);
 		
 		-- Remove rule
 		PERFORM api.create_log_entry('API','INFO','removing firewall rule');
@@ -274,12 +234,11 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_site_default"() IS 'Return the value of the site firewall default configuration';
 
 /* API - create_firewall_rule_program
-	1) Sanitize input
-	2) Fill in owner
-	3) Check privileges
-	4) Check for dynamic
-	5) Get program information
-	6) Create rule
+	1) Fill in owner
+	2) Check privileges
+	3) Check for dynamic
+	4) Get program information
+	5) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS VOID AS $$
 	DECLARE
@@ -287,10 +246,6 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule_program');
-
-		-- Sanitize input
-		input_program := api.sanitize_general(input_program);
-		input_owner := api.sanitize_general(input_owner);
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
@@ -320,10 +275,9 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean, text) IS 'Create a firewall rule based on a common program.';
 
 /* API - remove_firewall_rule_program
-	1) Sanitize input
-	2) Check privileges
-	3) Get program information
-	4) Remove rule
+	1) Check privileges
+	2) Get program information
+	3) Remove rule
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address inet, input_program text) RETURNS VOID AS $$
 	DECLARE
@@ -331,9 +285,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 		Transport VARCHAR(4);
 	BEGIN
 			PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_rule_program');
-
-		-- Sanitize input
-		input_program := api.sanitize_general(input_program);
 
 		-- Get program information
 		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
@@ -354,10 +305,9 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove a firewall rule based on a common program.';
 
 /* API - create_firewall_metahost_rule_program
-	1) Sanitize input
-	2) Check privileges
-	4) Get program information
-	5) Create rule
+	1) Check privileges
+	2) Get program information
+	3) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_name text, input_program text, input_deny boolean) RETURNS VOID AS $$
 	DECLARE
@@ -365,10 +315,6 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
-
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_program := api.sanitize_general(input_program);
 
 		-- Get program information
 		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
@@ -388,10 +334,9 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_rule_program"(text, text, boolean) IS 'Create a firewall rule based on a common program.';
 
 /* API - remove_firewall_metahost_rule_program
-	1) Sanitize input
-	2) Check privileges
-	4) Get program information
-	5) Create rule
+	1) Check privileges
+	2) Get program information
+	3) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_name text, input_program text) RETURNS VOID AS $$
 	DECLARE
@@ -399,10 +344,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_n
 		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule_program');
-
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_program := api.sanitize_general(input_program);
 
 		-- Get program information
 		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
