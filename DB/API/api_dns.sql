@@ -276,7 +276,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
 
 		-- Validate input
-		IF api.validate_srv(input_alias,NULL) IS FALSE THEN
+		IF api.validate_srv(input_alias) IS FALSE THEN
 			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
 		END IF;
 		
