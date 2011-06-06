@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost');
 
 		-- Validate input
-		input_name := api.validate_nospecial(input_name);
+		input_name := api.validate_name(input_name);
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
