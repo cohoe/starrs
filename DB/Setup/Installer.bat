@@ -19,3 +19,4 @@ psql -f triggers_systems.sql impulse
 psql -f triggers.sql impulse
 psql -f Views.sql impulse
 psql -f Base.sql impulse
+psql -f Privileges impulse
