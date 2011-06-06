@@ -206,7 +206,10 @@ CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$
 	use Net::IP qw(:PROC);
 	
 	# Return the rdns string for nsupdate from the given address. Automagically figures out IPv4 and IPv6.
-	return new Net::IP ($_[0])->reverse_ip() or die (Net::IP::Error());
+	my $reverse_domain = new Net::IP ($_[0])->reverse_ip() or die (Net::IP::Error());
+	$reverse_domain =~ s/\.$//;
+	return $reverse_domain;
+	
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_reverse_domain"(inet) IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
 
