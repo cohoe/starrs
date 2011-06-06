@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
 		-- Validate input
-		input_class := api.validate_dhcp_class(input_class);
+		input_class := api.validate_nospecial(input_class);
 
 		-- Create new class		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class');
