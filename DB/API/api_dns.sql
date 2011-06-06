@@ -471,3 +471,18 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 	}
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
+
+/* API - validate_srv */
+CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
+	my $srv_record = $_[0];
+	
+	if ($srv_record)
+	{
+		return 'TRUE';
+	}
+	else
+	{
+		return 'FALSE';
+	}
+$$ LANGUAGE 'plperl';
+COMMENT ON FUNCTION "api"."validate_srv"(text) IS 'Validate SRV records';
