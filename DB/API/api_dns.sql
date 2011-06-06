@@ -247,17 +247,12 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_nameserver"(text, text, boolean, integer, text) IS 'create a new NS record for the zone';
 
 /* API - remove_dns_nameserver
-	1) Sanitize input
-	2) Check privileges
-	3) Remove record
+	1) Check privileges
+	2) Remove record
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dns_nameserver"(input_hostname text, input_zone text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_nameserver');
-		
-		-- Sanitize input
-		input_hostname := api.sanitize_general(input_hostname);
-		input_zone := api.sanitize_general(input_zone);
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','remove NS record');
@@ -281,7 +276,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
 
 		-- Validate input
-		IF api.validate_domain(input_alias,NULL) IS FALSE THEN
+		IF api.validate_srv(input_alias,NULL) IS FALSE THEN
 			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
 		END IF;
 		
