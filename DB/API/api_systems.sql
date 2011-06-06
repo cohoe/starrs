@@ -1,16 +1,15 @@
 /* API - create_system
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Fill in username
 	4) Insert new system
 */
 CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system');
-		-- Sanitize input
-		input_system_name := api.sanitize_general(input_system_name);
-		input_owner := api.sanitize_general(input_owner);
-		input_comment := api.sanitize_general(input_comment);
+		
+		-- Validate input
+		input_system_name := api.validate_name(input_system_name);
 
 		-- Fill in username
 		IF input_owner IS NULL THEN
@@ -30,15 +29,11 @@ COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Crea
 
 /* API - remove_system
 	1) Check privileges
-	2) Sanitize input
-	3) Remove system
+	2) Remove system
 */
 CREATE OR REPLACE FUNCTION "api"."remove_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_system');
-		
-		-- Sanitize input
-		input_system_name := api.sanitize_general(input_system_name);
 		
 		-- Remove system
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting system');
@@ -51,16 +46,11 @@ COMMENT ON FUNCTION "api"."remove_system"(text) IS 'Delete an existing system';
 
 /* API - create_interface
 	1) Check privileges
-	2) Sanitize input
-	3) Create interface
+	2) Create interface
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
-		
-		-- Sanitize input
-		input_system_name := api.sanitize_general(input_system_name);
-		input_comment := api.sanitize_general(input_comment);
 		
 		-- Create interface
 		PERFORM api.create_log_entry('API','INFO','creating new interface');
@@ -92,23 +82,19 @@ COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface ba
 
 /* API - create_interface_address_manual
 	1) Check privileges
-	2) Sanitize input
-	3) Fill in class
-	4) Create address
+	2) Fill in class
+	3) Create address
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address_manual');
 		
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_config := api.sanitize_general(input_config);
-		input_class := api.sanitize_general(input_class);
-		input_comment := api.sanitize_general(input_comment);
+		-- Validate input
+		input_name := api.validate_name(input_name);
 		
 		-- Fill in class
 		IF input_class IS NULL THEN
-			input_class = api.get_dhcp_site_default_class();
+			input_class = api.get_site_configuration('DHCP_DEFAULT_CLASS');
 		END IF;
 		
 		IF input_address << cidr(api.get_site_configuration('DYNAMIC_SUBNET')) AND input_config !~* 'dhcp' THEN
