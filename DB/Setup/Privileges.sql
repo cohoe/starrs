@@ -1,5 +1,8 @@
 /* Privileges */
 
+CREATE ROLE "impulse_client";
+CREATE ROLE "impulse_admin";
+
 /* Schemas
 	Allow access to the schemas
 */
