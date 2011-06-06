@@ -1,15 +1,14 @@
 /* API - create_dhcp_class
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Create new class
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
-		-- Sanitize input
-		input_class := api.sanitize_general(input_class);
-		input_comment := api.sanitize_general(input_comment);
+		-- Validate input
+		input_class := api.validate_dhcp_class(input_class);
 
 		-- Create new class		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class');
@@ -22,15 +21,15 @@ COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP 
 
 /* API - remove_dhcp_clas
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Remove class
 s*/
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
 
-		-- Sanitize input
-		input_class := api.sanitize_general(input_class);
+		-- Validate input
+		input_class := api.validate_dhcp_class(input_class);
 
 		-- Remove class
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
@@ -43,17 +42,11 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP cla
 
 /* API - create_dhcp_class_option
 	1) Check privileges
-	2) Sanitize input
-	3) Create option
+	2) Create option
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
-
-		-- Sanitize input
-		input_class := api.sanitize_general(input_class);
-		input_option := api.sanitize_dhcp(input_option);
-		input_value := api.sanitize_dhcp(input_value);
 
 		-- Create class option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp class option');
@@ -68,17 +61,11 @@ COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Creat
 
 /* API - remove_dhcp_class_option
 	1) Check privileges
-	2) Sanitize input
-	3) Remove option
+	2) Remove option
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class_option');
-
-		-- Sanitize input
-		input_class := api.sanitize_general(input_class);
-		input_option := api.sanitize_dhcp(input_option);
-		input_value := api.sanitize_dhcp(input_value);
 
 		-- Remove option		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class option');
@@ -92,16 +79,11 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delet
 
 /* API - create_dhcp_subnet_option
 	1) Check privileges
-	2) Sanitize input
-	3) Create option
+	2) Create option
 */
 CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
-
-		-- Input sanitization
-		input_option := api.sanitize_dhcp(input_option);
-		input_value := api.sanitize_dhcp(input_value);
 
 		-- Create option		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating dhcp subnet option');
@@ -116,16 +98,11 @@ COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Crea
 
 /* API - remove_dhcp_subnet_option
 	1) Check privileges
-	2) Sanitize input
-	3) Remove option
+	2) Remove option
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
-
-		-- Sanitize input
-		input_option := api.sanitize_dhcp(input_option);
-		input_value := api.sanitize_dhcp(input_value);
 
 		-- Delete option		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp subnet option');
