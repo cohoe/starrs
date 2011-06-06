@@ -1,6 +1,6 @@
 /* API - create_subnet
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Create RDNS zone (since for this purpose you are authoritative for that zone)
 	4) Create new subnet
 */
@@ -10,11 +10,8 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
 
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_comment := api.sanitize_general(input_comment);
-		input_owner := api.sanitize_general(input_owner);
-		input_zone := api.sanitize_general(input_zone);
+		-- Validate input
+		input_name := api.validate_name(input_name);
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
@@ -68,17 +65,15 @@ COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existin
 
 /* API - create_ip_range
 	1) Check privileges
-	2) Sanitize input
+	2) Validate input
 	3) Create new range (triggers checking to make sure the range is valid
 */
 CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
-		input_use := api.sanitize_general(input_use);
-		input_comment := api.sanitize_general(input_comment);
+		-- Validate input
+		input_name := api.validate_name(input_name);
 		
 		-- Create new IP range		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
@@ -92,15 +87,11 @@ COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), 
 
 /* API - remove_ip_range
 	1) Check privileges
-	2) Sanitize input
-	3) Delete range
+	2) Delete range
 */
 CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_ip_range');
-	
-		-- Sanitize input
-		input_name := api.sanitize_general(input_name);
 		
 		-- Delete range		
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting range');
@@ -112,11 +103,10 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP range';
 
 /* API - get_address_from_range
-	1) Sanitize input
-	2) Dynamic addressing for ipv4
-	3) Get range bounds
-	4) Get address from range
-	5) Check if range was full
+	1) Dynamic addressing for ipv4
+	2) Get range bounds
+	3) Get address from range
+	4) Check if range was full
 */
 CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text) RETURNS INET AS $$
 	DECLARE
@@ -124,9 +114,6 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 		UpperBound INET;
 		AddressToUse INET;
 	BEGIN
-		-- Sanitize input
-		input_range_name := api.sanitize_general(input_range_name);
-
 		-- Dynamic Addressing for ipv4
 		IF (SELECT "use" FROM "ip"."ranges" WHERE "name" = input_range_name) = 'ROAM' 
 		AND (SELECT family("subnet") FROM "ip"."ranges" WHERE "name" = input_range_name) = 4 THEN
