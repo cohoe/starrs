@@ -49,7 +49,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
 
 		-- Validatae input
-		input_zone := api.validate_domain(NULL,input_zone);
+		IF api.validate_domain(NULL,input_zone) IS FALSE THEN
+			RAISE EXCEPTION 'Invalid domain (%)',input_zone;
+		END IF;
 		
 		-- Fill in owner
 		IF input_owner IS NULL THEN
@@ -106,7 +108,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		END IF;
 		
 		-- Validate hostname
-		PERFORM api.validate_domain(input_hostname,input_zone);
+		IF api.validate_domain(input_hostname,input_zone) IS FALSE THEN
+			RAISE EXCEPTION 'Invalid hostname (%) and domain (%)',input_hostname,input_zone;
+		END IF;
 		
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
@@ -274,7 +278,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
 
 		-- Validate input
-		input_alias := api.validate_domain(input_alias,NULL);
+		IF api.validate_domain(input_alias,NULL) IS FALSE THEN
+			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
+		END IF;
 		
 		-- Set owner
 		IF input_owner IS NULL THEN
@@ -329,7 +335,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_cname');
 
 		-- Validate input
-		input_alias := api.validate_domain(input_alias,NULL);
+		IF api.validate_domain(input_alias,NULL) IS FALSE THEN
+			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
+		END IF;
 		
 		-- Set owner
 		IF input_owner IS NULL THEN
