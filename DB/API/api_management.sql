@@ -11,19 +11,33 @@ CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_sev
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_log_entry"(text, text, text) IS 'Function to insert a log entry';
 
-/* API - sanitize_general */
-CREATE OR REPLACE FUNCTION "api"."sanitize_general"(input text) RETURNS TEXT AS $$
+/* API - validate_nospecial */
+CREATE OR REPLACE FUNCTION "api"."validate_nospecial"(input text) RETURNS TEXT AS $$
 	DECLARE
 		BadCrap TEXT;
 	BEGIN
-		BadCrap = regexp_replace(input, E'[a-z0-9\_\,\.\:\/ \(\)=\*\.]*\-*', '', 'gi');
+		BadCrap = regexp_replace(input, E'[a-z0-9]*', '', 'gi');
 		IF BadCrap != '' THEN
-			--RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
+			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
 		END IF;
 		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."sanitize_general"(text) IS 'Allow only certain characters for most common objects';
+COMMENT ON FUNCTION "api"."validate_nospecial"(text) IS 'Block all special characters';
+
+/* API - validate_name */
+CREATE OR REPLACE FUNCTION "api"."validate_name"(input text) RETURNS TEXT AS $$
+	DECLARE
+		BadCrap TEXT;
+	BEGIN
+		BadCrap = regexp_replace(input, E'[a-z0-9\:\_]*', '', 'gi');
+		IF BadCrap != '' THEN
+			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
+		END IF;
+		RETURN input;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."validate_name"(text) IS 'Allow certain characters for names';
 
 /* API - get_current_user */
 CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
@@ -58,16 +72,12 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for the next year';
 
 /* API - create_site_configuration
-	1) Validate input
-	2) Check privileges
-	3) Create directive
+	1) Check privileges
+	2) Create directive
 */
 CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive text, input_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
-		
-		-- Sanitize input
-		input_directive := api.validate_directive(input_directive);
 		
 		-- Create directive
 		PERFORM api.create_log_entry('API','INFO','creating directive');
