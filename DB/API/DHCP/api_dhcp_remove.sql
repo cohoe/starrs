@@ -1,8 +1,14 @@
-/* API - remove_dhcp_clas
+/* api_dhcp_remove.sql
+	1) remove_dhcp_class
+	2) remove_dhcp_class_option
+	3) remove_dhcp_subnet_option
+*/
+
+/* API - remove_dhcp_class
 	1) Check privileges
 	2) Validate input
 	3) Remove class
-s*/
+*/
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
@@ -24,7 +30,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete existing DHCP class';
-
 
 /* API - remove_dhcp_class_option
 	1) Check privileges
@@ -50,7 +55,6 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delete existing DHCP class option';
 
-
 /* API - remove_dhcp_subnet_option
 	1) Check privileges
 	2) Remove subnet option
@@ -74,4 +78,3 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete existing DHCP subnet option';
-

@@ -1,17 +1,21 @@
-/* API - get_reverse_domain 
-	1) Return reverse string
+/* api_dns_utility.sql
+	1) get_reverse_domain
+	2) validate_domain
+	3) validate_srv
 */
+
+/* API - get_reverse_domain */
 CREATE OR REPLACE FUNCTION "api"."get_reverse_domain"(INET) RETURNS TEXT AS $$
 	use strict;
 	use warnings;
 	use Net::IP;
 	use Net::IP qw(:PROC);
-	
+
 	# Return the rdns string for nsupdate from the given address. Automagically figures out IPv4 and IPv6.
 	my $reverse_domain = new Net::IP ($_[0])->reverse_ip() or die (Net::IP::Error());
 	$reverse_domain =~ s/\.$//;
 	return $reverse_domain;
-	
+
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_reverse_domain"(inet) IS 'Use a convenient Perl module to generate and return the RDNS record for a given address';
 
@@ -59,7 +63,7 @@ COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, d
 /* API - validate_srv */
 CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	my $srv_record = $_[0];
-	
+
 	if ($srv_record)
 	{
 		return 'TRUE';

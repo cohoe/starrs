@@ -1,12 +1,29 @@
+/* api_firewall_create.sql
+	1) create_firewall_metahost_member
+	2) create_firewall_metahost
+	3) create_firewall_metahost_rule
+	4) create_firewall_system
+	5) create_firewall_rule
+	6) create_firewall_rule_program
+	7) create_firewall_metahost_rule_program
+*/
+
 /* API - create_firewall_metahost_member
 	1) Check privileges
 	2) Check for dynamic
-	3) Create member (Insertion triggers new rules to be applied and old rules to be deleted)
+	3) Create member (Insertion triggers new rules to be applied)
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost_member');
-		
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost;
+			END IF;
+		END IF;
+
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
 			RAISE EXCEPTION 'Dynamic hosts cannot be a member of a metahost';
@@ -16,6 +33,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 		PERFORM api.create_log_entry('API','INFO','adding new member to metahost');
 		INSERT INTO "firewall"."metahost_members" ("address","name") VALUES (input_address,input_metahost);
 
+		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_firewall_metahost_member');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -33,17 +51,25 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 
 		-- Validate input
 		input_name := api.validate_name(input_name);
-		
+
 		-- Fill in owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
 		END IF;
-		
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF input_owner != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
+			END IF;
+		END IF;
+
 		-- Create metahost
 		PERFORM api.create_log_entry('API','INFO','creating new metahost');
 		INSERT INTO "firewall"."metahosts" ("name","comment","owner") VALUES 
 		(input_name, input_comment, input_owner);
-		
+
+		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_firewall_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -56,12 +82,20 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost"(text, text, text) IS 'creat
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
-		
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
+			END IF;
+		END IF;
+
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating new rule');
 		INSERT INTO "firewall"."metahost_rules" ("name","port","transport","deny","comment")
 		VALUES (input_name, input_port, input_transport, input_deny, input_comment);
-		
+
+		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -74,41 +108,63 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar
 CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input_subnet cidr, input_software text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_system');
-		
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
+			END IF;
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system;
+			END IF;
+		END IF;
+
 		-- Create system
 		PERFORM api.create_log_entry('API','INFO','creating new firewall system');
 		INSERT INTO "firewall"."systems" ("system_name","subnet","software_name") VALUES (input_name, input_subnet, input_software);
-		
+
+		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_system');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_system"(text, cidr, text) IS 'Firewall systems are the devices that receive rules for a subnet';
 
 /* API - create_firewall_rule
-	1) Check privileges
-	2) Fill in owner
-	3) Check for dynamic
+	1) Fill in owner
+	2) Check for dynamic
+	3) Check privileges
 	4) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule');
-		
+
 		-- Fill in owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
 		END IF;
-		
+
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
 			RAISE EXCEPTION 'Dynamic hosts cannot have firewall rules';
 		END IF;
-		
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
+			END IF;
+			IF input_owner != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
+			END IF;
+		END IF;
+
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating firewall rule');
 		INSERT INTO "firewall"."rules" ("address","port","transport","deny","comment","owner")
 		VALUES (input_address, input_port, input_transport, input_deny, input_comment, input_owner);
-		
+
+		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule');
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -116,8 +172,8 @@ COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, varchar(4), bool
 
 /* API - create_firewall_rule_program
 	1) Fill in owner
-	2) Check privileges
-	3) Check for dynamic
+	2) Check for dynamic
+	3) Check privileges
 	4) Get program information
 	5) Create rule
 */
@@ -127,15 +183,25 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule_program');
-		
+
 		-- Fill in owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
 		END IF;
-		
+
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
 			RAISE EXCEPTION 'Dynamic hosts cannot be a member of a metahost';
+		END IF;
+
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
+			END IF;
+			IF input_owner != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
+			END IF;
 		END IF;
 
 		-- Get program information
@@ -148,7 +214,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		INSERT INTO "firewall"."rules"
 		("address","port","transport","deny","owner","comment") VALUES
 		(input_address,Port,Transport,input_deny,input_owner,'Program on port '||Port||' '||Transport);
-		
+
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule_program');
 	END;
@@ -167,6 +233,16 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
 
+		-- Check privileges
+		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
+			END IF;
+			IF input_owner != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
+			END IF;
+		END IF;
+
 		-- Get program information
 		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
 		FROM "firewall"."programs"
@@ -177,7 +253,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 		INSERT INTO "firewall"."metahost_rules"
 		("name","port","transport","deny","comment") VALUES
 		(input_name,Port,Transport,input_deny,'Program on port '||Port||' '||Transport);
-		
+
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule_program');
 	END;

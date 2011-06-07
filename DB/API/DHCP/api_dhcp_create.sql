@@ -1,3 +1,9 @@
+/* api_dhcp_create.sql
+	1) create_dhcp_class
+	2) create_dhcp_class_option
+	3) create_dhcp_subnet_option
+*/
+
 /* API - create_dhcp_class
 	1) Check privileges
 	2) Validate input
@@ -9,7 +15,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to create dhcp class denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
 
 		-- Validate input
@@ -35,7 +41,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to create dhcp class option denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
 
 		-- Create class option		
@@ -60,7 +66,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to create dhcp subnet option denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
 
 		-- Create subnet option		
@@ -74,4 +80,3 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Create DHCP subnet option';
-

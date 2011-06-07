@@ -1,3 +1,9 @@
+/* api_ip_get.sql
+	1) get_address_from_range
+	2) get_subnet_addresses
+	3) get_range_addresses
+*/
+
 /* API - get_address_from_range
 	1) Dynamic addressing for ipv4
 	2) Get range bounds
@@ -18,23 +24,24 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 			AND "address" NOT IN (SELECT "address" FROM "systems"."interface_addresses") ORDER BY "address" ASC LIMIT 1;
 			RETURN AddressToUse;
 		END IF;
-	
+
 		-- Get range bounds
 		SELECT "first_ip","last_ip" INTO LowerBound,UpperBound
 		FROM "ip"."ranges"
 		WHERE "ip"."ranges"."name" = input_range_name;
-		
+
 		-- Get address from range
 		SELECT "address" FROM "ip"."addresses" INTO AddressToUse
 		WHERE "address" <= UpperBound AND "address" >= LowerBound
 		AND "address" NOT IN (SELECT "address" FROM "systems"."interface_addresses") ORDER BY "address" ASC LIMIT 1;
-		
+
 		-- Check if range was full (AddressToUse will be NULL)
 		IF AddressToUse IS NULL THEN
 			PERFORM api.create_log_entry('IP', 'ERROR', 'range full');
 			RAISE EXCEPTION 'All addresses in range % are in use',input_range_name;
 		END IF;
-		
+
+		-- Done
 		RETURN AddressToUse;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -81,7 +88,7 @@ CREATE OR REPLACE FUNCTION "api"."get_subnet_addresses"(CIDR) RETURNS SETOF INET
 		default { die "Unable to generate\n"; }
 	}
 
-	# Spit them all back out
+	# Done
 	return \@addresses;
 $$ LANGUAGE plperlu;
 COMMENT ON FUNCTION "api"."get_subnet_addresses"(cidr) IS 'Given a subnet, return an array of all acceptable addresses within that subnet.';
@@ -108,6 +115,7 @@ CREATE OR REPLACE FUNCTION "api"."get_range_addresses"(INET, INET) RETURNS SETOF
 		$range++;
 	}
 
+	# Done
 	return \@addresses;
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_range_addresses"(inet,inet) IS 'return a list of all addresses within a given range';

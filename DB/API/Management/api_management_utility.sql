@@ -1,3 +1,13 @@
+/* api_management_utility
+	1) validate_nospecial
+	2) validate_name
+	3) renew_system
+	4) lock_process
+	5) unlock_process
+	6) intialize
+	7) deinitialize
+*/
+
 /* API - validate_nospecial */
 CREATE OR REPLACE FUNCTION "api"."validate_nospecial"(input text) RETURNS TEXT AS $$
 	DECLARE
@@ -26,14 +36,27 @@ CREATE OR REPLACE FUNCTION "api"."validate_name"(input text) RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_name"(text) IS 'Allow certain characters for names';
 
-
-/* API - renew_system (DOCUMENT)*/
+/* API - renew_system
+	1) Check privileges
+	2) Renew system
+*/
 CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
-		
+
+		-- Check privileges
+		IF api.get_current_user_level() ~* 'PROGRAM|USER' THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied. Only admins can create site directives';
+			END IF;
+		END IF;
+
+		-- Renew system
 		PERFORM api.create_log_entry('API','INFO','renewing system');
 		UPDATE "systems"."systems" SET "renew_date" = date(current_date + interval '1 year');
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_system');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for the next year';
@@ -49,6 +72,11 @@ CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.lock_process');
 
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
+		END IF;
+
 		-- Get current status
 		SELECT "locked" INTO Status
 		FROM "management"."processes"
@@ -56,14 +84,13 @@ CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID
 		IF Status IS TRUE THEN
 			RAISE EXCEPTION 'Process is locked';
 		END IF;
-		
+
 		-- Update status
 		PERFORM api.create_log_entry('API','INFO','locking process '||input_process);
 		UPDATE "management"."processes" SET "locked" = TRUE WHERE "management"."processes"."process" = input_process;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.lock_process');
-
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."lock_process"(text) IS 'Lock a process for a job';
@@ -75,7 +102,12 @@ COMMENT ON FUNCTION "api"."lock_process"(text) IS 'Lock a process for a job';
 CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.unlock_process');
-		
+
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
+		END IF;
+
 		-- Update status
 		PERFORM api.create_log_entry('API','INFO','unlocking process '||input_process);
 		UPDATE "management"."processes" SET "locked" = FALSE WHERE "management"."processes"."process" = input_process;
@@ -101,7 +133,7 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		IF Level='NONE' THEN
 			RAISE EXCEPTION 'Could not identify "%".',input_username;
 		END IF;
-		
+
 		-- Create privilege table
 		CREATE TEMPORARY TABLE "user_privileges"
 		(username text NOT NULL,privilege text NOT NULL,
@@ -113,7 +145,7 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		INSERT INTO "user_privileges" VALUES (input_username,'PROGRAM',FALSE);
 		INSERT INTO "user_privileges" VALUES (input_username,'USER',FALSE);
 		ALTER TABLE "user_privileges" ALTER COLUMN "username" SET DEFAULT api.get_current_user();
-	
+
 		-- Set level
 		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" = Level;
 
@@ -122,3 +154,12 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."initialize"(text) IS 'Setup user access to the database';
+
+/* API - deinitialize */
+CREATE OR REPLACE FUNCTION "api"."deinitialize"() RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','INFO','Deinitializing user '||api.get_current_user());
+		DROP TABLE "user_privileges";
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."deinitialize"() IS 'Reset user permissions to activate a new user';
