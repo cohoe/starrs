@@ -4,7 +4,7 @@
 Useful for collecting metrics on OS usage and device types. Much better than Chuckles' scan-the-network-a-lot
 */
 
-SELECT api.initialize('IMPULSE Installer');
+SELECT api.initialize('root');
 
 /* Supported System Types
 Lets us see what all is on the network

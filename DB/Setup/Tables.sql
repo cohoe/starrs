@@ -41,7 +41,7 @@ CONSTRAINT "programs_pkey" PRIMARY KEY ("port")
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."defaults"(
-"deny" BOOLEAN NOT NULL DEFAULT api.get_firewall_site_default(),
+"deny" BOOLEAN NOT NULL DEFAULT bool(api.get_site_configuration('FW_DEFAULT_ACTION')),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
@@ -281,6 +281,7 @@ CREATE TABLE "dns"."zones"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 "comment" TEXT,
+"shared" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "zones_pkey" PRIMARY KEY ("zone")
 )
 WITHOUT OIDS;
@@ -292,6 +293,7 @@ CREATE TABLE "dns"."keys"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "comment" TEXT,
+"owner" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "keys_pkey" PRIMARY KEY ("keyname")
 )
 WITHOUT OIDS;
@@ -301,6 +303,7 @@ CREATE TABLE "ip"."addresses"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"owner" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
