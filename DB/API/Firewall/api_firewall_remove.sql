@@ -18,8 +18,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost;
+			IF (SELECT "owner" FROM "firewall"."metahost_members" 
+			JOIN "firewall"."metahosts" ON "firewall"."metahosts"."name" = "firewall"."metahost_members"."name"
+			WHERE "address" = input_address) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost member %. You are not owner.',input_address;
 			END IF;
 		END IF;
 
@@ -37,20 +39,20 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost_member"(inet) IS 'remove a m
 	1) Check privileges
 	2) Remove metahost
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost"(input_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost"(input_metahost_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost');
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost;
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
 		END IF;
 
 		-- Remove metahost
 		PERFORM api.create_log_entry('API','INFO','removing metahost');
-		DELETE FROM "firewall"."metahosts" WHERE "name" = input_name;		
+		DELETE FROM "firewall"."metahosts" WHERE "name" = input_metahost_name;		
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_firewall_metahost');
@@ -62,20 +64,20 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost"(text) IS 'remove a firewall
 	1) Check privileges
 	2) Remove rule
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_name text, input_port integer, input_transport text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_metahost_name text, input_port integer, input_transport text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule');
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost;
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
 		END IF;
 
 		-- Remove rule
 		PERFORM api.create_log_entry('API','INFO','removing rule');
-		DELETE FROM "firewall"."metahost_rules" WHERE "name" = input_name AND "port" = input_port AND "transport" = input_transport;
+		DELETE FROM "firewall"."metahost_rules" WHERE "name" = input_metahost_name AND "port" = input_port AND "transport" = input_transport;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule');
@@ -87,7 +89,7 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule"(text, integer, text) I
 	1) Check privileges
 	2) Remove system
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_metahost_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_system');
 
@@ -96,14 +98,14 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETUR
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
 			END IF;
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_name) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_metahost_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system;
 			END IF;
 		END IF;
 
 		-- Remove system
 		PERFORM api.create_log_entry('API','INFO','removing firewall system');
-		DELETE FROM "firewall"."systems" WHERE "system_name" = input_name;
+		DELETE FROM "firewall"."systems" WHERE "system_name" = input_metahost_name;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_system');
@@ -146,13 +148,13 @@ COMMENT ON FUNCTION "api"."remove_firewall_rule"(inet, integer, text) IS 'Remove
 */
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address inet, input_program text) RETURNS VOID AS $$
 	DECLARE
-		Port INTEGER;
-		Transport VARCHAR(4);
+		PortNum INTEGER;
+		ProgramTransport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_rule_program');
 
 		-- Get program information
-		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO PortNum,ProgramTransport
 		FROM "firewall"."programs"
 		WHERE "name" = input_program;
 
@@ -161,7 +163,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
-			IF (SELECT "owner" FROM "firewall"."rules" WHERE "address" = input_address AND "port" = Port AND "transport" = Transport) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "firewall"."rules" WHERE "firewall"."rules"."address" = input_address 
+			AND "firewall"."rules"."port" = PortNum AND "firewall"."rules"."transport" = ProgramTransport) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on rule %,%. You are not owner.',input_address,input_program;
 			END IF;
 		END IF;
@@ -170,8 +173,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 		PERFORM api.create_log_entry('API','INFO','removing rule based on program');
 		DELETE FROM "firewall"."rules"
 		WHERE "firewall"."rules"."address" = input_address
-		AND "firewall"."rules"."port" = Port
-		AND "firewall"."rules"."transport" = Transport;
+		AND "firewall"."rules"."port" = PortNum
+		AND "firewall"."rules"."transport" = ProgramTransport;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_rule_program');
@@ -184,31 +187,31 @@ COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove 
 	2) Get program information
 	3) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_name text, input_program text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_metahost_name text, input_program text) RETURNS VOID AS $$
 	DECLARE
-		Port INTEGER;
-		Transport VARCHAR(4);
+		PortNum INTEGER;
+		ProgramTransport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule_program');
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
 		END IF;
 
 		-- Get program information
-		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO PortNum,ProgramTransport
 		FROM "firewall"."programs"
 		WHERE "name" = input_program;
 
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','removing metahost rule from program');
 		DELETE FROM "firewall"."metahost_rules"
-		WHERE "firewall"."metahost_rules"."name" = input_name
-		AND "firewall"."metahost_rules"."port" = Port
-		AND "firewall"."metahost_rules"."transport" = Transport;
+		WHERE "firewall"."metahost_rules"."name" = input_metahost_name
+		AND "firewall"."metahost_rules"."port" = PortNum
+		AND "firewall"."metahost_rules"."transport" = ProgramTransport;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule_program');
