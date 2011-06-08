@@ -16,8 +16,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission to create dhcp class denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to create dhcp class denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Validate input
@@ -42,8 +42,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission to create dhcp class option denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to create dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Create class option		
@@ -67,8 +67,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission to create dhcp subnet option denied for % (%)',api.get_current_user(),api.get_current_user_level();
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to create dhcp subnet option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Create subnet option		

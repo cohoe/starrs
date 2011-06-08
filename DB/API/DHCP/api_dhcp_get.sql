@@ -1,3 +1,14 @@
+/* api_dhcp_get.sql
+	1) get_dhcpd_static_hosts
+	2) get_dhcpd_dynamic_hosts
+	3) get_dhcpd_subnets
+	4) get_dhcpd_subnet_options
+	5) get_dhcpd_subnet_settings
+	6) get_dhcpd_range_options
+	7) get_dhcpd_range_settings
+	8) get_dhcpd_ranges
+*/
+
 /* API - get_dhcpd_static_hosts */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_static_hosts"() RETURNS SETOF "dhcp"."dhcpd_static_hosts" AS $$
 	BEGIN
