@@ -16,6 +16,9 @@ system("psql","-f","\"$dir/Setup/Jumpstart.sql\"");
 print "Setup...\n";
 system("psql","-f","\"$dir/Setup/Setup.sql\"",$dbname);
 
+print "Types...\n";
+system("psql","-f","\"$dir/Setup/Types.sql\"",$dbname);
+
 foreach my $schema (@schemas)
 {
 	foreach my $file (@files)
@@ -27,6 +30,8 @@ foreach my $schema (@schemas)
 
 print "Tables...\n";
 system("psql","-f","\"$dir/Setup/Tables.sql\"",$dbname);
+print "Fixes...\n";
+system("psql","-f","\"$dir/Setup/Fixes.sql\"",$dbname);
 print "Constraints...\n";
 system("psql","-f","\"$dir/Setup/Constraints.sql\"",$dbname);
 
@@ -38,7 +43,6 @@ foreach my $schema (@schemas)
 
 print "Triggers...\n";
 system("psql","-f","\"$dir/Triggers/Triggers.sql\"",$dbname);
-
 print "Views...\n";
 system("psql","-f","\"$dir/Setup/Views.sql\"",$dbname);
 print "Base...\n";

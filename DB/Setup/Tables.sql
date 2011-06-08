@@ -108,6 +108,7 @@ CREATE TABLE "ip"."ranges"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "subnet" CIDR,
+"class" TEXT NOT NULL,
 CONSTRAINT "ranges_pkey" PRIMARY KEY ("name")
 )
 WITHOUT OIDS;
@@ -433,6 +434,35 @@ CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dhcp"."subnet_settings"(
+"setting" TEXT NOT NULL,
+"value" TEXT NOT NULL,
+"subnet" CIDR,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "subnet_settings_pkey" PRIMARY KEY ("setting")
+)
+WITHOUT OIDS;
+
+CREATE TABLE "dhcp"."range_settings"(
+"setting" TEXT NOT NULL,
+"name" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"value" TEXT NOT NULL,
+CONSTRAINT "range_settings_pkey" PRIMARY KEY ("setting")
+)
+WITHOUT OIDS;
+
+CREATE TABLE "dhcp"."lease_log"(
+"time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"mac" MACADDR NOT NULL,
+"address" INET NOT NULL
+)
+WITHOUT OIDS;
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -495,4 +525,10 @@ COMMENT ON TABLE "management"."output" IS 'Destination of the output functions r
 
 COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
 
-COMMENT ON TABLE "management"."processes" IS 'Process locking control'
+COMMENT ON TABLE "management"."processes" IS 'Process locking control';
+
+COMMENT ON TABLE "dhcp"."subnet_settings" IS 'Settings for the DHCP server';
+
+COMMENT ON TABLE "dhcp"."range_settings" IS 'DHCP settings for IP ranges';
+
+COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';

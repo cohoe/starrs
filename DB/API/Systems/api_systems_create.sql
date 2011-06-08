@@ -92,7 +92,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 
 		-- Fill in class
 		IF input_class IS NULL THEN
-			input_class = api.get_site_configuration('DHCP_DEFAULT_CLASS');
+			input_class = api.get_site_configuration('DHCPD_DEFAULT_CLASS');
 		END IF;
 
 		IF input_address << cidr(api.get_site_configuration('DYNAMIC_SUBNET')) AND input_config !~* 'dhcp' THEN
