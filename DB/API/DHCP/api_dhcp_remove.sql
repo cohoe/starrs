@@ -6,8 +6,7 @@
 
 /* API - remove_dhcp_class
 	1) Check privileges
-	2) Validate input
-	3) Remove class
+	2) Remove class
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS VOID AS $$
 	BEGIN
@@ -15,11 +14,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to remove dhcp class denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
-
-		-- Validate input
-		input_class := api.validate_dhcp_class(input_class);
 
 		-- Remove class
 		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
@@ -41,7 +37,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to remove dhcp class option denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
 
 		-- Remove class option		
@@ -65,7 +61,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
-			RAISE EXCEPTION 'Permission denied for % (%)',api.get_current_user(),api.get_current_user_level();
+			RAISE EXCEPTION 'Permission to remove dhcp subnet option denied for % (%)',api.get_current_user(),api.get_current_user_level();
 		END IF;
 
 		-- Delete subnet option		
