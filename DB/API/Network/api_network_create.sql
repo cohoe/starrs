@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport"(input_port_name text, input
 		input_port_name := api.validate_name(input_port_name);
 
 		-- Check privileges
-		IF api.get_current_user_level() ~* 'USER|PROGRAM' THEN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport_range"(input_prefix text, fi
 		Counter := first_port;
 
 		-- Check privileges
-		IF api.get_current_user_level() ~* 'USER|PROGRAM' THEN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
