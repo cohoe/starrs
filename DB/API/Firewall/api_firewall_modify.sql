@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_default"(input_address inet, i
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_firewall_default');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
