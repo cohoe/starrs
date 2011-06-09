@@ -62,15 +62,31 @@ COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, d
 
 /* API - validate_srv */
 CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
-	my $srv_record = $_[0];
+	my $srv = $_[0];
+	my @parts = split('\.',$srv);
 
-	if ($srv_record)
+	# Check for two parts: the service and the transport
+	if (scalar(@parts) ne 2)
 	{
-		return 'TRUE';
+		die "Improper number of parts in record\n"
 	}
-	else
+
+	# Define parts of the record
+	my $service = $parts[0];
+	my $transport = $parts[1];
+
+	# Check if transport is valid
+	if ($transport !~ m/_tcp|_udp/i)
 	{
-		return 'FALSE';
+		die "Improper transport in record\n";
 	}
+
+	# Check that service is valid
+	if ($service !~ m/^_\w+$/i)
+	{
+		die "Improper service in record\n";
+	}
+	
+	return $srv;
 $$ LANGUAGE 'plperl';
 COMMENT ON FUNCTION "api"."validate_srv"(text) IS 'Validate SRV records';
