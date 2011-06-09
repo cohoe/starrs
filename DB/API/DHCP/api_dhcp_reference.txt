@@ -61,29 +61,17 @@
         class - The name of the class to be created
         comment - A comment on the class (or NULL for no comment)
 
+	Returns:
+		void
+
     Rules:
         No two classes can have the same name (primary key)
         
     Example:
         SELECT api.create_dhcp_class('netboot','Anthonys boot server project');
     
-3.1.3.2 Remove DHCP Class
 
-    Remove a DHCP class from the database
-
-    Definition:
-        api.remove_dhcp_class(class text)
-        
-    Arguments:
-        class - The name of the class to be removed
-
-    Rules:
-        None
-
-    Example:
-        SELECT api.remove_dhcp_class('netboot');
-
-3.1.3.3 Create DHCP Class Option
+3.1.3.2 Create DHCP Class Option
 
     Assign an option to a given DHCP class
 
@@ -95,6 +83,9 @@
         option - The option declaration to insert
         value - The value of the option
 
+	Returns:
+		void
+
     Rules:
         Only one combination of class, option, value may exist (primary key)
         
@@ -102,26 +93,7 @@
         SELECT api.create_dhcp_class_option('netboot','next-server',
         '"10.0.0.1"');
 
-3.1.3.4 Remove DHCP Class Option
-
-    Remove a configured class option from the database
-
-    Definition:
-        api.remove_dhcp_class_option(class text, option text, value text)
-        
-    Arguments:
-        class - The name of the class
-        option - The option declaration to remove
-        value - The value of the option to remove
-        
-    Rules:
-        None
-        
-    Example:
-        SELECT api.remove_dhcp_class_option('netboot','next-server',
-        '"10.0.0.1"');
-
-3.1.3.5 Create DHCP Subnet Option
+3.1.3.3 Create DHCP Subnet Option
 
     Assign a DHCP option to a subnet. Useful for routers, DNS servers, etc
 
@@ -133,6 +105,9 @@
         option - The option declaration to insert
         value - The value of the option
 
+	Returns:
+		void
+
     Rules:
         Only one combination of subnet, option, value may exist (primary key)
  
@@ -140,8 +115,95 @@
         SELECT api.create_dhcp_class_option('10.0.0.0/24','option-routers',
         '"10.0.0.254"');
 
+3.1.3.4 Create DHCP Subnet Setting
+	
+	Create a DHCP subnet setting. These are different than options in that 
+	only one directive can be made per subnet
 
-3.1.3.6 Remove DHCP Subnet Option
+	Definition:
+		api.create_dhcp_subnet_setting(input_subnet cidr, input_setting 
+		text, input_value text)
+
+	Arguments:
+		input_subnet - The subnet to apply to
+		input_setting - The setting definition
+		input_value - The value of the setting
+
+	Returns:
+		void
+
+	Rules:
+		Setting must be unique per subnet (primary key)
+
+	Example:
+		SELECT api.create_dhcp_subnet_setting('10.0.0.0/24',
+		'max-lease-time','3600');
+
+3.1.3.5 Create DHCP Range Setting
+
+	Create a DHCP setting for a dynamic pool. 
+
+	Definition:
+		api.create_dhcp_range_setting(input_range text, input_setting text,
+		input_value text)
+
+	Arguments:
+		input_range - Range name to create the setting on
+		input_setting - The setting to create
+		input_value - The value of the setting
+
+	Returns:
+		void
+
+	Rules:
+		Setting must be unique to range (primary key)
+	
+	Example:
+		SELECT api.create_dhcp_range_setting('Dynamic pool',
+		'option domain-name','"example.com"');
+
+3.1.3.6 Remove DHCP Class
+
+    Remove a DHCP class from the database
+
+    Definition:
+        api.remove_dhcp_class(class text)
+        
+    Arguments:
+        class - The name of the class to be removed
+
+	Returns:
+		void
+
+    Rules:
+        None
+
+    Example:
+        SELECT api.remove_dhcp_class('netboot');
+
+3.1.3.7 Remove DHCP Class Option
+
+    Remove a configured class option from the database
+
+    Definition:
+        api.remove_dhcp_class_option(class text, option text, value text)
+        
+    Arguments:
+        class - The name of the class
+        option - The option declaration to remove
+        value - The value of the option to remove
+
+	Returns:
+		void
+        
+    Rules:
+        None
+        
+    Example:
+        SELECT api.remove_dhcp_class_option('netboot','next-server',
+        '"10.0.0.1"');
+
+3.1.3.X Remove DHCP Subnet Option
 
     Remove a configured subnet option from the database
 
@@ -152,10 +214,13 @@
         subnet - The subnet to remove the option/value from
         option - The option declaration to remove
         value - The value of the option to remove
+
+	Returns:
+		void
         
     Rules:
         None
         
     Example:
         SELECT api.remove_dhcp_subnet_option('10.0.0.0/24','option-routers',
-        '"10.0.0.254"');
+        '"10.0.0.254"'); 
