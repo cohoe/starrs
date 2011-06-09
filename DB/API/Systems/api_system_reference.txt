@@ -8,11 +8,11 @@
     A system is defined as a sngle computer box. Since computers often have 
     multiple network interfaces, the ability to do this has been a core 
     feature of IMPULSE. 
-    
+
     An interface is defined as a single device physically connected to the 
     network. It is identified by the MAC address. If anyone spoofs their MAC 
     address, find a stick and beat them with it.
-    
+
 3.7.2 Process Flow
 
     1) Create a system
@@ -55,6 +55,9 @@
         os_name - Primary operating system
         comment - Comment on the system (or NULL for no comment)
 
+    Returns:
+        void
+
     Rules:
         System names must be unique (primary key)
 
@@ -62,23 +65,7 @@
         SELECT api.create_system('Server1',NULL,'Server',
         'Windows Server 2003','Windows webserver');
 
-3.7.4.2 Remove System
-
-    Remove a system (and all associated records)
-
-    Definition:
-        api.remove_system(system_name text)
-
-    Arguments:
-        system_name - The name of the system to remove
-
-    Rules:
-        None
-
-    Example:
-        SELECT api.remove_system('Server1');
-
-3.7.4.3 Create Interface
+3.7.4.2 Create Interface
 
     Create an interface on a system
 
@@ -90,29 +77,16 @@
         mac - MAC address of the interface
         comment - Comment on the interface (or NULL for no comment)
 
+    Returns:
+        void
+
     Rules:
         MAC addresses must be unique (primary key)
 
     Example:
         SELECT api.create_interface('Server1','00:09:6b:12:34:56',NULL);
 
-3.7.4.4 Remove Interface
-
-    Remove an interface from a system
-
-    Definition: 
-        api.remove_interface(mac macaddr)
-
-    Arguments:
-        mac - MAC address of the interface
-
-    Rules:
-        None
-
-    Example:
-        SELECT api.remove_interface('00:09:6b:12:34:56');
-
-3.7.4.5 Create Interface Address
+3.7.4.3 Create Interface Address
 
     Associate an address with an interface by specifying the IP address
 
@@ -130,6 +104,9 @@
         isprimary - Is this address the primary of the interface
         comment - Comment on the address (or NULL for no comment)
 
+    Returns:
+        void
+
     Rules:
         Only one primary address per MAC (trigger)
         Config type must match address family (trigger)
@@ -137,7 +114,45 @@
     Example:
         SELECT pi.create_interface_address_manual('00:09:6b:12:34:56', 
         'Local Area Connection','10.0.0.1','DHCP',NULL,TRUE,'Main network');
-        
+
+3.7.4.4 Remove System
+
+    Remove a system (and all associated records)
+
+    Definition:
+        api.remove_system(system_name text)
+
+    Arguments:
+        system_name - The name of the system to remove
+
+    Returns:
+        void
+
+    Rules:
+        None
+
+    Example:
+        SELECT api.remove_system('Server1');
+
+3.7.4.5 Remove Interface
+
+    Remove an interface from a system
+
+    Definition: 
+        api.remove_interface(mac macaddr)
+
+    Arguments:
+        mac - MAC address of the interface
+
+    Returns:
+        void
+
+    Rules:
+        None
+
+    Example:
+        SELECT api.remove_interface('00:09:6b:12:34:56');
+
 3.7.4.6 Remove Interface Address
 
     Remove an associated address from an interface
@@ -148,29 +163,34 @@
     Arguments:
         address - IP address to deregister
 
+    Returns:
+        void
+
     Rules:
         None
 
     Example:
         SELECT api.remove_interface_address('10.0.0.1');
 
-        
 3.7.4.7 Get System Types
-    
+
     Get a list of all the available system types
-    
+
     Definition:
         api.get_system_types()
-        
+
     Arguments:
         None
-        
+
+    Returns:
+        SetOf text
+
     Rules:
         None
-        
+
     Example:
         SELECT api.get_system_types();
-    
+
 
 3.7.4.8 Get Operating Systems
 
@@ -178,12 +198,34 @@
 
     Definition:
         api.get_operating_systems()
-        
+
     Arguments:
         None
-        
+
+    Returns:
+        SetOf text
+
     Rules:
         None
-        
+
     Example:
         SELECT api.get_operating_systems();
+
+3.7.4.9 Get Interface Address Owner
+
+    Simplification function to get the owner of the address. 
+
+    Definition:
+        api.get_interface_address_owner(address inet)
+
+    Arguments:
+        address - Interface address to get the owner of
+
+    Returns:
+        text
+
+    Rules:
+        none
+
+    Example:
+        SELECT api.get_interface_address_owner('10.0.0.1');
