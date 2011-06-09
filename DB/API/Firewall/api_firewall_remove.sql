@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_member"(input_address
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost_member');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahost_members" 
 			JOIN "firewall"."metahosts" ON "firewall"."metahosts"."name" = "firewall"."metahost_members"."name"
 			WHERE "address" = input_address) != api.get_current_user() THEN
@@ -44,7 +44,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost"(input_metahost_name 
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_firewall_metahost');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
@@ -69,7 +69,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_metahost_
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_metahost_name te
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_system');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
 			END IF;
@@ -122,7 +122,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule"(input_address inet, inpu
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_rule');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 		WHERE "name" = input_program;
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
@@ -195,7 +195,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_m
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule_program');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost_name;
 			END IF;
