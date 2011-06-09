@@ -8,7 +8,7 @@
     control over SNMP compatible switches. This would allow for the management 
     to easily disable problem machines and see detailed infomation to make 
     debugging easier. 
-    
+
     Network devices can be created in IMPULSE, then have switchports 
     associated with them. These ports are then used to figure out how the 
     network is physically and logically constructed. 
@@ -18,7 +18,7 @@
 3.6.2.1 Create Switchport
 
     Create a switchport on a network device
-    
+
     Definition:
         api.create_switchport(port_name text, system_name text, 
         port_type text, description text)
@@ -29,39 +29,25 @@
         port_type - Type of port (access, uplink, trunk, etc)
         description - A description of the port
 
+    Returns:
+        void
+
     Rules:
         Only network systems can have switchports (trigger)
-        
+
     Example:
         SELECT api.create_switchport('Gi0/1','Head Switch','Uplink',
         'Master Uplink');
 
-3.6.2.2 Remove Switchport
-
-    Remove a switchport from a system
-    
-    Definition:
-        api.remove_switchport(port_name text, system_name text)
-        
-    Arguments:
-        port_name - Name of the port to remove
-        system_name - Name of the system to remove the port from
-        
-    Rules:
-        None
-        
-    Example: 
-        SELECT api.remove_switchport('Gi0/1','Head Switch');
-        
-3.6.2.3 Create Switchport Range
+3.6.2.2 Create Switchport Range
 
     Create a large amount of ports between two number identifiers
-    
+
     Definition:
         api.create_switchport_range(prefix text, first_port integer, 
         last_port integer, system_name text, port_type text, 
         description text)
-        
+
     Arguments:
         prefix - Name prefix for ports
         first_port - First port identifier
@@ -70,29 +56,54 @@
         port_type - Type of the ports
         description - Description of all ports
 
+    Returns:
+        void
+
     Rules:
         None
 
     Example:
         SELECT api.create_switchport_range('Gi0/',1,48,'switch1','access',
         'All machine ports');
-    
+
+3.6.2.3 Remove Switchport
+
+    Remove a switchport from a system
+
+    Definition:
+        api.remove_switchport(port_name text, system_name text)
+
+    Arguments:
+        port_name - Name of the port to remove
+        system_name - Name of the system to remove the port from
+
+    Returns:
+        void
+
+    Rules:
+        None
+
+    Example: 
+        SELECT api.remove_switchport('Gi0/1','Head Switch');
 3.6.2.4 Remove Switchport Range
 
     Remove a large amount of ports
-    
+
     Definition:
         api.remove_switchport_range(input_prefix text, first_port integer, 
         last_port integer, input_system_name text)
-        
+
     Arguments:
         input_prefix - Name prefix of the ports
         first_port - First port identifier
         last_port - Last port identifier
         input_system_name - System name to remove from
-        
+
+    Returns:
+        void
+
     Rules:
         None
-        
+
     Example:
         SELECT api.remove_switchport_range('Gi0/',1,48,'switch1');
