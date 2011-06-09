@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 		END IF;
 
 		-- Check privileges
-		IF api.get_current_user_level() ~* 'USER|PROGRAM' THEN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
 
 		-- Check privileges
-		IF api.get_current_user_level() ~* 'USER|PROGRAM' THEN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
@@ -79,7 +79,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address');
 
 		-- Check privileges
-		IF api.get_current_user_level() ~* 'USER|PROGRAM' THEN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interfaces"."mac" = input_mac) != api.get_current_user() THEN
