@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost_member');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_metahost) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_metahost;
 			END IF;
@@ -58,7 +58,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 		END IF;
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
@@ -84,7 +84,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
 			END IF;
@@ -110,7 +110,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_system');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
 			END IF;
@@ -150,7 +150,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		END IF;
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
@@ -195,7 +195,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		END IF;
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
@@ -234,7 +234,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
 			END IF;
