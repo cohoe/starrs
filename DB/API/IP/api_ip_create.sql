@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 		END IF;
 		
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF input_dhcp IS TRUE THEN
 				RAISE EXCEPTION 'Permission to create DHCP-enabled subnet % denied for user %',input_subnet,api.get_current_user();
 			END IF;
@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner',input_subnet;
 			END IF;
@@ -102,7 +102,7 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_address_range');
 
 		-- Check privileges
-		IF (api.get_current_user_level() ~* 'USER|PROGRAM') THEN
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner',input_subnet;
 			END IF;
