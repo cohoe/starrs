@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."classes" SET input_field,date_modified,last_modifier = input_new_value,current_timestamp,api.get_current_user() WHERE "class" = input_old_class;
+		UPDATE "dhcp"."classes" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "class" = input_old_class;
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class');
 	END;
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."class_options" SET input_field,date_modified,last_modifier = input_new_value,current_timestamp,api.get_current_user() WHERE "class" = input_old_class AND "option" = input_old_option AND "value" = input_old_value;
+		UPDATE "dhcp"."class_options" SET input_field = input_new_value, date_modified = current_timestamp,last_modifier = api.get_current_user() WHERE "class" = input_old_class AND "option" = input_old_option AND "value" = input_old_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class_option');
@@ -90,7 +90,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."subnet_options" SET input_field,date_modified,last_modifier = input_new_value,current_timestamp,api.get_current_user() WHERE "subnet" = input_old_subnet AND "option" = input_old_option AND "value" = input_old_value;
+		UPDATE "dhcp"."subnet_options" SET input_field = input_new_value, date_modified = current_timestamp,last_modifier = api.get_current_user() WHERE "subnet" = input_old_subnet AND "option" = input_old_option AND "value" = input_old_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_subnet_option');
@@ -119,7 +119,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_setting"(input_old_subnet c
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."subnet_settings" SET input_field,date_modified,last_modifier = input_new_value,current_timestamp,api.get_current_user() WHERE "subnet" = input_old_subnet AND "setting" = input_old_setting AND "value" = input_old_value;
+		UPDATE "dhcp"."subnet_settings" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "subnet" = input_old_subnet AND "setting" = input_old_setting AND "value" = input_old_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_subnet_setting');
@@ -148,7 +148,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_setting"(input_old_range tex
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."range_settings" SET input_field,date_modified,last_modifier = input_new_value,current_timestamp,api.get_current_user() WHERE "name" = input_old_range AND "setting" = input_old_setting AND "value" = input_old_value;
+		UPDATE "dhcp"."range_settings" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "name" = input_old_range AND "setting" = input_old_setting AND "value" = input_old_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_range_setting');
