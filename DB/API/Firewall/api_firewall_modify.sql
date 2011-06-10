@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_default"(input_address inet, i
 
 		-- Alter default action
 		PERFORM api.create_log_entry('API','INFO','altering default action');
-		UPDATE "firewall"."defaults" SET "deny" = input_action WHERE "address" = input_address;
+		UPDATE "firewall"."defaults" SET "deny" = input_action, "date_modified" = current_timestamp, "last_modifier" = api.get_current_user() WHERE "address" = input_address;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_firewall_default');
