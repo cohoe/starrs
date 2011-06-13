@@ -27,13 +27,15 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 		END IF;
 
 		-- Validate class name
-		IF input_field !* 'class' THEN
+		IF input_field !~* 'class' THEN
 			input_new_value := api.validate_nospecial(input_new_value);
 		END IF;
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."classes" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "class" = input_old_class;
+		EXECUTE 'UPDATE "dhcp"."classes" SET ' || quote_ident($2) || ' = $3, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "class" = $1' USING input_old_class, input_field, input_new_value;		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class');
 	END;
@@ -61,8 +63,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."class_options" SET input_field = input_new_value, date_modified = current_timestamp,last_modifier = api.get_current_user() WHERE "class" = input_old_class AND "option" = input_old_option AND "value" = input_old_value;
 
+		EXECUTE 'UPDATE "dhcp"."class_options" SET ' || quote_ident($4) || ' = $5, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "class" = $1 AND "option" = $2 AND "value" = $3' 
+		USING input_old_class, input_old_option, input_old_value, input_field, input_new_value;
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class_option');
 	END;
@@ -90,7 +96,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."subnet_options" SET input_field = input_new_value, date_modified = current_timestamp,last_modifier = api.get_current_user() WHERE "subnet" = input_old_subnet AND "option" = input_old_option AND "value" = input_old_value;
+		
+		EXECUTE 'UPDATE "dhcp"."subnet_options" SET ' || quote_ident($4) || ' = $5, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "subnet" = $1 AND "option" = $2 AND "value" = $3' 
+		USING input_old_subnet, input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_subnet_option');
@@ -119,8 +129,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_setting"(input_old_subnet c
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."subnet_settings" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "subnet" = input_old_subnet AND "setting" = input_old_setting AND "value" = input_old_value;
-
+		
+		EXECUTE 'UPDATE "dhcp"."subnet_settings" SET ' || quote_ident($4) || ' = $5, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "subnet" = $1 AND "setting" = $2 AND "value" = $3' 
+		USING input_old_subnet, input_old_setting, input_old_value, input_field, input_new_value;
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_subnet_setting');
 	END;
@@ -148,7 +162,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_setting"(input_old_range tex
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
-		UPDATE "dhcp"."range_settings" SET input_field = input_new_value, date_modified = current_timestamp, last_modifier = api.get_current_user() WHERE "name" = input_old_range AND "setting" = input_old_setting AND "value" = input_old_value;
+		
+		EXECUTE 'UPDATE "dhcp"."range_settings" SET ' || quote_ident($4) || ' = $5, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "name" = $1 AND "setting" = $2 AND "value" = $3' 
+		USING input_old_range, input_old_setting, input_old_value, input_field, input_new_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_range_setting');
