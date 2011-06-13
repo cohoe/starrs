@@ -28,46 +28,46 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."a_insert"() IS 'Creating a new A or AAAA record';
 
 /* Trigger a_update 
-	1) Check for zone mismatch
+	1) New address
+	2) New zone
 */
 CREATE OR REPLACE FUNCTION "dns"."a_update"() RETURNS TRIGGER AS $$
-DECLARE
-	RowCount INTEGER;
-BEGIN
-	-- Address/Zone mismatch
-	IF NEW."address" != OLD."address" THEN
-		SELECT COUNT(*) INTO RowCount
-		FROM "ip"."subnets"
-		WHERE "ip"."subnets"."zone" = NEW."zone"
-		AND NEW."address" << "ip"."subnets"."subnet";
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Address/Zone mismatch
+		IF NEW."address" != OLD."address" THEN
+			SELECT COUNT(*) INTO RowCount
+			FROM "ip"."subnets"
+			WHERE "ip"."subnets"."zone" = NEW."zone"
+			AND NEW."address" << "ip"."subnets"."subnet";
+			IF (RowCount < 1) THEN 
+				RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+			END IF;
 			
-		IF (RowCount < 1) THEN 
-			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+			-- Autofill Type
+			IF family(NEW."address") = 4 THEN
+				NEW."type" := 'A';
+			ELSIF family(NEW."address") = 6 THEN
+				NEW."type" := 'AAAA';
+			END IF;
 		END IF;
 		
-		-- Autofill Type
-		IF family(NEW."address") = 4 THEN
-			NEW."type" := 'A';
-		ELSIF family(NEW."address") = 6 THEN
-			NEW."type" := 'AAAA';
+		-- New zone mismatch
+		IF NEW."zone" != OLD."zone" THEN
+			SELECT COUNT(*) INTO RowCount
+			FROM "ip"."subnets"
+			WHERE "ip"."subnets"."zone" = NEW."zone"
+			AND NEW."address" << "ip"."subnets"."subnet";
+			IF (RowCount < 1) THEN 
+				RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+			END IF;
 		END IF;
-	END IF;
-	-- New zone mismatch
-	IF NEW."zone" != OLD."zone" THEN
-		SELECT COUNT(*) INTO RowCount
-		FROM "ip"."subnets"
-		WHERE "ip"."subnets"."zone" = NEW."zone"
-		AND NEW."address" << "ip"."subnets"."subnet";
-			
-		IF (RowCount < 1) THEN 
-			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
-		END IF;
-	END IF;
 
-	RETURN NEW;
-END;
+		RETURN NEW;
+	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."a_update"() IS 'Altering an A or AAAA record';
+COMMENT ON FUNCTION "dns"."a_update"() IS 'Update an existing A or AAAA record';
 
 /* Trigger - pointers_insert 
 	1) Check if alias name already exists
