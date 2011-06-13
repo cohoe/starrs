@@ -32,7 +32,8 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 		PERFORM api.create_log_entry('API','INFO','update record');
 		EXECUTE 'UPDATE "dns"."keys" SET ' || quote_ident($2) || ' = $3, 
 		date_modified = current_timestamp, last_modifier = api.get_current_user() 
-		WHERE "keyname" = $1' USING input_old_keyname, input_field, input_new_value;
+		WHERE "keyname" = $1' 
+		USING input_old_keyname, input_field, input_new_value;
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_key');
