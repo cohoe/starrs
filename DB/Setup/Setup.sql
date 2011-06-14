@@ -33,6 +33,10 @@ COMMENT ON SCHEMA "network" IS 'Data on special network devices';
 CREATE SCHEMA "api";
 COMMENT ON SCHEMA "api" IS 'Interaction with clients';
 
+/*Schema documentation*/
+CREATE SCHEMA "documentation";
+COMMENT ON SCHEMA "documentation" IS 'Documentation for all functions';
+
 /*Sequence Output ID*/
 CREATE SEQUENCE "management"."output_id_seq";
 COMMENT ON SEQUENCE "management"."output_id_seq" IS 'Identifier for all output results';
