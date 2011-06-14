@@ -1,3 +1,14 @@
+/* api_dns_modify.sql
+	1) modify_dns_key
+	2) modify_dns_zone
+	3) modify_dns_address
+	4) modify_dns_mailserver
+	5) modify_dns_nameserver
+	6) modify_dns_srv
+	7) modify_dns_cname
+	8) modify_dns_txt
+*/
+
 /* API - modify_dns_key
 	1) Check privileges
 	2) Check allowed fields
