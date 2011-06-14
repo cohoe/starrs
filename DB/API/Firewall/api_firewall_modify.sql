@@ -1,5 +1,8 @@
 /* api_firewall_modify
 	1) modify_firewall_default
+	2) modify_firewall_metahost
+	3) modify_firewall_rule
+	4) modify_firewall_metahost_rule
 */
 
 /* API - modify_firewall_default
@@ -64,4 +67,108 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_metahost"(input_old_name text,
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_firewall_metahost');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_firewall_metahost"(text, text, text) IS 'Modify an existing DNS TXT or SPF record';
+COMMENT ON FUNCTION "api"."modify_firewall_metahost"(text, text, text) IS 'Modify an existing firewall metahost';
+
+/* API - modify_firewall_rule
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_firewall_rule"(input_old_address inet, input_old_port integer, input_old_transport varchar(4), input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_firewall_rule');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "firewall"."rules" WHERE "address" = input_old_address AND "port" = input_old_port AND "transport" = input_old_transport) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit rule (Port % % on %) denied. You are not owner',input_old_port,input_old_transport,input_old_address;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'deny|port|comment|transport|address|owner' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update metahost');
+
+		IF input_field ~* '^port$' THEN
+			EXECUTE 'UPDATE "firewall"."rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "address" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_address, input_old_port, input_old_transport, input_field, cast(input_new_value as int);
+		ELSIF input_field ~* 'deny' THEN
+			EXECUTE 'UPDATE "firewall"."rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "address" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_address, input_old_port, input_old_transport, input_field, bool(input_new_value);
+		ELSIF input_field ~* 'address' THEN
+			EXECUTE 'UPDATE "firewall"."rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "address" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_address, input_old_port, input_old_transport, input_field, inet(input_new_value);
+		ELSE
+			EXECUTE 'UPDATE "firewall"."rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "address" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_address, input_old_port, input_old_transport, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_firewall_rule');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_firewall_rule"(inet, integer, varchar(4), text, text) IS 'Modify an existing firewall rule';
+
+/* API - modify_firewall_metahost_rule
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_firewall_metahost_rule"(input_old_metahost text, input_old_port integer, input_old_transport varchar(4), input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_firewall_metahost_rule');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_old_metahost) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit rule (Port % % on %) denied. You are not owner',input_old_port,input_old_transport,input_old_metahost;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'deny|port|comment|transport|name' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update metahost rule');
+
+		IF input_field ~* '^port$' THEN
+			EXECUTE 'UPDATE "firewall"."metahost_rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "name" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_metahost, input_old_port, input_old_transport, input_field, cast(input_new_value as int);
+		ELSIF input_field ~* 'deny' THEN
+			EXECUTE 'UPDATE "firewall"."metahost_rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "name" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_metahost, input_old_port, input_old_transport, input_field, bool(input_new_value);
+		ELSE
+			EXECUTE 'UPDATE "firewall"."metahost_rules" SET ' || quote_ident($4) || ' = $5,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "name" = $1 AND "port" = $2 AND "transport" = $3'
+			USING input_old_metahost, input_old_port, input_old_transport, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_firewall_metahost_rule');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_firewall_metahost_rule"(text, integer, varchar(4), text, text) IS 'Modify an existing firewall metahost rule';
+
