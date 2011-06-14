@@ -139,3 +139,238 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_dns_address"(inet,text,text) IS 'Modify an existing DNS address';
+
+/* API - modify_dns_mailserver
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_mailserver');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit mailserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'hostname|zone|preference|owner|ttl' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'preference|ttl' THEN
+			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
+		ELSE
+			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_mailserver');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_mailserver"(text, text, text, text) IS 'Modify an existing DNS MX record';
+
+/* API - modify_dns_nameserver
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_nameserver"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_nameserver');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."ns" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit nameserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'hostname|zone|isprimary|owner|ttl' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'ttl' THEN
+			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
+		ELSIF input_field ~* 'isprimary' THEN
+			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, bool(input_new_value);
+		ELSE
+			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_nameserver');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_nameserver"(text, text, text, text) IS 'Modify an existing DNS ns record';
+
+/* API - modify_dns_srv
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_srv');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'hostname|zone|alias|owner|ttl|extra' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'ttl' THEN
+			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
+			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int), 'SRV';
+		ELSE
+			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
+			USING input_old_alias, input_old_zone, input_field, input_new_value, 'SRV';
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_srv');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_srv"(text, text, text, text) IS 'Modify an existing DNS SRV record';
+
+/* API - modify_dns_cname
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_cname');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'hostname|zone|alias|owner|ttl' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'ttl' THEN
+			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
+			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int), 'CNAME';
+		ELSE
+			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
+			USING input_old_alias, input_old_zone, input_field, input_new_value, 'CNAME';
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_cname');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_cname"(text, text, text, text) IS 'Modify an existing DNS CNAME record';
+
+/* API - modify_dns_txt
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_txt');
+
+		 -- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_hostname,input_old_zone;
+			END IF;
+
+			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			END IF;
+		END IF;
+
+		 -- Check allowed fields
+		IF input_field !~* 'hostname|zone|text|owner|ttl|type' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'ttl' THEN
+			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
+		ELSE
+			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_txt');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_txt"(text, text, text, text) IS 'Modify an existing DNS TXT or SPF record';
