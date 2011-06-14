@@ -244,8 +244,8 @@ CREATE TABLE "dns"."pointers"(
 "type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT 300,
 "owner" TEXT NOT NULL,
-"zone" TEXT DEFAULT 'localdomain',
-CONSTRAINT "pointers_pkey" PRIMARY KEY ("alias"),
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
+CONSTRAINT "pointers_pkey" PRIMARY KEY ("alias","hostname","address","zone"),
 CONSTRAINT "dns_pointers_type_check" CHECK ("type" ~ '^CNAME|SRV$')
 )
 WITHOUT OIDS;
@@ -463,6 +463,33 @@ CREATE TABLE "dhcp"."lease_log"(
 )
 WITHOUT OIDS;
 
+CREATE TABLE "documentation"."functions"(
+"specific_name" TEXT NOT NULL,
+"definition" TEXT,
+"returns" TEXT,
+"name" TEXT NOT NULL,
+"example" TEXT,
+CONSTRAINT "functions_pkey" PRIMARY KEY ("specific_name")
+)
+WITHOUT OIDS;
+
+CREATE TABLE "documentation"."rules"(
+"specific_name" TEXT NOT NULL,
+"rule" TEXT NOT NULL,
+CONSTRAINT "rules_pkey" PRIMARY KEY ("specific_name","rule")
+)
+WITHOUT OIDS;
+
+CREATE TABLE "documentation"."arguments"(
+"specific_name" TEXT NOT NULL,
+"argument" TEXT NOT NULL,
+"type" TEXT,
+"comment" TEXT,
+CONSTRAINT "arguments_pkey" PRIMARY KEY ("specific_name","argument")
+)
+WITHOUT OIDS;
+
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -532,3 +559,9 @@ COMMENT ON TABLE "dhcp"."subnet_settings" IS 'Settings for the DHCP server';
 COMMENT ON TABLE "dhcp"."range_settings" IS 'DHCP settings for IP ranges';
 
 COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';
+
+COMMENT ON TABLE "documentation"."functions" IS 'List of all functions to be documented';
+
+COMMENT ON TABLE "documentation"."rules" IS 'Rules for documented functions';
+
+COMMENT ON TABLE "documentation"."arguments" IS 'Argument data for documented functions';
