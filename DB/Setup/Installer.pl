@@ -49,3 +49,5 @@ print "Base...\n";
 system("psql","-f","\"$dir/Setup/Base.sql\"",$dbname);
 print "Privileges...\n";
 system("psql","-f","\"$dir/Setup/Privileges.sql\"",$dbname);
+print "Documentation...\n";
+system("psql","-f","\"$dir/Setup/Document.sql\"",$dbname);
