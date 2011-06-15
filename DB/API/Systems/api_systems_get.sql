@@ -17,3 +17,11 @@ CREATE OR REPLACE FUNCTION "api"."get_operating_systems"() RETURNS SETOF TEXT AS
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_operating_systems"() IS 'Get a list of all available system types';
+
+/* API - get_system_owner */
+CREATE OR REPLACE FUNCTION "api"."get_system_owner"(input_system text) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_owner"(text) IS 'Easily get the owner of a system';
