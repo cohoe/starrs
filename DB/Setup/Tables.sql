@@ -469,6 +469,8 @@ CREATE TABLE "documentation"."functions"(
 "returns" TEXT,
 "name" TEXT NOT NULL,
 "example" TEXT,
+"comment" TEXT,
+"schema" TEXT,
 CONSTRAINT "functions_pkey" PRIMARY KEY ("specific_name")
 )
 WITHOUT OIDS;
@@ -485,6 +487,7 @@ CREATE TABLE "documentation"."arguments"(
 "argument" TEXT NOT NULL,
 "type" TEXT,
 "comment" TEXT,
+"position" INTEGER, 
 CONSTRAINT "arguments_pkey" PRIMARY KEY ("specific_name","argument")
 )
 WITHOUT OIDS;
