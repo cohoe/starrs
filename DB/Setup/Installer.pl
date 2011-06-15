@@ -50,4 +50,11 @@ system("psql","-f","\"$dir/Setup/Base.sql\"",$dbname);
 print "Privileges...\n";
 system("psql","-f","\"$dir/Setup/Privileges.sql\"",$dbname);
 print "Documentation...\n";
+system("psql","-f","\"$dir/API/Documentation/api_documentation_get.sql\"",$dbname);
 system("psql","-f","\"$dir/Setup/Document.sql\"",$dbname);
+foreach my $schema (@schemas)
+{
+	print "Documentation for $schema\n";
+	system("psql","-f","\"$dir/API/Documentation/api\_documentation\_$schema.sql\"",$dbname);
+}
+print "Done!";
