@@ -78,15 +78,16 @@ CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	# Check if transport is valid
 	if ($transport !~ m/_tcp|_udp/i)
 	{
-		die "Improper transport in record\n";
+		return "false";
 	}
 
 	# Check that service is valid
 	if ($service !~ m/^_\w+$/i)
 	{
-		die "Improper service in record\n";
+		return "false";
 	}
 	
-	return $srv;
+	# Good!
+	return "true";
 $$ LANGUAGE 'plperl';
 COMMENT ON FUNCTION "api"."validate_srv"(text) IS 'Validate SRV records';
