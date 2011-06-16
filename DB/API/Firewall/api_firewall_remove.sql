@@ -89,7 +89,7 @@ COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule"(text, integer, text) I
 	1) Check privileges
 	2) Remove system
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_metahost_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_system');
 
