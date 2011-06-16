@@ -105,7 +105,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETUR
 
 		-- Remove system
 		PERFORM api.create_log_entry('API','INFO','removing firewall system');
-		DELETE FROM "firewall"."systems" WHERE "system_name" = input_metahost_name;
+		DELETE FROM "firewall"."systems" WHERE "system_name" = input_name;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_system');
