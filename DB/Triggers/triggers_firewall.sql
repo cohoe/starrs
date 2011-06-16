@@ -72,11 +72,35 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_insert"() RETURNS TRIGGER 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_rules_insert"() IS 'Apply rules to members of the metahost';
 
+/* Trigger - metahost_rules_update
+	1) Get owner
+	2) Update record
+*/
+CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		MhOwner TEXT;
+	BEGIN
+		-- Get owner
+		SELECT "firewall"."metahosts"."owner" INTO MhOwner
+		FROM "firewall"."metahosts"
+		WHERE "firewall"."metahosts"."name" = NEW."name";
+
+		-- Update record
+		UPDATE "firewall"."rules" 
+		SET "port"=NEW."port","transport"=NEW."transport", "deny"=NEW."deny", "owner"=MhOwner, "comment"='"'||NEW."name"||'" - '||NEW."comment"
+		WHERE "address" IN (SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = OLD."name")
+		AND "port" = OLD."port" AND "transport" = OLD."transport";
+
+		-- Done
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."metahost_rules_update"() IS 'Update a rule applied to all metahost members';
+
 /* Trigger - metahost_rules_delete
 	1) Delete records
 */
 CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_delete"() RETURNS TRIGGER AS $$
-	DECLARE
 	BEGIN
 		-- Delete records
 		DELETE FROM "firewall"."rules" WHERE ("address") IN 
@@ -88,5 +112,3 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_delete"() RETURNS TRIGGER 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_rules_delete"() IS 'Remove a rule applied to all metahosts';
-
-
