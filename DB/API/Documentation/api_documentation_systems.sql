@@ -129,3 +129,74 @@ AND "specific_name" ~* '^get_interface_address_owner(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.get_interface_address_owner('10.0.0.1');$$, "comment" = 'Get the owner of a configured address', "schema" = 'systems'
 WHERE "specific_name" ~* '^get_interface_address_owner(_)+([0-9])+$';
+
+/* api.get_system_owner */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The system name'
+WHERE "argument" = 'input_system'
+AND "specific_name" ~* '^get_system_owner(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.get_system_owner('Server1');$$, "comment" = 'Get the owning username of a system', "schema" = 'systems'
+WHERE "specific_name" ~* '^get_system_owner(_)+([0-9])+$';
+
+/* api.modify_interface */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The MAC address to modify'
+WHERE "argument" = 'input_old_mac'
+AND "specific_name" ~* '^modify_interface(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_interface(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_interface(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_interface('de:ad:be:ef:ca:fe','mac','ff:fe:00:01:22:ff');$$, "comment" = 'Modify a system interface', "schema" = 'systems'
+WHERE "specific_name" ~* '^modify_interface(_)+([0-9])+$';
+
+/* api.modify_interface_address */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The IP address to modify'
+WHERE "argument" = 'input_old_address'
+AND "specific_name" ~* '^modify_interface_address(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_interface_address(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_interface_address(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_interface_address('10.0.0.1','config','dhcp');$$, "comment" = 'Modify a system interface address', "schema" = 'systems'
+WHERE "specific_name" ~* '^modify_interface_address(_)+([0-9])+$';
+
+/* api.modify_system */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the system to modify'
+WHERE "argument" = 'input_old_name'
+AND "specific_name" ~* '^modify_system(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_system(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_system(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_system('Server1','owner','root');$$, "comment" = 'Modify a system on the network', "schema" = 'systems'
+WHERE "specific_name" ~* '^modify_system(_)+([0-9])+$';
+
