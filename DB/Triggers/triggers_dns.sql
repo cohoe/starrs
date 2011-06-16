@@ -228,7 +228,7 @@ COMMENT ON FUNCTION "dns"."txt_update"() IS 'Modify a TXT record';
 /* Trigger - dns_autopopulate_address */
 CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text, input_zone text) RETURNS INET AS $$
 	BEGIN
-		RETURN (SELECT "dns"."a"."address" INTO Address
+		RETURN (SELECT "dns"."a"."address"
 		FROM "dns"."a"
 		WHERE "dns"."a"."hostname" = input_hostname
 		AND "dns"."a"."zone" = input_zone);
