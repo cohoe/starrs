@@ -223,3 +223,174 @@ AND "specific_name" ~* '^get_dhcpd_subnet_ranges(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.get_dhcpd_subnet_ranges('10.0.0.0/24');$$, "comment" = 'Get DHCP information on all the dynamic ranges from a subnet', "schema" = 'dhcp'
 WHERE "specific_name" ~* '^get_dhcpd_subnet_ranges(_)+([0-9])+$';
+
+
+/* modify_dhcp_class */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the class to modify'
+WHERE "argument" = 'input_old_class'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_class('default','comment','New comment');$$, "comment" = 'Modify a DHCP class', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+/* modify_dhcp_class */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the class to modify'
+WHERE "argument" = 'input_old_class'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option to modify'
+WHERE "argument" = 'input_old_option'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option value to modify'
+WHERE "argument" = 'input_old_value'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_class('default','routers','10.0.0.254','routers','10.0.0.253');$$, "comment" = 'Modify a DHCP class option', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
+
+/* modify_dhcp_range_setting */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the range to modify'
+WHERE "argument" = 'input_old_range'
+AND "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old setting to modify'
+WHERE "argument" = 'input_old_setting'
+AND "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old setting value to modify'
+WHERE "argument" = 'input_old_value'
+AND "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_range_setting('Dynamic Pool','allow','unknown clients','allow','members of 'default'');$$, "comment" = 'Modify a DHCP range setting', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_range_setting(_)+([0-9])+$';
+
+/* modify_dhcp_subnet_setting */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the subnet to modify'
+WHERE "argument" = 'input_old_subnet'
+AND "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old setting to modify'
+WHERE "argument" = 'input_old_setting'
+AND "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old setting value to modify'
+WHERE "argument" = 'input_old_value'
+AND "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_subnet_setting('10.0.0.0/24','allow','unknown clients','value','members of 'default'');$$, "comment" = 'Modify a DHCP subnet setting', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_subnet_setting(_)+([0-9])+$';
+
+/* modify_dhcp_subnet_option */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the subnet to modify'
+WHERE "argument" = 'input_old_subnet'
+AND "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option to modify'
+WHERE "argument" = 'input_old_option'
+AND "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option value to modify'
+WHERE "argument" = 'input_old_value'
+AND "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_subnet_option('10.0.0.0/24','routers','10.0.0.254','value','10.0.0.253');$$, "comment" = 'Modify a DHCP subnet option', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_subnet_option(_)+([0-9])+$';
+
+/* modify_dhcp_class_option */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the class to modify'
+WHERE "argument" = 'input_old_class'
+AND "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option to modify'
+WHERE "argument" = 'input_old_option'
+AND "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old option value to modify'
+WHERE "argument" = 'input_old_value'
+AND "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dhcp_class_option('default','domain-name','example.com','value','sub.example.com');$$, "comment" = 'Modify a DHCP class option', "schema" = 'dhcp'
+WHERE "specific_name" ~* '^modify_dhcp_class_option(_)+([0-9])+$';
