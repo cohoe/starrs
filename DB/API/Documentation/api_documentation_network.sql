@@ -94,3 +94,29 @@ AND "specific_name" ~* '^remove_switchport_range(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.remove_switchport_range('Gi0/',1,48,'Head Switch');$$, "comment" = 'Remove a range of switchports from a system', "schema" = 'network'
 WHERE "specific_name" ~* '^remove_switchport_range(_)+([0-9])+$';
+
+/* api.modify_network_switchport */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The system to use'
+WHERE "argument" = 'input_old_system'
+AND "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The port to modify'
+WHERE "argument" = 'input_old_port'
+AND "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_network_switchport('Switch1','Gi0/1','type','access');$$, "comment" = 'Modify a switchport on a network device', "schema" = 'network'
+WHERE "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
+
