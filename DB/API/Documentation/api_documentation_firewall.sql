@@ -144,7 +144,7 @@ WHERE "specific_name" ~* '^create_firewall_rule_program(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'The metahost to create the rule on'
-WHERE "argument" = 'input_metahost'
+WHERE "argument" = 'input_name'
 AND "specific_name" ~* '^create_firewall_metahost_rule_program(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
@@ -172,7 +172,7 @@ WHERE "specific_name" ~* '^remove_firewall_metahost_member(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'The name of the metahost to remove'
-WHERE "argument" = 'input_name'
+WHERE "argument" = 'input_metahost_name'
 AND "specific_name" ~* '^remove_firewall_metahost(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
@@ -181,7 +181,7 @@ WHERE "specific_name" ~* '^remove_firewall_metahost(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'The metahost name this rule applied to'
-WHERE "argument" = 'input_name'
+WHERE "argument" = 'input_metahost_name'
 AND "specific_name" ~* '^remove_firewall_metahost_rule(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
@@ -242,7 +242,7 @@ WHERE "specific_name" ~* '^remove_firewall_rule_program(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'The metahost name to remove the rule on'
-WHERE "argument" = 'input_metahost'
+WHERE "argument" = 'input_metahost_name'
 AND "specific_name" ~* '^remove_firewall_metahost_rule_program(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
