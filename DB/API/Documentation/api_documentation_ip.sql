@@ -124,7 +124,7 @@ WHERE "specific_name" ~* '^get_address_from_range(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'Subnet to parse'
-WHERE "argument" = 'input_$1'
+WHERE "argument" = '$1'
 AND "specific_name" ~* '^get_subnet_addresses(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
