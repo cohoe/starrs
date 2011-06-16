@@ -29,12 +29,12 @@ AND "specific_name" ~* '^create_switchport_range(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'First port identifier'
-WHERE "argument" = 'input_first_port'
+WHERE "argument" = 'first_port'
 AND "specific_name" ~* '^create_switchport_range(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'Last port identifer'
-WHERE "argument" = 'input_last_port'
+WHERE "argument" = 'last_port'
 AND "specific_name" ~* '^create_switchport_range(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
@@ -119,4 +119,3 @@ AND "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.modify_network_switchport('Switch1','Gi0/1','type','access');$$, "comment" = 'Modify a switchport on a network device', "schema" = 'network'
 WHERE "specific_name" ~* '^modify_network_switchport(_)+([0-9])+$';
-
