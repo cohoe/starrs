@@ -48,6 +48,10 @@ CREATE TRIGGER "firewall_metahost_members_insert"
 BEFORE INSERT ON "firewall"."metahost_members"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_members_insert"();
 
+CREATE TRIGGER "firewall_metahost_rules_update"
+BEFORE UPDATE ON "firewall"."metahost_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_update"();
+
 CREATE TRIGGER "firewall_metahost_members_update"
 BEFORE UPDATE ON "firewall"."metahost_members"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_members_update"();
@@ -61,9 +65,9 @@ CREATE TRIGGER "firewall_metahost_rules_insert"
 BEFORE INSERT ON "firewall"."metahost_rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_insert"();
 
---CREATE TRIGGER "firewall_rules_update"
---BEFORE UPDATE ON "firewall"."rules"
---FOR EACH ROW EXECUTE PROCEDURE "firewall"."rules_update"();
+CREATE TRIGGER "firewall_metahost_rules_delete"
+BEFORE DELETE ON "firewall"."metahost_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_delete"();
 
 /* ip.addresses */
 CREATE TRIGGER "ip_addresses_insert"
