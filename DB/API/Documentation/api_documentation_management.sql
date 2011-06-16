@@ -64,7 +64,7 @@ WHERE "specific_name" ~* '^get_current_user_level(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'The username to query for'
-WHERE "argument" = 'input_$1'
+WHERE "argument" = '$1'
 AND "specific_name" ~* '^get_ldap_user_level(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
@@ -82,7 +82,7 @@ WHERE "specific_name" ~* '^get_site_configuration(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'String to parse'
-WHERE "argument" = 'input_input'
+WHERE "argument" = 'input'
 AND "specific_name" ~* '^validate_nospecial(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
@@ -91,7 +91,7 @@ WHERE "specific_name" ~* '^validate_nospecial(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
 SET "comment" = 'String to parse'
-WHERE "argument" = 'input_input'
+WHERE "argument" = 'input'
 AND "specific_name" ~* '^validate_name(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
