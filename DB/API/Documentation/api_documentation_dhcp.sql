@@ -252,16 +252,6 @@ WHERE "argument" = 'input_old_class'
 AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
-SET "comment" = 'The old option to modify'
-WHERE "argument" = 'input_old_option'
-AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
-
-UPDATE "documentation"."arguments"
-SET "comment" = 'The old option value to modify'
-WHERE "argument" = 'input_old_value'
-AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
-
-UPDATE "documentation"."arguments"
 SET "comment" = 'The field to modify'
 WHERE "argument" = 'input_field'
 AND "specific_name" ~* '^modify_dhcp_class(_)+([0-9])+$';
