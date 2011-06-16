@@ -65,6 +65,8 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_insert"() RETURNS TRIGGER 
 			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
 			(result.address,NEW."port",NEW."transport",NEW."deny",Owner,'"'||NEW."name"||'" - '||NEW."comment");
 		END LOOP;
+		
+		-- Done
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -76,11 +78,15 @@ COMMENT ON FUNCTION "firewall"."metahost_rules_insert"() IS 'Apply rules to memb
 CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_delete"() RETURNS TRIGGER AS $$
 	DECLARE
 	BEGIN
+		-- Delete records
 		DELETE FROM "firewall"."rules" WHERE ("address") IN 
 		(SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = OLD."name")
 		AND "port" = OLD."port" AND "transport" = OLD."transport";
 		
+		-- Done
 		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_rules_delete"() IS 'Remove a rule applied to all metahosts';
+
+
