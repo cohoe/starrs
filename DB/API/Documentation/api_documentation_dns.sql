@@ -412,3 +412,188 @@ AND "specific_name" ~* '^validate_srv(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.validate_srv('_ldap._tcp');$$, "comment" = 'Validate a DNS SRV record against known rules. ', "schema" = 'dns'
 WHERE "specific_name" ~* '^validate_srv(_)+([0-9])+$';
+
+/* api.modify_dns_address */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The IP address of the record'
+WHERE "argument" = 'input_old_address'
+AND "specific_name" ~* '^modify_dns_address(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_address(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_address(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_address('10.0.0.1','hostname','server2');$$, "comment" = 'Modify a DNS address record', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_address(_)+([0-9])+$';
+
+/* api.modify_dns_cname */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old alias name'
+WHERE "argument" = 'input_old_alias'
+AND "specific_name" ~* '^modify_dns_cname(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone of the record'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_cname(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_cname(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_cname(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_cname('www','example.com','hostname','webserver2');$$, "comment" = 'Modify a DNS CNAME pointer record', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_cname(_)+([0-9])+$';
+
+/* api.modify_dns_key */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the key to modify'
+WHERE "argument" = 'input_old_keyname'
+AND "specific_name" ~* '^modify_dns_key(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_key(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_key(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_key('examplekey','keyname','subexamplekey');$$, "comment" = 'Modify a DNS key', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_key(_)+([0-9])+$';
+
+/* api.modify_dns_mailserver */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The hostname of the record'
+WHERE "argument" = 'input_old_hostname'
+AND "specific_name" ~* '^modify_dns_mailserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone of the record'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_mailserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_mailserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_mailserver(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_mailserver('mail','example.com','preference','20');$$, "comment" = 'Modify a DNS MX record', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_mailserver(_)+([0-9])+$';
+
+/* api.modify_dns_nameserver */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The hostname of the record'
+WHERE "argument" = 'input_old_hostname'
+AND "specific_name" ~* '^modify_dns_nameserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone of the record'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_nameserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_nameserver(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_nameserver(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_nameserver('mail','example.com','preference','20');$$, "comment" = 'Modify a DNS NS record', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_nameserver(_)+([0-9])+$';
+
+/* api.modify_dns_srv */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The old alias record'
+WHERE "argument" = 'input_old_alias'
+AND "specific_name" ~* '^modify_dns_srv(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone of the record'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_srv(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_srv(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_srv(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_srv('_ldap._tcp','example.com','hostname','ldap2');$$, "comment" = 'Modify a DNS SRV record within a zone', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_srv(_)+([0-9])+$';
+
+/* api.modify_dns_txt */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The hostname of the record'
+WHERE "argument" = 'input_old_hostname'
+AND "specific_name" ~* '^modify_dns_txt(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone of the record'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_txt(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_txt(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_txt(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_txt('tron','example.com','text','fights for the users');$$, "comment" = 'Modify a DNS TXT entry for a record', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_txt(_)+([0-9])+$';
+
+/* api.modify_dns_zone */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The zone to modify'
+WHERE "argument" = 'input_old_zone'
+AND "specific_name" ~* '^modify_dns_zone(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_dns_zone(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_dns_zone(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_dns_zone('example.com','zone','example.biz');$$, "comment" = 'Modify a DNS zone', "schema" = 'dns'
+WHERE "specific_name" ~* '^modify_dns_zone(_)+([0-9])+$';
