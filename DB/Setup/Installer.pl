@@ -57,4 +57,6 @@ foreach my $schema (@schemas)
 	print "Documentation for $schema\n";
 	system("psql","-f","\"$dir/API/Documentation/api\_documentation\_$schema.sql\"",$dbname);
 }
+print "Documentation for documentation\n";
+system("psql","-f","\"$dir/API/Documentation/api\_documentation\_documentation.sql\"",$dbname);
 print "Done!";
