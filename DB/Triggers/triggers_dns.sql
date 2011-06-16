@@ -156,7 +156,7 @@ CREATE OR REPLACE FUNCTION "dns"."ns_update"() RETURNS TRIGGER AS $$
 		RowCount INTEGER;
 	BEGIN
 		-- Check for existing primary NS for zone
-		IF NEW."zone" != OLD."zone" THEN
+		IF (NEW."isprimary" != OLD."isprimary") OR (NEW."zone" != OLD."zone") THEN
 			SELECT COUNT(*) INTO RowCount
 			FROM "dns"."ns"
 			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."isprimary" = TRUE;
@@ -227,14 +227,11 @@ COMMENT ON FUNCTION "dns"."txt_update"() IS 'Modify a TXT record';
 
 /* Trigger - dns_autopopulate_address */
 CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text, input_zone text) RETURNS INET AS $$
-	DECLARE
-		Address INET;
 	BEGIN
-		SELECT "dns"."a"."address" INTO Address
+		RETURN (SELECT "dns"."a"."address" INTO Address
 		FROM "dns"."a"
 		WHERE "dns"."a"."hostname" = input_hostname
-		AND "dns"."a"."zone" = input_zone;
-		RETURN Address;
+		AND "dns"."a"."zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
