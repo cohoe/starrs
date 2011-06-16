@@ -52,11 +52,6 @@ WHERE "argument" = 'input_deny'
 AND "specific_name" ~* '^create_firewall_metahost_rule(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
-SET "comment" = 'The owning username (or NULL for current user)'
-WHERE "argument" = 'input_owner'
-AND "specific_name" ~* '^create_firewall_metahost_rule(_)+([0-9])+$';
-
-UPDATE "documentation"."arguments"
 SET "comment" = 'A comment on the rule'
 WHERE "argument" = 'input_comment'
 AND "specific_name" ~* '^create_firewall_metahost_rule(_)+([0-9])+$';
