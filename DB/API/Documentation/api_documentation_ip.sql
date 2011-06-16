@@ -145,3 +145,54 @@ AND "specific_name" ~* '^get_range_addresses(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.get_range_addresses('10.0.0.1', '10.0.0.254');$$, "comment" = 'Get a list of all addresses within a range (useful for DHCPv6)', "schema" = 'ip'
 WHERE "specific_name" ~* '^get_range_addresses(_)+([0-9])+$';
+
+/* api.get_subnet_utilization */
+UPDATE "documentation"."arguments"
+SET "comment" = 'Subnet to analyze'
+WHERE "argument" = 'input_subnet'
+AND "specific_name" ~* '^get_subnet_utilization(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.get_subnet_utilization('10.0.0.1');$$, "comment" = 'Get a percentage usage of a subnet', "schema" = 'ip'
+WHERE "specific_name" ~* '^get_subnet_utilization(_)+([0-9])+$';
+
+/* api.modify_ip_range */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the range to modify'
+WHERE "argument" = 'input_old_name'
+AND "specific_name" ~* '^modify_ip_range(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_ip_range(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_ip_range(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_ip_range('Servers','first_ip','10.0.0.10');$$, "comment" = 'Modify an IP range', "schema" = 'ip'
+WHERE "specific_name" ~* '^modify_ip_range(_)+([0-9])+$';
+
+/* api.modify_ip_subnet */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the subnet to modify'
+WHERE "argument" = 'input_old_subnet'
+AND "specific_name" ~* '^modify_ip_subnet(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_ip_subnet(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_ip_subnet(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_ip_subnet('10.0.0.0/24','owner','admin');$$, "comment" = 'Modify an IP subnet', "schema" = 'ip'
+WHERE "specific_name" ~* '^modify_ip_subnet(_)+([0-9])+$';
+
