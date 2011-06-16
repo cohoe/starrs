@@ -46,32 +46,6 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_delete"() RETURNS TRIGGE
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_members_delete"() IS 'Delete an address from a firewall metahost';
 
-/* Trigger - metahost_members_update
-	1) Remove old address rules
-	2) Apply metahost rules
-*/
-CREATE OR REPLACE FUNCTION "firewall"."metahost_members_update"() RETURNS TRIGGER AS $$
-	DECLARE
-		result record;
-	BEGIN
-		IF NEW."address" != OLD."address" OR NEW."name" != OLD."name" THEN
-			-- Remove old rules
-			DELETE FROM "firewall"."rules" WHERE "address" = OLD."address";
-			DELETE FROM "firewall"."rules" WHERE "address" = NEW."address";
-			
-			-- Apply metahost rules
-			FOR result IN SELECT "port","transport","deny" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
-				INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner") VALUES 
-				(NEW."address",result.port,result.transport,result.deny,api.get_current_user());
-			END LOOP;
-		END IF;
-		
-		-- Done
-		RETURN NEW;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "firewall"."metahost_members_update"() IS 'Alter a metahost member';
-
 /* Trigger - metahost_rules_insert
 	1) Get owner
 	2) Apply rule to members
