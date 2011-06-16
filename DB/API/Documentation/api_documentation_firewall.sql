@@ -253,3 +253,120 @@ AND "specific_name" ~* '^remove_firewall_metahost_rule_program(_)+([0-9])+$';
 UPDATE "documentation"."functions"
 SET "example" = $$SELECT api.remove_firewall_metahost_rule_program('Servers','SSH');$$, "comment" = 'Remove a firewall metahost rule from a common program registered in the application', "schema" = 'firewall'
 WHERE "specific_name" ~* '^remove_firewall_metahost_rule_program(_)+([0-9])+$';
+
+/* api.modify_firewall_default */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The address to edit'
+WHERE "argument" = 'input_address'
+AND "specific_name" ~* '^modify_firewall_default(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'Deny (TRUE) or allow (FALSE)'
+WHERE "argument" = 'input_action'
+AND "specific_name" ~* '^modify_firewall_default(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_firewall_default('10.0.0.1','TRUE');$$, "comment" = 'Modify the default firewall action', "schema" = 'firewall'
+WHERE "specific_name" ~* '^modify_firewall_default(_)+([0-9])+$';
+
+/* api.modify_firewall_metahost */
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the metahost to modify'
+WHERE "argument" = 'input_old_name'
+AND "specific_name" ~* '^modify_firewall_metahost(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_firewall_metahost(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_firewall_metahost(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_firewall_metahost('Servers','name','Server Cluster 1');$$, "comment" = 'Modify a firewall metahost', "schema" = 'firewall'
+WHERE "specific_name" ~* '^modify_firewall_metahost(_)+([0-9])+$';
+
+/* api.modify_firewall_metahost_rule */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The name of the metahost'
+WHERE "argument" = 'input_old_metahost'
+AND "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The port of the rule'
+WHERE "argument" = 'input_old_port'
+AND "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The transport of the rule'
+WHERE "argument" = 'input_old_transport'
+AND "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_firewall_metahost_rule('Servers',22,'TCP','deny','false');$$, "comment" = 'Modify a firewall metahost rule', "schema" = 'firewall'
+WHERE "specific_name" ~* '^modify_firewall_metahost_rule(_)+([0-9])+$';
+
+/* api.modify_firewall_rule */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The address of the host to modify'
+WHERE "argument" = 'input_old_address'
+AND "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The port of the rule'
+WHERE "argument" = 'input_old_port'
+AND "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The transport of the rule'
+WHERE "argument" = 'input_old_transport'
+AND "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_firewall_rule('10.0.0.1',22,'TCP','deny','false');$$, "comment" = 'Modify a standalone firewall rule', "schema" = 'firewall'
+WHERE "specific_name" ~* '^modify_firewall_rule(_)+([0-9])+$';
+
+/* api.modify_firewall_system */
+UPDATE "documentation"."arguments"
+SET "comment" = 'The subnet to get the firewall from'
+WHERE "argument" = 'input_old_subnet'
+AND "specific_name" ~* '^modify_firewall_system(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The field to modify'
+WHERE "argument" = 'input_field'
+AND "specific_name" ~* '^modify_firewall_system(_)+([0-9])+$';
+
+UPDATE "documentation"."arguments"
+SET "comment" = 'The value of the new field'
+WHERE "argument" = 'input_new_value'
+AND "specific_name" ~* '^modify_firewall_system(_)+([0-9])+$';
+
+UPDATE "documentation"."functions"
+SET "example" = $$SELECT api.modify_firewall_system('10.0.0.0/24','software','Cisco IOS');$$, "comment" = 'Modify a firewall system', "schema" = 'firewall'
+WHERE "specific_name" ~* '^modify_firewall_system(_)+([0-9])+$';
+
