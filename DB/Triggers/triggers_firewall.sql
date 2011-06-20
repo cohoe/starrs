@@ -190,7 +190,7 @@ CREATE OR REPLACE FUNCTION "firewall"."rule_program_delete"() RETURNS TRIGGER AS
 		-- Get program info
 		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
 		FROM "firewall"."programs"
-		WHERE "port" = NEW."port";
+		WHERE "port" = OLD."port";
 		
 		-- Delete rule
 		DELETE FROM "firewall"."rules" WHERE "firewall"."rules"."address" = OLD."address" AND "port" = PortNum AND "transport" = ProgTransport AND "source" = 'standalone-program';
