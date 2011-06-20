@@ -131,6 +131,8 @@ CREATE OR REPLACE FUNCTION "firewall"."rule_program_insert"() RETURNS TRIGGER AS
 		-- Insert rules
 		INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES
 		(NEW."address",PortNum,ProgTransport,NEW."deny",NEW."owner",'"'||ProgName||'" program selected','program');
+		
+		-- Done
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -151,7 +153,11 @@ CREATE OR REPLACE FUNCTION "firewall"."rule_program_delete"() RETURNS TRIGGER AS
 		FROM "firewall"."programs"
 		WHERE "port" = NEW."port";
 		
+		-- Delete rule
 		DELETE FROM "firewall"."rules" WHERE "firewall"."rules"."address" = OLD."address" AND "port" = PortNum AND "transport" = ProgTransport AND "source" = 'program';
+		
+		-- Done
+		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_delete"() IS 'Remove a standalone program rule';
@@ -184,8 +190,8 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_insert"() RETURNS T
 			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES
 			(result.address,PortNum,ProgTransport,NEW."deny",Owner,'"'||NEW."name"||'" program "'||ProgName||'" selected','metahost-program');
 		END LOOP;
-
 		
+		-- Done
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -212,6 +218,8 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_delete"() RETURNS T
 			DELETE FROM "firewall"."rules" WHERE "firewall"."rules"."address" = result.address AND "port" = PortNum AND "transport" = ProgTransport AND "source" = 'metahost-program';
 		END LOOP;
 		
+		-- Done
+		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_delete"() IS 'Remove a metahost program rule';
