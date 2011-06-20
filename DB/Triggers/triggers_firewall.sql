@@ -83,7 +83,7 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_insert"() RETURNS T
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
+COMMENT ON FUNCTION "firewall"."metahost_rule_program_insert"() IS 'Place a program rule in the master table';
 
 /* Trigger - metahost_rules_insert
 	1) Get owner
