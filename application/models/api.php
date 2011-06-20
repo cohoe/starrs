@@ -1,6 +1,9 @@
 <?php
 class Api extends CI_Model {
 
+	////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
+	
 	/* Constructor
 	This class does database work. That is all. These functions are the
 	only access to the database you get.
@@ -10,10 +13,22 @@ class Api extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function intialize($username)
+	////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	
+	/**
+	 * Initiaizes the API for usage with the given user.
+	 * @param 	string 	$user	The username to initialze the db with
+	 */
+	public function intialize($user)
 	{
-		$sql = "SELECT api.initialize($username)";
+		// Escape it!
+		$user = $this->db->escape($user);
+		
+		// Run it!
+		$sql = "SELECT api.initialize({$user})";
 		$query = $this->db->query($sql);
+		
 		return $query;
 	}
 	
@@ -60,4 +75,7 @@ class Api extends CI_Model {
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
+	
+	////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
 }
