@@ -61,26 +61,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 				RAISE EXCEPTION 'Invalid configuration type selected (%) for your address family (%)',NEW."config",NEW."family";
 			END IF;
 		END IF;
-
-		-- Check for wacky names
-		SELECT COUNT(*) INTO RowCount
-		FROM "systems"."interface_addresses"
-		WHERE "systems"."interface_addresses"."name" = NEW."name"
-		AND "systems"."interface_addresses"."mac" = NEW."mac";
-		IF (RowCount > 0 AND NEW."family" = 4) THEN
-			RAISE EXCEPTION 'IPv4 address names (%) should not be the same as any other address on this interface (%)',NEW."name",NEW."mac";
-		END IF;
-		
-		-- Check for IPv6 secondary name
-		IF NEW."family" = 6 AND NEW."isprimary" = FALSE THEN
-			SELECT "name" INTO PrimaryName
-			FROM "systems"."interface_addresses"
-			WHERE "systems"."interface_addresses"."mac" = NEW."mac"
-			AND "systems"."interface_addresses"."isprimary" = TRUE;
-			IF NEW."name" != PrimaryName THEN
-				RAISE EXCEPTION 'IPv6 secondaries must have the same interface name (%) as the primary (%)',NEW."name",PrimaryName;
-			END IF;
-		END IF;
 		
 		-- IPv6 Autoconfiguration
 		IF NEW."family" = 6 AND NEW."config" ~* 'autoconf' THEN
@@ -195,17 +175,6 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 			-- Remove old autoconf addresses
 			IF OLD."config" ~* 'autoconf' THEN
 				DELETE FROM "ip"."addresses" WHERE "address" = OLD."address";
-			END IF;
-		END IF;
-
-		IF NEW."name" != OLD."name" THEN
-			-- Check for wacky names
-			SELECT COUNT(*) INTO RowCount
-			FROM "systems"."interface_addresses"
-			WHERE "systems"."interface_addresses"."name" = NEW."name"
-			AND "systems"."interface_addresses"."mac" = NEW."mac";
-			IF (RowCount > 0 AND NEW."family" = 4) THEN
-				RAISE EXCEPTION 'IPv4 address names (%) should not be the same as any other address on this interface (%)',NEW."name",NEW."mac";
 			END IF;
 		END IF;
 		
