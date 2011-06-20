@@ -60,6 +60,7 @@ CREATE TABLE "firewall"."rules"(
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
+"source" TEXT NOT NULL,
 CONSTRAINT "rules_pkey" PRIMARY KEY ("port","transport","address")
 )
 WITHOUT OIDS;
@@ -161,7 +162,6 @@ CREATE TABLE "systems"."interface_addresses"(
 "renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
 "mac" MACADDR,
 "class" TEXT,
-"name" TEXT NOT NULL,
 CONSTRAINT "interface_addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
@@ -224,7 +224,6 @@ WITHOUT OIDS;
 
 CREATE TABLE "systems"."os"(
 "name" TEXT NOT NULL,
-"default_connection_name" TEXT NOT NULL,
 "family" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
@@ -376,6 +375,7 @@ CREATE TABLE "systems"."interfaces"(
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT,
+"name" TEXT NOT NULL,
 CONSTRAINT "interfaces_pkey" PRIMARY KEY ("mac")
 )
 WITHOUT OIDS;
@@ -487,84 +487,99 @@ CREATE TABLE "documentation"."arguments"(
 "argument" TEXT NOT NULL,
 "type" TEXT,
 "comment" TEXT,
-"position" INTEGER, 
+"position" INTEGER,
 CONSTRAINT "arguments_pkey" PRIMARY KEY ("specific_name","argument")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "firewall"."program_rules"(
+"deny" BOOLEAN NOT NULL DEFAULT TRUE,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"port" INTEGER NOT NULL,
+"address" INET NOT NULL,
+"owner" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "program_rules_pkey" PRIMARY KEY ("port","address")
+)
+WITHOUT OIDS;
 
-COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
+CREATE TABLE "firewall"."metahost_program_rules"(
+"deny" BOOLEAN NOT NULL DEFAULT TRUE,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"name" TEXT NOT NULL,
+"port" INTEGER NOT NULL,
+CONSTRAINT "metahost_program_rules_pkey" PRIMARY KEY ("name","port")
+)
+WITHOUT OIDS;
 
-COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
 
-COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
+COMMENT ON TABLE "metahosts" IS 'Groups of addresses with similar firewall rules';
 
-COMMENT ON TABLE "firewall"."programs" IS 'Common programs to easily block.';
+COMMENT ON TABLE "transports" IS 'TCP, UDP, or Both';
 
-COMMENT ON TABLE "firewall"."defaults" IS 'Address default action';
+COMMENT ON TABLE "class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
 
-COMMENT ON TABLE "firewall"."rules" IS 'The actual rules that get put into the firewall.';
+COMMENT ON TABLE "programs" IS 'Common programs to easily block.';
 
-COMMENT ON TABLE "ip"."range_uses" IS 'Ranges are intended for a specific purpose.';
+COMMENT ON TABLE "defaults" IS 'Address default action';
 
-COMMENT ON TABLE "systems"."device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
+COMMENT ON TABLE "rules" IS 'The actual rules that get put into the firewall.';
 
-COMMENT ON TABLE "ip"."subnets" IS 'Subnets for which this application has control';
+COMMENT ON TABLE "range_uses" IS 'Ranges are intended for a specific purpose.';
 
-COMMENT ON TABLE "ip"."ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
+COMMENT ON TABLE "device_types" IS 'Computers are different than switches and routers, as they appear in the network overview.';
 
-COMMENT ON TABLE "dns"."ns" IS 'Nameservers (to be inserted as NS records)';
+COMMENT ON TABLE "subnets" IS 'Subnets for which this application has control';
 
-COMMENT ON TABLE "systems"."os_family" IS 'General classification for operating systems.';
+COMMENT ON TABLE "ranges" IS 'Ranges of addresses can be reserved for specific purposes (Autoreg, Dynamics, etc)';
 
-COMMENT ON TABLE "network"."switchports" IS 'Certain network devices have ports that can be marked with special options.';
+COMMENT ON TABLE "ns" IS 'Nameservers (to be inserted as NS records)';
 
-COMMENT ON TABLE "systems"."interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
+COMMENT ON TABLE "os_family" IS 'General classification for operating systems.';
 
-COMMENT ON TABLE "dhcp"."classes" IS 'DHCP classes allow configuration of hosts in certain ways';
+COMMENT ON TABLE "switchports" IS 'Certain network devices have ports that can be marked with special options.';
 
-COMMENT ON TABLE "systems"."systems" IS 'Systems are devices that connect to the network.';
+COMMENT ON TABLE "interface_addresses" IS 'Interfaces are assigned IP addresses based on certain rules. If DHCP is being used, then a class may be specified.';
 
-COMMENT ON TABLE "dhcp"."subnet_options" IS 'Options to apply to an entire subnet';
+COMMENT ON TABLE "classes" IS 'DHCP classes allow configuration of hosts in certain ways';
 
-COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
+COMMENT ON TABLE "systems" IS 'Systems are devices that connect to the network.';
 
-COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
+COMMENT ON TABLE "subnet_options" IS 'Options to apply to an entire subnet';
 
-COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
+COMMENT ON TABLE "metahost_members" IS 'Map addresses to metahosts';
 
-COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
+COMMENT ON TABLE "config_types" IS 'List of ways to configure your address';
 
-COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
+COMMENT ON TABLE "os" IS 'Track what primary operating systems are in use on the network.';
 
-COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
+COMMENT ON TABLE "pointers" IS 'CNAMEs and SRV records';
 
-COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
+COMMENT ON TABLE "switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
 
-COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
+COMMENT ON TABLE "mx" IS 'Mail servers (MX records)';
 
-COMMENT ON TABLE "ip"."addresses" IS 'Master list of all controlled addresses in the application';
+COMMENT ON TABLE "zones" IS 'Authoritative DNS zones';
 
-COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
+COMMENT ON TABLE "keys" IS 'Zone keys';
 
-COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
+COMMENT ON TABLE "addresses" IS 'Master list of all controlled addresses in the application';
 
-COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
+COMMENT ON TABLE "txt" IS 'TXT records for hosts';
 
-COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
+COMMENT ON TABLE "log_master" IS 'Record every single transaction that occurs in this application.';
 
-COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
+COMMENT ON TABLE "systems" IS 'Firewall boxes on the network';
 
-COMMENT ON TABLE "management"."processes" IS 'Process locking control';
+COMMENT ON TABLE "output" IS 'Destination of the output functions rather than write a file to disk.';
 
-COMMENT ON TABLE "dhcp"."subnet_settings" IS 'Settings for the DHCP server';
+COMMENT ON TABLE "interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
 
-COMMENT ON TABLE "dhcp"."range_settings" IS 'DHCP settings for IP ranges';
+COMMENT ON TABLE "processes" IS 'Process locking control';
 
-COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';
+COMMENT ON TABLE "subnet_settings" IS 'Settings for the DHCP server';
 
-COMMENT ON TABLE "documentation"."functions" IS 'List of all functions to be documented';
-
-COMMENT ON TABLE "documentation"."rules" IS 'Rules for documented functions';
-
-COMMENT ON TABLE "documentation"."arguments" IS 'Argument data for documented functions';
+COMMENT ON TABLE "range_settings" IS 'DHCP settings for IP ranges';
