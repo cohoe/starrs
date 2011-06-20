@@ -161,8 +161,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating firewall rule');
-		INSERT INTO "firewall"."rules" ("address","port","transport","deny","comment","owner")
-		VALUES (input_address, input_port, input_transport, input_deny, input_comment, input_owner);
+		INSERT INTO "firewall"."rules" ("address","port","transport","deny","comment","owner","source")
+		VALUES (input_address, input_port, input_transport, input_deny, input_comment, input_owner, 'standalone');
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule');
@@ -178,20 +178,17 @@ COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, varchar(4), bool
 	5) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS VOID AS $$
-	DECLARE
-		Port INTEGER;
-		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule_program');
-
-		-- Fill in owner
-		IF input_owner IS NULL THEN
-			input_owner := api.get_current_user();
-		END IF;
 
 		-- Check for dynamic
 		IF input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
 			RAISE EXCEPTION 'Dynamic hosts cannot be a member of a metahost';
+		END IF;
+
+		-- Fill in owner
+		IF input_owner IS NULL THEN
+			input_owner := api.get_current_user();
 		END IF;
 
 		-- Check privileges
@@ -204,16 +201,10 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 			END IF;
 		END IF;
 
-		-- Get program information
-		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
-		FROM "firewall"."programs"
-		WHERE "name" = input_program;
-
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating new rule from program');
-		INSERT INTO "firewall"."rules"
-		("address","port","transport","deny","owner","comment") VALUES
-		(input_address,Port,Transport,input_deny,input_owner,'Program on port '||Port||' '||Transport);
+		INSERT INTO "firewall"."program_rules" ("address","port","deny","owner")
+		VALUES (input_address, (SELECT "port" FROM "firewall"."programs" WHERE "name" = input_program), input_deny, input_owner);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule_program');
@@ -227,9 +218,6 @@ COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean, te
 	3) Create rule
 */
 CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_name text, input_program text, input_deny boolean) RETURNS VOID AS $$
-	DECLARE
-		Port INTEGER;
-		Transport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
 
@@ -243,16 +231,10 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 			END IF;
 		END IF;
 
-		-- Get program information
-		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO Port,Transport
-		FROM "firewall"."programs"
-		WHERE "name" = input_program;
-
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating new metahost rule from program');
-		INSERT INTO "firewall"."metahost_rules"
-		("name","port","transport","deny","comment") VALUES
-		(input_name,Port,Transport,input_deny,'Program on port '||Port||' '||Transport);
+		INSERT INTO "firewall"."metahost_program_rules" ("name","port","deny")
+		VALUES (input_name, (SELECT "port" FROM "firewall"."programs" WHERE "name" = input_program), input_deny);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule_program');
