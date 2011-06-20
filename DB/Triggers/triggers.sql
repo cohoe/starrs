@@ -109,3 +109,12 @@ FOR EACH ROW EXECUTE PROCEDURE "systems"."interface_addresses_insert"();
 CREATE TRIGGER "systems_interface_addresses_update"
 BEFORE UPDATE ON "systems"."interface_addresses"
 FOR EACH ROW EXECUTE PROCEDURE "systems"."interface_addresses_update"();
+
+/* firewall rule programs */
+CREATE TRIGGER "firewall_rule_program_insert"
+BEFORE INSERT ON "firewall"."program_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_insert"();
+
+CREATE TRIGGER "firewall_metahost_rule_program_insert"
+BEFORE INSERT ON "firewall"."metahost_program_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_insert"();
