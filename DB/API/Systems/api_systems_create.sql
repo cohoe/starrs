@@ -46,7 +46,7 @@ COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Crea
 	1) Check privileges
 	2) Create interface
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_name text, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
 
@@ -56,25 +56,28 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
+		
+		-- Validate input
+		input_name := api.validate_name(input_name);
 
 		-- Create interface
 		PERFORM api.create_log_entry('API','INFO','creating new interface');
 		INSERT INTO "systems"."interfaces"
-		("system_name","mac","comment","last_modifier") VALUES
-		(input_system_name,input_mac,input_comment,api.get_current_user());
+		("system_name","mac","comment","last_modifier","name") VALUES
+		(input_system_name,input_mac,input_comment,api.get_current_user(),input_name);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_interface');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text) IS 'Create a new interface on a system';
+COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text, text) IS 'Create a new interface on a system';
 
 /* API - create_interface_address
 	1) Check privileges
 	2) Fill in class
 	3) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_name text, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address');
 
@@ -87,9 +90,6 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			END IF;
 		END IF;
 
-		-- Validate input
-		input_name := api.validate_name(input_name);
-
 		-- Fill in class
 		IF input_class IS NULL THEN
 			input_class = api.get_site_configuration('DHCPD_DEFAULT_CLASS');
@@ -101,11 +101,11 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
-		INSERT INTO "systems"."interface_addresses" ("mac","name","address","config","class","comment","last_modifier","isprimary") VALUES
-		(input_mac,input_name,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
+		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier","isprimary") VALUES
+		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, text, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
+COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
