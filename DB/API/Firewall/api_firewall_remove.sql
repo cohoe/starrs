@@ -163,18 +163,18 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
-			IF (SELECT "owner" FROM "firewall"."rules" WHERE "firewall"."rules"."address" = input_address 
-			AND "firewall"."rules"."port" = PortNum AND "firewall"."rules"."transport" = ProgramTransport) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "firewall"."program_rules" WHERE "firewall"."program_rules"."address" = input_address 
+			AND "firewall"."program_rules"."port" = PortNum AND "firewall"."program_rules"."transport" = ProgramTransport) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on rule %,%. You are not owner.',input_address,input_program;
 			END IF;
 		END IF;
 
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','removing rule based on program');
-		DELETE FROM "firewall"."rules"
-		WHERE "firewall"."rules"."address" = input_address
-		AND "firewall"."rules"."port" = PortNum
-		AND "firewall"."rules"."transport" = ProgramTransport;
+		DELETE FROM "firewall"."program_rules"
+		WHERE "firewall"."program_rules"."address" = input_address
+		AND "firewall"."program_rules"."port" = PortNum
+		AND "firewall"."program_rules"."transport" = ProgramTransport;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_rule_program');
@@ -208,10 +208,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_m
 
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','removing metahost rule from program');
-		DELETE FROM "firewall"."metahost_rules"
-		WHERE "firewall"."metahost_rules"."name" = input_metahost_name
-		AND "firewall"."metahost_rules"."port" = PortNum
-		AND "firewall"."metahost_rules"."transport" = ProgramTransport;
+		DELETE FROM "firewall"."metahost_program_rules"
+		WHERE "firewall"."metahost_program_rules"."name" = input_metahost_name
+		AND "firewall"."metahost_program_rules"."port" = PortNum
+		AND "firewall"."metahost_program_rules"."transport" = ProgramTransport;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule_program');
