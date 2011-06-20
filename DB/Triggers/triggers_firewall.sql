@@ -85,6 +85,32 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_insert"() RETURNS T
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
 
+/* Trigger - metahost_rules_insert
+	1) Get owner
+	2) Apply rule to members
+*/
+CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		result Record;
+		Owner TEXT;
+	BEGIN
+		-- Get owner
+		SELECT "firewall"."metahosts"."owner" INTO Owner
+		FROM "firewall"."metahosts"
+		WHERE "firewall"."metahosts"."name" = NEW."name";
+	
+		-- Apply metahost rules
+		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = NEW."name" LOOP
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES 
+			(result.address,NEW."port",NEW."transport",NEW."deny",Owner,'"'||NEW."name"||'" - '||NEW."comment",'metahost-standalone');
+		END LOOP;
+		
+		-- Done
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."metahost_rules_insert"() IS 'Apply rules to members of the metahost';
+
 /* Trigger - metahost_rules_update
 	1) Get owner
 	2) Update record
