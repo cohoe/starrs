@@ -215,7 +215,7 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_delete"() RETURNS T
 		-- Get program info
 		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
 		FROM "firewall"."programs"
-		WHERE "port" = NEW."port";
+		WHERE "port" = OLD."port";
 		
 		-- Delete metahost rules
 		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = OLD."name" LOOP
