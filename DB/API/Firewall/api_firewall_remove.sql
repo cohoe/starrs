@@ -169,13 +169,12 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 			END IF;
 		END IF;
 
-		-- Create rule
+		-- Remove rule
 		PERFORM api.create_log_entry('API','INFO','removing rule based on program');
 		DELETE FROM "firewall"."program_rules"
 		WHERE "firewall"."program_rules"."address" = input_address
-		AND "firewall"."program_rules"."port" = PortNum
-		AND "firewall"."program_rules"."transport" = ProgramTransport;
-
+		AND "firewall"."program_rules"."port" = PortNum;
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_rule_program');
 	END;
@@ -190,7 +189,6 @@ COMMENT ON FUNCTION "api"."remove_firewall_rule_program"(inet, text) IS 'Remove 
 CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_metahost_name text, input_program text) RETURNS VOID AS $$
 	DECLARE
 		PortNum INTEGER;
-		ProgramTransport VARCHAR(4);
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_metahost_rule_program');
 
@@ -202,19 +200,18 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_m
 		END IF;
 
 		-- Get program information
-		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO PortNum,ProgramTransport
+		SELECT "firewall"."programs"."port","firewall"."programs"."transport" INTO PortNum
 		FROM "firewall"."programs"
 		WHERE "name" = input_program;
 
-		-- Create rule
+		-- Remove rule
 		PERFORM api.create_log_entry('API','INFO','removing metahost rule from program');
 		DELETE FROM "firewall"."metahost_program_rules"
 		WHERE "firewall"."metahost_program_rules"."name" = input_metahost_name
-		AND "firewall"."metahost_program_rules"."port" = PortNum
-		AND "firewall"."metahost_program_rules"."transport" = ProgramTransport;
+		AND "firewall"."metahost_program_rules"."port" = PortNum;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_metahost_rule_program');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule_program"(text, text) IS 'Create a firewall rule based on a common program.';
+COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule_program"(text, text) IS 'Remove a firewall rule based on a common program.';
