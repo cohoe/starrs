@@ -31,25 +31,25 @@ INSERT INTO "systems"."os_family"
 Better than chuckles' scan-everyone method of figuring out what OS's are on the network
 */
 INSERT INTO "systems"."os" 
-	("name", "default_connection_name", "family") VALUES 
-	('Cisco IOS','VLAN','Other'),
-	('Windows XP','Local Area Connection','Windows'),
-	('Windows Vista','Local Area Connection','Windows'),
-	('Windows 7','Local Area Connection','Windows'),
-	('Windows Server 2003','Local Area Connection','Windows'),
-	('Windows Server 2008','Local Area Connection','Windows'),
-	('Windows Server 2008 R2','Local Area Connection','Windows'),
-	('Gentoo','eth0','Linux'),
-	('Ubuntu','eth0','Linux'),
-	('Fedora','eth0','Linux'),
-	('CentOS','eth0','Linux'),
-	('Slackware','eth0','Linux'),
-	('Arch','eth0','Linux'),
-	('Exherbo','eth0','Linux'),
-	('Debian','eth0','Linux'),
-	('FreeBSD','fxp0','BSD'),
-	('OpenBSD','xx0','BSD'),
-	('NetBSD','xx0','BSD');
+	("name", "family") VALUES 
+	('Cisco IOS','Other'),
+	('Windows XP','Windows'),
+	('Windows Vista','Windows'),
+	('Windows 7','Windows'),
+	('Windows Server 2003','Windows'),
+	('Windows Server 2008','Windows'),
+	('Windows Server 2008 R2','Windows'),
+	('Gentoo','Linux'),
+	('Ubuntu','Linux'),
+	('Fedora','Linux'),
+	('CentOS','Linux'),
+	('Slackware','Linux'),
+	('Arch','Linux'),
+	('Exherbo','Linux'),
+	('Debian','Linux'),
+	('FreeBSD','BSD'),
+	('OpenBSD','BSD'),
+	('NetBSD','BSD');
 	
 /* NETWORK INFORMATION
 Use a table to keep track of all active IP addresses and what they are used for. IP's must be activated here before they can be handed out
