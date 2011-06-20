@@ -15,8 +15,8 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_members_insert"() RETURNS TRIGGE
 		
 		-- Apply metahost rules
 		FOR result IN SELECT "port","transport","deny","comment" FROM "firewall"."metahost_rules" WHERE "name" = NEW."name" LOOP
-			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
-			(NEW."address",result.port,result.transport,result.deny,Owner,'"'||NEW."name"||'" - '||result.comment);
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES 
+			(NEW."address",result.port,result.transport,result.deny,Owner,'"'||NEW."name"||'" - '||result.comment,'metahost');
 		END LOOP;
 		
 		-- Done
@@ -62,8 +62,8 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_insert"() RETURNS TRIGGER 
 	
 		-- Apply metahost rules
 		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = NEW."name" LOOP
-			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment") VALUES 
-			(result.address,NEW."port",NEW."transport",NEW."deny",Owner,'"'||NEW."name"||'" - '||NEW."comment");
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES 
+			(result.address,NEW."port",NEW."transport",NEW."deny",Owner,'"'||NEW."name"||'" - '||NEW."comment",'metahost');
 		END LOOP;
 		
 		-- Done
@@ -112,3 +112,61 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rules_delete"() RETURNS TRIGGER 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."metahost_rules_delete"() IS 'Remove a rule applied to all metahosts';
+
+/* Trigger - rule_program_insert
+	1) Get program info
+	2) Insert rules into the master
+*/
+CREATE OR REPLACE FUNCTION "firewall"."rule_program_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ProgName TEXT;
+		PortNum INTEGER;
+		ProgTransport TEXT;
+	BEGIN
+		-- Get program info
+		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
+		FROM "firewall"."programs"
+		WHERE "port" = NEW."port";
+
+		-- Insert rules
+		INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES
+		(NEW."address",PortNum,ProgTransport,NEW."deny",NEW."owner",'"'||ProgName||'" program selected','program');
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
+
+/* Trigger - metahost_rules_insert
+	1) Get owner
+	2) Get program info
+	3) Apply rule to members
+*/
+CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ProgName TEXT;
+		PortNum INTEGER;
+		ProgTransport TEXT;
+		result Record;
+		Owner TEXT;
+	BEGIN
+		-- Get owner
+		SELECT "firewall"."metahosts"."owner" INTO Owner
+		FROM "firewall"."metahosts"
+		WHERE "firewall"."metahosts"."name" = NEW."name";
+
+		-- Get program info
+		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
+		FROM "firewall"."programs"
+		WHERE "port" = NEW."port";
+
+		-- Apply metahost rules
+		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = NEW."name" LOOP
+			INSERT INTO "firewall"."rules" ("address","port","transport","deny","owner","comment","source") VALUES
+			(result.address,PortNum,ProgTransport,NEW."deny",Owner,'"'||NEW."name"||'" program "'||ProgName||'" selected','metahost-program');
+		END LOOP;
+
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
