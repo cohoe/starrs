@@ -162,7 +162,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 		-- Create rule
 		PERFORM api.create_log_entry('API','INFO','creating firewall rule');
 		INSERT INTO "firewall"."rules" ("address","port","transport","deny","comment","owner","source")
-		VALUES (input_address, input_port, input_transport, input_deny, input_comment, input_owner, 'standalone');
+		VALUES (input_address, input_port, input_transport, input_deny, input_comment, input_owner, 'standalone-standalone');
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule');
