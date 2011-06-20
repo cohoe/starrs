@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'mac|comment|system_name' THEN
+		IF input_field !~* 'mac|comment|system_name|name' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -99,7 +99,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'comment|address|config|isprimary|mac|class|name' THEN
+		IF input_field !~* 'comment|address|config|isprimary|mac|class' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
