@@ -34,6 +34,10 @@ ALTER TABLE "dns"."pointers" ADD CONSTRAINT "pointers_alias_extra_key" UNIQUE ("
 
 COMMENT ON CONSTRAINT "pointers_alias_extra_key" ON "dns"."pointers" IS 'No duplicate infomation';
 
+ALTER TABLE "dns"."pointers" ADD CONSTRAINT "pointers_alias_zone_key" UNIQUE ("alias","zone");
+
+COMMENT ON CONSTRAINT "pointers_alias_zone_key" ON "dns"."pointers" IS 'Cannot have two of the same alises in the same zone';
+
 ALTER TABLE "dns"."mx" ADD CONSTRAINT "dns_mx_preference_zone_key" UNIQUE ("preference","zone");
 
 COMMENT ON CONSTRAINT "dns_mx_preference_zone_key" ON "dns"."mx" IS 'No two MX servers can have the same preference in a domain';
@@ -49,6 +53,10 @@ COMMENT ON CONSTRAINT "a_hostname_type_key" ON "dns"."a" IS 'Can only have 1 of 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_key" UNIQUE ("address");
 
 COMMENT ON CONSTRAINT "a_address_key" ON "dns"."a" IS 'Addresses in this table must be unique';
+
+ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "interfaces_system_name_name_key" UNIQUE ("system_name","name");
+
+COMMENT ON CONSTRAINT "interfaces_system_name_name_key" ON "systems"."interfaces" IS 'Inteface names must be unique on a system';
 
 ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "fk_dhcp_class_options_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -67,7 +75,7 @@ ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_use" FOREIGN KEY ("use") 
 
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ranges_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ranges_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."ns" ADD CONSTRAINT "fk_ns_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -125,3 +133,15 @@ ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_name" 
 ALTER TABLE "dhcp"."subnet_settings" ADD CONSTRAINT "fk_subnet_settings_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "dhcp"."range_settings" ADD CONSTRAINT "fk_range_settings_name" FOREIGN KEY ("name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "documentation"."rules" ADD CONSTRAINT "fk_rules_specific_name" FOREIGN KEY ("specific_name") REFERENCES "documentation"."functions"("specific_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "documentation"."arguments" ADD CONSTRAINT "fk_arguments_specific_name" FOREIGN KEY ("specific_name") REFERENCES "documentation"."functions"("specific_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "firewall"."program_rules" ADD CONSTRAINT "fk_program_rules_port" FOREIGN KEY ("port") REFERENCES "firewall"."programs"("port") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "firewall"."program_rules" ADD CONSTRAINT "fk_program_rules_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "firewall"."metahost_program_rules" ADD CONSTRAINT "fk_metahost_program_rules_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "firewall"."metahost_program_rules" ADD CONSTRAINT "fk_metahost_program_rules_port" FOREIGN KEY ("port") REFERENCES "firewall"."programs"("port") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
