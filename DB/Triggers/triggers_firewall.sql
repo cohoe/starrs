@@ -136,6 +136,26 @@ CREATE OR REPLACE FUNCTION "firewall"."rule_program_insert"() RETURNS TRIGGER AS
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
 
+/* Trigger - rule_program_delete
+	1) Get program info
+	2) Delete rules from the master
+*/
+CREATE OR REPLACE FUNCTION "firewall"."rule_program_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ProgName TEXT;
+		PortNum INTEGER;
+		ProgTransport TEXT;
+	BEGIN
+		-- Get program info
+		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
+		FROM "firewall"."programs"
+		WHERE "port" = NEW."port";
+		
+		DELETE FROM "firewall"."rules" WHERE "firewall"."rules"."address" = OLD."address" AND "port" = PortNum AND "transport" = ProgTransport AND "source" = 'program';
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."rule_program_delete"() IS 'Remove a standalone program rule';
+
 /* Trigger - metahost_rules_insert
 	1) Get owner
 	2) Get program info
@@ -170,3 +190,28 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_insert"() RETURNS T
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_insert"() IS 'Place a program rule in the master table';
+
+/* Trigger - metahost_rule_program_delete
+	1) Get program info
+	2) Delete rules from the master
+*/
+CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ProgName TEXT;
+		PortNum INTEGER;
+		ProgTransport TEXT;
+		result Record;
+	BEGIN
+		-- Get program info
+		SELECT "name","port","transport" INTO ProgName,PortNum,ProgTransport
+		FROM "firewall"."programs"
+		WHERE "port" = NEW."port";
+		
+		-- Delete metahost rules
+		FOR result IN SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = OLD."name" LOOP
+			DELETE FROM "firewall"."rules" WHERE "firewall"."rules"."address" = result.address AND "port" = PortNum AND "transport" = ProgTransport AND "source" = 'metahost-program';
+		END LOOP;
+		
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."rule_program_delete"() IS 'Remove a metahost program rule';
