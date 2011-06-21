@@ -7,6 +7,10 @@
 	6) get_dhcpd_range_options
 	7) get_dhcpd_range_settings
 	8) get_dhcpd_ranges
+	9) get_dhcpd_global_options
+	10) get_dhcpd_dns_keys
+	11) get_dhcpd_forward_zones
+	12) get_dhcpd_reverse_zones
 */
 
 /* API - get_dhcpd_static_hosts */
@@ -87,3 +91,45 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_ranges"(input_subnet cidr) RE
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_subnet_ranges"(cidr) IS 'Get a list of all dynamic ranges in a subnet';
+
+/* API - get_dhcpd_global_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_global_options"() RETURNS SETOF "dhcp"."dhcpd_global_options" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value" FROM "dhcp"."global_options");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_global_options"() IS 'Get all of the global DHCPD config directives';
+
+/* API - get_dhcpd_dns_keys */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dns_keys"() RETURNS SETOF "dhcp"."dhcpd_dns_keys" AS $$
+	BEGIN
+		RETURN QUERY (SELECT DISTINCT "dns"."zones"."keyname","dns"."keys"."key",api.get_site_configuration('DNS_KEY_ENCTYPE') AS "enctype" 
+		FROM "ip"."subnets" 
+		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
+		JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname" 
+		WHERE "dhcp_enable" = TRUE);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_dns_keys"() IS 'Get all of the dns keys for dhcpd';
+
+/* API - get_dhcpd_forward_zones */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_forward_zones"() RETURNS SETOF "dhcp"."dhcpd_zones" AS $$
+	BEGIN
+		RETURN QUERY (SELECT DISTINCT "ip"."subnets"."zone","dns"."zones"."keyname","address" FROM "ip"."subnets"
+		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
+		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone" 
+		WHERE "isprimary" = TRUE);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_forward_zones"() IS 'Get all forward zone info for dhcpd';
+
+/* API - get_dhcpd_reverse_zones */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_reverse_zones"() RETURNS SETOF "dhcp"."dhcpd_zones" AS $$
+	BEGIN
+		RETURN QUERY (SELECT DISTINCT api.get_reverse_domain("subnet") AS "zone","dns"."zones"."keyname","address" FROM "ip"."subnets"
+		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
+		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone" 
+		WHERE "isprimary" = TRUE AND "dhcp_enable" = TRUE);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_reverse_zones"() IS 'Get all reverse zone info for dhcpd';
