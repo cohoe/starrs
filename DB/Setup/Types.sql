@@ -27,3 +27,19 @@ COMMENT ON TYPE "dhcp"."dhcpd_range_settings" IS 'range settings for the dhcpd.c
 /* DHCP - subnet_ranges */
 CREATE TYPE "dhcp"."dhcpd_subnet_ranges" AS (name text, first_ip inet, last_ip inet, class text);
 COMMENT ON TYPE "dhcp"."dhcpd_subnet_ranges" IS 'list all dynamic ranges within a subnet';
+
+/* DHCP - keys */
+CREATE TYPE "dhcp"."dhcpd_keys" AS (keyname text, key text);
+COMMENT ON TYPE "dhcp"."dhcpd_keys" IS 'get the keys of the DHCP enabled subnet zones';
+
+/* DHCP - global options */
+CREATE TYPE "dhcp"."dhcpd_global_options" AS (option text, value text);
+COMMENT ON TYPE "dhcp"."dhcpd_global_options" IS 'Get all global DHCPD config directives';
+
+/* DHCP - zone keys */
+CREATE TYPE "dhcp"."dhcpd_dns_keys" AS (keyname text, key text, enctype text);
+COMMENT ON TYPE "dhcp"."dhcpd_dns_keys" IS 'Get all dns key information for dhcpd';
+
+/* DHCP - zones */
+CREATE TYPE "dhcp"."dhcpd_zones" AS (zone text, keyname text, primary_ns inet);
+COMMENT ON TYPE "dhcp"."dhcpd_zones" IS 'Zone information for dhcpd';
