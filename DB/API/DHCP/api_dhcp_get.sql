@@ -3,12 +3,14 @@
 	2) get_dhcpd_dynamic_hosts
 	3) get_dhcpd_subnets
 	4) get_dhcpd_subnet_options
-	5) get_dhcpd_range_options
-	6) get_dhcpd_ranges
-	7) get_dhcpd_global_options
-	8) get_dhcpd_dns_keys
-	9) get_dhcpd_forward_zones
-	10) get_dhcpd_reverse_zones
+	5) get_dhcpd_subnet_settings
+	6) get_dhcpd_range_options
+	7) get_dhcpd_range_settings
+	8) get_dhcpd_ranges
+	9) get_dhcpd_global_options
+	10) get_dhcpd_dns_keys
+	11) get_dhcpd_forward_zones
+	12) get_dhcpd_reverse_zones
 */
 
 /* API - get_dhcpd_static_hosts */
@@ -69,7 +71,7 @@ COMMENT ON FUNCTION "api"."get_dhcpd_range_options"(text) IS 'Get all range opti
 /* API - get_dhcpd_subnet_ranges */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_ranges"(input_subnet cidr) RETURNS SETOF "dhcp"."dhcpd_subnet_ranges" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "name","first_ip","last_ip","class" FROM "ip"."ranges" WHERE "subnet" = input_subnet AND "use" = 'ROAM');
+		RETURN QUERY (SELECT "name","first_ip","last_ip","class" FROM "ip"."ranges" WHERE "subnet" = input_subnet AND "use" = 'ROAM' AND family("subnet" = 4));
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_subnet_ranges"(cidr) IS 'Get a list of all dynamic ranges in a subnet';
