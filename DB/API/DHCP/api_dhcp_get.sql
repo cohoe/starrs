@@ -3,14 +3,12 @@
 	2) get_dhcpd_dynamic_hosts
 	3) get_dhcpd_subnets
 	4) get_dhcpd_subnet_options
-	5) get_dhcpd_subnet_settings
-	6) get_dhcpd_range_options
-	7) get_dhcpd_range_settings
-	8) get_dhcpd_ranges
-	9) get_dhcpd_global_options
-	10) get_dhcpd_dns_keys
-	11) get_dhcpd_forward_zones
-	12) get_dhcpd_reverse_zones
+	5) get_dhcpd_range_options
+	6) get_dhcpd_ranges
+	7) get_dhcpd_global_options
+	8) get_dhcpd_dns_keys
+	9) get_dhcpd_forward_zones
+	10) get_dhcpd_reverse_zones
 */
 
 /* API - get_dhcpd_static_hosts */
@@ -60,14 +58,6 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_options"(input_subnet cidr) R
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_subnet_options"(cidr) IS 'Get all subnet options for dhcpd.conf';
 
-/* API - get_dhcpd_subnet_settings */
-CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_settings"(input_subnet cidr) RETURNS SETOF "dhcp"."dhcpd_subnet_settings" AS $$
-	BEGIN
-		RETURN QUERY (SELECT "setting","value" FROM "dhcp"."subnet_settings" WHERE "subnet" = input_subnet);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcpd_subnet_settings"(cidr) IS 'Get all subnet settings for dhcpd.conf';
-
 /* API - get_dhcpd_range_options */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_range_options"(input_range text) RETURNS SETOF "dhcp"."dhcpd_range_options" AS $$
 	BEGIN
@@ -75,14 +65,6 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_range_options"(input_range text) RET
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_range_options"(text) IS 'Get all range options for dhcpd.conf';
-
-/* API - get_dhcpd_range_settings */
-CREATE OR REPLACE FUNCTION "api"."get_dhcpd_range_settings"(input_range text) RETURNS SETOF "dhcp"."dhcpd_range_settings" AS $$
-	BEGIN
-		RETURN QUERY (SELECT "setting","value" FROM "dhcp"."range_settings" WHERE "name" = input_range);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcpd_range_settings"(text) IS 'Get all range settings for dhcpd.conf';
 
 /* API - get_dhcpd_subnet_ranges */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_ranges"(input_subnet cidr) RETURNS SETOF "dhcp"."dhcpd_subnet_ranges" AS $$
