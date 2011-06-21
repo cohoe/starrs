@@ -4,6 +4,7 @@
 	3) create_dhcp_subnet_option
 	4) create_dhcp_subnet_setting
 	5) create_dhcp_range_setting
+	6) create_dhcp_global_option
 */
 
 /* API - create_dhcp_class
@@ -142,3 +143,27 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_setting"(input_range text, i
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_range_setting"(text, text, text) IS 'Create a DHCP range setting';
+
+/* API - create_dhcp_global_option
+	1) Check privileges
+	2) Create class option
+*/
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, input_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_global_option');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to create dhcp class option denied for %. Not admin.',api.get_current_user();
+		END IF;
+
+		-- Create class option		
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dhcp global option');
+		INSERT INTO "dhcp"."global_options" 
+		("option","value") VALUES (input_option,input_value);
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_global_option');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dhcp_global_option"(text, text) IS 'Create a new DHCP global option';
