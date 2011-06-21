@@ -7,7 +7,7 @@
 
 .system_resource_title {
 	color: white;
-	background-color: #0E0E78;
+	background-color: #6f7dc7;
 	border: 1px solid black;
 	height: 48px;
 	width: 100%;
@@ -38,7 +38,7 @@
 
 .system_date_bar {
 	color: white;
-	background-color: #0E0E78;
+	background-color: #6f7dc7;
 	border: 1px solid black;
 	border-top: 0px;
 	height: 24px;

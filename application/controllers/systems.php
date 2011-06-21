@@ -15,7 +15,8 @@ class Systems extends CI_Controller {
 			die;
 		}
 
-		$skin = "grid";
+		#$skin = "grid";
+		$skin = "sunday";
 		
 		$system_info = $this->api->get_system_info($system_name);
 		echo link_tag("css/$skin/full/address.css");
