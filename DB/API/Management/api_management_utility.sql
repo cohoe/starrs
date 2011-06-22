@@ -6,6 +6,8 @@
 	5) unlock_process
 	6) intialize
 	7) deinitialize
+	8) reset_database
+	9) exec
 */
 
 /* API - validate_nospecial */
@@ -163,3 +165,27 @@ CREATE OR REPLACE FUNCTION "api"."deinitialize"() RETURNS VOID AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."deinitialize"() IS 'Reset user permissions to activate a new user';
+
+/* API - reset_database */
+CREATE OR REPLACE FUNCTION "api"."reset_database"() RETURNS VOID AS $$
+	DECLARE
+		tables RECORD;
+	BEGIN
+		FOR tables IN (SELECT "table_schema","table_name" 
+		FROM "information_schema"."tables" 
+		WHERE "table_schema" !~* 'information_schema|pg_catalog'
+		AND "table_type" ~* 'BASE TABLE'
+		ORDER BY "table_schema" ASC) LOOP
+			PERFORM (SELECT api.exec('DROP TABLE '||tables.table_schema||'.'||tables.table_name||' CASCADE'));
+		END LOOP;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+/* API - exec */
+CREATE OR REPLACE FUNCTION "api"."exec"(text) RETURNS VOID AS $$
+	BEGIN
+		EXECUTE $1;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."exec"(text) IS 'Execute a query in a plpgsql context';
+COMMENT ON FUNCTION "api"."reset_database"() IS 'Drop all tables to reset the database to only functions';
