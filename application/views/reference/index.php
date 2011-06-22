@@ -1,7 +1,7 @@
-<div class="function_container">
+<div class="item_container">
 	<a href="<?php echo base_url(),"reference/view/$name"?>">
-		<div class="schema_title">
-			<div class="schema_title_span"><?php echo $name;?></div>
+		<div class="resource_title_bar_style4">
+			<div class="resource_title_bar_center"><?php echo $name;?></div>
 		</div>
 	</a>
 </div>

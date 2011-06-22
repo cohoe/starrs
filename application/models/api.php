@@ -64,14 +64,14 @@ class Api extends CI_Model {
 	public function get_interface_addresses($mac)
 	{
 		# This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * from systems.interface_addresses WHERE mac = '$mac' ORDER BY name DESC";
+		$sql = "SELECT * from systems.interface_addresses WHERE mac = '$mac' ORDER BY mac DESC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 	
 	public function get_address_rules($address)
 	{
-		$sql = "SELECT * from firewall.rules WHERE address = '$address' ORDER BY port ASC";
+		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}

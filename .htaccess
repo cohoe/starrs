@@ -1,4 +1,1 @@
-Options +FollowSymlinks
-RewriteEngine on
-RewriteCond $1 !^(index\.php|images|robots\.txt|css|scripts|media|user_guide)
-RewriteRule ^(.*)$ /index.php/$1 [L]
+Deny from all

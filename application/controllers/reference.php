@@ -5,7 +5,7 @@ class Reference extends CI_Controller {
 	{
 		$skin = "grid";
 		echo link_tag("css/$skin/full/main.css");	
-          echo link_tag("css/$skin/full/reference.css");
+        #echo link_tag("css/$skin/full/reference.css");
 
 		$schemas = array('dhcp','dns','documentation','firewall','ip','management','systems');
 
@@ -18,9 +18,8 @@ class Reference extends CI_Controller {
 
 	public function view($schema = "none")
 	{
-		$skin = "grid";
-		echo link_tag("css/$skin/full/main.css");	
-          echo link_tag("css/$skin/full/reference.css");
+		$skin = "impulse";
+		echo link_tag("css/$skin/full/main.css");
 		$functions = $this->api->get_schema_documentation($schema);
 
 		foreach ($functions as $function)
