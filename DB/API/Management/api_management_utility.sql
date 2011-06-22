@@ -180,6 +180,11 @@ CREATE OR REPLACE FUNCTION "api"."reset_database"() RETURNS VOID AS $$
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';
+ALTER FUNCTION api.reset_database() OWNER TO impulse_admin;
+GRANT EXECUTE ON FUNCTION api.initialize(text) TO impulse_admin;
+REVOKE ALL PRIVILEGES ON FUNCTION api.reset_database() FROM public;
+
+COMMENT ON FUNCTION "api"."reset_database"() IS 'Drop all tables to reset the database to only functions';
 
 /* API - exec */
 CREATE OR REPLACE FUNCTION "api"."exec"(text) RETURNS VOID AS $$
@@ -188,4 +193,3 @@ CREATE OR REPLACE FUNCTION "api"."exec"(text) RETURNS VOID AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."exec"(text) IS 'Execute a query in a plpgsql context';
-COMMENT ON FUNCTION "api"."reset_database"() IS 'Drop all tables to reset the database to only functions';
