@@ -15,18 +15,10 @@ class Systems extends CI_Controller {
 			die;
 		}
 
-		$skin = "impulse";
-		#$skin = "sunday";
+		$skin = "grid";
 		
 		$system_info = $this->api->get_system_info($system_name);
 		echo link_tag("css/$skin/full/main.css");
-		#echo link_tag("css/$skin/full/address.css");
-		#echo link_tag("css/$skin/full/firewall.css");
-		#echo link_tag("css/$skin/full/interface.css");
-		#echo link_tag("css/$skin/full/main.css");
-		#echo link_tag("css/$skin/full/resource.css");
-		#echo link_tag("css/$skin/full/system.css");
-		#echo link_tag("css/$skin/full/item.css");
 
 		$this->load->view("systems/system",$system_info);
 		$interface_info = $this->api->get_system_interfaces($system_name);
