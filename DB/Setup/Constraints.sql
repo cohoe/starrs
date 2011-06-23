@@ -124,15 +124,11 @@ ALTER TABLE "firewall"."systems" ADD CONSTRAINT "fk_firewall_systems_software" F
 
 ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "fk_systems_interfaces_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "management"."user_privileges" ADD CONSTRAINT "fk_user_privileges_privilege" FOREIGN KEY ("privilege") REFERENCES "management"."privileges"("privilege") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
 ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_transport" FOREIGN KEY ("transport") REFERENCES "firewall"."transports"("transport") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
-ALTER TABLE "dhcp"."subnet_settings" ADD CONSTRAINT "fk_subnet_settings_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "dhcp"."range_settings" ADD CONSTRAINT "fk_range_settings_name" FOREIGN KEY ("name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE "dhcp"."range_options" ADD CONSTRAINT "fk_range_options_name" FOREIGN KEY ("name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "documentation"."rules" ADD CONSTRAINT "fk_rules_specific_name" FOREIGN KEY ("specific_name") REFERENCES "documentation"."functions"("specific_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
