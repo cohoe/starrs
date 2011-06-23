@@ -380,21 +380,6 @@ CONSTRAINT "interfaces_pkey" PRIMARY KEY ("mac")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "management"."privileges"(
-"privilege" TEXT NOT NULL,
-"comment" TEXT,
-CONSTRAINT "privileges_pkey" PRIMARY KEY ("privilege")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "management"."user_privileges"(
-"username" TEXT NOT NULL,
-"privilege" TEXT NOT NULL,
-"allow" BOOLEAN NOT NULL DEFAULT FALSE,
-CONSTRAINT "user_privileges_pkey" PRIMARY KEY ("username","privilege")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "management"."configuration"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
@@ -434,25 +419,14 @@ CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "dhcp"."subnet_settings"(
-"setting" TEXT NOT NULL,
-"value" TEXT NOT NULL,
-"subnet" CIDR,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "subnet_settings_pkey" PRIMARY KEY ("setting")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "dhcp"."range_settings"(
-"setting" TEXT NOT NULL,
+CREATE TABLE "dhcp"."range_options"(
+"option" TEXT NOT NULL,
 "name" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "value" TEXT NOT NULL,
-CONSTRAINT "range_settings_pkey" PRIMARY KEY ("setting")
+CONSTRAINT "range_options_pkey" PRIMARY KEY ("option")
 )
 WITHOUT OIDS;
 
@@ -515,6 +489,15 @@ CONSTRAINT "metahost_program_rules_pkey" PRIMARY KEY ("name","port")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dhcp"."global_options"(
+"option" TEXT NOT NULL,
+"value" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "global_options_pkey" PRIMARY KEY ("option")
+)
+WITHOUT OIDS;
 
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
