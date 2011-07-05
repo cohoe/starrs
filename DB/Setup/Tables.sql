@@ -426,7 +426,7 @@ CREATE TABLE "dhcp"."range_options"(
 "date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "value" TEXT NOT NULL,
-CONSTRAINT "range_options_pkey" PRIMARY KEY ("option")
+CONSTRAINT "range_options_pkey" PRIMARY KEY ("name","option")
 )
 WITHOUT OIDS;
 
@@ -562,10 +562,6 @@ COMMENT ON TABLE "management"."output" IS 'Destination of the output functions r
 COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
 
 COMMENT ON TABLE "management"."processes" IS 'Process locking control';
-
-COMMENT ON TABLE "dhcp"."subnet_settings" IS 'Settings for the DHCP server';
-
-COMMENT ON TABLE "dhcp"."range_settings" IS 'DHCP settings for IP ranges';
 
 COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';
 
