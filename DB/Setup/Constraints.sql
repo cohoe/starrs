@@ -46,9 +46,9 @@ ALTER TABLE "dns"."txt" ADD CONSTRAINT "dns_txt_hostname_type_key" UNIQUE ("host
 
 COMMENT ON CONSTRAINT "dns_txt_hostname_type_key" ON "dns"."txt" IS 'A hostname can have on only one of each type of TXT record';
 
-ALTER TABLE "dns"."a" ADD CONSTRAINT "a_hostname_type_key" UNIQUE ("hostname","type");
+ALTER TABLE "dns"."a" ADD CONSTRAINT "a_hostname_zone_type_key" UNIQUE ("hostname","zone","type");
 
-COMMENT ON CONSTRAINT "a_hostname_type_key" ON "dns"."a" IS 'Can only have 1 of each A or AAAA';
+COMMENT ON CONSTRAINT "a_hostname_zone_type_key" ON "dns"."a" IS 'Can only have 1 of each A or AAAA';
 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_key" UNIQUE ("address");
 
