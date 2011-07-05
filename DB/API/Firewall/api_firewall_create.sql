@@ -226,9 +226,6 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 			IF (SELECT "owner" FROM "firewall"."metahosts" WHERE "name" = input_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on metahost %. You are not owner.',input_name;
 			END IF;
-			IF input_owner != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
-			END IF;
 		END IF;
 
 		-- Create rule
