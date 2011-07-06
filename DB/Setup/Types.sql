@@ -36,6 +36,10 @@ COMMENT ON TYPE "dhcp"."dhcpd_keys" IS 'get the keys of the DHCP enabled subnet 
 CREATE TYPE "dhcp"."dhcpd_global_options" AS (option text, value text);
 COMMENT ON TYPE "dhcp"."dhcpd_global_options" IS 'Get all global DHCPD config directives';
 
+/* DHCP - classes */
+CREATE TYPE "dhcp"."dhcpd_classes" AS (class text, comment text);
+COMMENT ON TYPE "dhcp"."dhcpd_classes" IS 'Class information for dhcpd.conf';
+
 /* DHCP - zone keys */
 CREATE TYPE "dhcp"."dhcpd_dns_keys" AS (keyname text, key text, enctype text);
 COMMENT ON TYPE "dhcp"."dhcpd_dns_keys" IS 'Get all dns key information for dhcpd';
