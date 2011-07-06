@@ -117,3 +117,11 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_reverse_zones"() RETURNS SETOF "dhcp
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_reverse_zones"() IS 'Get all reverse zone info for dhcpd';
+
+/* API - get_dhcpd_classes */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_classes"() RETURNS SETOF "dhcp"."dhcpd_classes" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "class","comment" FROM "dhcp"."classes");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_classes"() IS 'Get class information for the dhcpd.conf file';
