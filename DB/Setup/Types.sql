@@ -49,5 +49,5 @@ CREATE TYPE "dhcp"."dhcpd_zones" AS (zone text, keyname text, primary_ns inet);
 COMMENT ON TYPE "dhcp"."dhcpd_zones" IS 'Zone information for dhcpd';
 
 /* DHCP - class options */
-CREATE TYPE "dhcp"."get_dhcpd_class_options" AS (option text, value text);
-COMMENT ON TYPE "dhcp"."get_dhcpd_class_options" IS 'Get class options for the dhcpd.conf';
+CREATE TYPE "dhcp"."dhcpd_class_options" AS (option text, value text);
+COMMENT ON TYPE "dhcp"."dhcpd_class_options" IS 'Get class options for the dhcpd.conf';
