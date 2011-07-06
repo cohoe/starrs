@@ -55,7 +55,9 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 	}
 	else
 	{
-		return 'FALSE';
+		# This module sucks and should be disabled
+		return 'TRUE';
+		#return 'FALSE';
 	}
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."validate_domain"(text, text) IS 'Validate hostname, domain, FQDN based on known rules. Requires Perl module';
