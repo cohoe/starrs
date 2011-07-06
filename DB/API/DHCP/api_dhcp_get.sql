@@ -11,6 +11,8 @@
 	10) get_dhcpd_dns_keys
 	11) get_dhcpd_forward_zones
 	12) get_dhcpd_reverse_zones
+	13) get_dhcpd_classes
+	14) get_dhcpd_class_options
 */
 
 /* API - get_dhcpd_static_hosts */
@@ -125,3 +127,11 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_classes"() RETURNS SETOF "dhcp"."dhc
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_classes"() IS 'Get class information for the dhcpd.conf file';
+
+/* API - get_dhcpd_class_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_class_options"(input_class text) RETURNS SETOF "dhcp"."dhcpd_class_options" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value" FROM "dhcp"."class_options" WHERE "class" = input_class);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_class_options"(text) IS 'Get class options for the dhcpd.conf file';
