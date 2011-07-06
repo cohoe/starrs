@@ -35,4 +35,4 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_address_owner"(input_address ine
 		WHERE "address" = '10.21.50.1');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an existing interface address');
+COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an existing interface address';
