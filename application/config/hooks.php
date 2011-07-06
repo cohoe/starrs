@@ -10,7 +10,12 @@
 |
 */
 
-
+$hook['post_controller_constructor'][] = array(
+	'class'    => 'CSS',
+	'function' => 'load_css',
+	'filename' => 'css.php',
+	'filepath' => 'hooks',
+);
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

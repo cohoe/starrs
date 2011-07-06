@@ -47,6 +47,11 @@ class Api extends CI_Model {
 		{
 			return $query->row_array();
 		}
+		elseif ($query->num_rows() == 0)
+		{
+			echo "No systems found";
+			die;
+		}
 		else
 		{
 			echo "Multiple systems found?";
@@ -95,6 +100,16 @@ class Api extends CI_Model {
 		$sql = "select * from documentation.arguments where specific_name = '$function' order by position asc";
 		$query = $this->db->query($sql);
 		return $query->result_array();
+	}
+	
+	public function get_ip_fqdn($address)
+	{
+		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		#$arr = $query->result_array();
+		#print_r($arr);
+		#echo $arr;
+		return $query->row()->fqdn;
 	}
 	
 	////////////////////////////////////////////////////////////////////////
