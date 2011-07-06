@@ -47,7 +47,7 @@ foreach my $schema (@schemas)
 }
 
 print "Triggers...\n";
-system("psql -p $dbport -U $dbuser -f \"Triggers\/Triggers.sql\" $dbname");
+system("psql -p $dbport -U $dbuser -f \"Triggers\/triggers.sql\" $dbname");
 
 print "Views...\n";
 system("psql -p $dbport -U $dbuser -f \"Setup\/Views.sql\" $dbname");
