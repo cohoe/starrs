@@ -9,6 +9,9 @@ class InterfaceObject extends IMPULSEObject {
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
+	// 
+	private $addresses;
+	
 	// The MAC address of the interface
 	private $mac;
 	
@@ -37,11 +40,26 @@ class InterfaceObject extends IMPULSEObject {
 		parent::__construct($dateCreated, $dateModified, $lastModifier);
 		
 		// Store interface specific data
-		$this->mac		= $mac;
-		$this->comment	= $comment;
-		$this->system	= $system;
+		$this->mac		 = $mac;
+		$this->comment	 = $comment;
+		$this->system	 = $system;
+		$this->addresses = array(); 
 	}
 	
+	////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	
+	/**
+	 * Binds an interface address to the address
+	 * @param	InterfaceAddress	$interfaceAddress	The address to bind
+	 * @throws	APIException		Thrown if the address is not an InterfaceAddress
+	 */
+	public function add_address($interfaceAddress) {
+		if(!($interfaceAddress instanceof InterfaceAddress)) {
+			throw new APIException("The given interface address (" . get_class($interfaceAddress) . ") is not an InterfaceAddress!");
+		}
+		$this->addresses[] = $interfaceAddress;
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
