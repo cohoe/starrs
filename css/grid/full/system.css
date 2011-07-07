@@ -1,9 +1,9 @@
 .system_resource_container {
 	width: 50%;
+	min-width: 520px;
 	margin-left:auto;
 	margin-right: auto;
 	margin-bottom: 15px;
-
 }
 
 .system_resource_title {

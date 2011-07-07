@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Systems extends CI_Controller {
+class System extends CI_Controller {
 
 	public function index()
 	{
@@ -15,10 +15,9 @@ class Systems extends CI_Controller {
 			die;
 		}
 
-		$skin = "grid";
 		
 		$system_info = $this->api->get_system_info($system_name);
-		echo link_tag("css/$skin/full/main.css");
+		
 
 		$this->load->view("systems/system",$system_info);
 		$interface_info = $this->api->get_system_interfaces($system_name);

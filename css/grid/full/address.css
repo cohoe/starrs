@@ -7,17 +7,17 @@
 	margin-left:auto;
 	margin-right: auto;
 	border-radius:5px;
-    -webkit-border-radius:5px;
-    -moz-border-radius:5px;
+		-webkit-border-radius:5px;
+		-moz-border-radius:5px;
 	border-bottom-left-radius: 0;
-	-webkit-border-bottom-left-radius:0;
-    -moz-border-bottom-left-radius:0;
+		-webkit-border-bottom-left-radius:0;
+		-moz-border-bottom-left-radius:0;
 	border-bottom-right-radius: 0;
-	-webkit-border-bottom-right-radius:0;
-    -moz-border-bottom-right-radius:0;
-box-shadow:0 0 35px #eee254; 
-	-webkit-box-shadow:0 0 35px #eee254; 
-	-moz-box-shadow: 0 0 20px #eee254; 
+		-webkit-border-bottom-right-radius:0;
+		-moz-border-bottom-right-radius:0;
+	box-shadow:0 0 35px #eee254; 
+		-webkit-box-shadow:0 0 35px #eee254; 
+		-moz-box-shadow: 0 0 20px #eee254; 
 }
 
 .address_resource_information {
@@ -62,6 +62,7 @@ box-shadow:0 0 35px #eee254;
 
 .address_resource_container {
    	width: 50%;
+	min-width: 520px;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 15px;

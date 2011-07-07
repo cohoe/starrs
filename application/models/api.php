@@ -212,9 +212,40 @@ class Api extends CI_Model {
 	
 	public function get_address_rules($address)
 	{
-		$sql = "SELECT * from firewall.rules WHERE address = '$address' ORDER BY port ASC";
+		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
+	}
+
+	public function get_schema_documentation($schema)
+	{
+		if ($schema != "none")
+		{
+			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
+		}
+		else
+		{
+			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
+		}
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	public function get_function_parameters($function)
+	{
+		$sql = "select * from documentation.arguments where specific_name = '$function' order by position asc";
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+	
+	public function get_ip_fqdn($address)
+	{
+		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		#$arr = $query->result_array();
+		#print_r($arr);
+		#echo $arr;
+		return $query->row()->fqdn;
 	}
 	
 	////////////////////////////////////////////////////////////////////////

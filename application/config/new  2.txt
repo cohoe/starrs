@@ -1,0 +1,180 @@
+config/hooks.php
+
+############################################################################
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+/*
+| -------------------------------------------------------------------------
+| Hooks
+| -------------------------------------------------------------------------
+| This file lets you define "hooks" to extend CI without hacking the core
+| files.  Please see the user guide for info:
+|
+|	http://codeigniter.com/user_guide/general/hooks.html
+|
+*/
+
+$hook['post_controller_constructor'][] = array(
+	'class'    => 'CSS',
+	'function' => 'load_css',
+	'filename' => 'css.php',
+	'filepath' => 'hooks',
+);
+
+/* End of file hooks.php */
+/* Location: ./application/config/hooks.php */
+############################################################################
+
+views/system/system.php
+############################################################################
+<div class="item_container">
+	<div class="resource_title_bar_style4">
+		<span class="resource_title_bar_left"><?echo $system->get_system_name(); if ($system->get_comment()) { $comment = $system->get_comment(); echo " ($comment)"; }?></span>
+		<img class="system_image"src="http://www.google.com/images/nav_logo72.png"></img>
+	</div>
+
+	<div class="item_information_area_style4">
+		<table class="item_information_area_table">
+			<tr><td><em>Owner:</em></td><td><?echo $system->get_owner();?></td></tr>
+			<tr><td><em>Type:</em></td><td><?echo $system->get_type();?></td></tr>
+			<tr><td><em>OS:</em></td><td><?echo $system->get_os_name();?></td></tr>
+		</table>
+	</div>
+	
+	<div class="item_lower_bar_style4">Created on <?echo $system->get_date_created();?> - Modified by <?echo $system->get_last_modifier();?> on <?echo $system->get_date_modified();?></div>
+</div>
+############################################################################
+
+config/config.php
+############################################################################
+$config['enable_hooks'] = TRUE;
+add the autoload library "impulselib"
+############################################################################
+
+libraries/Impulselib.php
+############################################################################
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Impulselib {
+	function get_eui64_address($mac)
+	{
+		return $mac;
+	}
+}
+
+class System {
+
+	// Information to describe the system
+	private $system_name;
+	private $_owner;
+	private $comment;
+	private $date_created;
+	private $date_modified;
+	private $last_modifier;
+	private $renew_date;
+	private $type;
+	private $os_name;
+	
+	// The CI outside world
+	private $CI;
+	
+	
+	public function __construct($input_name)
+	{
+		// Load in the CI world so we can access other libraries and things
+		$CI =& get_instance();
+		
+		// Get and populate system information
+		$info = $CI->api->get_system_info($input_name);
+		$this->system_name = $info['system_name'];
+		$this->owner = $info['owner'];
+		$this->comment = $info['comment'];
+		$this->date_created = $info['date_created'];
+		$this->date_modified = $info['date_modified'];
+		$this->last_modifier = $info['last_modifier'];
+		$this->renew_date = $info['renew_date'];
+		$this->type = $info['type'];
+		$this->os_name = $info['os_name'];
+	}
+	
+	// Accessors for system properties
+    public function get_system_name()
+    {
+		return $this->system_name;
+    }
+	
+	public function get_owner()
+	{
+		return $this->owner;
+	}
+	
+	public function get_comment()
+	{
+		return $this->comment;
+	}
+	
+	public function get_date_created()
+	{
+		return $this->date_created;
+	}
+	
+	public function get_date_modified()
+	{
+		return $this->date_modified;
+	}
+	
+	public function get_last_modifier()
+	{
+		return $this->last_modifier;
+	}
+	
+	public function get_renew_date()
+	{
+		return $this->renew_date;
+	}
+	
+	public function get_type()
+	{
+		return $this->type;
+	}
+	
+	public function get_os_name()
+	{
+		return $this->os_name;
+	}
+}
+
+/* End of file Impulselib.php */
+############################################################################
+
+test class controller
+############################################################################
+class Classtest extends CI_Controller {
+
+	public function index()
+	{
+		$sql = "SELECT * FROM systems.systems WHERE owner = 'user'";
+		$query = $this->db->query($sql);
+		$this->load->library('systemlib');
+
+		foreach ($query->result() as $system)
+		{
+			$sys = new System($system->system_name);
+			$this->load->view('systemtest',array('system'=>$sys));
+		}
+	}
+	
+	public function view($system_name=NULL)
+	{
+		if(!$system_name)
+		{
+			echo "You need to specify a system";
+			die;
+		}
+		$system_info = $this->api->get_system_info($system_name);
+		
+		$this->load->library('systemlib',$system_info);
+		$newsys1 = new Systemlib($system_info);
+		$this->load->view('systemtest',array('system'=>$newsys1));
+	}
+}
+############################################################################

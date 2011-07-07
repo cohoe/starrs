@@ -1,0 +1,40 @@
+.resource_information_table {
+	width: auto;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.resource_information_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.resource_information_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+}
+
+.resource_information_table	 td {
+	padding-left: .75em;
+	padding-right: .75em;
+}
+
+.resource_title_img {
+	width: 48px;
+	height: 48px;
+	float: right;
+}
+
+.resource_title_em {
+	font: inherit;
+	font-weight: normal;
+}
+
+.resource_title_span {
+	width: auto;
+	float: left;
+	font-weight: bold;
+	line-height: 48px;
+	padding-left: 10px;
+}
