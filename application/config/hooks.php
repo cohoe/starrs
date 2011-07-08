@@ -17,5 +17,12 @@ $hook['post_controller_constructor'][] = array(
 	'filepath' => 'hooks',
 );
 
+$hook['pre_controller'][] = array(
+	'class'    => 'ImpulseLoader',
+	'function' => 'initialize',
+	'filename' => 'impulseloader.php',
+	'filepath' => 'hooks'
+);
+
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */
