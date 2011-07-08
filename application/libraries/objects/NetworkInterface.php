@@ -52,16 +52,16 @@ class NetworkInterface extends ImpulseObject {
 		$address_info = $this->CI->api->get_interface_addresses($this->mac);
 		foreach ($address_info as $address) {
 			$this->addresses[] = new InterfaceAddress(
-				$address['address'],
-				$address['class'],
-				$address['config'],
-				$address['mac'],
-				$address['renew_date'],
-				$address['isprimary'],
-				$address['comment'],
-				$address['date_created'],
-				$address['date_modified'],
-				$address['last_modifier']
+				$address->get_address(),
+				$address->get_class(),
+				$address->get_config(),
+				$address->get_mac(),
+				$address->get_renew_date(),
+				$address->get_isprimary(),
+				$address->get_comment(),
+				$address->get_date_created(),
+				$address->get_date_modified(),
+				$address->get_last_modifier()
 			);
 		}
 	}

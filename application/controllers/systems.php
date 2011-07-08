@@ -3,24 +3,29 @@
 class Systems extends CI_Controller {
 	
 	public function index() {
-	$this->_css();
-		$sql = "SELECT * FROM systems.systems WHERE owner = 'user'";
+		$this->_css();
+		$sql = "SELECT * FROM systems.systems";
 		$query = $this->db->query($sql);
 
+#		foreach ($query->result() as $system) {
+#			$system_info = $this->api->get_system_info($system->system_name);
+#			print_r($system_info);
+#			$sys = new System(
+#				$system_info['system_name'],
+#				$system_info['owner'],
+#				$system_info['comment'],
+#				$system_info['type'],
+#				$system_info['os_name'],
+#				$system_info['renew_date'],
+#				$system_info['date_created'],
+#				$system_info['date_modified'],
+#				$system_info['last_modifier']
+#			);
+#			$this->load->view('systems/system',array('system'=>$sys));
+#		}
+
 		foreach ($query->result() as $system) {
-			$system_info = $this->api->get_system_info($system->system_name);
-			$sys = new System(
-				$system_info['system_name'],
-				$system_info['owner'],
-				$system_info['comment'],
-				$system_info['type'],
-				$system_info['os_name'],
-				$system_info['renew_date'],
-				$system_info['date_created'],
-				$system_info['date_modified'],
-				$system_info['last_modifier']
-			);
-			$this->load->view('systems/system',array('system'=>$sys));
+			$sys = $this->api->get_system_info($system->system_name);
 		}
 	}
 	

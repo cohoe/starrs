@@ -74,6 +74,7 @@ class Api extends CI_Model {
 		// Run the query
 		$sql = "SELECT * FROM systems.systems WHERE system_name={$systemName}";
 		$query = $this->db->query($sql);
+
 				
 		// Error conditions
 		if($this->db->_error_number() > 0) {
@@ -88,7 +89,8 @@ class Api extends CI_Model {
 		
 		// It was valid! Create the system
 		$system = $query->row_array();
-		$system = $system[0];
+		#$system = $system[0];
+		#print_r($system);
 		$systemResult = new System(
 			$system['system_name'], 
 			$system['owner'], 
@@ -139,20 +141,22 @@ class Api extends CI_Model {
 		
 		// There were interfaces that matched, build them and return them
 		$resultSet = array();
-		foreach($query->row_array() as $row) {
+		foreach($query->result_array() as $row) {
 			// Create the interface
-			$interface = new InterfaceObject(
+			$interface = new NetworkInterface(
 				$row['mac'], 
 				$row['comment'], 
 				$row['system'], 
+				$row['name'],
 				$row['date_created'], 
 				$row['date_modified'], 
 				$row['last_modifier']
 			);
 			
 			// @todo: Handle other objects here
+			// Umm... variable much?
 			if($complete) {
-				$iA = get_interface_addresses($mac);
+				$iA = get_interface_addresses($row['mac']);
 				foreach($iA as $address) {
 					$interface->add_address($address);
 				}
@@ -180,7 +184,7 @@ class Api extends CI_Model {
 				
 		// Run the query
 		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * from systems.interface_addresses WHERE mac = '{$mac}' ORDER BY name DESC";
+		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$mac} ORDER BY address DESC";
 		$query = $this->db->query($sql);
 		
 		// Check for errors
@@ -193,7 +197,8 @@ class Api extends CI_Model {
 		
 		// Create the objects
 		$resultSet = array();
-		foreach($query->row_array() as $row) {
+		#foreach($query->row_array() as $row) {
+		foreach($query->result_array() as $row) {
 			$resultSet[] = new InterfaceAddress(
 				$row['address'], 
 				$row['class'], 
@@ -228,7 +233,6 @@ class Api extends CI_Model {
 			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
 		}
 		$query = $this->db->query($sql);
-		print_r($query);
 		return $query->result_array();
 	}
 
@@ -247,6 +251,51 @@ class Api extends CI_Model {
 		#print_r($arr);
 		#echo $arr;
 		return $query->row()->fqdn;
+	}
+
+	public function get_firewall_program($port) {
+		$sql = "SELECT name FROM firewall.programs WHERE port = '$port'";
+		$query = $this->db->query($sql);
+		return $query->row()->name;
+	}
+	
+	public function get_firewall_default($address) {
+		$sql = "SELECT deny FROM firewall.defaults WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		if($query->num_rows() > 0) {
+			return $query->row()->deny;
+		}
+
+	}
+	
+	public function get_address_record($address) {
+		$sql = "SELECT * FROM dns.a WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		return $query->row_array();
+	}
+	
+	public function get_pointer_records($address) {
+		$sql = "SELECT * FROM dns.pointers WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+	
+	public function get_text_records($address) {
+		$sql = "SELECT * FROM dns.txt WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+	
+	public function get_ns_records($address) {
+		$sql = "SELECT * FROM dns.ns WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+	
+	public function get_mx_records($address) {
+		$sql = "SELECT * FROM dns.mx WHERE address = '$address'";
+		$query = $this->db->query($sql);
+		return $query->result_array();
 	}
 	
 	////////////////////////////////////////////////////////////////////////
