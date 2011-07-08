@@ -72,7 +72,7 @@ class Api extends CI_Model {
 		$systemName = $this->db->escape($systemName);
 		
 		// Run the query
-		$sql = "SELECT * FROM systems.systems WHERE system_name='{$systemName}'";
+		$sql = "SELECT * FROM systems.systems WHERE system_name={$systemName}";
 		$query = $this->db->query($sql);
 				
 		// Error conditions
@@ -126,7 +126,7 @@ class Api extends CI_Model {
 	{
 		// Escape the system name, run the query
 		$systemName = $this->db->escape($systemName);
-		$sql = "SELECT * FROM systems.interfaces WHERE system_name = '{$system_name}' ORDER BY mac ASC";
+		$sql = "SELECT * FROM systems.interfaces WHERE system_name = {$systemName} ORDER BY mac ASC";
 		$query = $this->db->query($sql);
 		
 		// Error conditions
