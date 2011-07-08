@@ -105,6 +105,30 @@ body {
 		-moz-box-shadow: 0 0 20px #c8fffe; 
 }
 
+/* Purple */ 
+.item_title_style5 {
+     color: black;
+     background-color: white;
+     border: 1px solid #c8bdd2;
+     height: 24px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     border-radius:5px;
+          -webkit-border-radius:5px;
+          -moz-border-radius:5px;
+     border-bottom-left-radius: 0;
+          -webkit-border-bottom-left-radius:0;
+          -moz-border-bottom-left-radius:0;
+     border-bottom-right-radius: 0;
+          -webkit-border-bottom-right-radius:0;
+          -moz-border-bottom-right-radius:0;
+     box-shadow:0 0 35px #666699;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
+}
+
+
 /**************************************** 
 	Item Heading Bars
 	No real purose yet
@@ -178,6 +202,24 @@ body {
 		-moz-box-shadow: 0 0 20px #c8fffe; 
 }
 
+/* Purple */
+.item_heading_style5 {
+     color: black;
+     background-color: white;
+     border: 1px solid #c8dbb2;
+     height: 24px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     border-radius:5px;
+          -webkit-border-radius:5px;
+          -moz-border-radius:5px;
+     box-shadow:0 0 35px #666699;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
+}
+
+
 /****************************************
 	Item Information Areas
 	Places where useful infomrmation goes 
@@ -192,6 +234,8 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	box-shadow:0 0 35px #ff6f20; 
 		-webkit-box-shadow:0 0 35px #ff6f20; 
 		-moz-box-shadow: 0 0 20px #ff6f20; 
@@ -206,6 +250,8 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	box-shadow:0 0 35px #eee254; 
 		-webkit-box-shadow:0 0 35px #eee254; 
 		-moz-box-shadow: 0 0 20px #eee254; 
@@ -220,6 +266,8 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	box-shadow:0 0 35px #73ae57; 
 		-webkit-box-shadow:0 0 35px #73ae57; 
 		-moz-box-shadow: 0 0 20px #73ae57; 
@@ -234,9 +282,43 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	box-shadow:0 0 35px #c8fffe; 
 		-webkit-box-shadow:0 0 35px #c8fffe; 
 		-moz-box-shadow: 0 0 20px #c8fffe; 
+}
+
+/* Purple */
+.item_information_area_style5 {
+     color: white;
+     background-color: #0C141F;
+     border: 1px solid #c8dbd2;
+     border-top: none;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
+     box-shadow:0 0 35px #666699;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
+}
+
+/****************************************
+	Item Information Area Containers
+	Boxes for detailed stuff
+****************************************/
+
+.item_information_area_container {
+	width: 90%;
+	border: 1px solid white;
+	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 /****************************************
@@ -269,6 +351,43 @@ body {
 }
 
 .item_information_area_table ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+/****************************************
+	DNS Information Area Table
+	How the data in this view gets presented
+****************************************/
+.dns_information_area_table {
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.dns_information_area_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.dns_information_area_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+	border-bottom: 1px solid white;
+}
+
+.dns_information_area_table td {
+	padding-left: .75em;
+	padding-right: .75em;
+	vertical-align: top;
+	max-width: 500px;
+}
+
+.dns_information_area_table ul {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;
@@ -391,6 +510,34 @@ body {
 		-moz-box-shadow: 0 0 20px #c8fffe; 
 }
 
+/* Purple */
+.item_lower_bar_style5 {
+     color: black;
+     background-color: #FFFFFF;
+     border: 1px solid #c8bdd2;
+     border-top: 0px;
+     height: 24px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     text-align: center;
+     font-size: 10pt;
+     text-valign: middle;
+     line-height: 24px;
+     border-radius:5px;
+          -webkit-border-radius:5px;
+          -moz-border-radius:5px;
+     border-top-left-radius: 0;
+          -webkit-border-top-left-radius:0;
+          -moz-border-top-left-radius:0;
+     border-top-right-radius: 0;
+          -webkit-border-top-right-radius:0;
+          -moz-border-top-right-radius:0;
+     box-shadow:0 0 35px #666699;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
+}
+
 /****************************************
 	Resource Title Bars
 	Intended for important objects such as systems and interfaces
@@ -488,6 +635,29 @@ body {
 		-moz-box-shadow: 0 0 20px #c8fffe; 
 }
 
+/* Purple */
+.resource_title_bar_style5 {
+     color: black;
+     background-color: white;
+     border: 1px solid #c8bdd2;
+     height: 48px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     border-radius:5px;
+          -webkit-border-radius:5px;
+          -moz-border-radius:5px;
+     border-bottom-left-radius: 0;
+          -webkit-border-bottom-left-radius:0;
+          -moz-border-bottom-left-radius:0;
+     border-bottom-right-radius: 0;
+          -webkit-border-bottom-right-radius:0;
+          -moz-border-bottom-right-radius:0;
+     box-shadow:0 0 35px #c8fffe;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
+}
+
 /****************************************
 	Resource heading Bars
 	Intended for misc important things that dont have data
@@ -559,6 +729,23 @@ body {
 	box-shadow:0 0 35px #c8fffe; 
 		-webkit-box-shadow:0 0 35px #c8fffe; 
 		-moz-box-shadow: 0 0 20px #c8fffe; 
+}
+
+/* Purple */
+.resource_heading_bar_style5 {
+     color: black;
+     background-color: white;
+     border: 1px solid #c8bdd2;
+     height: 48px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     border-radius:5px;
+          -webkit-border-radius:5px;
+          -moz-border-radius:5px;
+     box-shadow:0 0 35px #666699;
+          -webkit-box-shadow:0 0 35px #666699;
+          -moz-box-shadow: 0 0 20px #666699;
 }
 
 /****************************************
@@ -657,4 +844,57 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 15px;
+}
+
+/****************************************
+	Firewall Box
+	Change color depending on the deny
+	action of the rule.
+****************************************/
+.firewall_rule_port_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_default_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	min-width: 120px;
 }

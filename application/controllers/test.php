@@ -7,4 +7,8 @@ class Test extends CI_Controller {
 		$this->api->intialize('benrr101');
 		$this->api->intialize('titsmagee');
 	}	
+
+	public function classtest() {
+		$class = new InterfaceObject(1,2,3,4,5,6);
+	}
 }

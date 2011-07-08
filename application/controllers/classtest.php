@@ -34,7 +34,7 @@ class Classtest extends CI_Controller {
 	}
 	
 	private function _css() {
-		$skin = "impulse";
+		$skin = "grid";
 		if(isset($_GET['skin'])) {
 			$skin = $_GET['skin'];
 		}
@@ -43,9 +43,9 @@ class Classtest extends CI_Controller {
 	}
 	
 	private function _print_firewall_rules($address) {
-		foreach ($address->get_rules() as $rule) {
-			$this->load->view('ruletest',array("rule"=>$rule));
-		}
+		#foreach ($address->get_rules() as $rule) {
+		#	$this->load->view('rulestest',array("rule"=>$rule));
+		#}
 	}
 }
 

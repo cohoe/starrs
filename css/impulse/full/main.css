@@ -36,6 +36,15 @@ body {
 
 /* Blue */
 
+/* Purple */
+.item_title_style5 {
+	border: 1px solid black;
+	height: 24px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 /****************************************
 	Item Information Areas
 	Places where useful infomrmation goes 
@@ -48,6 +57,8 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 /* Yellow */
@@ -75,6 +86,34 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+}
+
+/* Purple */
+.item_information_area_style5 {
+     border: 1px solid black;
+     border-top: none;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     padding-top: 10px;
+     padding-bottom: 10px;
+}
+
+
+/****************************************
+	Item Information Area Containers
+	Boxes for detailed stuff
+****************************************/
+
+.item_information_area_container {
+	width: 90%;
+	border: 1px solid black;
+	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 /****************************************
@@ -106,6 +145,43 @@ body {
 }
 
 .item_information_area_table ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+/****************************************
+	DNS Information Area Table
+	How the data in this view gets presented
+****************************************/
+.dns_information_area_table {
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.dns_information_area_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.dns_information_area_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+	border-bottom: 1px solid black;
+}
+
+.dns_information_area_table td {
+	padding-left: .75em;
+	padding-right: .75em;
+	vertical-align: top;
+	max-width: 500px;
+}
+
+.dns_information_area_table ul {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;
@@ -172,6 +248,21 @@ body {
 	line-height: 24px;
 }
 
+/* Purple */
+.item_lower_bar_style5 {
+     border: 1px solid black;
+     border-top: 0px;
+     height: 24px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     text-align: center;
+     font-size: 10pt;
+     text-valign: middle;
+     line-height: 24px;
+}
+
+
 /****************************************
 	Resource Title Bars
 	Intended for important objects such as systems and interfaces
@@ -197,6 +288,8 @@ body {
 	width: 100%;
 	margin-left:auto;
 	margin-right: auto;
+	color: black;
+	background-color: white;
 }
 
 /****************************************
@@ -287,4 +380,75 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 15px;
+}
+
+/****************************************
+	Links
+	For if you like clicking on things
+****************************************/
+
+a .system_image  {
+	border: none;
+}
+
+a .resource_title_bar_style4 {
+	text-decoration: none;
+}
+
+a {
+	text-decoration: none;
+	color: none;
+}
+
+/****************************************
+	Firewall Box
+	Change color depending on the deny
+	action of the rule.
+****************************************/
+.firewall_rule_port_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_default_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	min-width: 120px;
 }

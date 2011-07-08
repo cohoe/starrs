@@ -228,6 +228,7 @@ class Api extends CI_Model {
 			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
 		}
 		$query = $this->db->query($sql);
+		print_r($query);
 		return $query->result_array();
 	}
 
