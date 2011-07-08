@@ -16,5 +16,9 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/TxtRecord.php");
 		
 		# Exceptions
+		require_once(APPPATH . "libraries/exceptions/APIException.php");
+		require_once(APPPATH . "libraries/exceptions/AmbiguousTargetException.php");
+		require_once(APPPATH . "libraries/exceptions/DBException.php");
+		require_once(APPPATH . "libraries/exceptions/ObjectNotFoundException.php");
 	}
 }
