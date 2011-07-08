@@ -1,75 +1,88 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Systems extends CI_Controller {
+	
+	public function index() {
+	$this->_css();
+		$sql = "SELECT * FROM systems.systems WHERE owner = 'user'";
+		$query = $this->db->query($sql);
 
-	public function index()
-	{
-		echo "You are working with a system<br>";
+		foreach ($query->result() as $system) {
+			$system_info = $this->api->get_system_info($system->system_name);
+			$sys = new System(
+				$system_info['system_name'],
+				$system_info['owner'],
+				$system_info['comment'],
+				$system_info['type'],
+				$system_info['os_name'],
+				$system_info['renew_date'],
+				$system_info['date_created'],
+				$system_info['date_modified'],
+				$system_info['last_modifier']
+			);
+			$this->load->view('systems/system',array('system'=>$sys));
+		}
 	}
 	
-	public function view($system_name=NULL)
-	{
-		if (!$system_name)
-		{
-			echo "Need to specify system<br>";
+	public function view($system_name=NULL) {
+		$this->_css();
+		if(!$system_name) {
+			echo "You need to specify a system";
 			die;
 		}
-
-		$skin = "grid";
 		
 		$system_info = $this->api->get_system_info($system_name);
-		echo link_tag("css/$skin/full/main.css");
-
-		$this->load->view("systems/system",$system_info);
-		$interface_info = $this->api->get_system_interfaces($system_name);
+		$sys = new System(
+				$system_info['system_name'],
+				$system_info['owner'],
+				$system_info['comment'],
+				$system_info['type'],
+				$system_info['os_name'],
+				$system_info['renew_date'],
+				$system_info['date_created'],
+				$system_info['date_modified'],
+				$system_info['last_modifier']
+			);
+		$this->load->view('systems/system',array('system'=>$sys));
 		
-		foreach ($interface_info as $interface)
-		{
-			$this->load->view("systems/interface",$interface);
-
-			$address_info = $this->api->get_interface_addresses($interface['mac']);
-			foreach ($address_info as $address)
-			{
-				$this->load->view("ip/address",$address);
-				
-				$fw_rules_info = $this->api->get_address_rules($address['address']);
-				$rules['stdrules'] = array();
-				$rules['stdprogs'] = array();
-				foreach ($fw_rules_info as $rule)
-				{
-					switch($rule['source'])
-					{
-						case 'standalone-standalone':
-							array_push($rules['stdrules'], $rule);
-							break;
-						case 'standalone-program':
-							array_push($rules['stdprogs'], $rule);
-							break;
-					}
-				}
-				if(count($rules['stdrules']) > 0)
-				{
-					$this->load->view("firewall/standalone-rules",$rules);
-				}
-				if(count($rules['stdprogs']) > 0)
-				{
-					$this->load->view("firewall/standalone-programs",$rules);
-				}
+		foreach ($sys->get_interfaces() as $interface) {
+			$this->load->view('systems/interface',array("interface"=>$interface));
+			
+			foreach ($interface->get_interface_addresses() as $address) {
+				$this->load->view('ip/address',array("address"=>$address));
+				$this->_print_firewall_rules($address);
+				$this->_print_dns_records($address);
 			}
 		}
 	}
 	
-	public function edit($system_name=NULL)
-	{
-		if (!$system_name)
-		{
-			echo "Need to specify system<br>";
-			die;
+	private function _css() {
+		$skin = "impulse";
+		if(isset($_GET['skin'])) {
+			$skin = $_GET['skin'];
 		}
+
+		echo link_tag("css/$skin/full/main.css");
+	}
+	
+	private function _print_firewall_rules($address) {
+		$rule_info['rules'] = $address->get_rules();
+		$rule_info['deny'] = $address->get_fw_default();
+		$rule_info['address'] = $address->get_address();
 		
+		$this->load->view('firewall/rules',$rule_info);
+	}
+	
+	private function _print_dns_records($address) {
+		$record_info['address_record'] = $address->get_address_record();
+		$record_info['pointer_records'] = $address->get_pointer_records();
+		$record_info['ns_records'] = $address->get_ns_records();
+		$record_info['mx_records'] = $address->get_mx_records();
+		$record_info['text_records'] = $address->get_text_records();
+		$record_info['address'] = $address->get_address();
 		
-		echo "Editing system \"$system_name\"";
+		$this->load->view('dns/records',$record_info);
 	}
 }
-/* End of file system.php */
-/* Location: ./application/controllers/system.php */
+
+/* End of file systems.php */
