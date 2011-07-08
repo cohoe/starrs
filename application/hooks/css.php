@@ -11,7 +11,8 @@ class CSS {
 		}
 		else
 		{
-			$skin = "impulse";
+			#$skin = "impulse";
+			$skin = "grid";
 		}
 		#echo link_tag("css/$skin/full/main.css");
 		

@@ -7,25 +7,9 @@ class Systems extends CI_Controller {
 		$sql = "SELECT * FROM systems.systems";
 		$query = $this->db->query($sql);
 
-#		foreach ($query->result() as $system) {
-#			$system_info = $this->api->get_system_info($system->system_name);
-#			print_r($system_info);
-#			$sys = new System(
-#				$system_info['system_name'],
-#				$system_info['owner'],
-#				$system_info['comment'],
-#				$system_info['type'],
-#				$system_info['os_name'],
-#				$system_info['renew_date'],
-#				$system_info['date_created'],
-#				$system_info['date_modified'],
-#				$system_info['last_modifier']
-#			);
-#			$this->load->view('systems/system',array('system'=>$sys));
-#		}
-
 		foreach ($query->result() as $system) {
-			$sys = $this->api->get_system_info($system->system_name);
+			$sys = $this->api->get_system_info($system->system_name,false);
+			$this->load->view('systems/system',array('system'=>$sys));
 		}
 	}
 	
@@ -35,24 +19,12 @@ class Systems extends CI_Controller {
 			echo "You need to specify a system";
 			die;
 		}
-		
-		$system_info = $this->api->get_system_info($system_name);
-		$sys = new System(
-				$system_info['system_name'],
-				$system_info['owner'],
-				$system_info['comment'],
-				$system_info['type'],
-				$system_info['os_name'],
-				$system_info['renew_date'],
-				$system_info['date_created'],
-				$system_info['date_modified'],
-				$system_info['last_modifier']
-			);
+
+		$sys = $this->api->get_system_info($system_name,true);
 		$this->load->view('systems/system',array('system'=>$sys));
-		
+
 		foreach ($sys->get_interfaces() as $interface) {
 			$this->load->view('systems/interface',array("interface"=>$interface));
-			
 			foreach ($interface->get_interface_addresses() as $address) {
 				$this->load->view('ip/address',array("address"=>$address));
 				$this->_print_firewall_rules($address);
@@ -62,7 +34,8 @@ class Systems extends CI_Controller {
 	}
 	
 	private function _css() {
-		$skin = "impulse";
+		#$skin = "impulse";
+		$skin = "grid";
 		if(isset($_GET['skin'])) {
 			$skin = $_GET['skin'];
 		}

@@ -90,7 +90,6 @@ class Api extends CI_Model {
 		// It was valid! Create the system
 		$system = $query->row_array();
 		#$system = $system[0];
-		#print_r($system);
 		$systemResult = new System(
 			$system['system_name'], 
 			$system['owner'], 
@@ -103,7 +102,7 @@ class Api extends CI_Model {
 			$system['last_modifier']);
 		
 		//Are we making a complete system
-		if($complete) {
+		if($complete == true) {
 			// Grab the interfaces that the system has
 			foreach($this->get_system_interfaces($systemName, $complete) as $interface) {
 				$systemResult->add_interface($interface);
@@ -127,10 +126,12 @@ class Api extends CI_Model {
 	public function get_system_interfaces($systemName, $complete=false)
 	{
 		// Escape the system name, run the query
-		$systemName = $this->db->escape($systemName);
+		if(preg_match('/^\w+$/',$systemName)) {
+			$systemName = $this->db->escape($systemName);
+		}
 		$sql = "SELECT * FROM systems.interfaces WHERE system_name = {$systemName} ORDER BY mac ASC";
 		$query = $this->db->query($sql);
-		
+
 		// Error conditions
 		if($this->db->_error_number() > 0) {
 			throw new DBException("A database error occurred: " . $this->db->_error_message());
@@ -146,7 +147,7 @@ class Api extends CI_Model {
 			$interface = new NetworkInterface(
 				$row['mac'], 
 				$row['comment'], 
-				$row['system'], 
+				$row['system_name'], 
 				$row['name'],
 				$row['date_created'], 
 				$row['date_modified'], 
@@ -155,8 +156,8 @@ class Api extends CI_Model {
 			
 			// @todo: Handle other objects here
 			// Umm... variable much?
-			if($complete) {
-				$iA = get_interface_addresses($row['mac']);
+			if($complete == true) {
+				$iA = $this->get_interface_addresses($row['mac']);
 				foreach($iA as $address) {
 					$interface->add_address($address);
 				}
@@ -205,10 +206,11 @@ class Api extends CI_Model {
 				$row['config'], 
 				$row['mac'], 
 				$row['renew_date'], 
+				$row['isprimary'],
 				$row['comment'], 
 				$row['date_created'], 
 				$row['date_modified'], 
-				$row['last_modifer']
+				$row['last_modifier']
 			);
 		}
 		
@@ -248,9 +250,13 @@ class Api extends CI_Model {
 		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
 		$query = $this->db->query($sql);
 		#$arr = $query->result_array();
-		#print_r($arr);
 		#echo $arr;
-		return $query->row()->fqdn;
+		if($query->row()) {
+			return $query->row()->fqdn;
+		}
+		else {
+			return "";
+		}
 	}
 
 	public function get_firewall_program($port) {

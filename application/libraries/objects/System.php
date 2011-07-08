@@ -63,18 +63,18 @@ class System extends ImpulseObject {
 		$interfaces = array();
 		
 		// Load interfaces
-		$interface_info = $this->CI->api->get_system_interfaces($this->systemName);
-		foreach ($interface_info as $interface) {
-			$this->add_interface(new NetworkInterface(
-				$interface->get_mac(),
-				$interface->get_comment(),
-				$interface->get_system_name(),
-				$interface->get_interface_name(),
-				$interface->get_date_created(),
-				$interface->get_date_modified(),
-				$interface->get_last_modifier()
-			));
-		}
+		#$interface_info = $this->CI->api->get_system_interfaces($this->systemName);
+		#foreach ($interface_info as $interface) {
+		#	$this->add_interface(new NetworkInterface(
+		#		$interface->get_mac(),
+		#		$interface->get_comment(),
+		#		$interface->get_system_name(),
+		#		$interface->get_interface_name(),
+		#		$interface->get_date_created(),
+		#		$interface->get_date_modified(),
+		#		$interface->get_last_modifier()
+		#	));
+		#}
 	}
 
 	////////////////////////////////////////////////////////////////////////
