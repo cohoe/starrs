@@ -73,7 +73,7 @@ COMMENT ON FUNCTION "api"."get_dhcpd_range_options"(text) IS 'Get all range opti
 /* API - get_dhcpd_subnet_ranges */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_subnet_ranges"(input_subnet cidr) RETURNS SETOF "dhcp"."dhcpd_subnet_ranges" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "name","first_ip","last_ip","class" FROM "ip"."ranges" WHERE "subnet" = input_subnet AND "use" = 'ROAM' AND family("subnet" = 4));
+		RETURN QUERY (SELECT "name","first_ip","last_ip","class" FROM "ip"."ranges" WHERE "subnet" = input_subnet AND "use" = 'ROAM');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_subnet_ranges"(cidr) IS 'Get a list of all dynamic ranges in a subnet';
