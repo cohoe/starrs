@@ -132,7 +132,7 @@ class Api extends CI_Model {
 		}
 		
 		// There were interfaces that matched, build them and return them
-		$resultSet = array();
+		$interfaceSet = array();
 		foreach($query->result_array() as $row) {
 			// Create the interface
 			$interface = new NetworkInterface(
@@ -155,10 +155,10 @@ class Api extends CI_Model {
 			}
 			
 			// Add the machine to the result set
-			$resultSet[] = $interface;
+			$interfaceSet[] = $interface;
 		}
 		
-		return $resultSet;
+		return $interfaceSet;
 	}
 
     /**
@@ -182,7 +182,7 @@ class Api extends CI_Model {
 		}
 		
 		// Create the objects
-		$resultSet = array();
+		$addressSet = array();
 		#foreach($query->row_array() as $row) {
 		foreach($query->result_array() as $row) {
 			$address = new InterfaceAddress(
@@ -206,20 +206,25 @@ class Api extends CI_Model {
             }
 
             // Add the address to the array
-            $resultSet[] = $address;
+            $addressSet[] = $address;
 		}
 
-		return $resultSet;
+        // Return the array of addresses
+		return $addressSet;
 	}
 
+    /**
+     * @param $address
+     * @return array
+     */
     public function get_address_rules($address) {
 		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
 		$query = $this->db->query($sql);
 
-        $resultSet = array();
+        $ruleSet = array();
 
         foreach($query->result_array() as $fwRule) {
-            $resultSet[] = new FirewallRule(
+            $ruleSet[] = new FirewallRule(
                 $fwRule['port'],
                 $fwRule['transport'],
                 $fwRule['deny'],
@@ -233,7 +238,8 @@ class Api extends CI_Model {
             );
         }
 
-        return $resultSet;
+        // Return the array of rules
+        return $ruleSet;
 	}
 
 	public function get_schema_documentation($schema) {
