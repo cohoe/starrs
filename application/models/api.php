@@ -181,7 +181,6 @@ class Api extends CI_Model {
 		
 		// Create the objects
 		$addressSet = array();
-		#foreach($query->row_array() as $row) {
 		foreach($query->result_array() as $row) {
 			$address = new InterfaceAddress(
 				$row['address'], 
@@ -196,27 +195,33 @@ class Api extends CI_Model {
 				$row['last_modifier']
 			);
 
+            // If we are building all information about the system, do all this stuff
             if($complete == true) {
+                // Load firewall rules
                 $fwRules = $this->get_address_rules($row['address']);
                 foreach($fwRules as $fwRule) {
                     $address->add_firewall_rule($fwRule);
                 }
 
+                // Load DNS pointer records
                 $pointerRecords = $this->get_pointer_records($row['address']);
                 foreach ($pointerRecords as $pointerRecord) {
                     $address->add_pointer_record($pointerRecord);
                 }
 
+                // Load DNS text records
                 $txtRecords = $this->get_txt_records($row['address']);
                 foreach ($txtRecords as $txtRecord) {
                     $address->add_txt_record($txtRecord);
                 }
 
+                // Load DNS nameserver records
                 $nsRecords = $this->get_ns_records($row['address']);
                 foreach ($nsRecords as $nsRecord) {
                     $address->add_ns_record($nsRecord);
                 }
 
+                // Load DNS mailserver records
                 $mxRecords = $this->get_mx_records($row['address']);
                 foreach ($mxRecords as $mxRecord) {
                     $address->add_mx_record($mxRecord);
