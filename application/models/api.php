@@ -79,7 +79,7 @@ class Api extends CI_Model {
 			throw new ObjectNotFoundException("The system could not be found: '{$systemName}'");
 		}
 		if($query->num_rows() > 1) {
-			throw new AmbiguousTarget("More than one system matches '{$systemName}'");
+			throw new AmbiguousTargetException("More than one system matches '{$systemName}'");
 		}
 		
 		// It was valid! Create the system
@@ -127,7 +127,7 @@ class Api extends CI_Model {
 		if($this->db->_error_number() > 0) {
 			throw new DBException("A database error occurred: " . $this->db->_error_message());
 		}
-		if($query->num_rows == 0) {
+		if($query->num_rows() == 0) {
 			throw new ObjectNotFoundException("No interfaces matching the system name '{$systemName}' could not be found.");
 		}
 		
@@ -145,8 +145,6 @@ class Api extends CI_Model {
 				$row['last_modifier']
 			);
 			
-			// @todo: Handle other objects here
-			// Umm... variable much?
 			if($complete == true) {
 				$iA = $this->get_interface_addresses($row['mac'],$complete);
 				foreach($iA as $address) {
@@ -165,7 +163,7 @@ class Api extends CI_Model {
      * Query the database for the interface addresses associated with the given
 	 * MAC address
      * @param $mac                      The MAC address of the interface to search on
-     * @param $complete                 Are we making a complete system
+     * @param bool $complete            Are we making a complete system
      * @throws	DBException				Thrown if the database shit the bed
      * @return array<InterfaceAddress>  An array of InterfaceAddress objects
      */
@@ -262,7 +260,11 @@ class Api extends CI_Model {
         return $ruleSet;
 	}
 
-	public function get_schema_documentation($schema) {
+    /**
+     * @param $schema
+     * @return array
+     */
+    public function get_schema_documentation($schema) {
 		if ($schema != "none") {
 			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
 		}
@@ -273,13 +275,22 @@ class Api extends CI_Model {
 		return $query->result_array();
 	}
 
-	public function get_function_parameters($function) {
+    /**
+     * @param $function
+     * @return array
+     */
+    public function get_function_parameters($function) {
 		$sql = "select * from documentation.arguments where specific_name = '$function' order by position asc";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
-	
-	public function get_ip_fqdn($address) {
+
+    /**
+     * Get the DNS FQDN of a given IP address if it exists
+     * @param $address  The address to search on
+     * @return string   The FQDN of the address (or NULL if none)
+     */
+    public function get_ip_fqdn($address) {
 		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
 		$query = $this->db->query($sql);
 		#$arr = $query->result_array();
