@@ -12,7 +12,7 @@
 			<tr><td><em>Type:</em></td><td><?echo $system->get_type();?></td></tr>
 			<tr><td><em>OS:</em></td><td><?echo $system->get_os_name();?></td></tr>
 		</table>
-        <? $this->load->view('systems/system',array('system'=>$system));?>
+       
 	</div>
 
 	<div class="item_lower_bar_style4">Created on <?echo $system->get_date_created();?> - Modified by <?echo $system->get_last_modifier();?> on <?echo $system->get_date_modified();?></div>
