@@ -2,6 +2,7 @@
   <dictionary name="cohoe">
     <words>
       <w>deinitialize</w>
+      <w>fqdn</w>
     </words>
   </dictionary>
 </component>

@@ -288,7 +288,7 @@ class Api extends CI_Model {
 			return $query->row()->fqdn;
 		}
 		else {
-			return "";
+			return null;
 		}
 	}
 

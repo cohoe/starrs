@@ -1,3 +1,9 @@
+<?php
+    $fqdn = $address->get_fqdn();
+    if(!$fqdn) {
+        $fqdn = "No FQDN could be found for this IP address";
+    }
+?>
 <div class="item_container">
 	<div class="item_title_style2">
 		<span class="item_title_bar_left"><?echo $address->get_comment();?></span>
@@ -8,7 +14,7 @@
 	<div class="item_information_area_style2">
 		<table class="item_information_area_table">
 			<tr><td><em>Address:</em></td><td><?echo $address->get_address();?></td></tr>
-			<tr><td><em>DNS Name:</em></td><td><?echo $address->get_fqdn();?></td></tr>
+			<tr><td><em>DNS Name:</em></td><td><?echo $fqdn;?></td></tr>
 			<tr><td><em>Configuration:</em></td><td><?echo $address->get_config();?></td></tr>
 			<tr><td><em>Class:</em></td><td><?echo $address->get_class();?></td></tr>
 		</table>
