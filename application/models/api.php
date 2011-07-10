@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * The IMPULSE API - the only supported way to interact with the IMPULSE database. 
+ */
 class Api extends CI_Model {
 
 	////////////////////////////////////////////////////////////////////////
@@ -9,8 +12,7 @@ class Api extends CI_Model {
 	This class does database work. That is all. These functions are the
 	only access to the database you get.
 	*/
-	function __construct()
-	{
+	function __construct() {
 		parent::__construct();
 	}
 	
@@ -23,13 +25,10 @@ class Api extends CI_Model {
 	 * @return	bool			True on success
 	 * 							False on recoverable error
 	 */
-	public function intialize($user)
-	{
-		// Escape it!
-		$user = $this->db->escape($user);
+	public function initialize($user) {
 		
 		// Run it!
-		$sql = "SELECT api.initialize({$user})";
+		$sql = "SELECT api.initialize({$this->db->escape($user)})";
 		$query = $this->db->query($sql);
 		
 		return $query;
@@ -40,8 +39,7 @@ class Api extends CI_Model {
 	 * @return	bool			True on success
 	 * 							False on recoverable failure
 	 */
-	public function deinitialize()
-	{
+	public function deinitialize() {
 		// Run the query
 		$sql = "SELECT api.deinitialize()";
 		$query = $this->db->query($sql);
@@ -66,13 +64,10 @@ class Api extends CI_Model {
 	 * @throws	DBException					Thrown if the db shit the bed
 	 * @return	System				The system desired
 	 */
-	public function get_system_info($systemName, $complete=false)
-	{
-		// Escape the code
-		$systemName = $this->db->escape($systemName);
-		
+	public function get_system_info($systemName, $complete=false) {
+
 		// Run the query
-		$sql = "SELECT * FROM systems.systems WHERE system_name={$systemName}";
+		$sql = "SELECT * FROM systems.systems WHERE system_name={$this->db->escape($systemName)}";
 		$query = $this->db->query($sql);
 
 				
@@ -123,13 +118,9 @@ class Api extends CI_Model {
 	 * @throws	DBException					Thrown if the database shit the bed
 	 * @return	array<Interface>	An array of interface objects associated with the system
 	 */
-	public function get_system_interfaces($systemName, $complete=false)
-	{
-		// Escape the system name, run the query
-		if(preg_match('/^\w+$/',$systemName)) {
-			$systemName = $this->db->escape($systemName);
-		}
-		$sql = "SELECT * FROM systems.interfaces WHERE system_name = {$systemName} ORDER BY mac ASC";
+	public function get_system_interfaces($systemName, $complete=false) {
+
+		$sql = "SELECT * FROM systems.interfaces WHERE system_name = {$this->db->escape($systemName)} ORDER BY mac ASC";
 		$query = $this->db->query($sql);
 
 		// Error conditions
@@ -169,31 +160,24 @@ class Api extends CI_Model {
 		
 		return $resultSet;
 	}
-	
-	/**
-	 * Query the database for the interface addresses associated with the given
-	 * MAC address.
-	 * @param	string			The mac address to look up
-	 * @throws	DBException				Thrown if the database shit the bed
-	 * @throws	ObjectNotFoundException	Thrown if the mac address is not in the db
-	 * @return	array<Address>	An arry of addresses associated with the interface
-	 */
-	public function get_interface_addresses($mac)
-	{
-		// Escape the address
-		$mac = $this->db->escape($mac);
+
+    /**
+     * Query the database for the interface addresses associated with the given
+	 * MAC address
+     * @param $mac                      The MAC address of the interface to search on
+     * @throws	DBException				Thrown if the database shit the bed
+     * @return array<InterfaceAddress>  An array of InterfaceAddress objects
+     */
+    public function get_interface_addresses($mac) {
 				
 		// Run the query
 		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$mac} ORDER BY address DESC";
+		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$this->db->escape($mac)} ORDER BY address DESC";
 		$query = $this->db->query($sql);
 		
 		// Check for errors
 		if($this->db->_error_number() > 0) {
 			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($query->num_rows == 0) {
-			throw new ObjectNotFoundException("No addresses matching the  name '{$systemName}' could not be found.");
 		}
 		
 		// Create the objects
@@ -216,37 +200,31 @@ class Api extends CI_Model {
 		
 		return $resultSet;
 	}
-	
-	public function get_address_rules($address)
-	{
+
+    public function get_address_rules($address) {
 		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 
-	public function get_schema_documentation($schema)
-	{
-		if ($schema != "none")
-		{
+	public function get_schema_documentation($schema) {
+		if ($schema != "none") {
 			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
 		}
-		else
-		{
+		else {
 			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
 		}
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 
-	public function get_function_parameters($function)
-	{
+	public function get_function_parameters($function) {
 		$sql = "select * from documentation.arguments where specific_name = '$function' order by position asc";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 	
-	public function get_ip_fqdn($address)
-	{
+	public function get_ip_fqdn($address) {
 		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
 		$query = $this->db->query($sql);
 		#$arr = $query->result_array();
