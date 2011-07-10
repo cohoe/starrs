@@ -285,7 +285,7 @@ class InterfaceAddress extends ImpulseObject {
 		}
 
 		// Add the record to the local array
-		$this->dnsPointerRecords = $pointerRecord;
+		$this->dnsPointerRecords[] = $pointerRecord;
 	}
 
     /**
@@ -299,7 +299,7 @@ class InterfaceAddress extends ImpulseObject {
 		}
 
 		// Add the record to the local array
-		$this->dnsTxtRecords= $txtRecord;
+		$this->dnsTxtRecords[] = $txtRecord;
 	}
 
     /**
@@ -313,7 +313,7 @@ class InterfaceAddress extends ImpulseObject {
 		}
 
 		// Add the record to the local array
-		$this->dnsNsRecords= $nsRecord;
+		$this->dnsNsRecords[] = $nsRecord;
 	}
 
     /**
@@ -327,7 +327,7 @@ class InterfaceAddress extends ImpulseObject {
 		}
 
 		// Add the record to the local array
-		$this->dnsMxRecords= $mxRecord;
+		$this->dnsMxRecords[] = $mxRecord;
 	}
 
 
