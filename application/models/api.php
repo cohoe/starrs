@@ -231,9 +231,9 @@ class Api extends CI_Model {
                 $fwRule['date_modified'],
                 $fwRule['last_modifier']
             );
-
-            return $resultSet;
         }
+
+        return $resultSet;
 	}
 
 	public function get_schema_documentation($schema) {
