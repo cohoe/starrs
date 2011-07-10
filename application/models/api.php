@@ -203,6 +203,26 @@ class Api extends CI_Model {
                 foreach($fwRules as $fwRule) {
                     $address->add_firewall_rule($fwRule);
                 }
+
+                $pointerRecords = $this->get_pointer_records($row['address']);
+                foreach ($pointerRecords as $pointerRecord) {
+                    $address->add_pointer_record($pointerRecord);
+                }
+
+                $txtRecords = $this->get_txt_records($row['address']);
+                foreach ($txtRecords as $txtRecord) {
+                    $address->add_txt_record($txtRecord);
+                }
+
+                $nsRecords = $this->get_ns_records($row['address']);
+                foreach ($nsRecords as $nsRecord) {
+                    $address->add_ns_record($nsRecord);
+                }
+
+                $mxRecords = $this->get_mx_records($row['address']);
+                foreach ($mxRecords as $mxRecord) {
+                    $address->add_pointer_record($mxRecord);
+                }
             }
 
             // Add the address to the array
@@ -315,27 +335,112 @@ class Api extends CI_Model {
 	}
 	
 	public function get_pointer_records($address) {
-		$sql = "SELECT * FROM dns.pointers WHERE address = '$address'";
+		$sql = "SELECT * FROM dns.pointers WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+
+        // Declare the array of record objects
+        $recordSet = array();
+
+        // Loop through the results, instantiating all of them
+        foreach ($query->result_array() as $pointerRecord) {
+            $recordSet[] = new PointerRecord(
+                $pointerRecord['hostname'],
+                $pointerRecord['zone'],
+                $pointerRecord['address'],
+                $pointerRecord['type'],
+                $pointerRecord['ttl'],
+                $pointerRecord['owner'],
+                $pointerRecord['alias'],
+                $pointerRecord['extra'],
+                $pointerRecord['date_created'],
+                $pointerRecord['date_modified'],
+                $pointerRecord['last_modifier']
+            );
+        }
+
+        // Return the array of objects
+        return $recordSet;
 	}
 	
-	public function get_text_records($address) {
-		$sql = "SELECT * FROM dns.txt WHERE address = '$address'";
+	public function get_txt_records($address) {
+		$sql = "SELECT * FROM dns.txt WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+
+        // Declare the array of text objects
+        $recordSet = array();
+
+        // Loop through the results, instantiating all of them
+        foreach ($query->result_array() as $txtRecord) {
+            $recordSet[] = new TxtRecord(
+                $txtRecord['hostname'],
+                $txtRecord['zone'],
+                $txtRecord['address'],
+                $txtRecord['type'],
+                $txtRecord['ttl'],
+                $txtRecord['owner'],
+                $txtRecord['text'],
+                $txtRecord['date_created'],
+                $txtRecord['date_modified'],
+                $txtRecord['last_modifier']
+            );
+        }
+
+        // Return the array of objects
+        return $recordSet;
 	}
 	
 	public function get_ns_records($address) {
-		$sql = "SELECT * FROM dns.ns WHERE address = '$address'";
+		$sql = "SELECT * FROM dns.ns WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+
+        // Declare the array of text objects
+        $recordSet = array();
+
+        // Loop through the results, instantiating all of them
+        foreach ($query->result_array() as $nsRecord) {
+            $recordSet[] = new NsRecord(
+                $nsRecord['hostname'],
+                $nsRecord['zone'],
+                $nsRecord['address'],
+                $nsRecord['type'],
+                $nsRecord['ttl'],
+                $nsRecord['owner'],
+                $nsRecord['isprimary'],
+                $nsRecord['date_created'],
+                $nsRecord['date_modified'],
+                $nsRecord['last_modifier']
+            );
+        }
+
+        // Return the array of objects
+        return $recordSet;
 	}
 	
 	public function get_mx_records($address) {
-		$sql = "SELECT * FROM dns.mx WHERE address = '$address'";
+		$sql = "SELECT * FROM dns.mx WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+
+        // Declare the array of text objects
+        $recordSet = array();
+
+        // Loop through the results, instantiating all of them
+        foreach ($query->result_array() as $mxRecord) {
+            $recordSet[] = new MxRecord(
+                $mxRecord['hostname'],
+                $mxRecord['zone'],
+                $mxRecord['address'],
+                $mxRecord['type'],
+                $mxRecord['ttl'],
+                $mxRecord['owner'],
+                $mxRecord['preference'],
+                $mxRecord['date_created'],
+                $mxRecord['date_modified'],
+                $mxRecord['last_modifier']
+            );
+        }
+
+        // Return the array of objects
+        return $recordSet;
 	}
 	
 	////////////////////////////////////////////////////////////////////////

@@ -50,30 +50,16 @@ class NetworkInterface extends ImpulseObject {
 		// Initialize variables
 		$this->addresses = array();
 		$address_info = $this->CI->api->get_interface_addresses($this->mac);
-		#foreach ($address_info as $address) {
-		#	$this->addresses[] = new InterfaceAddress(
-		#		$address->get_address(),
-		#		$address->get_class(),
-		#		$address->get_config(),
-		#		$address->get_mac(),
-		#		$address->get_renew_date(),
-		#		$address->get_isprimary(),
-		#		$address->get_comment(),
-		#		$address->get_date_created(),
-		#		$address->get_date_modified(),
-		#		$address->get_last_modifier()
-		#	);
-		#}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	
-	public function get_interface_name() { return $this->interfaceName; }
-	public function get_mac() { return $this->mac; }
-	public function get_comment() { return $this->comment; }
-	public function get_system_name() { return $this->systemName; }
-	public function get_interface_addresses() { return $this->addresses; }
+	public function get_interface_name()        { return $this->interfaceName; }
+	public function get_mac()                   { return $this->mac; }
+	public function get_comment()               { return $this->comment; }
+	public function get_system_name()           { return $this->systemName; }
+	public function get_interface_addresses()   { return $this->addresses; }
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

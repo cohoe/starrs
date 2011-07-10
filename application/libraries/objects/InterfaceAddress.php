@@ -119,10 +119,10 @@ class InterfaceAddress extends ImpulseObject {
         $this->dnsAddressRecord = $this->CI->api->get_address_record($this->address);
 		
 		// Loaders
-		$this->_load_pointer_records();
-		$this->_load_text_records();
-		$this->_load_mx_records();
-		$this->_load_ns_records();
+		#$this->_load_pointer_records();
+		#$this->_load_text_records();
+		#$this->_load_mx_records();
+		#$this->_load_ns_records();
 		
 	}
 	
@@ -292,7 +292,7 @@ class InterfaceAddress extends ImpulseObject {
      * Add a TXT or SPF record for this address
      * @param $txtRecord    The record object to add
      */
-    public function add_text_record($txtRecord) {
+    public function add_txt_record($txtRecord) {
 		// If it's not a proper record, blow up
 		if(!$txtRecord instanceof TxtRecord) {
 			throw new APIException("Cannot add a non-txt-record as a txt-record");
