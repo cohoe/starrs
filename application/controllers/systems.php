@@ -4,13 +4,18 @@ class Systems extends CI_Controller {
 
 	public function index() {
 		$this->_css();
-		$sql = "SELECT * FROM systems.systems";
-		$query = $this->db->query($sql);
+		#$sql = "SELECT * FROM systems.systems";
+		#$query = $this->db->query($sql);
 
-		foreach ($query->result() as $system) {
-			$sys = $this->api->get_system_info($system->system_name,false);
-			$this->load->view('systems/system',array('system'=>$sys));
-		}
+		#foreach ($query->result() as $system) {
+		#	$sys = $this->api->get_system_info($system->system_name,false);
+		#	$this->load->view('systems/system',array('system'=>$sys));
+		#}
+
+        $systems = $this->api->get_systems(NULL);
+        foreach ($systems as $sys) {
+            $this->load->view('systems/system',array('system'=>$sys));
+        }
 	}
 
 	public function view($system_name=NULL) {

@@ -50,7 +50,36 @@ class Api extends CI_Model {
 		
 		return true;
 	}
-	
+
+    public function get_systems($owner=null) {
+        // Generate the SQL
+        $sql = "SELECT * FROM systems.systems WHERE owner = {$this->db->escape($owner)}";
+        if(!$owner) {
+            $sql = "SELECT * FROM systems.systems";
+        }
+
+        // Run the query
+        $query = $this->db->query($sql);
+
+        // Create the array of objects
+        $systemSet = array();
+        foreach($query->result_array() as $system) {
+            $systemSet[] = new System(
+                $system['system_name'],
+                $system['owner'],
+                $system['comment'],
+                $system['type'],
+                $system['os_name'],
+                $system['renew_date'],
+                $system['date_created'],
+                $system['date_modified'],
+                $system['last_modifier']
+            );
+        }
+
+        // Return the array
+        return $systemSet;
+    }
 	
 	/**
 	 * Looks up the given system in the database and creates an object to
