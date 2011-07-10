@@ -118,7 +118,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->fwDefault = $this->CI->api->get_firewall_default($this->address);
 		
 		// Loaders
-		$this->_load_rules();
+		#$this->_load_rules();
 		$this->_load_pointer_records();
 		$this->_load_text_records();
 		$this->_load_mx_records();

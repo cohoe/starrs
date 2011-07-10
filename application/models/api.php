@@ -148,7 +148,7 @@ class Api extends CI_Model {
 			// @todo: Handle other objects here
 			// Umm... variable much?
 			if($complete == true) {
-				$iA = $this->get_interface_addresses($row['mac']);
+				$iA = $this->get_interface_addresses($row['mac'],$complete);
 				foreach($iA as $address) {
 					$interface->add_address($address);
 				}
@@ -165,14 +165,15 @@ class Api extends CI_Model {
      * Query the database for the interface addresses associated with the given
 	 * MAC address
      * @param $mac                      The MAC address of the interface to search on
+     * @param $complete                 Are we making a complete system
      * @throws	DBException				Thrown if the database shit the bed
      * @return array<InterfaceAddress>  An array of InterfaceAddress objects
      */
-    public function get_interface_addresses($mac) {
+    public function get_interface_addresses($mac, $complete=false) {
 				
 		// Run the query
 		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$this->db->escape($mac)} ORDER BY address DESC";
+		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$this->db->escape($mac)} ORDER BY family(address),address ASC";
 		$query = $this->db->query($sql);
 		
 		// Check for errors
@@ -184,7 +185,7 @@ class Api extends CI_Model {
 		$resultSet = array();
 		#foreach($query->row_array() as $row) {
 		foreach($query->result_array() as $row) {
-			$resultSet[] = new InterfaceAddress(
+			$address = new InterfaceAddress(
 				$row['address'], 
 				$row['class'], 
 				$row['config'], 
@@ -196,15 +197,43 @@ class Api extends CI_Model {
 				$row['date_modified'], 
 				$row['last_modifier']
 			);
+
+            if($complete == true) {
+                $fwRules = $this->get_address_rules($row['address']);
+                foreach($fwRules as $fwRule) {
+                    $address->add_firewall_rule($fwRule);
+                }
+            }
+
+            // Add the address to the array
+            $resultSet[] = $address;
 		}
-		
+
 		return $resultSet;
 	}
 
     public function get_address_rules($address) {
 		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+
+        $resultSet = array();
+
+        foreach($query->result_array() as $fwRule) {
+            $resultSet[] = new FirewallRule(
+                $fwRule['port'],
+                $fwRule['transport'],
+                $fwRule['deny'],
+                $fwRule['comment'],
+                $fwRule['address'],
+                $fwRule['owner'],
+                $fwRule['source'],
+                $fwRule['date_created'],
+                $fwRule['date_modified'],
+                $fwRule['last_modifier']
+            );
+
+            return $resultSet;
+        }
 	}
 
 	public function get_schema_documentation($schema) {
@@ -237,7 +266,10 @@ class Api extends CI_Model {
 		}
 	}
 
-	public function get_firewall_program($port) {
+    /**
+     * @param $port
+     */
+    public function get_firewall_program($port) {
 		$sql = "SELECT name FROM firewall.programs WHERE port = '$port'";
 		$query = $this->db->query($sql);
 		return $query->row()->name;
@@ -249,7 +281,6 @@ class Api extends CI_Model {
 		if($query->num_rows() > 0) {
 			return $query->row()->deny;
 		}
-
 	}
 	
 	public function get_address_record($address) {
