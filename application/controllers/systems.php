@@ -5,7 +5,7 @@ class Systems extends CI_Controller {
 	public function index() {
 		$this->_css();
 
-        $systems = $this->api->get_systems('root');
+        $systems = $this->api->get_systems(null);
         foreach ($systems as $sys) {
             $this->load->view('systems/system',array('system'=>$sys));
         }
