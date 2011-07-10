@@ -51,3 +51,11 @@ COMMENT ON TYPE "dhcp"."dhcpd_zones" IS 'Zone information for dhcpd';
 /* DHCP - class options */
 CREATE TYPE "dhcp"."dhcpd_class_options" AS (option text, value text);
 COMMENT ON TYPE "dhcp"."dhcpd_class_options" IS 'Get class options for the dhcpd.conf';
+
+/* DNS - mx_data */
+CREATE TYPE "dns"."mx_data" AS (hostname varchar(63), zone text, address inet, type text, preference integer, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."mx_data" IS 'All MX data';
+
+/* DNS - ns_data */
+CREATE TYPE "dns"."ns_data" AS (hostname varchar(63), zone text, address inet, type text, isprimary boolean, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."ns_data" IS 'All NS data';
