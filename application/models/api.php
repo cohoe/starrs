@@ -433,7 +433,7 @@ class Api extends CI_Model {
      * @return array<NsRecord>  An array of NsRecords
      */
     public function get_ns_records($address) {
-		$sql = "SELECT * FROM dns.ns WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
         // Declare the array of text objects

@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Systems extends CI_Controller {
-	
+
 	public function index() {
 		$this->_css();
 		$sql = "SELECT * FROM systems.systems";
@@ -12,7 +12,7 @@ class Systems extends CI_Controller {
 			$this->load->view('systems/system',array('system'=>$sys));
 		}
 	}
-	
+
 	public function view($system_name=NULL) {
 		$this->_css();
 		if(!$system_name) {
