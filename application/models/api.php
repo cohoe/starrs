@@ -466,7 +466,7 @@ class Api extends CI_Model {
      * @todo: Make this only return one result since there can only ever be one MX record for an address
      */
     public function get_mx_records($address) {
-		$sql = "SELECT * FROM dns.mx WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
         // Declare the array of text objects
