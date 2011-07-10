@@ -51,7 +51,13 @@
 			<?}?>
 		</table>
 		</div>
-	<?}?>
+	<?}
+    if(!$address_record && !$pointer_records && !$text_records && !$ns_records && !$mx_records) {
+        ?>
+        <div class="item_information_area_container">
+		No DNS records found for this IP address
+        </div>
+        <?}?>
 	</div>
 	<div class="item_lower_bar_style5"></div>
 </div>
