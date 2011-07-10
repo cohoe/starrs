@@ -1,32 +1,42 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
   
-  <script>
-  $(document).ready(function() {
-    $("#accordion").accordion();
-  });
-  </script>
+    <script>
+    $(document).ready(function() {
+        $("#accordion").accordion();
+    });
+    </script>
 
 	<style type="text/css">
 	.sidebar {
 		width: 200px;
 	}
+    .ui-accordion-content {
+        background-color: pink;
+        height: auto;
+    }
+
+    .ui-accordion-content ul {
+        padding-top: 0px;
+        -webkit-padding-start: 0px;
+    }
 	</style>
 </head>
+
 <body style="font-size:62.5%;">
   
 <div class="sidebar">
 <div id="accordion">
 	<h3><a href="#">cohoe</a></h3>
 	<div>
-		Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-		ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
-		amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
-		odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+		<ul>
+            <li>Tron</li>
+            <li>CLU</li>
+            <li>Encom</li>
+		</ul>
 	</div>
 	<h3><a href="#">Section 2</a></h3>
 	<div>
