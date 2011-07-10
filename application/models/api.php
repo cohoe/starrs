@@ -221,7 +221,7 @@ class Api extends CI_Model {
 
                 $mxRecords = $this->get_mx_records($row['address']);
                 foreach ($mxRecords as $mxRecord) {
-                    $address->add_pointer_record($mxRecord);
+                    $address->add_mx_record($mxRecord);
                 }
             }
 
