@@ -1,4 +1,4 @@
 Options +FollowSymlinks
 RewriteEngine on
-RewriteCond $1 !^(index\.php|images|robots\.txt|css|scripts|media|user_guide)
+RewriteCond $1 !^(index\.php|images|robots\.txt|css|scripts|media|user_guide|sample)
 RewriteRule ^(.*)$ /index.php/$1 [L]
