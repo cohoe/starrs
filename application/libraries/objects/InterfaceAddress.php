@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * This class contains the definition of an InterfaceAddress object. These
  * objects represent an address tied to the
  * specified address.
@@ -116,14 +116,13 @@ class InterfaceAddress extends ImpulseObject {
 		$this->fwRules = array();
 		$this->dnsFqdn = $this->CI->api->get_ip_fqdn($this->address);
 		$this->fwDefault = $this->CI->api->get_firewall_default($this->address);
+        $this->dnsAddressRecord = $this->CI->api->get_address_record($this->address);
 		
 		// Loaders
-		#$this->_load_rules();
 		$this->_load_pointer_records();
 		$this->_load_text_records();
 		$this->_load_mx_records();
 		$this->_load_ns_records();
-		$this->_load_address_record();
 		
 	}
 	
@@ -149,27 +148,6 @@ class InterfaceAddress extends ImpulseObject {
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR LOADERS
-	
-	/**
-	 * Get all of the firewall rules that apply to this address and put them in the array
-	 */
-	private function _load_rules() {
-		$rules_info = $this->CI->api->get_address_rules($this->address);
-		foreach ($rules_info as $rule) {
-			$this->add_firewall_rule(new FirewallRule(
-				$rule['port'],
-				$rule['transport'],
-				$rule['deny'],
-				$rule['comment'],
-				$rule['address'],
-				$rule['owner'],
-				$rule['source'],
-				$rule['date_created'],
-				$rule['date_modified'],
-				$rule['last_modifier']
-			));
-		}
-	}
 	
 	/**
 	 * Get all of the DNS pointer records that resolve to this address and put them in the array
@@ -295,4 +273,62 @@ class InterfaceAddress extends ImpulseObject {
 		// Add the rule to the local array
 		$this->fwRules[] = $rule;
 	}
+
+    /**
+     * Add a pointer record for this address
+     * @param $pointerRecord    The record object to add
+     */
+    public function add_pointer_record($pointerRecord) {
+		// If it's not a proper record, blow up
+		if(!$pointerRecord instanceof PointerRecord) {
+			throw new APIException("Cannot add a non-pointer-record as a pointer-record");
+		}
+
+		// Add the record to the local array
+		$this->dnsPointerRecords = $pointerRecord;
+	}
+
+    /**
+     * Add a TXT or SPF record for this address
+     * @param $txtRecord    The record object to add
+     */
+    public function add_text_record($txtRecord) {
+		// If it's not a proper record, blow up
+		if(!$txtRecord instanceof TxtRecord) {
+			throw new APIException("Cannot add a non-txt-record as a txt-record");
+		}
+
+		// Add the record to the local array
+		$this->dnsTxtRecords= $txtRecord;
+	}
+
+    /**
+     * Add a NS record for this address
+     * @param $nsRecord     The record object to add
+     */
+    public function add_ns_record($nsRecord) {
+		// If it's not a proper record, blow up
+		if(!$nsRecord instanceof NsRecord) {
+			throw new APIException("Cannot add a non-ns-record as a ns-record");
+		}
+
+		// Add the record to the local array
+		$this->dnsNsRecords= $nsRecord;
+	}
+
+    /**
+     * Add a MX record for this address
+     * @param $mxRecord     The record object to add
+     */
+    public function add_mx_record($mxRecord) {
+		// If it's not a proper record, blow up
+		if(!$mxRecord instanceof MxRecord) {
+			throw new APIException("Cannot add a non-mx-record as a mx-record");
+		}
+
+		// Add the record to the local array
+		$this->dnsMxRecords= $mxRecord;
+	}
+
+
 }

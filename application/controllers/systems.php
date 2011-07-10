@@ -44,10 +44,12 @@ class Systems extends CI_Controller {
 	}
 	
 	private function _print_firewall_rules($address) {
+        // Preload the data for the view
 		$rule_info['rules'] = $address->get_rules();
 		$rule_info['deny'] = $address->get_fw_default();
 		$rule_info['address'] = $address->get_address();
-		
+
+        // Load the view
 		$this->load->view('firewall/rules',$rule_info);
 	}
 	

@@ -288,11 +288,30 @@ class Api extends CI_Model {
 			return $query->row()->deny;
 		}
 	}
-	
-	public function get_address_record($address) {
-		$sql = "SELECT * FROM dns.a WHERE address = '$address'";
+
+    /**
+     * Get the DNS address record object for a given address
+     * @param $address          The address to get on
+     * @return \AddressRecord   The object of the record
+     */
+    public function get_address_record($address) {
+		$sql = "SELECT * FROM dns.a WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		return $query->row_array();
+        $info = $query->row_array();
+
+        $record = new AddressRecord(
+            $info['hostname'],
+            $info['zone'],
+            $info['address'],
+            $info['type'],
+            $info['ttl'],
+            $info['owner'],
+            $info['date_created'],
+            $info['date_modified'],
+            $info['last_modifier']
+        );
+
+        return $record;
 	}
 	
 	public function get_pointer_records($address) {
