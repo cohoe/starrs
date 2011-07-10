@@ -293,18 +293,26 @@ class Api extends CI_Model {
 	}
 
     /**
-     * @param $port
+     * Get the name of a firewall program based on its port
+     * @param $port     The port of the program to search on
+     * @return string   The name of the program
      */
     public function get_firewall_program($port) {
-		$sql = "SELECT name FROM firewall.programs WHERE port = '$port'";
+		$sql = "SELECT name FROM firewall.programs WHERE port = {$this->db->escape($port)}";
 		$query = $this->db->query($sql);
 		return $query->row()->name;
 	}
-	
-	public function get_firewall_default($address) {
-		$sql = "SELECT deny FROM firewall.defaults WHERE address = '$address'";
+
+    /**
+     * Get the default firewall action of an address
+     * @param $address  The address to search on
+     * @return bool     Deny (t) the traffic or allow (f)
+     * @todo: add exceptions for non 1 results
+     */
+    public function get_firewall_default($address) {
+		$sql = "SELECT deny FROM firewall.defaults WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
-		if($query->num_rows() > 0) {
+		if($query->num_rows() == 1) {
 			return $query->row()->deny;
 		}
 	}
@@ -319,22 +327,31 @@ class Api extends CI_Model {
 		$query = $this->db->query($sql);
         $info = $query->row_array();
 
-        $record = new AddressRecord(
-            $info['hostname'],
-            $info['zone'],
-            $info['address'],
-            $info['type'],
-            $info['ttl'],
-            $info['owner'],
-            $info['date_created'],
-            $info['date_modified'],
-            $info['last_modifier']
-        );
-
-        return $record;
+        // Establish and return the record object
+        if($query->num_rows() == 1) {
+            return new AddressRecord(
+                $info['hostname'],
+                $info['zone'],
+                $info['address'],
+                $info['type'],
+                $info['ttl'],
+                $info['owner'],
+                $info['date_created'],
+                $info['date_modified'],
+                $info['last_modifier']
+            );
+        }
+        else {
+            return null;
+        }
 	}
-	
-	public function get_pointer_records($address) {
+
+    /**
+     * Get all of the pointer records that resolve to an IP address and return an array of PointerRecord objects
+     * @param $address              The address to search on
+     * @return array<PointerRecord> An array of PointerRecords
+     */
+    public function get_pointer_records($address) {
 		$sql = "SELECT * FROM dns.pointers WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
 
@@ -361,8 +378,13 @@ class Api extends CI_Model {
         // Return the array of objects
         return $recordSet;
 	}
-	
-	public function get_txt_records($address) {
+
+    /**
+     * Get all of the TXT or SPF records that resolve to an IP address and return an array of TxtRecord objects
+     * @param $address          The address to search for
+     * @return array<TxtRecord> An array of NsRecords
+     */
+    public function get_txt_records($address) {
 		$sql = "SELECT * FROM dns.txt WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
 
@@ -388,8 +410,13 @@ class Api extends CI_Model {
         // Return the array of objects
         return $recordSet;
 	}
-	
-	public function get_ns_records($address) {
+
+    /**
+     * Get all of the NS records that resolve to an IP address and return an array of NsRecord objects
+     * @param $address          The address to search for
+     * @return array<NsRecord>  An array of NsRecords
+     */
+    public function get_ns_records($address) {
 		$sql = "SELECT * FROM dns.ns WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
 
@@ -415,8 +442,14 @@ class Api extends CI_Model {
         // Return the array of objects
         return $recordSet;
 	}
-	
-	public function get_mx_records($address) {
+
+    /**
+     * Get all of the MX records that resolve to an IP address and return an array of MxRecord objects
+     * @param $address          The address to search for
+     * @return array<MxRecord>  Array of MxRecord objects
+     * @todo: Make this only return one result since there can only ever be one MX record for an address
+     */
+    public function get_mx_records($address) {
 		$sql = "SELECT * FROM dns.mx WHERE address = {$this->db->escape($address)}";
 		$query = $this->db->query($sql);
 
