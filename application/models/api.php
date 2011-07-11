@@ -62,7 +62,7 @@ class Api extends CI_Model {
         // Create the array of objects
         $systemSet = array();
         foreach($query->result_array() as $systemName) {
-            $systemSet[] = $systemName
+            $systemSet[] = $systemName;
         }
 
         // Return the array
@@ -188,7 +188,7 @@ class Api extends CI_Model {
 				
 		// Run the query
 		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * api.get_system_interface_addresses({$this->db->escape($mac)})";
+		$sql = "SELECT * FROM api.get_system_interface_addresses({$this->db->escape($mac)})";
 		$query = $this->db->query($sql);
 		
 		// Check for errors
