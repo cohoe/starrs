@@ -83,3 +83,7 @@ COMMENT ON TYPE "systems"."interface_address_data" IS 'Interface address data';
 /* Systems - interface_data */
 CREATE TYPE "systems"."interface_data" AS (system_name text, mac macaddr, name text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "systems"."interface_data" IS 'System interface information';
+
+/* Systems - system_data */
+CREATE TYPE "systems"."system_data" AS (system_name text, type text, os_name text, owner text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "systems"."system_data" IS 'System inforation';
