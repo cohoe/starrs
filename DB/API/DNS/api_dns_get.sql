@@ -15,3 +15,30 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_ns"(input_address inet) RETURNS SETOF 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_ns"(inet) IS 'Get all data pertanent to DNS NS records for an address';
+
+/* API - get_dns_txt */
+CREATE OR REPLACE FUNCTION "api"."get_dns_txt"(input_address inet) RETURNS SETOF "dns"."txt_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "hostname","zone","address","type","text","ttl","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."txt" WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_txt"(inet) IS 'Get all DNS TXT records for an address';
+
+/* API - get_dns_pointer */
+CREATE OR REPLACE FUNCTION "api"."get_dns_pointer"(input_address inet) RETURNS SETOF "dns"."pointer_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "alias","hostname","zone","address","type","extra","ttl","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."pointers" WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_pointer"(inet) IS 'Get all DNS pointer (SRV,CNAME) records for an address';
+
+/* API - get_dns_a */
+CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet) RETURNS SETOF "dns"."a_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."a" WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for an address';
