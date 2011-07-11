@@ -85,5 +85,5 @@ CREATE TYPE "systems"."interface_data" AS (system_name text, mac macaddr, name t
 COMMENT ON TYPE "systems"."interface_data" IS 'System interface information';
 
 /* Systems - system_data */
-CREATE TYPE "systems"."system_data" AS (system_name text, type text, os_name text, owner text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "systems"."system_data" IS 'System inforation';
+CREATE TYPE "systems"."system_data" AS (system_name text, type text, os_name text, owner text, comment text, renew_date date, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "systems"."system_data" IS 'System information';
