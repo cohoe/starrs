@@ -59,3 +59,15 @@ COMMENT ON TYPE "dns"."mx_data" IS 'All MX data';
 /* DNS - ns_data */
 CREATE TYPE "dns"."ns_data" AS (hostname varchar(63), zone text, address inet, type text, isprimary boolean, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "dns"."ns_data" IS 'All NS data';
+
+/* DNS - txt_data */
+CREATE TYPE "dns"."txt_data" AS (hostname varchar(63), zone text, address inet, type text, text text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."txt_data" IS 'All text (TXT,SPF) data';
+
+/* DNS - pointer_data */
+CREATE TYPE "dns"."pointer_data" AS (alias varchar(63), hostname varchar(63), zone text, address inet, type text, extra text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."pointer_data" IS 'All pointer (CNAME,SRV) data';
+
+/* DNS - a_data */
+CREATE TYPE "dns"."a_data" AS (hostname varchar(63), zone text, address inet, type text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."a_data" IS 'All address (A/AAAA) data';
