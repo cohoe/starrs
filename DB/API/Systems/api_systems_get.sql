@@ -58,7 +58,7 @@ COMMENT ON FUNCTION "api"."get_system_interfaces"(text) IS 'Get all interface in
 /* API - get_system_data */
 CREATE OR REPLACE FUNCTION "api"."get_system_data"(input_system_name text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","date_created","date_modified","last_modifier"
+		RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
 			FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
