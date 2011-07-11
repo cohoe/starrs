@@ -75,3 +75,7 @@ COMMENT ON TYPE "dns"."a_data" IS 'All address (A/AAAA) data';
 /* Firewall - rule_data */
 CREATE TYPE "firewall"."rule_data" AS (address inet, port integer, transport text, deny boolean, owner text, comment text, source text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."rule_data" IS 'Firewall rule data';
+
+/* Systems - interface_address_data */
+CREATE TYPE "systems"."interface_address_data" AS (mac macaddr, address inet, family integer, config text, class text, isprimary boolean, comment text, renew_date date, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "systems"."interface_address_data" IS 'Interface address data';
