@@ -53,28 +53,16 @@ class Api extends CI_Model {
 
     public function get_systems($owner=null) {
         // Generate the SQL
-        $sql = "SELECT * FROM systems.systems WHERE owner = {$this->db->escape($owner)}";
-        if(!$owner) {
-            $sql = "SELECT * FROM systems.systems";
-        }
+		// This function can take NULL as an arg
+        $sql = "SELECT api.get_systems({$this->db->escape($owner)})";
 
         // Run the query
         $query = $this->db->query($sql);
 
         // Create the array of objects
         $systemSet = array();
-        foreach($query->result_array() as $system) {
-            $systemSet[] = new System(
-                $system['system_name'],
-                $system['owner'],
-                $system['comment'],
-                $system['type'],
-                $system['os_name'],
-                $system['renew_date'],
-                $system['date_created'],
-                $system['date_modified'],
-                $system['last_modifier']
-            );
+        foreach($query->result_array() as $systemName) {
+            $systemSet[] = $systemName
         }
 
         // Return the array
@@ -96,7 +84,7 @@ class Api extends CI_Model {
 	public function get_system_info($systemName, $complete=false) {
 
 		// Run the query
-		$sql = "SELECT * FROM systems.systems WHERE system_name={$this->db->escape($systemName)}";
+		$sql = "SELECT * FROM api.get_system_data({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
 				
@@ -149,7 +137,7 @@ class Api extends CI_Model {
 	 */
 	public function get_system_interfaces($systemName, $complete=false) {
 
-		$sql = "SELECT * FROM systems.interfaces WHERE system_name = {$this->db->escape($systemName)} ORDER BY mac ASC";
+		$sql = "SELECT * FROM api.get_system_interfaces({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
 		// Error conditions
@@ -200,7 +188,7 @@ class Api extends CI_Model {
 				
 		// Run the query
 		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * from systems.interface_addresses WHERE mac = {$this->db->escape($mac)} ORDER BY family(address),address ASC";
+		$sql = "SELECT * api.get_system_interface_addresses({$this->db->escape($mac)})";
 		$query = $this->db->query($sql);
 		
 		// Check for errors
@@ -270,7 +258,7 @@ class Api extends CI_Model {
      * @return array
      */
     public function get_address_rules($address) {
-		$sql = "SELECT * from firewall.rules JOIN firewall.programs ON firewall.rules.port = firewall.programs.port WHERE address = '$address' ORDER BY source,firewall.rules.port ASC";
+		$sql = "SELECT * FROM api.get_firewall_rules({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
         $ruleSet = array();
@@ -343,9 +331,9 @@ class Api extends CI_Model {
      * @return string   The name of the program
      */
     public function get_firewall_program($port) {
-		$sql = "SELECT name FROM firewall.programs WHERE port = {$this->db->escape($port)}";
+		$sql = "SELECT api.get_firewall_program_name({$this->db->escape($port)})";
 		$query = $this->db->query($sql);
-		return $query->row()->name;
+		return $query->row()->get_firewall_program_name;
 	}
 
     /**
@@ -355,10 +343,10 @@ class Api extends CI_Model {
      * @todo: add exceptions for non 1 results
      */
     public function get_firewall_default($address) {
-		$sql = "SELECT deny FROM firewall.defaults WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT api.get_firewall_default({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 		if($query->num_rows() == 1) {
-			return $query->row()->deny;
+			return $query->row()->get_firewall_default;
 		}
 	}
 
@@ -368,7 +356,7 @@ class Api extends CI_Model {
      * @return \AddressRecord   The object of the record
      */
     public function get_address_record($address) {
-		$sql = "SELECT * FROM dns.a WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
         $info = $query->row_array();
 
@@ -397,7 +385,7 @@ class Api extends CI_Model {
      * @return array<PointerRecord> An array of PointerRecords
      */
     public function get_pointer_records($address) {
-		$sql = "SELECT * FROM dns.pointers WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT * FROM api.get_dns_pointers({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
         // Declare the array of record objects
@@ -430,7 +418,7 @@ class Api extends CI_Model {
      * @return array<TxtRecord> An array of NsRecords
      */
     public function get_txt_records($address) {
-		$sql = "SELECT * FROM dns.txt WHERE address = {$this->db->escape($address)}";
+		$sql = "SELECT * FROM api.get_dns_txt({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
         // Declare the array of text objects
