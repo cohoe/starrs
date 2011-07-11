@@ -79,3 +79,7 @@ COMMENT ON TYPE "firewall"."rule_data" IS 'Firewall rule data';
 /* Systems - interface_address_data */
 CREATE TYPE "systems"."interface_address_data" AS (mac macaddr, address inet, family integer, config text, class text, isprimary boolean, comment text, renew_date date, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "systems"."interface_address_data" IS 'Interface address data';
+
+/* Systems - interface_data */
+CREATE TYPE "systems"."interface_data" AS (system_name text, mac macaddr, name text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "systems"."interface_data" IS 'System interface information';
