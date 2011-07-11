@@ -19,7 +19,25 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		// CSS
+		echo link_tag("css/mockup/main.css");
+		echo link_tag("css/mockup/impulse.css");
+		
+		// Header
+		$info['header'] = $this->load->view('mockup/header',"",TRUE);
+		
+		// Sidebar
+		$info['sidebar'] = $this->load->view('mockup/sidebar',"",TRUE);
+		
+		// Information
+		$navbarData['options'] = array('Create System','Create Interface','Assign IP Address');
+		$navbarData['systemName'] = "Getting Started";
+		$navbarData['edit'] = false;
+		$info['navbar'] = $this->load->view('mockup/navbar',$navbarData,TRUE);
+		$info['data'] = $this->load->view('mockup/getstarted',"",TRUE);
+		
+		// Load the main view
+		$this->load->view('mockup/main',$info);
 	}
 }
 

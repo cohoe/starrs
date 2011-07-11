@@ -61,8 +61,8 @@ class Api extends CI_Model {
 
         // Create the array of objects
         $systemSet = array();
-        foreach($query->result_array() as $systemName) {
-            $systemSet[] = $systemName;
+        foreach($query->result_array() as $system) {
+            $systemSet[] = $system['get_systems'];
         }
 
         // Return the array
