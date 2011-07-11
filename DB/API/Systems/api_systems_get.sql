@@ -62,3 +62,15 @@ CREATE OR REPLACE FUNCTION "api"."get_system_data"(input_system_name text) RETUR
 			FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
+
+/* API - get_systems */
+CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF text AS $$
+	BEGIN
+		IF input_username IS NULL THEN
+			RETURN QUERY (SELECT "system_name" FROM "systems"."systems");
+		ELSE
+			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" WHERE "owner" = input_username);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_systems"(text) IS 'Get all system names owned by a given user';
