@@ -36,3 +36,12 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_address_owner"(input_address ine
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an existing interface address';
+
+/* API - get_system_interface_addresses */
+CREATE OR REPLACE FUNCTION "api"."get_system_interface_addresses"(input_mac macaddr) RETURNS SETOF "systems"."interface_address_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."interface_addresses" WHERE "mac" = input_mac);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_interface_addresses"(macaddr) IS 'Get all interface addresses on a specified MAC';
