@@ -18,7 +18,7 @@ COMMENT ON FUNCTION "api"."get_firewall_program_name"(integer) IS 'Get the name 
 CREATE OR REPLACE FUNCTION "api"."get_firewall_rules"(input_address inet) RETURNS SETOF "firewall"."rule_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "address","port","transport","deny","owner","comment","source","date_created","date_modified","last_modifier"
-			FROM "firewall"."rules" WHERE "address" = input_address);
+			FROM "firewall"."rules" WHERE "address" = input_address ORDER BY source,port ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION  "api"."get_firewall_rules"(inet) IS 'Get all firewall rule data for an address';
