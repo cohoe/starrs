@@ -67,9 +67,9 @@ $$ LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF text AS $$
 	BEGIN
 		IF input_username IS NULL THEN
-			RETURN QUERY (SELECT "system_name" FROM "systems"."systems");
+			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" ORDER BY "system_name" ASC);
 		ELSE
-			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" WHERE "owner" = input_username);
+			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" WHERE "owner" = input_username ORDER BY "system_name" ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
