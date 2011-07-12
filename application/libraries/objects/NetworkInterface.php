@@ -52,6 +52,24 @@ class NetworkInterface extends ImpulseObject {
 		$address_info = $this->CI->api->get_interface_addresses($this->mac);
 	}
 	
+	/**
+	 * Constructor for creating an interface with limited information. This is
+	 * necessary for adding objects to the database, modifying and such.
+	 * @param	string	$mac			The mac address for the interface	
+	 * @param	string	$comment		A descriptive comment about the interface
+	 * @param	string	$systemName		The name of the system associated with the
+	 * 									interface being constructed
+	 */
+	public function __construct($mac, $systemName, $comment = NULL) {
+		// chain into the parent with nulls
+		parent::__construct(NULL, NULL, NULL);
+		
+		// Store the data
+		$this->mac = $mac;
+		$this->system = $systemName;
+		$this->comment = $comment;
+	}
+	
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	

@@ -126,6 +126,26 @@ class InterfaceAddress extends ImpulseObject {
 		
 	}
 	
+	/**
+	 * Construct a new InterfaceAddress object for use when adding/modding/deleting
+	 * @param 	string 	$address		The address bound to the address
+	 * @param 	string	$config			How the address is configured
+	 * @param	bool	$isPrimary		Is this address the primary for the interface?
+	 * @param 	string 	$class			The class of the address
+	 * @param 	string	$comment		A comment about the address
+	 */
+	public function __construct($address, $config, $isPrimary, $class = null, $comment = null) {
+		// Chain into the parent with null
+		parent::__construct(null, null, null);
+		
+		// InterfaceAddress
+		$this->address   = $address;
+		$this->class     = $class;
+		$this->config    = $config;
+		$this->isPrimary = $isPrimary;
+		$this->comment   = $comment; 
+	}
+	
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	

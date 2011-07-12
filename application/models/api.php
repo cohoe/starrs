@@ -340,13 +340,14 @@ class Api extends CI_Model {
      * Get the default firewall action of an address
      * @param $address  The address to search on
      * @return bool     Deny (t) the traffic or allow (f)
-     * @todo: add exceptions for non 1 results
      */
     public function get_firewall_default($address) {
 		$sql = "SELECT api.get_firewall_default({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 		if($query->num_rows() == 1) {
 			return $query->row()->get_firewall_default;
+		} else {
+			throw new ObjectNotFoundException("Could not find a defailt firewall action for the specified address {$address}");
 		}
 	}
 
@@ -479,35 +480,136 @@ class Api extends CI_Model {
     /**
      * Get all of the MX records that resolve to an IP address and return an array of MxRecord objects
      * @param $address          The address to search for
-     * @return array<MxRecord>  Array of MxRecord objects
-     * @todo: Make this only return one result since there can only ever be one MX record for an address
+     * @throws	AmbiguousTargetException	Thrown if there is more than 1 record
+     * 										gathered from the database
+     * @throws	ObjectNotFoundException		Thrown if no records were returned
+     * @return	MxRecord		The MX Record for the provided address 
      */
     public function get_mx_records($address) {
 		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $mxRecord) {
-            $recordSet[] = new MxRecord(
-                $mxRecord['hostname'],
-                $mxRecord['zone'],
-                $mxRecord['address'],
-                $mxRecord['type'],
-                $mxRecord['ttl'],
-                $mxRecord['owner'],
-                $mxRecord['preference'],
-                $mxRecord['date_created'],
-                $mxRecord['date_modified'],
-                $mxRecord['last_modifier']
-            );
-        }
-
-        // Return the array of objects
-        return $recordSet;
+		// If there were more than one result; that's not good.
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("More than one MX record was found for the given address ({$address}).");
+		}
+		if($query->num_rows() < 1) {
+			throw new ObjectNotFoundException("An MX record for the given address ({$address}) could not be found."); 
+		}
+		
+		// Grab the result, instantiate it as an object, then return it
+		$result = $query->result_array();
+		$result = $result[0];
+		$result = new MxRecord(
+			$mxRecord['hostname'],
+            $mxRecord['zone'],
+            $mxRecord['address'],
+            $mxRecord['type'],
+            $mxRecord['ttl'],
+            $mxRecord['owner'],
+            $mxRecord['preference'],
+            $mxRecord['date_created'],
+            $mxRecord['date_modified'],
+            $mxRecord['last_modifier']
+        	);
+		
+        return $result;
 	}
+	
+	////////////////////////////////////////////////////////////////////////
+	// CREATION METHODS
+	
+	/**
+	 * Execute the api command to create a new interface, given an interface obj
+	 * @param 	NetworkInterface	$interface	A partial network interface to
+	 * 											add to the database
+	 * @throws 	APIException		Thrown when the provided interface is not a
+	 * 								NetworkInterface instance
+	 * @throws 	DBException			Thrown if the database query failed
+	 */
+	public function create_interface($interface) {
+		// Verify that we have an interface
+		if(!($interface instanceof NetworkInterface)) {
+			throw new APIException("Cannot call create_instance with a non-NetworkInterface object (given ".get_class($interface).")");
+		}
+		
+		// Build a query to create the interface
+		$sql = "SELECT api.create_interface(";
+		$sql .= $this->db->escape($interface->get_system_name()) . ',';
+		$sql .= $this->db->escape($ingerface->get_mac()) . ',';
+		$sql .= (($interface->get_comment()) ? $this->db->escape($interface->get_comment()) : "NULL") . ')'; 
+		$result = $this->db->query($sql);
+		
+		// Error check
+		if($this->db->_error_number() > 0) {
+			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		}
+	}
+	
+	/**
+	 * Execute the api command to create a new interface address and associate
+	 * it with a given interface.
+	 * @param 	InterfaceAddress	$interfaceAddr	An interface address to associate
+	 * 												with the given interface 	
+	 * @param	NetworkInterface	$interface		A network interface for the address
+	 * 												to be associated with
+	 * @throws 	APIException		Thrown when the arguments are the incorrect type
+	 * @throws 	DBException			Thrown if the database query failed
+	 */
+	public function create_interface_address($interfaceAddr, $interface) {
+		// Verify that we have an interface and an InterfaceAddress
+		if(!($interface instanceof NetworkInterface)) {
+			throw new APIException("Cannot call create_instance_address with a non-NetworkInterface object (given ".get_class($interface).")");
+		}
+		if(!($interfaceAddr instanceof InterfaceAddress)) {
+			throw new APIException("Cannot call create_instance_address with a non-InterfaceAddress object (given ".get_class($interfaceAddr).")");
+		}
+		
+		// Build a query to create the interface address
+		$sql = "SELECT api.create_interface_address(";
+		$sql .= $this->db->escape($interface->get_mac()) . ',';
+		$sql .= $this->db->escape($interfaceAddr->get_name()) . ',';
+		$sql .= $this->db->escape($interfaceAddr->get_address()) . ',';
+		$sql .= $this->db->escape($interfaceAddr->get_config()) . ',';
+		$sql .= (($interfaceAddr->get_class()) ? $this->db->escape($interfaceAddr->get_class()) : "NULL") . ',';
+		$sql .= (($interfaceAddr->get_isprimary()) ? "TRUE": "FALSE") . ',';
+		$sql .= (($interfaceAddr->get_comment()) ? $this->db->escape($interfaceAddr->get_comment()) : "NULL") . ')';
+		$result = $this->db->query($sql);
+		
+		// Error check
+		if($this->db->_error_number() > 0) {
+			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		}
+	}
+	
+	/**
+	 * Call the api command that creates a new system
+	 * @param 	System	$system		A System filled with information for creating it
+	 * @throws 	APIException		Thrown when the parameter is not a System
+	 * @throws 	DBException			Thrown when the database shits the bed
+	 */
+	public function create_system($system) {
+		// Verify that we have an instance of System
+		if(!($system instanceof System)) {
+			throw new APIException("Cannot call create_system with a non-System object (given ".get_class($system).")");
+		}
+		
+		// Build a query to create the system
+		$sql = "SELECT api.create_system(";
+		$sql .= $this->db->escape($system->get_system_name()) . ',';
+		// @todo: determine this value using webauth
+		$sql .= (($system->get_owner()) ? $this->db->escape($system->get_owner()) : "NULL") . ',';
+		$sql .= $this->db->escape($system->get_type()) . ',';
+		$sql .= $this->db->escape($system->get_os_name()) . ',';
+		$sql .= (($system->get_comment()) ? $this->db->escape($system->get_comment()) : "NULL") .')';
+		$result = $this->db->query($sql);
+		
+		// Error check
+		if($this->db->_error_number() > 0) {
+			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		}
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
