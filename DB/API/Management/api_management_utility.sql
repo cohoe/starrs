@@ -160,8 +160,7 @@ COMMENT ON FUNCTION "api"."initialize"(text) IS 'Setup user access to the databa
 /* API - deinitialize */
 CREATE OR REPLACE FUNCTION "api"."deinitialize"() RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','INFO','Deinitializing user '||api.get_current_user());
-		DROP TABLE "user_privileges";
+		DROP TABLE IF EXISTS "user_privileges";
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."deinitialize"() IS 'Reset user permissions to activate a new user';
