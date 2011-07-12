@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/views/getstarted.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/systems.php" afterPath="$PROJECT_DIR$/application/controllers/systems.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -71,19 +71,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="systems.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="systems.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="159" column="4" selection-start="5168" selection-end="5728" vertical-scroll-proportion="0.0">
+            <state line="33" column="0" selection-start="1170" selection-end="1170" vertical-scroll-proportion="0.38059703">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="welcome.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="welcome.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/welcome.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="43" selection-start="770" selection-end="770" vertical-scroll-proportion="0.4195459">
+            <state line="3" column="0" selection-start="114" selection-end="114" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -136,7 +136,6 @@
         <option value="$PROJECT_DIR$/application/views/ip/address.php" />
         <option value="$PROJECT_DIR$/application/views/dns/records.php" />
         <option value="$PROJECT_DIR$/application/models/api.php" />
-        <option value="$PROJECT_DIR$/application/controllers/systems.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NsRecord.php" />
         <option value="$PROJECT_DIR$/application/views/systems/system.php" />
         <option value="$PROJECT_DIR$/sample/system_view.html" />
@@ -144,6 +143,7 @@
         <option value="$PROJECT_DIR$/sample/uitest2.html" />
         <option value="$PROJECT_DIR$/sample/uimockup.html" />
         <option value="$PROJECT_DIR$/application/controllers/welcome.php" />
+        <option value="$PROJECT_DIR$/application/controllers/systems.php" />
       </list>
     </option>
   </component>
@@ -369,7 +369,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3384944" sideWeight="0.6701923" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -404,7 +404,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added new gettingstarted view" />
+    <option name="LAST_COMMIT_MESSAGE" value="forgot to add a file" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -441,6 +441,7 @@
     <MESSAGE value="added sample folder" />
     <MESSAGE value="added sample files" />
     <MESSAGE value="added new gettingstarted view" />
+    <MESSAGE value="forgot to add a file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -526,16 +527,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/welcome.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="159" column="4" selection-start="5168" selection-end="5728" vertical-scroll-proportion="0.0">
+        <state line="3" column="0" selection-start="114" selection-end="114" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/welcome.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="43" selection-start="770" selection-end="770" vertical-scroll-proportion="0.4195459">
+        <state line="33" column="0" selection-start="1170" selection-end="1170" vertical-scroll-proportion="0.38059703">
           <folding />
         </state>
       </provider>

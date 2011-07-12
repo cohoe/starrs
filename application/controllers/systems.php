@@ -4,18 +4,41 @@ class Systems extends CI_Controller {
 	
 	public function index() {
 	
+		$this->owned();
+	}
+
+    public function all() {
+
 		// Information
-		$navOptions = array('Create System'=>'create/system');
+		$navOptions = array('My Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
 		$navbar = new Navbar("All Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
 		$systemList = $this->api->get_systems(NULL);
-		
+
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
 		$info['title'] = "Systems";
-		
+
+		// Load the main view
+		$this->load->view('core/main',$info);
+	}
+
+    public function owned() {
+
+		// Information
+		$navOptions = array('My Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
+		$navbar = new Navbar("All Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
+		$systemList = $this->api->get_systems($this->impulselib->get_username());
+
+		// Load the view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
+		$info['title'] = "Systems";
+
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
