@@ -61,32 +61,6 @@ class System extends ImpulseObject {
 		// Initialize other vars
 		$hasInterfaces = false;
 		$interfaces = array();
-		
-		// Load interfaces
-		#$interface_info = $this->CI->api->get_system_interfaces($this->systemName);
-		#foreach ($interface_info as $interface) {
-		#	$this->add_interface(new NetworkInterface(
-		#		$interface->get_mac(),
-		#		$interface->get_comment(),
-		#		$interface->get_system_name(),
-		#		$interface->get_interface_name(),
-		#		$interface->get_date_created(),
-		#		$interface->get_date_modified(),
-		#		$interface->get_last_modifier()
-		#	));
-		#}
-	}
-	
-	public function __construct($systemName, $type, $osName, $owner = null, $comment = null){
-		// Chain into the parent with null
-		parent::__construct(null, null, null);
-		
-		// Store the rest of the data
-		$this->systemName 	= $systemName;
-		$this->owner 		= $owner;
-		$this->comment 		= $comment;
-		$this->type			= $type;
-		$this->osName		= $osName;
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -99,8 +73,6 @@ class System extends ImpulseObject {
 	public function get_type()          { return $this->type; }
 	public function get_os_name()       { return $this->osName; }
 	public function get_interfaces()    { return $this->interfaces; }
-	
-	public function has_interfaces()	{ return $this->hasInterfaces; }
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

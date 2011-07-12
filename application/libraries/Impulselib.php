@@ -29,6 +29,25 @@ class Impulselib {
 
 		return $paths[$osname];
 	}
+	
+	public function remove_url_space($url) {
+		return preg_replace("/%20/"," ",$url);
+	}
+	
+	public function set_session($key, $value) {
+		session_start();
+		$_SESSION[$key] = $value;
+	}
+	
+	public function get_session($key) {
+		session_start();
+		return $_SESSION[$key];
+	}
+	
+	public function clear_session($key) {
+		session_start();
+		unset($_SESSION[$key]);
+	}
 }
 
 /* End of file Impulselib.php */

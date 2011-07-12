@@ -2,6 +2,7 @@ body {
 	font-family:arial, helvetica;
 	font-size: 1em;
 }
+
 .content {
 	width: 900px;
 	margin-left: auto;
@@ -41,7 +42,7 @@ body {
 	width: 100%;
 }
 
-.edit {
+.nav_item_right {
 	float: right;
 	padding-left: .5em;
 	padding-right: .5em;
@@ -50,10 +51,21 @@ body {
 	margin-right: .25em;
 	border: 1px solid white;
 	border-bottom: none;
-	font-weight: bold;
+	text-align: center;
+	height: 1.2em;
+	margin-top: .3em;
+	line-height: 1.2em;
 }
 
-.nav_item {
+a .nav_item_right {
+	color: white;
+}
+
+.nav_item_right span {
+	font-size: 70%;
+}
+
+.nav_item_left {
 	float: left;
 	padding-left: .5em;
 	padding-right: .5em;
@@ -68,7 +80,15 @@ body {
 	line-height: 1.2em;
 }
 
-.nav_item span {
+.nav_item_left_active {
+	background-color: black;
+}
+
+a .nav_item_left {
+	color: white;
+}
+
+.nav_item_left span {
 	font-size: 70%;
 }
 
@@ -91,4 +111,61 @@ body {
 	font-size: 2em;
 	font-style: normal;
 	font-weight: normal;
+}
+
+.system_list_box {
+	border: 1px solid black;
+	height: 2em;
+	line-height: 2em;
+	width: 20%;
+	float: left;
+	margin: .5em;
+	padding: .5em;
+	
+}
+
+.create_form {
+	width: 50%;
+	padding: .5em;
+	line-height: 1.5em;
+}
+
+.create_form label {
+	float: left;
+	line-height: 1.5em;
+}
+
+.create_form input {
+	float: right;
+}
+
+.create_form select {
+	float: right;
+}
+
+.submit {
+	float: right;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.prompt {
+	margin-left: .5em;
+	margin-right: .5em;
+	width: 6em;
+}
+
+.prompt_form {
+	width: 50%;
+	padding: .5em;
+	line-height: 1.5em;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid black;
+}
+
+.prompt_form_message {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
 }

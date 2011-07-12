@@ -15,6 +15,7 @@ class CSS {
 			$skin = "grid";
 		}
 		#echo link_tag("css/$skin/full/main.css");
-		
+		#echo link_tag("css/mockup/main.css");
+		#echo link_tag("css/mockup/impulse.css");
 	}
 }
