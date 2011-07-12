@@ -75,6 +75,7 @@ CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETO
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_systems"(text) IS 'Get all system names owned by a given user';
 
+/* API - get_os_family_distribution */
 CREATE OR REPLACE FUNCTION "api"."get_os_family_distribution"() RETURNS SETOF "systems"."os_family_distribution" AS $$
 	BEGIN
 		RETURN QUERY(SELECT "family",count("family")::integer,round(count("family")::numeric/(SELECT count(*)::numeric FROM "systems"."systems")*100,0)::integer AS "percentage"
@@ -84,3 +85,14 @@ CREATE OR REPLACE FUNCTION "api"."get_os_family_distribution"() RETURNS SETOF "s
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_os_family_distribution"() IS 'Get fun statistics on registered operating system families';
+
+/* API - get_os_distribution */
+CREATE OR REPLACE FUNCTION "api"."get_os_distribution"() RETURNS SETOF "systems"."os_distribution" AS $$
+	BEGIN
+		RETURN QUERY(SELECT "os_name",count("os_name")::integer,round(count("os_name")::numeric/(SELECT count(*)::numeric FROM "systems"."systems")*100,0)::integer AS "percentage"
+		FROM "systems"."systems" 
+		JOIN "systems"."os" ON "systems"."systems"."os_name" = "systems"."os"."name" 
+		GROUP BY "os_name");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_os_distribution"() IS 'Get fun statistics on registered operating systems';
