@@ -137,6 +137,8 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		END IF;
 
 		-- Create privilege table
+		DROP TABLE IF EXISTS "user_privileges";
+
 		CREATE TEMPORARY TABLE "user_privileges"
 		(username text NOT NULL,privilege text NOT NULL,
 		allow boolean NOT NULL DEFAULT false);
