@@ -137,10 +137,14 @@ a .nav_item_left {
 
 .create_form input {
 	float: right;
+	height: 1.5em;
+	width: 12em;
 }
 
 .create_form select {
 	float: right;
+	width: 12em;
+	height: 1.5em;
 }
 
 .submit {

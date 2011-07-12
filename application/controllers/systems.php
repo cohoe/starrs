@@ -218,8 +218,9 @@ class Systems extends CI_Controller {
 	}
 	
 	public function chart() {
-		$data = $this->api->get_os_distribution();
-		$this->load->view('systems/os_distribution',array("data"=>$data));
+		#$data = $this->api->get_os_distribution();
+		#$this->load->view('systems/os_distribution',array("data"=>$data));
+		echo $this->impulselib->get_name_string();
 	}
 	
 }

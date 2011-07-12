@@ -1,6 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Impulselib {
+
+	private $fname;
+	private $lname;
+	private $uname;
+	private $CI;
+
+	function __construct() {
+		$CI =& get_instance();
+		$this->uname = $CI->input->server('WEBAUTH_USER');
+		$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
+		$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
+	}
+
 	function get_eui64_address($mac)
 	{
 		return $mac;
@@ -47,6 +60,14 @@ class Impulselib {
 	public function clear_session($key) {
 		session_start();
 		unset($_SESSION[$key]);
+	}
+
+	public function get_username() {
+		return $this->uname;
+	}
+
+	public function get_name_string() {
+		return "$this->fname $this->lname ($this->uname)";
 	}
 }
 

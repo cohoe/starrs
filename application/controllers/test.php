@@ -3,9 +3,10 @@
 class Test extends CI_Controller {
 	
 	public function index() {
-		$this->load->model('Api');
-		$this->api->intialize('benrr101');
-		$this->api->intialize('titsmagee');
+		#$this->load->model('Api');
+		#$this->api->intialize('benrr101');
+		#$this->api->intialize('titsmagee');
+		$this->api->test("hello");
 	}	
 
 	public function classtest() {
