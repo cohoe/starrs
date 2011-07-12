@@ -29,7 +29,7 @@ class Systems extends CI_Controller {
 
 		// Information
 		$navOptions = array('My Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
-		$navbar = new Navbar("All Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
+		$navbar = new Navbar("My Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
 		$systemList = $this->api->get_systems($this->impulselib->get_username());
 
 		// Load the view data
