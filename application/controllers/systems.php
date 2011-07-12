@@ -197,10 +197,10 @@ class Systems extends CI_Controller {
 	
 	private function _create_system() {
 		$this->api->deinitialize();
-		$this->api->initialize('root');
+		$this->api->initialize($this->impulselib->get_username());
 		$this->api->create_system(
 			$this->input->post('systemName'),
-			"root",
+			$this->impulselib->get_username(),
 			$this->input->post('type'),
 			$this->input->post('osName'),
 			$this->input->post('comment')
@@ -211,7 +211,7 @@ class Systems extends CI_Controller {
 	
 	private function _delete_system($systemName) {
 		$this->api->deinitialize();
-		$this->api->initialize('root');
+		$this->api->initialize($this->impulselib->get_username());
 		$this->api->remove_system($systemName);
 		$this->api->deinitialize();
 		redirect(base_url()."systems/",'location');

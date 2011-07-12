@@ -14,6 +14,7 @@ class Api extends CI_Model {
 	*/
 	function __construct() {
 		parent::__construct();
+		$this->initialize($this->impulselib->get_username());
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -554,6 +555,12 @@ class Api extends CI_Model {
 		$sql = "SELECT * FROM api.get_os_distribution()";
 		$query = $this->db->query($sql);
 		return $query->result_array();
+	}
+
+	public function get_current_user_level() {
+		$sql = "SELECT api.get_current_user_level()";
+		$query = $this->db->query($sql);
+		return $query->row()->get_current_user_level;
 	}
 	
 	////////////////////////////////////////////////////////////////////////

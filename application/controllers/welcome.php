@@ -19,10 +19,6 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		// CSS
-		echo link_tag("css/mockup/main.css");
-		echo link_tag("css/mockup/impulse.css");
-		
 		// Header
 		$info['header'] = $this->load->view('mockup/header',"",TRUE);
 		

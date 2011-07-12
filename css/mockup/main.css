@@ -97,6 +97,11 @@ a .nav_item_left {
 	font-weight: bold;
 }
 
+.nav_user {
+	margin-right: .25em;
+	float: right;
+}
+
 .header_title_container {
 	float: left;
 	height: 100%;

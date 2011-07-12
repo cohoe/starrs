@@ -66,8 +66,8 @@ class Impulselib {
 		return $this->uname;
 	}
 
-	public function get_name_string() {
-		return "$this->fname $this->lname ($this->uname)";
+	public function get_name() {
+		return "$this->fname $this->lname";
 	}
 }
 
