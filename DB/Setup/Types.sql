@@ -87,3 +87,7 @@ COMMENT ON TYPE "systems"."interface_data" IS 'System interface information';
 /* Systems - system_data */
 CREATE TYPE "systems"."system_data" AS (system_name text, type text, os_name text, owner text, comment text, renew_date date, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "systems"."system_data" IS 'System information';
+
+/* Systems - os_distribution */
+CREATE TYPE "systems"."os_distribution" AS (family text, count integer, percentage integer);
+COMMENT ON TYPE "systems"."os_distribution" IS 'OS distribution statistics';
