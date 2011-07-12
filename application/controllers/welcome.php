@@ -35,6 +35,22 @@ class Welcome extends CI_Controller {
 		// Load the main view
 		$this->load->view('mockup/main',$info);
 	}
+
+    private function _load_get_started() {
+
+		// Information
+		$navbar = new Navbar("Getting Started",FALSE,FALSE,NULL,"/",array("Create System"));
+
+		// Load view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view('getstarted',"",TRUE);
+		$info['title'] = "Getting Started";
+
+		// Load the main view
+		$this->load->view('mockup/main',$info);
+	}
 }
 
 /* End of file welcome.php */
