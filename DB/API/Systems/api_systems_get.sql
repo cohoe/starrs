@@ -96,3 +96,4 @@ CREATE OR REPLACE FUNCTION "api"."get_os_distribution"() RETURNS SETOF "systems"
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_os_distribution"() IS 'Get fun statistics on registered operating systems';
+
