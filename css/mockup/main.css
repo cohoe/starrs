@@ -93,12 +93,15 @@ a .nav_item_left {
 }
 
 .nav_title {
-	margin-left: .25em;
-	font-weight: bold;
+	font-weight: bold; 
+	margin-left: 5px; 
+	width: auto; 
+	float: left;
 }
 
 .nav_user {
-	margin-right: .25em;
+	margin-right: 5px; 
+	width: auto; 
 	float: right;
 }
 
@@ -177,4 +180,47 @@ a .nav_item_left {
 	width: auto;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.error_box {
+	width: 50%; 
+	border: 1px solid black; 
+	margin-left: auto; 
+	margin-right: auto; 
+	min-height: 64px; 
+	margin-top: 1em; 
+	margin-bottom: 1em; 
+	padding: 5px;
+}
+
+.error_box img {
+	width: 64px;
+	height: 64px;
+	float: right;
+}
+
+.error_box_message {
+	padding: 5px;
+}
+
+.interface_box {
+	width: 50%; 
+	border: 1px solid black; 
+	margin: 24px;
+}
+
+.interface_box_nav {
+	width: 100%; 
+	height: 1.5em; 
+	background-color: lightgray; 
+	border-bottom: 1px solid black;
+}
+
+.interface_box_nav .nav_item_right span {
+	color: white;
+}
+
+.interface_box_nav .nav_item_right {
+	border: 1px solid black;
+	border-bottom: none;
 }

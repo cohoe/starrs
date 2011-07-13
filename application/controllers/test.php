@@ -3,13 +3,15 @@
 class Test extends CI_Controller {
 	
 	public function index() {
-		#$this->load->model('Api');
-		#$this->api->intialize('benrr101');
-		#$this->api->intialize('titsmagee');
-		$this->api->test("hello");
-	}	
-
-	public function classtest() {
-		$class = new InterfaceObject(1,2,3,4,5,6);
+		$navModes['CREATE'] = "test/create";
+		$navModes['EDIT'] = "test/edit";
+		$navModes['DELETE'] = "test/delete";
+		$navModes['CANCEL'] = "";
+		$navOptions = array("OS Distribution"=>'os_distribution',"OS Family Distribution"=>'os_family_distribution');
+		$navbar = new Navbar("Testing Bar", $navModes, $navOptions);
+		
+		echo link_tag("/css/mockup/main.css");
+		$this->load->view('core/navbar',array("navbar"=>$navbar));
 	}
+
 }

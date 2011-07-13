@@ -62,6 +62,11 @@ class System extends ImpulseObject {
 		$hasInterfaces = false;
 		$interfaces = array();
 	}
+	
+	////////////////////////////////////////////////////////////////////////
+	// DESTRUCTOR
+	
+	public function __destruct() {}
 
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
@@ -73,6 +78,15 @@ class System extends ImpulseObject {
 	public function get_type()          { return $this->type; }
 	public function get_os_name()       { return $this->osName; }
 	public function get_interfaces()    { return $this->interfaces; }
+	
+	////////////////////////////////////////////////////////////////////////
+	// SETTERS
+	
+	public function set_system_name($new)	{ $this->CI->api->systems->modify_system($this->systemName, 'system_name', $new);	$this->systemName = $new; }
+	public function set_owner($new) 		{ $this->CI->api->systems->modify_system($this->systemName, 'owner', $new);		$this->owner = $new; }
+	public function set_comment($new) 		{ $this->CI->api->systems->modify_system($this->systemName, 'comment', $new);		$this->comment = $new; }
+	public function set_type($new) 			{ $this->CI->api->systems->modify_system($this->systemName, 'type', $new);			$this->type = $new; }
+	public function set_os_name($new) 		{ $this->CI->api->systems->modify_system($this->systemName, 'os_name', $new);		$this->osName = $new; }
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

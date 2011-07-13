@@ -9,9 +9,12 @@ class Impulselib {
 
 	function __construct() {
 		$CI =& get_instance();
-		$this->uname = $CI->input->server('WEBAUTH_USER');
-		$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
-		$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
+		#$this->uname = $CI->input->server('WEBAUTH_USER');
+		#$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
+		#$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
+		$this->uname = "user";
+		$this->fname = "Grant";
+		$this->lname = "Cohoe";
 	}
 
 	function get_eui64_address($mac)

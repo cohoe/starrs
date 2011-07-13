@@ -10,9 +10,11 @@ class Systems extends CI_Controller {
     public function all() {
 
 		// Information
-		$navOptions = array('Owned Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
-		$navbar = new Navbar("All Systems",FALSE,FALSE,'All Systems',"/systems",$navOptions);
-		$systemList = $this->api->get_systems(NULL);
+		
+		$navModes['CREATE'] = "/systems/create/";
+		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
+		$navbar = new Navbar("All Systems", $navModes, $navOptions);
+		$systemList = $this->api->systems->get_systems(NULL);
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -28,9 +30,10 @@ class Systems extends CI_Controller {
     public function owned() {
 
 		// Information
-		$navOptions = array('Owned Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
-		$navbar = new Navbar("Owned Systems",FALSE,FALSE,'Owned Systems',"/systems",$navOptions);
-		$systemList = $this->api->get_systems($this->impulselib->get_username());
+		$navModes['CREATE'] = "/systems/create/";
+		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
+		$navbar = new Navbar("Owned Systems", $navModes, $navOptions);
+		$systemList = $this->api->systems->get_systems($this->impulselib->get_username());
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -62,12 +65,14 @@ class Systems extends CI_Controller {
 			}
 			
 			// System Object
-			$sys = $this->api->get_system_info($systemName,false);
+			$sys = $this->api->systems->get_system_data($systemName,false);
 			$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
 			
 			// Navbar information
+			$navModes['EDIT'] = "/systems/edit/";
+			$navModes['DELETE'] = "/systems/delete/";
 			$navOptions = array('Overview'=>'overview','Interfaces'=>'interfaces');
-			$navbar = new Navbar($sys->get_system_name(),TRUE,TRUE,$target,"/systems/view/".$sys->get_system_name(),$navOptions);
+			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
 			// Check for network system
 			// @todo: Make this legit and not half-assed
@@ -79,11 +84,13 @@ class Systems extends CI_Controller {
 			switch(strtolower($target)) {
 				case 'interfaces':
 					$info['data'] = $this->_load_interfaces($sys);
+					$navbar->set_create(TRUE,"/interfaces/create/");
+					$navbar->set_edit(FALSE,NULL);
+					$navbar->set_delete(FALSE,NULL);
 					break;
 
 				default:
 					$info['data'] = $this->load->view('core/data',array('data'=>$systemViewData),TRUE);
-					$navbar->set_active_page('Overview');
 					break;
 			}
 			
@@ -101,18 +108,41 @@ class Systems extends CI_Controller {
 		}
 	}
 	
-	public function edit($systemName=NULL) {
+	public function edit() {
 
 		// Get the system object that we will be editing
 		$sys = $this->impulselib->get_session('activeSystem');
 		
-		// If a system name was not specified in the URL, get it from the activeSystem object
-		if(!isset($systemName)) {
-			$systemName = $sys->get_system_name();
+		// Information is there
+		if($this->input->post('submit')) {
+			$this->_edit_system($sys);
 		}
 		
-		// Edit the system
-		echo "Editing system ".$sys->get_system_name();
+		// Need to input the information
+		else {
+			// Information
+			$navModes['CANCEL'] = "";
+			$navbar = new Navbar("Owned Systems", $navModes, null);
+			#$navbar = new Navbar("Edit System - ".$sys->get_system_name(),FALSE,FALSE,TRUE,NULL,"/systems/edit/",array());
+			
+			// Load the view data
+			$info['header'] = $this->load->view('core/header',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+			
+			// Get the preset form data for dropdown lists and things
+			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
+			$form['systemTypes'] = $this->api->systems->get_system_types();
+			$form['system'] = $sys;
+			
+			// Continue loading view data
+			$info['data'] = $this->load->view('systems/edit',$form,TRUE);	// Systems
+			$info['title'] = "Edit System";
+			
+			// Load the main view
+			$this->load->view('core/main',$info);
+		}
+		
 	}
 	
 	public function create() {
@@ -125,7 +155,7 @@ class Systems extends CI_Controller {
 		// Need to input the information
 		else {
 			// Information
-			$navbar = new Navbar("Create System",FALSE,FALSE,NULL,"/systems/create/system",array());
+			$navbar = new Navbar("Create System",FALSE,FALSE,FALSE,NULL,"/systems/create/system",array());
 			
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -133,8 +163,8 @@ class Systems extends CI_Controller {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for dropdown lists and things
-			$form['operatingSystems'] = $this->api->get_operating_systems();
-			$form['systemTypes'] = $this->api->get_system_types();
+			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
+			$form['systemTypes'] = $this->api->systems->get_system_types();
 			
 			// Continue loading view data
 			$info['data'] = $this->load->view('systems/create',$form,TRUE);	// Systems
@@ -145,11 +175,13 @@ class Systems extends CI_Controller {
 		}
 	}
 	
-	public function delete($systemName) {
+	public function delete() {
+		
+		$sys = $this->impulselib->get_session('activeSystem');
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
-			$this->_delete_system($systemName);
+			$code = $this->_delete_system($sys);
 		}
 		
 		// They hit no, don't delete the system
@@ -160,7 +192,7 @@ class Systems extends CI_Controller {
 		// Need to print the prompt
 		else {
 			// Information
-			$navbar = new Navbar("Delete System",FALSE,FALSE,NULL,"/systems/delete",array());
+			$navbar = new Navbar("Delete System",FALSE,FALSE,FALSE,NULL,"/systems/delete",array());
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -168,12 +200,12 @@ class Systems extends CI_Controller {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information
-			$prompt['message'] = "Delete system \"$systemName\"?";
+			$prompt['message'] = "Delete system \"".$sys->get_system_name()."\"?";
 			$prompt['rejectUrl'] = $this->input->server('HTTP_REFERER');
 			
 			// Continue loading the view data
 			$info['data'] = $this->load->view('core/prompt',$prompt,TRUE);	// Systems
-			$info['title'] = "Delete System \"$systemName\"";
+			$info['title'] = "Delete System \"".$sys->get_system_name()."\"";
 			
 			// Load the main view
 			$this->load->view('core/main',$info);
@@ -183,7 +215,7 @@ class Systems extends CI_Controller {
 	private function _load_get_started() {
 
 		// Information
-		$navbar = new Navbar("Getting Started",FALSE,FALSE,NULL,"systems/",array("Create System"));
+		$navbar = new Navbar("Getting Started",FALSE,FALSE,FALSE,NULL,"systems/",array("Create System"));
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -199,7 +231,7 @@ class Systems extends CI_Controller {
 	private function _load_interfaces($system) {
 	
 		// Get the interface objects for the system
-		$interfaces = $this->api->get_system_interfaces($system->get_system_name(),false);
+		$interfaces = $this->api->systems->get_system_interfaces($system->get_system_name(),false);
 		
 		// Value of all interface view data
 		$interfaceViewData = "";
@@ -219,31 +251,67 @@ class Systems extends CI_Controller {
 	}
 	
 	private function _create_system() {
-		$this->api->deinitialize();
-		$this->api->initialize($this->impulselib->get_username());
-		$this->api->create_system(
+		#$this->api->management->deinitialize();
+		#$this->api->management->initialize($this->impulselib->get_username());
+		$this->api->systems->create_system(
 			$this->input->post('systemName'),
 			$this->impulselib->get_username(),
 			$this->input->post('type'),
 			$this->input->post('osName'),
 			$this->input->post('comment')
 		);
-		$this->api->deinitialize();
+		#$this->api->management->deinitialize();
 		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 	}
 	
-	private function _delete_system($systemName) {
-		$this->api->deinitialize();
-		$this->api->initialize($this->impulselib->get_username());
-		$this->api->remove_system($systemName);
-		$this->api->deinitialize();
-		redirect(base_url()."systems/",'location');
+	private function _edit_system($sys) {
+	
+		// SYS = old
+		// POST = new
+		
+		if($sys->get_system_name() != $this->input->post('systemName')) {
+			$sys->set_system_name($this->input->post('systemName'));
+		}
+		if($sys->get_type() != $this->input->post('type')) {
+			$sys->set_type($this->input->post('type'));
+		}
+		if($sys->get_os_name() != $this->input->post('osName')) {
+			$sys->set_os_name($this->input->post('osName'));
+		}
+		if($sys->get_comment() != $this->input->post('comment')) {
+			$sys->set_comment($this->input->post('comment'));
+		}
+		
+		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 	}
 	
-	public function chart() {
-		#$data = $this->api->get_os_distribution();
-		#$this->load->view('systems/os_distribution',array("data"=>$data));
-		echo $this->impulselib->get_name_string();
+	private function _delete_system($sys) {
+		$query = $this->api->systems->remove_system($sys);
+		if($query != "OK") {
+			$this->_error($query);
+			return 1;
+		}
+		else {
+			redirect(base_url()."systems/",'location');
+			return 0;
+		}
 	}
 	
+	private function _error($message) {
+		// Information
+		$navOptions = array();
+		$navbar = new Navbar("Error",FALSE,FALSE,NULL,"/error",$navOptions);
+		
+		$data['message'] = $message;
+		
+		// Load view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view('core/error',$data,TRUE);
+		$info['title'] = "Error";
+		
+		// Load the main view
+		$this->load->view('core/main',$info);
+	}	
 }

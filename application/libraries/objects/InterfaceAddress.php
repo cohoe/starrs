@@ -114,9 +114,9 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsMxRecords = array();
 		$this->dnsTxtRecords = array();
 		$this->fwRules = array();
-		$this->dnsFqdn = $this->CI->api->get_ip_fqdn($this->address);
-		$this->fwDefault = $this->CI->api->get_firewall_default($this->address);
-        $this->dnsAddressRecord = $this->CI->api->get_address_record($this->address);
+		$this->dnsFqdn = $this->CI->api->dns->get_ip_fqdn($this->address);
+		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
+        $this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
 		
 		// Loaders
 		#$this->_load_pointer_records();

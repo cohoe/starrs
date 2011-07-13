@@ -50,7 +50,7 @@ class NetworkInterface extends ImpulseObject {
 		
 		// Initialize variables
 		$this->addresses = array();
-		$address_info = $this->CI->api->get_interface_addresses($this->mac);
+		$address_info = $this->CI->api->systems->get_system_interface_addresses($this->mac);
 	}
 	
 	////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,15 @@
  */
 class Api extends CI_Model {
 
+	public $dhcp;
+	public $dns;
+	public $documentation;
+	public $firewall;
+	public $ip;
+	public $management;
+	public $network;
+	public $systems;
+
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -12,557 +21,46 @@ class Api extends CI_Model {
 	This class does database work. That is all. These functions are the
 	only access to the database you get.
 	*/
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
-		$this->initialize($this->impulselib->get_username());
+		$this->_load();
+		$this->dhcp = new API_DHCP();
+		$this->dns = new API_DNS();
+		$this->documentation = new API_Documentation();
+		$this->firewall = new API_Firewall();
+		$this->ip = new API_IP();
+		$this->management = new API_Management();
+		$this->network = new API_Network();
+		$this->systems = new API_Systems();		
+		
+		$this->management->initialize($this->impulselib->get_username());
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	
-	/**
-	 * Initiaizes the API for usage with the given user.
-	 * @param 	string 	$user	The username to initialze the db with
-	 * @return	bool			True on success
-	 * 							False on recoverable error
-	 */
-	public function initialize($user) {
+	public function isadmin() {
 		
-		// Run it!
-		$sql = "SELECT api.initialize({$this->db->escape($user)})";
-		$query = $this->db->query($sql);
-		
-		return $query;
-	}
-	
-	/**
-	 * Deinitializes the API for usage with the already provided user.
-	 * @return	bool			True on success
-	 * 							False on recoverable failure
-	 */
-	public function deinitialize() {
-		// Run the query
-		$sql = "SELECT api.deinitialize()";
-		$query = $this->db->query($sql);
-		
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		
-		return true;
-	}
-
-    public function get_systems($owner=null) {
-        // Generate the SQL
-		// This function can take NULL as an arg
-        $sql = "SELECT api.get_systems({$this->db->escape($owner)})";
-
-        // Run the query
-        $query = $this->db->query($sql);
-
-        // Create the array of objects
-        $systemSet = array();
-        foreach($query->result_array() as $system) {
-            $systemSet[] = $system['get_systems'];
-        }
-
-        // Return the array
-        return $systemSet;
-    }
-	
-	/**
-	 * Looks up the given system in the database and creates an object to
-	 * represent it.
-	 * @param	string	$systemName	The name of the system to lookup
-	 * @param	bool	$complete	Whether to lookup interfaces,
-	 * 								addresses, etc and add them to the system
-	 * @throws	AmbiguousTargetException	Thrown when more than one system
-	 * 										matches the given input
-	 * @throws	ObjectNotFoundException		Thrown when no system was found
-	 * @throws	DBException					Thrown if the db shit the bed
-	 * @return	System				The system desired
-	 */
-	public function get_system_info($systemName, $complete=false) {
-
-		// Run the query
-		$sql = "SELECT * FROM api.get_system_data({$this->db->escape($systemName)})";
-		$query = $this->db->query($sql);
-
-				
-		// Error conditions
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($query->num_rows() == 0) {
-			throw new ObjectNotFoundException("The system could not be found: '{$systemName}'");
-		}
-		if($query->num_rows() > 1) {
-			throw new AmbiguousTargetException("More than one system matches '{$systemName}'");
-		}
-		
-		// It was valid! Create the system
-		$system = $query->row_array();
-		#$system = $system[0];
-		$systemResult = new System(
-			$system['system_name'], 
-			$system['owner'], 
-			$system['comment'], 
-			$system['type'], 
-			$system['os_name'],
-			$system['renew_date'],
-			$system['date_created'],
-			$system['date_modified'],
-			$system['last_modifier']);
-		
-		//Are we making a complete system
-		if($complete == true) {
-			// Grab the interfaces that the system has
-			foreach($this->get_system_interfaces($systemName, $complete) as $interface) {
-				$systemResult->add_interface($interface);
-			} 
-		}
-		
-		// Return the system object
-		return $systemResult;
-	}
-	
-	/**
-	 * Look up the interfaces that match up with a given system. Process each
-	 * interface into an interface object and then return it as an array.
-	 * @param	string	$systemName	The name of the system to lookup
-	 * @param	bool	$complete	Whether to lookup the addresses associated
-	 * 								with each interfaces
-	 * @throws	ObjectNotFoundException		Thrown if the interface was not found
-	 * @throws	DBException					Thrown if the database shit the bed
-	 * @return	array<Interface>	An array of interface objects associated with the system
-	 */
-	public function get_system_interfaces($systemName, $complete=false) {
-
-		$sql = "SELECT * FROM api.get_system_interfaces({$this->db->escape($systemName)})";
-		$query = $this->db->query($sql);
-
-		// Error conditions
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($query->num_rows() == 0) {
-			#throw new ObjectNotFoundException("No interfaces matching the system name '{$systemName}' could not be found.");
-		}
-		
-		// There were interfaces that matched, build them and return them
-		$interfaceSet = array();
-		foreach($query->result_array() as $row) {
-			// Create the interface
-			$interface = new NetworkInterface(
-				$row['mac'], 
-				$row['comment'], 
-				$row['system_name'], 
-				$row['name'],
-				$row['date_created'], 
-				$row['date_modified'], 
-				$row['last_modifier']
-			);
-			
-			if($complete == true) {
-				$iA = $this->get_interface_addresses($row['mac'],$complete);
-				foreach($iA as $address) {
-					$interface->add_address($address);
-				}
-			}
-			
-			// Add the machine to the result set
-			$interfaceSet[] = $interface;
-		}
-		
-		return $interfaceSet;
-	}
-
-    /**
-     * Query the database for the interface addresses associated with the given
-	 * MAC address
-     * @param $mac                      The MAC address of the interface to search on
-     * @param bool $complete            Are we making a complete system
-     * @throws	DBException				Thrown if the database shit the bed
-     * @return array<InterfaceAddress>  An array of InterfaceAddress objects
-     */
-    public function get_interface_addresses($mac, $complete=false) {
-				
-		// Run the query
-		// This is DESC for temporary viewing purposes. It will be made ASC later
-		$sql = "SELECT * FROM api.get_system_interface_addresses({$this->db->escape($mac)})";
-		$query = $this->db->query($sql);
-		
-		// Check for errors
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		
-		// Create the objects
-		$addressSet = array();
-		foreach($query->result_array() as $row) {
-			$address = new InterfaceAddress(
-				$row['address'], 
-				$row['class'], 
-				$row['config'], 
-				$row['mac'], 
-				$row['renew_date'], 
-				$row['isprimary'],
-				$row['comment'], 
-				$row['date_created'], 
-				$row['date_modified'], 
-				$row['last_modifier']
-			);
-
-            // If we are building all information about the system, do all this stuff
-            if($complete == true) {
-                // Load firewall rules
-                $fwRules = $this->get_address_rules($row['address']);
-                foreach($fwRules as $fwRule) {
-                    $address->add_firewall_rule($fwRule);
-                }
-
-                // Load DNS pointer records
-                $pointerRecords = $this->get_pointer_records($row['address']);
-                foreach ($pointerRecords as $pointerRecord) {
-                    $address->add_pointer_record($pointerRecord);
-                }
-
-                // Load DNS text records
-                $txtRecords = $this->get_txt_records($row['address']);
-                foreach ($txtRecords as $txtRecord) {
-                    $address->add_txt_record($txtRecord);
-                }
-
-                // Load DNS nameserver records
-                $nsRecords = $this->get_ns_records($row['address']);
-                foreach ($nsRecords as $nsRecord) {
-                    $address->add_ns_record($nsRecord);
-                }
-
-                // Load DNS mailserver records
-                $mxRecords = $this->get_mx_records($row['address']);
-                foreach ($mxRecords as $mxRecord) {
-                    $address->add_mx_record($mxRecord);
-                }
-            }
-
-            // Add the address to the array
-            $addressSet[] = $address;
-		}
-
-        // Return the array of addresses
-		return $addressSet;
-	}
-
-    /**
-     * @param $address
-     * @return array
-     */
-    public function get_address_rules($address) {
-		$sql = "SELECT * FROM api.get_firewall_rules({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        $ruleSet = array();
-
-        foreach($query->result_array() as $fwRule) {
-            $ruleSet[] = new FirewallRule(
-                $fwRule['port'],
-                $fwRule['transport'],
-                $fwRule['deny'],
-                $fwRule['comment'],
-                $fwRule['address'],
-                $fwRule['owner'],
-                $fwRule['source'],
-                $fwRule['date_created'],
-                $fwRule['date_modified'],
-                $fwRule['last_modifier']
-            );
-        }
-
-        // Return the array of rules
-        return $ruleSet;
-	}
-
-    /**
-     * @param $schema
-     * @return array
-     */
-    public function get_schema_documentation($schema) {
-		if ($schema != "none") {
-			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
+		if($this->api->management->get_current_user_level() == "ADMIN") {
+			return true;
 		}
 		else {
-			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
-		}
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-    /**
-     * @param $function
-     * @return array
-     */
-    public function get_function_parameters($function) {
-		$sql = "select * from documentation.arguments where specific_name = '$function' order by position asc";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-    /**
-     * Get the DNS FQDN of a given IP address if it exists
-     * @param $address  The address to search on
-     * @return string   The FQDN of the address (or NULL if none)
-     */
-    public function get_ip_fqdn($address) {
-		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
-		$query = $this->db->query($sql);
-		#$arr = $query->result_array();
-		#echo $arr;
-		if($query->row()) {
-			return $query->row()->fqdn;
-		}
-		else {
-			return null;
+			return false;
 		}
 	}
-
-    /**
-     * Get the name of a firewall program based on its port
-     * @param $port     The port of the program to search on
-     * @return string   The name of the program
-     */
-    public function get_firewall_program($port) {
-		$sql = "SELECT api.get_firewall_program_name({$this->db->escape($port)})";
-		$query = $this->db->query($sql);
-		return $query->row()->get_firewall_program_name;
-	}
-
-    /**
-     * Get the default firewall action of an address
-     * @param $address  The address to search on
-     * @return bool     Deny (t) the traffic or allow (f)
-     * @todo: add exceptions for non 1 results
-     */
-    public function get_firewall_default($address) {
-		$sql = "SELECT api.get_firewall_default({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-		if($query->num_rows() == 1) {
-			return $query->row()->get_firewall_default;
-		}
-	}
-
-    /**
-     * Get the DNS address record object for a given address
-     * @param $address          The address to get on
-     * @return \AddressRecord   The object of the record
-     */
-    public function get_address_record($address) {
-		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-        $info = $query->row_array();
-
-        // Establish and return the record object
-        if($query->num_rows() == 1) {
-            return new AddressRecord(
-                $info['hostname'],
-                $info['zone'],
-                $info['address'],
-                $info['type'],
-                $info['ttl'],
-                $info['owner'],
-                $info['date_created'],
-                $info['date_modified'],
-                $info['last_modifier']
-            );
-        }
-        else {
-            return null;
-        }
-	}
-
-    /**
-     * Get all of the pointer records that resolve to an IP address and return an array of PointerRecord objects
-     * @param $address              The address to search on
-     * @return array<PointerRecord> An array of PointerRecords
-     */
-    public function get_pointer_records($address) {
-		$sql = "SELECT * FROM api.get_dns_pointers({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Declare the array of record objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $pointerRecord) {
-            $recordSet[] = new PointerRecord(
-                $pointerRecord['hostname'],
-                $pointerRecord['zone'],
-                $pointerRecord['address'],
-                $pointerRecord['type'],
-                $pointerRecord['ttl'],
-                $pointerRecord['owner'],
-                $pointerRecord['alias'],
-                $pointerRecord['extra'],
-                $pointerRecord['date_created'],
-                $pointerRecord['date_modified'],
-                $pointerRecord['last_modifier']
-            );
-        }
-
-        // Return the array of objects
-        return $recordSet;
-	}
-
-    /**
-     * Get all of the TXT or SPF records that resolve to an IP address and return an array of TxtRecord objects
-     * @param $address          The address to search for
-     * @return array<TxtRecord> An array of NsRecords
-     */
-    public function get_txt_records($address) {
-		$sql = "SELECT * FROM api.get_dns_txt({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $txtRecord) {
-            $recordSet[] = new TxtRecord(
-                $txtRecord['hostname'],
-                $txtRecord['zone'],
-                $txtRecord['address'],
-                $txtRecord['type'],
-                $txtRecord['ttl'],
-                $txtRecord['owner'],
-                $txtRecord['text'],
-                $txtRecord['date_created'],
-                $txtRecord['date_modified'],
-                $txtRecord['last_modifier']
-            );
-        }
-
-        // Return the array of objects
-        return $recordSet;
-	}
-
-    /**
-     * Get all of the NS records that resolve to an IP address and return an array of NsRecord objects
-     * @param $address          The address to search for
-     * @return array<NsRecord>  An array of NsRecords
-     */
-    public function get_ns_records($address) {
-		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $nsRecord) {
-            $recordSet[] = new NsRecord(
-                $nsRecord['hostname'],
-                $nsRecord['zone'],
-                $nsRecord['address'],
-                $nsRecord['type'],
-                $nsRecord['ttl'],
-                $nsRecord['owner'],
-                $nsRecord['isprimary'],
-                $nsRecord['date_created'],
-                $nsRecord['date_modified'],
-                $nsRecord['last_modifier']
-            );
-        }
-
-        // Return the array of objects
-        return $recordSet;
-	}
-
-    /**
-     * Get all of the MX records that resolve to an IP address and return an array of MxRecord objects
-     * @param $address          The address to search for
-     * @return array<MxRecord>  Array of MxRecord objects
-     * @todo: Make this only return one result since there can only ever be one MX record for an address
-     */
-    public function get_mx_records($address) {
-		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $mxRecord) {
-            $recordSet[] = new MxRecord(
-                $mxRecord['hostname'],
-                $mxRecord['zone'],
-                $mxRecord['address'],
-                $mxRecord['type'],
-                $mxRecord['ttl'],
-                $mxRecord['owner'],
-                $mxRecord['preference'],
-                $mxRecord['date_created'],
-                $mxRecord['date_modified'],
-                $mxRecord['last_modifier']
-            );
-        }
-
-        // Return the array of objects
-        return $recordSet;
-	}
 	
-	public function create_system($systemName,$owner=NULL,$type,$osName,$comment) {
-	
-		$sql = "SELECT api.create_system(
-			{$this->db->escape($systemName)},
-			{$this->db->escape($owner)},
-			{$this->db->escape($type)},
-			{$this->db->escape($osName)},
-			{$this->db->escape($comment)})";
-			
-		$query = $this->db->query($sql);
-	}
-	
-	public function get_system_types() {
-		$sql = "SELECT api.get_system_types()";
-		$query = $this->db->query($sql);
-		
-		$types = array();
-		foreach($query->result_array() as $result) {
-			$types[] = $result['get_system_types'];
-		}
 
-		return $types;
-	}
-	
-	public function get_operating_systems() {
-		$sql = "SELECT api.get_operating_systems()";
-		$query = $this->db->query($sql);
-		
-		$oss = array();
-		foreach($query->result_array() as $os) {
-			$oss[] = $os['get_operating_systems'];
-		}
-
-		return $oss;
-	}
-	
-	public function remove_system($systemName) {
-		$sql = "SELECT api.remove_system({$this->db->escape($systemName)})";
-		$query = $this->db->query($sql);
-	}
-	
-	public function get_os_distribution() {
-		$sql = "SELECT * FROM api.get_os_distribution()";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-	public function get_current_user_level() {
-		$sql = "SELECT api.get_current_user_level()";
-		$query = $this->db->query($sql);
-		return $query->row()->get_current_user_level;
-	}
-	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
+	
+	private function _load() {
+		$this->load->model('API/API_DHCP');
+		$this->load->model('API/API_DNS');
+		$this->load->model('API/API_Documentation');
+		$this->load->model('API/API_Firewall');
+		$this->load->model('API/API_IP');
+		$this->load->model('API/API_Management');
+		$this->load->model('API/API_Network');
+		$this->load->model('API/API_Systems');
+	}
 }

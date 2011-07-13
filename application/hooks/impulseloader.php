@@ -23,5 +23,8 @@ class ImpulseLoader {
 		
 		# UI Stuff
 		require_once(APPPATH . "libraries/navigation/navbar.php");
+		
+		# API
+		#require_once(APPPATH . "models/API/API_System.php");
 	}
 }
