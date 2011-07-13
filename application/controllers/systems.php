@@ -71,7 +71,7 @@ class Systems extends CI_Controller {
 			// Navbar information
 			$navModes['EDIT'] = "/systems/edit/";
 			$navModes['DELETE'] = "/systems/delete/";
-			$navOptions = array('Overview'=>'overview','Interfaces'=>'interfaces');
+			$navOptions = array('Overview'=>"/systems/view/".$sys->get_system_name()."/overview",'Interfaces'=>"/systems/view/".$sys->get_system_name()."/interfaces");
 			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
 			// Check for network system
