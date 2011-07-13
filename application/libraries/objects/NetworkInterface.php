@@ -1,5 +1,5 @@
 <?php
-/*
+/**
 * This class contains the definition for a the Interface object. An Interface
 * is essentially a connection to the network that a system posesses. It would
 * totally be called 'Interface' if that wasn't a keyword in PHP...

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Class for all pointer (CNAME, SRV) records
  */
 class PointerRecord extends DnsRecord {

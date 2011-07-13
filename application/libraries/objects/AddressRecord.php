@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Class for all regular address records (A, AAAA)
  */
 class AddressRecord extends DnsRecord {

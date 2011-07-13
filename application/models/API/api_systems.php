@@ -1,8 +1,16 @@
 <?php
+/**
+ * @throws AmbiguousTargetException|DBException|ObjectNotFoundException
+ *
+ */
 class API_Systems extends CI_Model {
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
+
+    /**
+     *
+     */
 	public function __construct() {
 		parent::__construct();
 	}
@@ -32,6 +40,11 @@ class API_Systems extends CI_Model {
 	
 	////////////////////////////////////////////////////////////////////////
 	// GET FUNCTIONS
+
+    /**
+     * @param null $owner
+     * @return array
+     */
 	public function get_systems($owner=null) {
         // Generate the SQL
 		// This function can take NULL as an arg
@@ -233,7 +246,10 @@ class API_Systems extends CI_Model {
         // Return the array of addresses
 		return $addressSet;
 	}
-	
+
+    /**
+     * @return array
+     */
 	public function get_system_types() {
 		$sql = "SELECT api.get_system_types()";
 		$query = $this->db->query($sql);
@@ -245,7 +261,10 @@ class API_Systems extends CI_Model {
 
 		return $types;
 	}
-	
+
+    /**
+     * @return array
+     */
 	public function get_operating_systems() {
 		$sql = "SELECT api.get_operating_systems()";
 		$query = $this->db->query($sql);
@@ -257,13 +276,19 @@ class API_Systems extends CI_Model {
 
 		return $oss;
 	}
-	
+
+    /**
+     * @return
+     */
 	public function get_os_distribution() {
 		$sql = "SELECT * FROM api.get_os_distribution()";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
-	
+
+    /**
+     * @return
+     */
 	public function get_os_family_distribution() {
 		$sql = "SELECT * FROM api.get_os_family_distribution()";
 		$query = $this->db->query($sql);
@@ -273,6 +298,14 @@ class API_Systems extends CI_Model {
 	
 	////////////////////////////////////////////////////////////////////////
 	// MODIFY FUNCTIONS
+
+    /**
+     * @throws DBException
+     * @param $systemName
+     * @param $field
+     * @param $newValue
+     * @return string
+     */
 	public function modify_system($systemName, $field, $newValue) {
 		$sql = "SELECT api.modify_system({$this->db->escape($systemName)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
 		$query = $this->db->query($sql);
@@ -295,6 +328,12 @@ class API_Systems extends CI_Model {
 	
 	////////////////////////////////////////////////////////////////////////
 	// REMOVE FUNCTIONS
+
+    /**
+     * @throws DBException
+     * @param $sys
+     * @return string
+     */
 	public function remove_system($sys) {
 		$sql = "SELECT api.remove_system({$this->db->escape($sys->get_system_name())})";
 		$query = $this->db->query($sql);

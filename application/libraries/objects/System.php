@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This class contains the definition for a the System object. A system is 
  * essentially a server/machine that is part of the network.
  */

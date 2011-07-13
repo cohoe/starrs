@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Class for all Nameserver (NS) records
  */
 class NsRecord extends DnsRecord {

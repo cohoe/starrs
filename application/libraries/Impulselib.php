@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ *
+ */
 class Impulselib {
 
 	private $fname;
@@ -7,6 +9,9 @@ class Impulselib {
 	private $uname;
 	private $CI;
 
+    /**
+     *
+     */
 	function __construct() {
 		$CI =& get_instance();
 		$this->uname = $CI->input->server('WEBAUTH_USER');
@@ -17,11 +22,19 @@ class Impulselib {
 		#$this->lname = "Cohoe";
 	}
 
+    /**
+     * @param $mac
+     * @return
+     */
 	function get_eui64_address($mac)
 	{
 		return $mac;
 	}
-	
+
+    /**
+     * @param $osname
+     * @return
+     */
 	function get_os_img_path($osname)
 	{
 		$paths['Arch'] = "media/images/os/Arch.jpg";
@@ -45,30 +58,53 @@ class Impulselib {
 
 		return $paths[$osname];
 	}
-	
+
+    /**
+     * @param $url
+     * @return mixed
+     */
 	public function remove_url_space($url) {
 		return preg_replace("/%20/"," ",$url);
 	}
-	
+
+    /**
+     * @param $key
+     * @param $value
+     * @return void
+     */
 	public function set_session($key, $value) {
 		session_start();
 		$_SESSION[$key] = $value;
 	}
-	
+
+    /**
+     * @param $key
+     * @return
+     */
 	public function get_session($key) {
 		session_start();
 		return $_SESSION[$key];
 	}
-	
+
+    /**
+     * @param $key
+     * @return void
+     */
 	public function clear_session($key) {
 		session_start();
 		unset($_SESSION[$key]);
 	}
 
+    /**
+     * @return
+     */
 	public function get_username() {
 		return $this->uname;
 	}
 
+    /**
+     * @return string
+     */
 	public function get_name() {
 		return "$this->fname $this->lname";
 	}

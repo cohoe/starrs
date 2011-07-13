@@ -1,4 +1,7 @@
 <?php
+/**
+ *
+ */
 class Navbar {
 
 	private $navOptions = array();
@@ -18,6 +21,11 @@ class Navbar {
 	private $priv;
 	private $CI;
 
+    /**
+     * @param $title
+     * @param $modes
+     * @param $navOptions
+     */
 	public function __construct($title, $modes, $navOptions) {
 		
 		$this->CI =& get_instance();

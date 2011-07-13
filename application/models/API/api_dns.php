@@ -1,7 +1,12 @@
 <?php
+/**
+ *
+ */
 class Api_dns extends CI_Model {
 
-
+    /**
+     *
+     */
 	public function __construct() {
 		parent::__construct();
 	}

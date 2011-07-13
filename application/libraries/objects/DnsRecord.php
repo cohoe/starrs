@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * This class is the template for all DNS records. It also brings in the
  * properties of an ImpulseObject.
  */

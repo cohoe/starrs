@@ -1,12 +1,21 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ *
+ */
 class Systems extends CI_Controller {
-	
+
+    /**
+     * @return void
+     */
 	public function index() {
 	
 		$this->owned();
 	}
 
+    /**
+     * @return void
+     */
     public function all() {
 
 		// Information
@@ -27,6 +36,9 @@ class Systems extends CI_Controller {
 		$this->load->view('core/main',$info);
 	}
 
+    /**
+     * @return void
+     */
     public function owned() {
 
 		// Information
@@ -45,7 +57,12 @@ class Systems extends CI_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
-	
+
+    /**
+     * @param null $systemName
+     * @param null $target
+     * @return void
+     */
 	public function view($systemName=NULL,$target=NULL) {
 	
 		// Clean up the URL data since it will have %20's rather than spaces
@@ -107,7 +124,10 @@ class Systems extends CI_Controller {
 			$this->impulselib->set_session('activeSystem',$sys);
 		}
 	}
-	
+
+    /**
+     * @return void
+     */
 	public function edit() {
 
 		// Get the system object that we will be editing
@@ -144,7 +164,10 @@ class Systems extends CI_Controller {
 		}
 		
 	}
-	
+
+    /**
+     * @return void
+     */
 	public function create() {
 	
 		// Information is there
@@ -175,7 +198,10 @@ class Systems extends CI_Controller {
 			$this->load->view('core/main',$info);
 		}
 	}
-	
+
+    /**
+     * @return void
+     */
 	public function delete() {
 		
 		$sys = $this->impulselib->get_session('activeSystem');
@@ -213,7 +239,10 @@ class Systems extends CI_Controller {
 			$this->load->view('core/main',$info);
 		}
 	}
-	
+
+    /**
+     * @return void
+     */
 	private function _load_get_started() {
 
 		// Information
@@ -230,7 +259,11 @@ class Systems extends CI_Controller {
 		// Load the main view
 		$this->load->view('mockup/main',$info);
 	}
-	
+
+    /**
+     * @param $system
+     * @return
+     */
 	private function _load_interfaces($system) {
 	
 		// Get the interface objects for the system
@@ -252,7 +285,10 @@ class Systems extends CI_Controller {
 		// Spit back all of the interface data
 		return $this->load->view('core/data',array('data'=>$interfaceViewData),TRUE);
 	}
-	
+
+    /**
+     * @return void
+     */
 	private function _create_system() {
 		#$this->api->management->deinitialize();
 		#$this->api->management->initialize($this->impulselib->get_username());
@@ -266,7 +302,11 @@ class Systems extends CI_Controller {
 		#$this->api->management->deinitialize();
 		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 	}
-	
+
+    /**
+     * @param $sys
+     * @return void
+     */
 	private function _edit_system($sys) {
 	
 		// SYS = old
@@ -287,7 +327,11 @@ class Systems extends CI_Controller {
 		
 		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 	}
-	
+
+    /**
+     * @param $sys
+     * @return int
+     */
 	private function _delete_system($sys) {
 		$query = $this->api->systems->remove_system($sys);
 		if($query != "OK") {
@@ -299,7 +343,11 @@ class Systems extends CI_Controller {
 			return 0;
 		}
 	}
-	
+
+    /**
+     * @param $message
+     * @return void
+     */
 	private function _error($message) {
 		// Information
         $navbar = new Navbar("Error", null, null);

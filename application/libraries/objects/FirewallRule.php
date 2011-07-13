@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Here we have our template for a firewall rule. A rule is pulled from the firewall.rules
  * table and applies to a certain address.
  */

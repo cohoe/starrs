@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Class for all text (TXT, SPF) records
  */
 class TxtRecord extends DnsRecord {

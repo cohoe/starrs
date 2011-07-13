@@ -17,7 +17,7 @@ class Api extends CI_Model {
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
-	/* Constructor
+	/**
 	This class does database work. That is all. These functions are the
 	only access to the database you get.
 	*/
@@ -38,7 +38,11 @@ class Api extends CI_Model {
 
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
-	
+
+    /**
+     * Return a boolean as to if the current user is an admin or not.
+     * @return bool
+     */
 	public function isadmin() {
 		
 		if($this->api->management->get_current_user_level() == "ADMIN") {
@@ -52,7 +56,11 @@ class Api extends CI_Model {
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-	
+
+    /**
+     * Load all of the sub models that contain the actual API functions
+     * @return void
+     */
 	private function _load() {
 		$this->load->model('API/api_dhcp');
 		$this->load->model('API/api_dns');

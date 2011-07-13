@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Class for all Mail-Exchange (MX) records
  */
 class MxRecord extends DnsRecord {

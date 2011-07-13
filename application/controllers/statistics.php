@@ -1,6 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Statistics extends CI_Controller {
-	
+
+    /**
+     * @return void
+     */
 	public function index() {
 		
 		// Information
@@ -17,7 +20,10 @@ class Statistics extends CI_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}			
-	
+
+    /**
+     * @return void
+     */
 	public function os_distribution() {
 		$data = $this->api->systems->get_os_distribution();
 		
@@ -35,7 +41,10 @@ class Statistics extends CI_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
-	
+
+    /**
+     * @return void
+     */
 	public function os_family_distribution() {
 		$data = $this->api->systems->get_os_family_distribution();
 		
