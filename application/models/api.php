@@ -54,13 +54,13 @@ class Api extends CI_Model {
 	// PRIVATE METHODS
 	
 	private function _load() {
-		$this->load->model('API/API_DHCP');
-		$this->load->model('API/API_DNS');
-		$this->load->model('API/API_Documentation');
-		$this->load->model('API/API_Firewall');
-		$this->load->model('API/API_IP');
-		$this->load->model('API/API_Management');
-		$this->load->model('API/API_Network');
-		$this->load->model('API/API_Systems');
+		$this->load->model('API/api_dhcp');
+		$this->load->model('API/api_dns');
+		$this->load->model('API/api_documentation');
+		$this->load->model('API/api_firewall');
+		$this->load->model('API/api_ip');
+		$this->load->model('API/api_management');
+		$this->load->model('API/api_network');
+		$this->load->model('API/api_systems');
 	}
 }
