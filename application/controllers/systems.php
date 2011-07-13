@@ -155,8 +155,9 @@ class Systems extends CI_Controller {
 		// Need to input the information
 		else {
 			// Information
-			$navbar = new Navbar("Create System",FALSE,FALSE,FALSE,NULL,"/systems/create/system",array());
-			
+            $navModes['CANCEL'] = "";
+            $navbar = new Navbar("Create System", $navModes, null);
+
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
 			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
@@ -192,7 +193,8 @@ class Systems extends CI_Controller {
 		// Need to print the prompt
 		else {
 			// Information
-			$navbar = new Navbar("Delete System",FALSE,FALSE,FALSE,NULL,"/systems/delete",array());
+            $navModes['CANCEL'] = "";
+			$navbar = new Navbar("Delete System", $navModes, null);
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -215,7 +217,8 @@ class Systems extends CI_Controller {
 	private function _load_get_started() {
 
 		// Information
-		$navbar = new Navbar("Getting Started",FALSE,FALSE,FALSE,NULL,"systems/",array("Create System"));
+        $navOptions = array('Create System'=>'/systems/create');
+        $navbar = new Navbar("Getting Started", null, $navOptions);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -299,8 +302,7 @@ class Systems extends CI_Controller {
 	
 	private function _error($message) {
 		// Information
-		$navOptions = array();
-		$navbar = new Navbar("Error",FALSE,FALSE,NULL,"/error",$navOptions);
+        $navbar = new Navbar("Error", null, null);
 		
 		$data['message'] = $message;
 		
