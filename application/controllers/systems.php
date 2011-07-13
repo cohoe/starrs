@@ -10,8 +10,8 @@ class Systems extends CI_Controller {
     public function all() {
 
 		// Information
-		$navOptions = array('My Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
-		$navbar = new Navbar("All Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
+		$navOptions = array('Owned Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
+		$navbar = new Navbar("All Systems",FALSE,FALSE,'All Systems',"/systems",$navOptions);
 		$systemList = $this->api->get_systems(NULL);
 
 		// Load the view data
@@ -19,7 +19,7 @@ class Systems extends CI_Controller {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
-		$info['title'] = "Systems";
+		$info['title'] = "All Systems";
 
 		// Load the main view
 		$this->load->view('core/main',$info);
@@ -28,8 +28,8 @@ class Systems extends CI_Controller {
     public function owned() {
 
 		// Information
-		$navOptions = array('My Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
-		$navbar = new Navbar("My Systems",FALSE,FALSE,NULL,"/systems",$navOptions);
+		$navOptions = array('Owned Systems'=>'owned','All Systems'=>'all','Create System'=>'create/system');
+		$navbar = new Navbar("Owned Systems",FALSE,FALSE,'Owned Systems',"/systems",$navOptions);
 		$systemList = $this->api->get_systems($this->impulselib->get_username());
 
 		// Load the view data
@@ -37,7 +37,7 @@ class Systems extends CI_Controller {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
-		$info['title'] = "Systems";
+		$info['title'] = "Owned Systems";
 
 		// Load the main view
 		$this->load->view('core/main',$info);
