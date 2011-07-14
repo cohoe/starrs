@@ -55,6 +55,15 @@ CREATE OR REPLACE FUNCTION "api"."get_system_interfaces"(input_system_name text)
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interfaces"(text) IS 'Get all interface information on a system';
 
+/* API - get_system_interface_data */
+CREATE OR REPLACE FUNCTION "api"."get_system_interface_data"(input_mac macaddr) RETURNS SETOF "systems"."interface_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "system_name","mac","name","comment","date_created","date_modified","last_modifier"
+			FROM "systems"."interfaces" WHERE "mac" = input_mac);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_interface_data"(macaddr) IS 'Get all interface information on a system for a specific interface';
+
 /* API - get_system_data */
 CREATE OR REPLACE FUNCTION "api"."get_system_data"(input_system_name text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
