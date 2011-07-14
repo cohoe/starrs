@@ -106,3 +106,12 @@ CREATE OR REPLACE FUNCTION "api"."get_os_distribution"() RETURNS SETOF "systems"
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_os_distribution"() IS 'Get fun statistics on registered operating systems';
 
+/* API - get_interface_owner */
+CREATE OR REPLACE FUNCTION "api"."get_interface_owner"(input_mac macaddr) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "owner" FROM "systems"."interfaces" 
+			JOIN "systems"."systems" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
+			WHERE "mac" = input_mac);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_interface_owner"(macaddr) IS 'Get the owner of the system that contains the mac address';
