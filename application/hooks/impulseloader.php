@@ -1,5 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+
+
 class ImpulseLoader {
 	public function initialize() {
 		# Objects
@@ -22,9 +24,9 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/exceptions/ObjectNotFoundException.php");
 		
 		# UI Stuff
-		require_once(APPPATH . "libraries/navigation/navbar.php");
+		require_once(APPPATH . "libraries/core/navbar.php");
 		
-		# API
-		#require_once(APPPATH . "models/API/API_System.php");
+		
+
 	}
 }

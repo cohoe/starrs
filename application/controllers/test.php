@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Test extends CI_Controller {
+require_once(APPPATH . "libraries/core/controller.php");
+
+class Test extends IMPULSE_Controller {
 	
 	public function index() {
 		$navModes['CREATE'] = "test/create";
@@ -12,6 +14,6 @@ class Test extends CI_Controller {
 		
 		echo link_tag("/css/mockup/main.css");
 		$this->load->view('core/navbar',array("navbar"=>$navbar));
+		$this->error("test");
 	}
-
 }

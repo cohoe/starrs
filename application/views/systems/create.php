@@ -1,4 +1,3 @@
-<title>Testing</title>
 <div class="item_container">
 
 	<form method="POST" class="create_form">
@@ -18,6 +17,11 @@
 		?>
 		</select><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" /><br />
+		
+		<? if(isset($admin)) {?>
+			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" /><br />
+		<?}?>
+		
 		<input type="submit" name="submit" value="Create System" class="submit"/>
 	</form>
 

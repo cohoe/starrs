@@ -47,6 +47,7 @@ class NetworkInterface extends ImpulseObject {
 		$this->comment = $comment;
 		$this->system = $systemName;
 		$this->interfaceName = $interfaceName;
+		$this->systemName = $systemName;
 		
 		// Initialize variables
 		$this->addresses = array();
@@ -61,6 +62,41 @@ class NetworkInterface extends ImpulseObject {
 	public function get_comment()               { return $this->comment; }
 	public function get_system_name()           { return $this->systemName; }
 	public function get_interface_addresses()   { return $this->addresses; }
+	
+	////////////////////////////////////////////////////////////////////////
+	// SETTERS
+	
+	public function set_system_name($new) {
+		$err = $this->CI->api->systems->modify_interface($this->mac, 'system_name', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->systemName = $new; 
+	}
+	
+	public function set_mac($new) {
+		$err = $this->CI->api->systems->modify_interface($this->mac, 'mac', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->mac = $new; 
+	}
+	
+	public function set_interface_name($new) {
+		$err = $this->CI->api->systems->modify_interface($this->mac, 'name', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->interfaceName = $new; 
+	}
+	
+	public function set_comment($new) { 
+		$err = $this->CI->api->systems->modify_interface($this->mac, 'comment', $new);
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->comment = $new; 
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

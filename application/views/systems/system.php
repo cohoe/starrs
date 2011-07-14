@@ -9,5 +9,6 @@
 		<tr><td><em>Date Created:</em></td><td><?echo htmlentities($system->get_date_created());?></td></tr>
 		<tr><td><em>Date Modified:</em></td><td><?echo htmlentities($system->get_date_modified());?></td></tr>
 		<tr><td><em>Last Modifier:</em></td><td><?echo htmlentities($system->get_last_modifier());?></td></tr>
+		<tr><td><em>Renew Date:</em></td><td><?echo htmlentities($system->get_renew_date());?></td></tr>
 	</table>
 </div>

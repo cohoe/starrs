@@ -1,11 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/controller.php");
 
 /**
- *
+ * This controller handles all information regarding the system objects. You can create, edit, and delete systems
+ * that you have permission to do so on. 
  */
-class Systems extends CI_Controller {
+class Systems extends IMPULSE_Controller {
 
     /**
+	 * If no additional URL paramters were specified, load this default view
      * @return void
      */
 	public function index() {
@@ -14,15 +17,17 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * View all of the systems registered in the IMPULSE database
      * @return void
      */
     public function all() {
 
-		// Information
-		
+		// Navbar
 		$navModes['CREATE'] = "/systems/create/";
 		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
 		$navbar = new Navbar("All Systems", $navModes, $navOptions);
+		
+		// List of systems
 		$systemList = $this->api->systems->get_systems(NULL);
 
 		// Load the view data
@@ -37,14 +42,17 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * View all of the systems that you are the owner for in the IMPULSE database
      * @return void
      */
     public function owned() {
 
-		// Information
+		// Navbar
 		$navModes['CREATE'] = "/systems/create/";
 		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
 		$navbar = new Navbar("Owned Systems", $navModes, $navOptions);
+		
+		// List of systems
 		$systemList = $this->api->systems->get_systems($this->impulselib->get_username());
 
 		// Load the view data
@@ -59,8 +67,9 @@ class Systems extends CI_Controller {
 	}
 
     /**
-     * @param null $systemName
-     * @param null $target
+	 * View a specific systems information. 
+     * @param null $systemName	The name of the system to view
+     * @param null $target		The target view. Right now this is just an overview and the interfaces
      * @return void
      */
 	public function view($systemName=NULL,$target=NULL) {
@@ -82,13 +91,29 @@ class Systems extends CI_Controller {
 			}
 			
 			// System Object
-			$sys = $this->api->systems->get_system_data($systemName,false);
+			try {
+				$sys = $this->api->systems->get_system_data($systemName,false);
+			}
+			catch (ObjectNotFoundException $oNFE) {
+				$this->_error("System not found!");
+				return null;
+			}
 			$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
 			
 			// Navbar information
-			$navModes['EDIT'] = "/systems/edit/";
-			$navModes['DELETE'] = "/systems/delete/";
-			$navOptions = array('Overview'=>"/systems/view/".$sys->get_system_name()."/overview",'Interfaces'=>"/systems/view/".$sys->get_system_name()."/interfaces");
+			$navModes = array();
+			if($this->api->get_editable($sys) == true) {
+				$navModes['EDIT'] = "/systems/edit/";
+			}
+			if($this->api->get_editable($sys) == true) {
+				$navModes['DELETE'] = "/systems/delete/";
+			}
+			$navOptions['Overview'] = "/systems/view/".$sys->get_system_name()."/overview";
+			$navOptions['Interfaces'] = "/systems/view/".$sys->get_system_name()."/interfaces";
+			
+			if($this->api->get_editable($sys) == true) {
+				$navOptions['Renew'] = "/systems/renew/".$sys->get_system_name();
+			}
 			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
 			// Check for network system
@@ -101,7 +126,9 @@ class Systems extends CI_Controller {
 			switch(strtolower($target)) {
 				case 'interfaces':
 					$info['data'] = $this->_load_interfaces($sys);
-					$navbar->set_create(TRUE,"/interfaces/create/");
+					if($this->api->get_editable($sys) == true) {
+						$navbar->set_create(TRUE,"/interfaces/create/".$sys->get_system_name());
+					}
 					$navbar->set_edit(FALSE,NULL);
 					$navbar->set_delete(FALSE,NULL);
 					break;
@@ -126,6 +153,7 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * Edit the properties of an existing system
      * @return void
      */
 	public function edit() {
@@ -133,17 +161,16 @@ class Systems extends CI_Controller {
 		// Get the system object that we will be editing
 		$sys = $this->impulselib->get_session('activeSystem');
 		
-		// Information is there
+		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			$this->_edit_system($sys);
 		}
 		
 		// Need to input the information
 		else {
-			// Information
+			// Navbar
 			$navModes['CANCEL'] = "";
-			$navbar = new Navbar("Owned Systems", $navModes, null);
-			#$navbar = new Navbar("Edit System - ".$sys->get_system_name(),FALSE,FALSE,TRUE,NULL,"/systems/edit/",array());
+			$navbar = new Navbar("Edit System", $navModes, null);
 			
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -154,6 +181,10 @@ class Systems extends CI_Controller {
 			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
 			$form['systemTypes'] = $this->api->systems->get_system_types();
 			$form['system'] = $sys;
+			$form['user'] = $this->impulselib->get_username();
+			if($this->api->isadmin() == TRUE) {
+				$form['admin'] = TRUE;
+			}
 			
 			// Continue loading view data
 			$info['data'] = $this->load->view('systems/edit',$form,TRUE);	// Systems
@@ -162,22 +193,22 @@ class Systems extends CI_Controller {
 			// Load the main view
 			$this->load->view('core/main',$info);
 		}
-		
 	}
 
     /**
+	 * Create a new system in the database
      * @return void
      */
 	public function create() {
 	
-		// Information is there
+		// Information is there. Create the system
 		if($this->input->post('submit')) {
 			$this->_create_system();
 		}
 		
 		// Need to input the information
 		else {
-			// Information
+			// Navbar
             $navModes['CANCEL'] = "";
             $navbar = new Navbar("Create System", $navModes, null);
 
@@ -189,6 +220,10 @@ class Systems extends CI_Controller {
 			// Get the preset form data for dropdown lists and things
 			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
 			$form['systemTypes'] = $this->api->systems->get_system_types();
+			$form['user'] = $this->impulselib->get_username();
+			if($this->api->isadmin() == TRUE) {
+				$form['admin'] = TRUE;
+			}
 			
 			// Continue loading view data
 			$info['data'] = $this->load->view('systems/create',$form,TRUE);	// Systems
@@ -200,15 +235,17 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * Delete a system in the DB (as long as you own it!)
      * @return void
      */
 	public function delete() {
 		
+		// Get the current system object
 		$sys = $this->impulselib->get_session('activeSystem');
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
-			$code = $this->_delete_system($sys);
+			$this->_delete_system($sys);
 		}
 		
 		// They hit no, don't delete the system
@@ -218,7 +255,7 @@ class Systems extends CI_Controller {
 		
 		// Need to print the prompt
 		else {
-			// Information
+			// Navbar
             $navModes['CANCEL'] = "";
 			$navbar = new Navbar("Delete System", $navModes, null);
 
@@ -239,13 +276,34 @@ class Systems extends CI_Controller {
 			$this->load->view('core/main',$info);
 		}
 	}
+	
+	/**
+	 * Renew a system registration for another year. This is to help remove dead registrations and keep the DB clean
+     * @return void
+     */
+	public function renew() {
+		// Get the current system object
+		$sys = $this->impulselib->get_session('activeSystem');
+		
+		// Renew
+		$query = $this->api->systems->renew($sys);
+		
+		// View
+		if($query != "OK") {
+			$this->_error($query);
+		}
+		else {
+			$this->success("Successfully renewed system for another year.");
+		}
+	}
 
     /**
+	 * This will open the getting started view to point users in the right direction
      * @return void
      */
 	private function _load_get_started() {
 
-		// Information
+		// Navbar
         $navOptions = array('Create System'=>'/systems/create');
         $navbar = new Navbar("Getting Started", null, $navOptions);
 		
@@ -261,6 +319,7 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * Prepare a list of all interfaces attached to a system. 
      * @param $system
      * @return
      */
@@ -274,12 +333,23 @@ class Systems extends CI_Controller {
 		
 		// Concatenate all view data into one string
 		foreach ($interfaces as $interface) {
-			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$interface),TRUE);
+			
+			// Navbar
+			$navModes = array();
+			if($this->api->get_editable($interface) == true) {
+				$navModes['EDIT'] = "/interfaces/edit/".$interface->get_mac();
+				$navModes['DELETE'] = "/interfaces/delete/".$interface->get_mac();
+			}
+			$navbar = new Navbar("Interface", $navModes, null);
+		
+			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$interface, 'navbar'=>$navbar),TRUE);
 		}
 		
 		// If there were no interfaces....
 		if(count($interfaces) == 0) {
-			$interfaceViewData = $this->load->view('systems/interfaces',array('none'=>true),TRUE);
+		
+			$navbar = new Navbar("Interface", null, null);
+			$interfaceViewData = $this->load->view('core/warning',array("message"=>"No interfaces found!"),TRUE);
 		}
 
 		// Spit back all of the interface data
@@ -287,48 +357,68 @@ class Systems extends CI_Controller {
 	}
 
     /**
+	 * Create a system from the given values. 
      * @return void
      */
 	private function _create_system() {
-		#$this->api->management->deinitialize();
-		#$this->api->management->initialize($this->impulselib->get_username());
-		$this->api->systems->create_system(
+		$query = $this->api->systems->create_system(
 			$this->input->post('systemName'),
 			$this->impulselib->get_username(),
 			$this->input->post('type'),
 			$this->input->post('osName'),
 			$this->input->post('comment')
 		);
-		#$this->api->management->deinitialize();
-		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
+		
+		if($query != "OK") {
+			$this->_error($query);
+		}
+		else {
+			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
+		}		
 	}
 
     /**
+	 * Edit an existing system
      * @param $sys
      * @return void
      */
 	private function _edit_system($sys) {
-	
-		// SYS = old
-		// POST = new
 		
+		// The error return message
+		$err = "";
+		
+		// Check for which field was modified
 		if($sys->get_system_name() != $this->input->post('systemName')) {
-			$sys->set_system_name($this->input->post('systemName'));
+			try { $sys->set_system_name($this->input->post('systemName')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_type() != $this->input->post('type')) {
-			$sys->set_type($this->input->post('type'));
+			try { $sys->set_type($this->input->post('type')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_os_name() != $this->input->post('osName')) {
-			$sys->set_os_name($this->input->post('osName'));
+			try { $sys->set_os_name($this->input->post('osName')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_comment() != $this->input->post('comment')) {
-			$sys->set_comment($this->input->post('comment'));
+			try { $sys->set_comment($this->input->post('comment')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		if($sys->get_owner() != $this->input->post('owner')) {
+			try { $sys->set_owner($this->input->post('owner')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		
-		redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
+		if($err != "") {
+			$this->_error($err);
+		}
+		else {
+			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
+		}
 	}
 
     /**
+	 * Delete a system from the DB
      * @param $sys
      * @return int
      */
@@ -336,32 +426,11 @@ class Systems extends CI_Controller {
 		$query = $this->api->systems->remove_system($sys);
 		if($query != "OK") {
 			$this->_error($query);
-			return 1;
 		}
 		else {
 			redirect(base_url()."systems/",'location');
-			return 0;
 		}
 	}
-
-    /**
-     * @param $message
-     * @return void
-     */
-	private function _error($message) {
-		// Information
-        $navbar = new Navbar("Error", null, null);
-		
-		$data['message'] = $message;
-		
-		// Load view data
-		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('core/error',$data,TRUE);
-		$info['title'] = "Error";
-		
-		// Load the main view
-		$this->load->view('core/main',$info);
-	}	
+	
+	
 }

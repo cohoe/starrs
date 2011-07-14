@@ -35,6 +35,46 @@ class API_Systems extends CI_Model {
 			{$this->db->escape($comment)})";
 			
 		$query = $this->db->query($sql);
+		
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_number() > 0) {
+				throw new DBException($this->db->_error_message());
+			}
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
+	
+	public function create_interface($systemName, $mac, $interfaceName, $comment) {
+		$sql = "SELECT api.create_interface(
+			{$this->db->escape($systemName)},
+			{$this->db->escape($mac)},
+			{$this->db->escape($interfaceName)},
+			{$this->db->escape($comment)})";
+			
+		$query = $this->db->query($sql);
+		
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_number() > 0) {
+				throw new DBException($this->db->_error_message());
+			}
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
 	}
 	
 	
@@ -169,6 +209,36 @@ class API_Systems extends CI_Model {
 		
 		return $interfaceSet;
 	}
+	
+	public function get_system_interface_data($mac, $complete=false) {
+		
+		$sql = "SELECT * FROM api.get_system_interface_data({$this->db->escape($mac)})";
+		$query = $this->db->query($sql);
+		// Error conditions
+		if($this->db->_error_number() > 0) {
+			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		}
+		
+		$result = $query->row_array();
+		$interface = new NetworkInterface(
+			$result['mac'],
+			$result['comment'],
+			$result['system_name'],
+			$result['name'],
+			$result['date_created'],
+			$result['date_modified'],
+			$result['last_modifier']
+		);
+		
+		if($complete == true) {
+			$iA = $this->get_interface_addresses($result['mac'],$complete);
+			foreach($iA as $address) {
+				$interface->add_address($address);
+			}
+		}
+		
+		return $interface;
+	}
 
     /**
      * Query the database for the interface addresses associated with the given
@@ -295,6 +365,11 @@ class API_Systems extends CI_Model {
 		return $query->result_array();
 	}
 	
+	public function get_interface_owner($int) {
+		$sql = "SELECT api.get_interface_owner('{$int->get_mac()}')";
+		$query = $this->db->query($sql);
+		return $query->row()->get_interface_owner;
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// MODIFY FUNCTIONS
@@ -317,9 +392,23 @@ class API_Systems extends CI_Model {
 			}
 		}
 		catch (DBException $dbE) {
-			if($dbE->permissiondenied() == TRUE) {
-				$return = $dbE->getMessage();
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
+	
+	public function modify_interface($mac, $field, $newValue) {
+		$sql = "SELECT api.modify_interface({$this->db->escape($mac)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
+		$query = $this->db->query($sql);
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
 			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
 		}
 		return $return;
 	}
@@ -345,9 +434,23 @@ class API_Systems extends CI_Model {
 			}
 		}
 		catch (DBException $dbE) {
-			if($dbE->permissiondenied() == TRUE) {
-				$return = $dbE->getMessage();
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
+	
+	public function remove_interface($interface) {
+		$sql = "SELECT api.remove_interface({$this->db->escape($interface->get_mac())})";
+		$query = $this->db->query($sql);
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
 			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
 		}
 		return $return;
 	}
@@ -357,5 +460,20 @@ class API_Systems extends CI_Model {
 	////////////////////////////////////////////////////////////////////////
 	// UTILITY FUNCTIONS
 
+	public function renew($sys) {
+		$sql = "SELECT api.renew_system({$this->db->escape($sys->get_system_name())})";
+		$query = $this->db->query($sql);
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
 	
 }

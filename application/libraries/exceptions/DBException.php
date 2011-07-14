@@ -19,7 +19,7 @@ class DBException extends Exception {
      * @return bool
      */
 	public function permissiondenied() {
-		if(preg_match("/permission denied/i", $this->message)) {
+		if(preg_match("/permission/i", $this->message)) {
 			return true;
 		}
 		else {
