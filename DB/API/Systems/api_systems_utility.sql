@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
 
-		PERFORM api.create_log_entry('API','INFO','updating system'|input_system_name);
+		PERFORM api.create_log_entry('API','INFO','updating system'||input_system_name);
 		UPDATE "systems"."systems"
 		SET "renew_date" = date(current_date + interval '1 year')
 		WHERE "system_name" = input_system_name;
