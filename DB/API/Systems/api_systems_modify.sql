@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "mac" = input_old_mac) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit system % denied. You are not owner',input_old_name;
+				RAISE EXCEPTION 'Permission to edit interface % denied. You are not owner',input_old_mac;
 			END IF;
  		END IF;
 
