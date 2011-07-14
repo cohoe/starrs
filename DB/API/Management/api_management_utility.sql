@@ -33,6 +33,9 @@ CREATE OR REPLACE FUNCTION "api"."validate_name"(input text) RETURNS TEXT AS $$
 		IF BadCrap != '' THEN
 			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
 		END IF;
+		IF input = "" THEN
+			RAISE EXCEPTION 'Name cannot be blank';
+		END IF;
 		RETURN input;
 	END;
 $$ LANGUAGE 'plpgsql';
