@@ -49,6 +49,7 @@ INSERT INTO "systems"."os"
 	('Debian','Linux'),
 	('FreeBSD','BSD'),
 	('OpenBSD','BSD'),
+	('Mac OS X', 'Mac'),
 	('NetBSD','BSD');
 	
 /* NETWORK INFORMATION
