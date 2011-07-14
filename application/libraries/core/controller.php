@@ -9,8 +9,8 @@ class IMPULSE_Controller extends CI_Controller {
      */
 	public function error($message) {
 		// Navbar
-        $navbar = new Navbar("Error", null, null);
-		
+		$navbar = new Navbar("Error", null, null);
+
 		$data['message'] = $message;
 		
 		// Load view data
@@ -31,7 +31,8 @@ class IMPULSE_Controller extends CI_Controller {
      */
 	public function success($message) {
 		// Navbar
-        $navbar = new Navbar("Success", null, null);
+		$navOptions['Back'] = $this->input->server('HTTP_REFERER');
+		$navbar = new Navbar("Success", null, $navOptions);
 		
 		$data['message'] = $message;
 		

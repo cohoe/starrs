@@ -159,6 +159,9 @@ a .nav_item_left {
 	float: right;
 	margin-top: 1em;
 	margin-bottom: 1em;
+	border: 2px solid black;
+	background-color: #7b869c;
+	color: white;
 }
 
 .prompt {
@@ -223,4 +226,10 @@ a .nav_item_left {
 .interface_box_nav .nav_item_right {
 	border: 1px solid black;
 	border-bottom: none;
+}
+
+.save_button {
+	border: 1px solid black;
+	background-color: #7b869c;
+	color: white;
 }

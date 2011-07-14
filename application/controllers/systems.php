@@ -102,17 +102,13 @@ class Systems extends IMPULSE_Controller {
 			
 			// Navbar information
 			$navModes = array();
-			if($this->api->get_editable($sys) == true) {
-				$navModes['EDIT'] = "/systems/edit/";
-			}
-			if($this->api->get_editable($sys) == true) {
-				$navModes['DELETE'] = "/systems/delete/";
-			}
 			$navOptions['Overview'] = "/systems/view/".$sys->get_system_name()."/overview";
 			$navOptions['Interfaces'] = "/systems/view/".$sys->get_system_name()."/interfaces";
 			
 			if($this->api->get_editable($sys) == true) {
 				$navOptions['Renew'] = "/systems/renew/".$sys->get_system_name();
+				$navModes['EDIT'] = "/systems/edit/";
+				$navModes['DELETE'] = "/systems/delete/";
 			}
 			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
