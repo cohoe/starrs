@@ -115,3 +115,13 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_owner"(input_mac macaddr) RETURN
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_owner"(macaddr) IS 'Get the owner of the system that contains the mac address';
+
+/* API - get_interface_address_system */
+CREATE OR REPLACE FUNCTION "api"."get_interface_address_system"(input_address inet) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "system_name" FROM "systems"."interface_addresses"
+			JOIN "systems"."interfaces" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
+			WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_interface_address_system"(inet) IS 'Get the name of the system to which the given address is assigned';
