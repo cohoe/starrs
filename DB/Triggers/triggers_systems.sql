@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 			RAISE EXCEPTION 'Primary address for this interface and family already exists';
 		ELSIF NEW."isprimary" IS FALSE AND RowCount = 0 THEN
 			-- There is no primary and this is set to not be one.
-			RAISE EXCEPTION 'No primary address exists for this interface (%) and family (%).',NEW."name",NEW."family";
+			RAISE EXCEPTION 'No primary address exists for this interface (%) and family (%).',NEW."mac",NEW."family";
 		END IF;
 
 		-- Check for one DHCPable address per MAC
@@ -179,6 +179,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 		END IF;
 		
 		-- Check for IPv6 secondary name
+		/*
 		IF NEW."family" = 6 AND NEW."isprimary" = FALSE THEN
 			SELECT "name" INTO PrimaryName
 			FROM "systems"."interface_addresses"
@@ -188,7 +189,7 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_update"() RETURNS TRIG
 				RAISE EXCEPTION 'IPv6 secondaries must have the same interface name (%) as the primary (%)',NEW."name",PrimaryName;
 			END IF;
 		END IF;			
-		
+		*/
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
