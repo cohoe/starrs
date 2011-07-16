@@ -115,4 +115,12 @@ class NetworkInterface extends ImpulseObject {
 		}
 		$this->addresses[] = $interfaceAddress;
 	}
+	
+	public function get_address($address) {
+		foreach ($this->addresses as $addr) {
+			if($addr->get_address() == $address) {
+				return $addr;
+			}
+		}
+	}
 }

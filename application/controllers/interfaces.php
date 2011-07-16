@@ -56,7 +56,9 @@ class Interfaces extends IMPULSE_Controller {
 			$this->error("No interface was specified");
 		}
 		
-		$interface = $this->api->systems->get_system_interface_data($mac);
+		#$interface = $this->api->systems->get_system_interface_data($mac);
+		session_start();
+		$interface = $_SESSION['interfaces'][$mac];
 		
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
@@ -135,6 +137,34 @@ class Interfaces extends IMPULSE_Controller {
 		}
 	}
 	
+	public function addresses($mac=NULL) {
+		if($mac ==  NULL) {
+			$this->error("No interface was given!");
+			return;
+		}
+		
+		$int = $this->api->systems->get_system_interface_data($mac, false);
+		
+		// Navbar
+		$navModes['CREATE'] = "/addresses/create/".$mac;
+		$navModes['DELETE'] = "/addresses/delete/".$mac;
+		$navOptions['Interfaces'] = "/systems/view/".$int->get_system_name()."/interfaces";
+		$navbar = new Navbar("Addresses on " . $mac, $navModes, $navOptions);
+
+		// Load the view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		
+		$info['data'] = $this->_load_addresses($int);
+		$info['title'] = "Addresses - ".$mac;
+		
+		// Load the main view
+		$this->load->view('core/main',$info);
+		
+		$_SESSION['interfaces'][$int->get_mac()] = $int;
+	}
+	
 	private function _create() {
 		$query = $this->api->systems->create_interface(
 			$this->input->post('systemName'),
@@ -189,7 +219,28 @@ class Interfaces extends IMPULSE_Controller {
 		}
 	}
 	
+	private function _load_addresses($int) {
+		$addressViewData = "";
 		
+		$addrs = $this->api->systems->get_system_interface_addresses($int->get_mac(), true);
+		#$addrs = $int->get_interface_addresses();
+		
+		session_start();
+		
+		foreach($addrs as $address) {
+			$navbar = new Navbar("Address", null, null);
+			$addressViewData .= $this->load->view('systems/address',array('address'=>$address, 'navbar'=>$navbar),TRUE);
+			#$_SESSION['intaddrs'][$address->get_address()] = $address;
+			$int->add_address($address);
+		}
+		
+		if(count($addrs) == 0) {
+			return $this->warning("No addresses found!");
+		}
+		else {
+			return $addressViewData;
+		}
+	}	
 }
 
 /* End of file interfaces.php */

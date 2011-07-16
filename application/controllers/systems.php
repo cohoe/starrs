@@ -144,7 +144,8 @@ class Systems extends IMPULSE_Controller {
 			$this->load->view('core/main',$info);
 			
 			// Set the active system object to prepare for changes
-			$this->impulselib->set_session('activeSystem',$sys);
+			#$this->impulselib->set_session('activeSystem',$sys);
+			$_SESSION['activeSystem'] = $sys;
 		}
 	}
 
@@ -327,6 +328,9 @@ class Systems extends IMPULSE_Controller {
 		// Value of all interface view data
 		$interfaceViewData = "";
 		
+		// Start the session
+		session_start();
+		
 		// Concatenate all view data into one string
 		foreach ($interfaces as $interface) {
 			
@@ -336,9 +340,12 @@ class Systems extends IMPULSE_Controller {
 				$navModes['EDIT'] = "/interfaces/edit/".$interface->get_mac();
 				$navModes['DELETE'] = "/interfaces/delete/".$interface->get_mac();
 			}
-			$navbar = new Navbar("Interface", $navModes, null);
+			$navOptions['Addresses'] = "/interfaces/addresses/".$interface->get_mac();
+			$navbar = new Navbar("Interface", $navModes, $navOptions);
 		
 			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$interface, 'navbar'=>$navbar),TRUE);
+			
+			$_SESSION['interfaces'][$interface->get_mac()] = $interface;
 		}
 		
 		// If there were no interfaces....

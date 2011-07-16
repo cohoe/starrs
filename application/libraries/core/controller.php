@@ -54,19 +54,21 @@ class IMPULSE_Controller extends CI_Controller {
      */
 	public function warning($message) {
 		// Navbar
-        $navbar = new Navbar("Warning", null, null);
+        #$navbar = new Navbar("Warning", null, null);
 		
 		$data['message'] = $message;
 		
 		// Load view data
-		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('core/warning',$data,TRUE);
-		$info['title'] = "Warning";
+		#$info['header'] = $this->load->view('core/header',"",TRUE);
+		#$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		#$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		#$info['data'] = $this->load->view('core/warning',$data,TRUE);
+		#$info['title'] = "Warning";
 		
 		// Load the main view
-		$this->load->view('core/main',$info);
+		#$this->load->view('core/main',$info);
+		
+		return $this->load->view('core/warning',$data,TRUE);
 	}
 
 }

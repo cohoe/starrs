@@ -45,6 +45,10 @@ class InterfaceAddress extends ImpulseObject {
 	// bool			Is this address the primary for the interface
 	private $isPrimary;
 	
+	// string		The name of the containing system
+	private $systemName;
+
+	
 	////////////////////////////////////////////////////////////////////////
 	// DNS RELATED VARIABLES
 	
@@ -117,6 +121,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsFqdn = $this->CI->api->dns->get_ip_fqdn($this->address);
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
         $this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
+		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
 		
 		// Loaders
 		#$this->_load_pointer_records();
@@ -145,6 +150,19 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_mx_records()      { return $this->dnsMxRecords; }
 	public function get_pointer_records() { return $this->dnsPointerRecords; }
 	public function get_text_records()    { return $this->dnsTxtRecords; }
+	public function get_system_name()     { return $this->systemName; }
+	
+	public function get_help() {
+		return "Interfaces are assigned IP addresses in multiple ways from configured resource pools. 
+		Each address is then configured with DNS records and Firewall Rules. Depending on your IP address
+		and privilege level, certain records may or may not be available to you. Firewall rules can be 
+		applied in \"standalone\" or \"metahost\" contexts. You will be warned if there are conflicts in 
+		your firewall rules.";
+	}
+	
+	public function get_start() {
+		return "To get started, click a view above, then click Create.";
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

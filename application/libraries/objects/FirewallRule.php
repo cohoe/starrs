@@ -64,7 +64,7 @@ class FirewallRule extends ImpulseObject {
 		
 		// If this rule came from a program, get the name and store it locally
 		if(preg_match("/program/",$this->source)) {
-			$this->programName = $this->CI->api->get_firewall_program($this->port);
+			$this->programName = $this->CI->api->firewall->get_firewall_program($this->port);
 		}
 		else {
 			$this->programName = "Unknown";

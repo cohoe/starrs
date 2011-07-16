@@ -122,6 +122,8 @@ body {
 ****************************************/
 .item_information_area_table {
 	width: auto;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .item_information_area_table em {

@@ -228,8 +228,25 @@ a .nav_item_left {
 	border-bottom: none;
 }
 
+.interface_box_nav .nav_item_left span {
+	color: white;
+}
+
+.interface_box_nav .nav_item_left {
+	border: 1px solid black;
+	border-bottom: none;
+}
+
 .save_button {
 	border: 1px solid black;
 	background-color: #7b869c;
 	color: white;
+}
+
+.address_box {
+	width: auto; 
+	border: 1px solid black; 
+	margin: 1em; 
+	padding: .1em; 
+	text-align: center;
 }

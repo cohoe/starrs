@@ -77,6 +77,35 @@ class API_Systems extends CI_Model {
 		return $return;
 	}
 	
+	public function create_interface_address($mac, $address, $config, $class, $isprimary, $comment) {
+	
+		$sql = "SELECT api.create_interface_address(
+			{$this->db->escape($mac)},
+			{$this->db->escape($address)},
+			{$this->db->escape($config)},
+			{$this->db->escape($class)},
+			{$this->db->escape($isprimary)},
+			{$this->db->escape($comment)}
+		)";
+		
+		$query = $this->db->query($sql);
+		
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_number() > 0) {
+				throw new DBException($this->db->_error_message());
+			}
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
+	
 	
 	////////////////////////////////////////////////////////////////////////
 	// GET FUNCTIONS
@@ -218,6 +247,9 @@ class API_Systems extends CI_Model {
 		if($this->db->_error_number() > 0) {
 			throw new DBException("A database error occurred: " . $this->db->_error_message());
 		}
+		if($this->db->_error_message() != "") {
+			throw new DBException($this->db->_error_message());
+		}
 		
 		$result = $query->row_array();
 		$interface = new NetworkInterface(
@@ -231,7 +263,7 @@ class API_Systems extends CI_Model {
 		);
 		
 		if($complete == true) {
-			$iA = $this->get_interface_addresses($result['mac'],$complete);
+			$iA = $this->get_system_interface_addresses($result['mac'],$complete);
 			foreach($iA as $address) {
 				$interface->add_address($address);
 			}
@@ -279,31 +311,31 @@ class API_Systems extends CI_Model {
             // If we are building all information about the system, do all this stuff
             if($complete == true) {
                 // Load firewall rules
-                $fwRules = $this->get_address_rules($row['address']);
+                $fwRules = $this->api->firewall->get_address_rules($row['address']);
                 foreach($fwRules as $fwRule) {
                     $address->add_firewall_rule($fwRule);
                 }
 
                 // Load DNS pointer records
-                $pointerRecords = $this->get_pointer_records($row['address']);
+                $pointerRecords = $this->api->dns->get_pointer_records($row['address']);
                 foreach ($pointerRecords as $pointerRecord) {
                     $address->add_pointer_record($pointerRecord);
                 }
 
                 // Load DNS text records
-                $txtRecords = $this->get_txt_records($row['address']);
+                $txtRecords = $this->api->dns->get_txt_records($row['address']);
                 foreach ($txtRecords as $txtRecord) {
                     $address->add_txt_record($txtRecord);
                 }
 
                 // Load DNS nameserver records
-                $nsRecords = $this->get_ns_records($row['address']);
+                $nsRecords = $this->api->dns->get_ns_records($row['address']);
                 foreach ($nsRecords as $nsRecord) {
                     $address->add_ns_record($nsRecord);
                 }
 
                 // Load DNS mailserver records
-                $mxRecords = $this->get_mx_records($row['address']);
+                $mxRecords = $this->api->dns->get_mx_records($row['address']);
                 foreach ($mxRecords as $mxRecord) {
                     $address->add_mx_record($mxRecord);
                 }
@@ -315,6 +347,70 @@ class API_Systems extends CI_Model {
 
         // Return the array of addresses
 		return $addressSet;
+	}
+	
+	public function get_system_inteface_address($address, $complete=false) {
+				
+		// Run the query
+		$sql = "SELECT * FROM systems.interface_addresses WHERE address={$this->db->escape($address)}";
+		$query = $this->db->query($sql);
+		
+		// Check for errors
+		if($this->db->_error_number() > 0) {
+			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		}
+		
+		$row = $query->row_array();
+		
+		// Create the objects
+		$address = new InterfaceAddress(
+				$row['address'], 
+				$row['class'], 
+				$row['config'], 
+				$row['mac'], 
+				$row['renew_date'], 
+				$row['isprimary'],
+				$row['comment'], 
+				$row['date_created'], 
+				$row['date_modified'], 
+				$row['last_modifier']
+		);
+
+		// If we are building all information about the system, do all this stuff
+		if($complete == true) {
+			// Load firewall rules
+			$fwRules = $this->api->firewall->get_address_rules($row['address']);
+			foreach($fwRules as $fwRule) {
+				$address->add_firewall_rule($fwRule);
+			}
+
+			// Load DNS pointer records
+			$pointerRecords = $this->api->dns->get_pointer_records($row['address']);
+			foreach ($pointerRecords as $pointerRecord) {
+				$address->add_pointer_record($pointerRecord);
+			}
+
+			// Load DNS text records
+			$txtRecords = $this->api->dns->get_txt_records($row['address']);
+			foreach ($txtRecords as $txtRecord) {
+				$address->add_txt_record($txtRecord);
+			}
+
+			// Load DNS nameserver records
+			$nsRecords = $this->api->dns->get_ns_records($row['address']);
+			foreach ($nsRecords as $nsRecord) {
+				$address->add_ns_record($nsRecord);
+			}
+
+			// Load DNS mailserver records
+			$mxRecords = $this->api->dns->get_mx_records($row['address']);
+			foreach ($mxRecords as $mxRecord) {
+				$address->add_mx_record($mxRecord);
+			}
+		}
+
+        // Return the array of addresses
+		return $address;
 	}
 
     /**
@@ -369,6 +465,12 @@ class API_Systems extends CI_Model {
 		$sql = "SELECT api.get_interface_owner('{$int->get_mac()}')";
 		$query = $this->db->query($sql);
 		return $query->row()->get_interface_owner;
+	}
+	
+	public function get_interface_address_system($address) {
+		$sql = "SELECT api.get_interface_address_system({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+		return $query->row()->get_interface_address_system;
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -439,8 +541,24 @@ class API_Systems extends CI_Model {
 		return $return;
 	}
 	
-	public function remove_interface($interface) {
-		$sql = "SELECT api.remove_interface({$this->db->escape($interface->get_mac())})";
+	public function remove_interface($int) {
+		$sql = "SELECT api.remove_interface({$this->db->escape($int->get_mac())})";
+		$query = $this->db->query($sql);
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
+	
+	public function remove_interface_address($addr) {
+		$sql = "SELECT api.remove_interface_address({$this->db->escape($addr->get_address())})";
 		$query = $this->db->query($sql);
 		$return = "OK";
 		// Error conditions
