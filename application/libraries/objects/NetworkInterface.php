@@ -113,14 +113,13 @@ class NetworkInterface extends ImpulseObject {
 		if(!($interfaceAddress instanceof InterfaceAddress)) {
 			throw new APIException("The given interface address (" . get_class($interfaceAddress) . ") is not an InterfaceAddress!");
 		}
-		$this->addresses[] = $interfaceAddress;
+		$this->addresses[$interfaceAddress->get_address()] = $interfaceAddress;
 	}
 	
 	public function get_address($address) {
-		foreach ($this->addresses as $addr) {
-			if($addr->get_address() == $address) {
-				return $addr;
-			}
-		}
+        if($this->addresses[$address] == NULL) {
+            throw new APIException("Unable to locate the address object for address $address on interface ".$this->mac);
+        }
+		return $this->addresses[$address];
 	}
 }
