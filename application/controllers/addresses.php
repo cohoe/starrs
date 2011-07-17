@@ -29,6 +29,7 @@ class Addresses extends IMPULSE_Controller {
         }
         catch (ObjectNotFoundException $onfE) {
             $this->error($onfE->getMessage());
+            return;
         }
 
         $int = $sys->get_interface($mac);

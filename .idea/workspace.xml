@@ -4,7 +4,6 @@
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/addresses.php" afterPath="$PROJECT_DIR$/application/controllers/addresses.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/Impulselib.php" afterPath="$PROJECT_DIR$/application/libraries/Impulselib.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,7 +38,7 @@
       <file leaf-file-name="addresses.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="0" selection-start="813" selection-end="813" vertical-scroll-proportion="0.59080964">
+            <state line="31" column="19" selection-start="1046" selection-end="1046" vertical-scroll-proportion="0.6892779">
               <folding />
             </state>
           </provider>
@@ -375,7 +374,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned up and commented libraries" />
+    <option name="LAST_COMMIT_MESSAGE" value="added error catching to addresses" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -388,7 +387,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="forgot array brackets" />
     <MESSAGE value="changed addressrecord return type" />
     <MESSAGE value="changed handling of the FQDN" />
     <MESSAGE value="added handler for no records" />
@@ -413,6 +411,7 @@
     <MESSAGE value="adding interface objects back after work" />
     <MESSAGE value="added session to systems" />
     <MESSAGE value="cleaned up and commented libraries" />
+    <MESSAGE value="added error catching to addresses" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -525,7 +524,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="0" selection-start="813" selection-end="813" vertical-scroll-proportion="0.59080964">
+        <state line="31" column="19" selection-start="1046" selection-end="1046" vertical-scroll-proportion="0.6892779">
           <folding />
         </state>
       </provider>
