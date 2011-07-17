@@ -33,7 +33,13 @@ class Addresses extends IMPULSE_Controller {
         }
 
         $int = $sys->get_interface($mac);
-		$addr = $int->get_address($address);
+        try {
+		    $addr = $int->get_address($address);
+        }
+        catch (APIException $apiE) {
+            $this->error($apiE->getMessage());
+            return;
+        }
 		
 		// Navbar
 		$navOptions['Main'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/main";
