@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" afterPath="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/interfaces/create.php" afterPath="$PROJECT_DIR$/application/views/interfaces/create.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/interfaces/edit.php" afterPath="$PROJECT_DIR$/application/views/interfaces/edit.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,10 +36,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NetworkInterface.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="NetworkInterface.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="124" column="1" selection-start="4391" selection-end="4391" vertical-scroll-proportion="0.7252252">
+            <state line="120" column="31" selection-start="4207" selection-end="4207" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="create.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/views/interfaces/create.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="18" column="8" selection-start="502" selection-end="502" vertical-scroll-proportion="0.62355655">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="edit.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/views/interfaces/edit.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="20" column="30" selection-start="717" selection-end="717" vertical-scroll-proportion="-12.5">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="create.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="24" column="42" selection-start="760" selection-end="794" vertical-scroll-proportion="-15.0">
               <folding />
             </state>
           </provider>
@@ -67,8 +95,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php" />
-        <option value="$PROJECT_DIR$/application/libraries/objects/MxRecord.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NsRecord.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/PointerRecord.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
@@ -83,6 +109,8 @@
         <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
         <option value="$PROJECT_DIR$/application/controllers/addresses.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" />
+        <option value="$PROJECT_DIR$/application/views/interfaces/create.php" />
+        <option value="$PROJECT_DIR$/application/views/interfaces/edit.php" />
       </list>
     </option>
   </component>
@@ -195,7 +223,51 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="libraries" />
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="systems" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="interfaces" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -214,32 +286,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="objects" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -405,7 +451,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added test for addresses" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed error text" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -441,34 +487,13 @@
     <MESSAGE value="added error catching to addresses" />
     <MESSAGE value="added return" />
     <MESSAGE value="added isset" />
-    <MESSAGE value="changed error text" />
     <MESSAGE value="added test for addresses" />
+    <MESSAGE value="changed error text" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/TxtRecord.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="4" selection-start="1591" selection-end="1591" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/DnsRecord.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="77" column="53" selection-start="2637" selection-end="2637" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/AddressRecord.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1489" selection-end="1590" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/FirewallRule.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="93" column="57" selection-start="3298" selection-end="3298" vertical-scroll-proportion="0.0">
@@ -555,7 +580,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="124" column="1" selection-start="4391" selection-end="4391" vertical-scroll-proportion="0.7252252">
+        <state line="120" column="31" selection-start="4207" selection-end="4207" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="42" selection-start="760" selection-end="794" vertical-scroll-proportion="-15.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/interfaces/edit.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="30" selection-start="717" selection-end="717" vertical-scroll-proportion="-12.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/interfaces/create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="8" selection-start="502" selection-end="502" vertical-scroll-proportion="0.62355655">
           <folding />
         </state>
       </provider>

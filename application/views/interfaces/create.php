@@ -19,6 +19,6 @@
 		
 		<label for="name">Interface Name: </label><input type="text" name="name" /><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" /><br />
-		<input type="submit" name="submit" value="Save" class="submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Save" class="submit"/>
 	</form>
 </div>
