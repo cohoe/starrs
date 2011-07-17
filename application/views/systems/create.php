@@ -22,7 +22,7 @@
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" /><br />
 		<?}?>
 		
-		<input type="submit" name="submit" value="Create System" class="submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create System" class="submit"/>
 	</form>
 
 </div>

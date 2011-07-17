@@ -163,7 +163,7 @@ class Addresses extends IMPULSE_Controller {
 		else {
 			$address = $this->api->systems->get_system_inteface_address($address);
 			$int->add_address($address);
-			redirect(base_url()."/interfaces/addresses/".$int->get_mac(),'location');
+			redirect(base_url()."/interfaces/addresses/".$int->get_mac()."/".$address->get_address(),'location');
 		}
 	}
 	

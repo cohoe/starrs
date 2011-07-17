@@ -26,7 +26,6 @@ class ImpulseLoader {
 		# UI Stuff
 		require_once(APPPATH . "libraries/core/navbar.php");
 		
-		
 
 	}
 }

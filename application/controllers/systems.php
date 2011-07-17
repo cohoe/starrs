@@ -73,7 +73,7 @@ class Systems extends IMPULSE_Controller {
      * @return void
      */
 	public function view($systemName=NULL,$target=NULL) {
-	
+
 		// Clean up the URL data since it will have %20's rather than spaces
 		$systemName = $this->impulselib->remove_url_space($systemName);
 		$target = $this->impulselib->remove_url_space($target);
@@ -145,6 +145,9 @@ class Systems extends IMPULSE_Controller {
 			
 			// Set the active system object to prepare for changes
 			#$this->impulselib->set_session('activeSystem',$sys);
+			if(session_id() == "") { 
+				session_start();
+			}
 			$_SESSION['activeSystem'] = $sys;
 		}
 	}

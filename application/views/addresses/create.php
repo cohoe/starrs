@@ -21,8 +21,7 @@
 			} ?>
 		</select><br />
 		
-		<label for="isprimary">Primary Address?: </label>
-		<input type="checkbox" name="isprimary" value="True" /><br />
+		<label for="isprimary">Primary Address?: </label><input type="checkbox" name="isprimary" value="True" checked="checked" ><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" /><br />
 		<input type="submit" name="submit" value="Create" class="submit"/>
 	</form>

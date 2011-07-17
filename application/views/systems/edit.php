@@ -29,11 +29,11 @@
 		<label for="comment">Comment: </label><input type="text" name="comment" value="<?echo $system->get_comment();?>"/><br />
 		
 		<? if(isset($admin)) {?>
-			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" /><br />
+			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $system->get_owner();?>" /><br />
 		<?} else {?>
 			<input type="hidden" name="owner" value="<?echo $user;?>" /><br />
 		<?}?>
-		<input type="submit" name="submit" value="Save" class="submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Save" class="submit"/>
 	</form>
 
 </div>
