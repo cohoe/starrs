@@ -139,7 +139,12 @@ class System extends ImpulseObject {
 		}
 		
 		// Add an interface to the local interfaces array
-		$this->interfaces[] = $interface;
+		$this->interfaces[$interface->get_mac()] = $interface;
 		$this->hasInterfaces = true;
 	}
+
+    public function get_interface($mac) {
+        // Return the interface object that corresponds to the given MAC address
+        return $this->interfaces[$mac];
+    }
 }

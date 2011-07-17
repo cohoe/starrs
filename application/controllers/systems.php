@@ -315,37 +315,39 @@ class Systems extends IMPULSE_Controller {
 	}
 
     /**
-	 * Prepare a list of all interfaces attached to a system. 
-     * @param $system
-     * @return
+	 * Prepare a list of all interfaces attached to a system.
+     * @param $sys
+     * @return string
      */
-	private function _load_interfaces($system) {
+	private function _load_interfaces($sys) {
 	
 		// Get the interface objects for the system
-		$interfaces = $this->api->systems->get_system_interfaces($system->get_system_name(),false);
+		$ints = $this->api->systems->get_system_interfaces($sys->get_system_name(),false);
 		
 		// Value of all interface view data
 		$interfaceViewData = "";
 		
 		// Concatenate all view data into one string
-		foreach ($interfaces as $interface) {
+		foreach ($ints as $int) {
 			
 			// Navbar
 			$navModes = array();
-			if($this->api->get_editable($interface) == true) {
-				$navModes['EDIT'] = "/interfaces/edit/".$interface->get_mac();
-				$navModes['DELETE'] = "/interfaces/delete/".$interface->get_mac();
+			if($this->api->get_editable($int) == true) {
+				$navModes['EDIT'] = "/interfaces/edit/".$int->get_mac();
+				$navModes['DELETE'] = "/interfaces/delete/".$int->get_mac();
 			}
-			$navOptions['Addresses'] = "/interfaces/addresses/".$interface->get_mac();
+			$navOptions['Addresses'] = "/interfaces/addresses/".$int->get_mac();
 			$navbar = new Navbar("Interface", $navModes, $navOptions);
 		
-			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$interface, 'navbar'=>$navbar),TRUE);
+			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);
 			
-			$this->impulselib->add_active_interface($interface);
+			#$this->impulselib->add_active_interface($interface);
+            # Should be using the system object
+            $sys->add_interface($int);
 		}
 		
 		// If there were no interfaces....
-		if(count($interfaces) == 0) {
+		if(count($ints) == 0) {
 		
 			$navbar = new Navbar("Interface", null, null);
 			$interfaceViewData = $this->load->view('core/warning',array("message"=>"No interfaces found!"),TRUE);
@@ -430,6 +432,7 @@ class Systems extends IMPULSE_Controller {
 			redirect(base_url()."systems/",'location');
 		}
 	}
-	
-	
 }
+
+/* End of file systems.php */
+/* Location: ./application/controllers/systems.php */

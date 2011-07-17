@@ -134,15 +134,15 @@ class Impulselib {
 		$_SESSION['interfaces'][$int->get_mac()] = serialize($int);
 	}
 
-	public function get_active_interface($mac) {
-		if(session_id() == "") { 
-			session_start();
-		}
-
-		# I have absolutely no idea why this works... or is necessary
-		require_once(APPPATH . "controllers/systems.php");
-		return unserialize($_SESSION['interfaces'][$mac]);
-	}
+//	public function get_active_interface($mac) {
+//		if(session_id() == "") {
+//			session_start();
+//		}
+//
+//		# I have absolutely no idea why this works... or is necessary
+//		require_once(APPPATH . "controllers/systems.php");
+//		return unserialize($_SESSION['interfaces'][$mac]);
+//	}
 	
 }
 
