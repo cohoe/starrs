@@ -7,7 +7,7 @@
 				echo "<option value=\"$range[name]\">$range[name]</option>";
 			} ?>
 		</select></br>
-		<span style="float: right; font-weight: bold;">-OR-</span>
+		<label><span style="font-weight: bold;">-OR-</span></label>
 		</br>
 		<label for="address">Address: </label><input type="text" name="address" /><br />
 		<label for="config">Configuration: </label><select name="config">
