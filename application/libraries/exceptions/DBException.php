@@ -12,6 +12,8 @@ class DBException extends Exception {
      */
 	public function __construct($message) {
 		
+		// I hate PHP regex. It wouldnt let me do (.*?) 
+		$message = preg_replace('/^ERROR: ([^&]*)CONTEXT([^&]*)$/i', '\1', $message);
 		$this->message = $message;
 	}
 
@@ -26,5 +28,4 @@ class DBException extends Exception {
 			return false;
 		}
 	}
-	
 }

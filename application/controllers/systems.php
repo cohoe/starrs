@@ -289,7 +289,7 @@ class Systems extends IMPULSE_Controller {
 			$this->_error($query);
 		}
 		else {
-			$this->success("Successfully renewed system for another year.");
+			$this->success("Successfully renewed \"".$sys->get_system_name()."\" for another year.");
 		}
 	}
 
