@@ -49,7 +49,12 @@ abstract class ImpulseObject {
 	/**
 	 * These are all prety simple. They return the variable in the name
 	 */
-	public function get_date_created()  { return $this->dateCreated; }
-	public function get_date_modified() { return $this->dateModified; }
+	public function get_date_created()  { return $this->CI->impulselib->clean_timestamp($this->dateCreated); }
+	public function get_date_modified() { return $this->CI->impulselib->clean_timestamp($this->dateModified); }
 	public function get_last_modifier() { return $this->lastModifier; }
+
+	////////////////////////////////////////////////////////////////////////
+	// PUBLIC FUNCTIONS
+
+	
 }

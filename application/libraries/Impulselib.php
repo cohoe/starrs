@@ -145,6 +145,10 @@ class Impulselib {
 //		require_once(APPPATH . "controllers/systems.php");
 //		return unserialize($_SESSION['interfaces'][$mac]);
 //	}
+
+	public function clean_timestamp($timestamp) { 
+		return preg_replace('/:(\d+).(\d+)$/','',$timestamp); 
+	}
 	
 }
 

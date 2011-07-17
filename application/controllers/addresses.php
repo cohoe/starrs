@@ -29,6 +29,7 @@ class Addresses extends IMPULSE_Controller {
 		$addr = $int->get_address($address);
 		
 		// Navbar
+		$navOptions['Main'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/main";
 		$navOptions['DNS Records'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/dns";
 		$navOptions['Firewall Rules'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/firewall";
 		$navOptions['All Addresses'] = "/interfaces/addresses/".$addr->get_mac();
