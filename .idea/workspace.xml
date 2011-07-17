@@ -1,30 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="added session to systems">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/application/libraries/core/oldnavbar.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/application/libraries/navigation/navbar.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/application/libraries/navigation/oldnavbar.php" afterPath="" />
+    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/addresses.php" afterPath="$PROJECT_DIR$/application/controllers/addresses.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/Impulselib.php" afterPath="$PROJECT_DIR$/application/libraries/Impulselib.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/core/controller.php" afterPath="$PROJECT_DIR$/application/libraries/core/controller.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/core/navbar.php" afterPath="$PROJECT_DIR$/application/libraries/core/navbar.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/exceptions/APIException.php" afterPath="$PROJECT_DIR$/application/libraries/exceptions/APIException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php" afterPath="$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/exceptions/DBException.php" afterPath="$PROJECT_DIR$/application/libraries/exceptions/DBException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php" afterPath="$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/AddressRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/AddressRecord.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/DnsRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/DnsRecord.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/FirewallRule.php" afterPath="$PROJECT_DIR$/application/libraries/objects/FirewallRule.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php" afterPath="$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php" afterPath="$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/MxRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/MxRecord.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" afterPath="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/NsRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/NsRecord.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/PointerRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/PointerRecord.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/System.php" afterPath="$PROJECT_DIR$/application/libraries/objects/System.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/TxtRecord.php" afterPath="$PROJECT_DIR$/application/libraries/objects/TxtRecord.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -47,82 +27,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ObjectNotFoundException.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="0" selection-start="535" selection-end="659" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="APIException.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/APIException.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="0" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AmbiguousTargetException.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="4" selection-start="167" selection-end="260" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="controller.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/core/controller.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="79" column="0" selection-start="2404" selection-end="2497" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="impulseloader.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/hooks/impulseloader.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="navbar.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/libraries/core/navbar.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="133" column="57" selection-start="4380" selection-end="4380" vertical-scroll-proportion="4.4965677">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Impulselib.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="128" column="0" selection-start="3644" selection-end="3731" vertical-scroll-proportion="0.0">
+            <state line="93" column="31" selection-start="2850" selection-end="2850" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DBException.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/DBException.php">
+      <file leaf-file-name="addresses.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="0" selection-start="724" selection-end="724" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImpulseObject.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="49" column="54" selection-start="1659" selection-end="1659" vertical-scroll-proportion="0.0">
+            <state line="24" column="0" selection-start="813" selection-end="813" vertical-scroll-proportion="0.59080964">
               <folding />
             </state>
           </provider>
@@ -142,8 +59,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/libraries/objects/FirewallRule.php" />
-        <option value="$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/MxRecord.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" />
@@ -158,6 +73,8 @@
         <option value="$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/controller.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/navbar.php" />
+        <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
+        <option value="$PROJECT_DIR$/application/controllers/addresses.php" />
       </list>
     </option>
   </component>
@@ -458,7 +375,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added session to systems" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaned up and commented libraries" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -471,7 +388,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="derp'd a function call" />
     <MESSAGE value="forgot array brackets" />
     <MESSAGE value="changed addressrecord return type" />
     <MESSAGE value="changed handling of the FQDN" />
@@ -496,6 +412,7 @@
     <MESSAGE value="added exception to NetworkInterface" />
     <MESSAGE value="adding interface objects back after work" />
     <MESSAGE value="added session to systems" />
+    <MESSAGE value="cleaned up and commented libraries" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -543,65 +460,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php">
+    <entry file="file://$PROJECT_DIR$/application/libraries/core/navbar.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="54" selection-start="1659" selection-end="1659" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="0" selection-start="3644" selection-end="3731" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="535" selection-end="659" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/DBException.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="0" selection-start="724" selection-end="724" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/APIException.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="385" selection-end="385" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="4" selection-start="167" selection-end="260" vertical-scroll-proportion="0.0">
+        <state line="7" column="23" selection-start="168" selection-end="168" vertical-scroll-proportion="0.17162472">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/hooks/impulseloader.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.13729978">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/core/controller.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="0" selection-start="2404" selection-end="2497" vertical-scroll-proportion="0.0">
+        <state line="79" column="0" selection-start="2404" selection-end="2497" vertical-scroll-proportion="0.72540045">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/core/navbar.php">
+    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="57" selection-start="4380" selection-end="4380" vertical-scroll-proportion="4.4965677">
+        <state line="7" column="4" selection-start="167" selection-end="260" vertical-scroll-proportion="0.2402746">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/APIException.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="0" selection-start="385" selection-end="385" vertical-scroll-proportion="0.49234137">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="0" selection-start="535" selection-end="659" vertical-scroll-proportion="0.65645516">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/DBException.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="0" selection-start="724" selection-end="724" vertical-scroll-proportion="0.5295405">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="54" selection-start="1659" selection-end="1659" vertical-scroll-proportion="1.4442014">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="31" selection-start="2850" selection-end="2850" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="813" selection-end="813" vertical-scroll-proportion="0.59080964">
           <folding />
         </state>
       </provider>

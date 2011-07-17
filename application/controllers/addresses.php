@@ -24,7 +24,13 @@ class Addresses extends IMPULSE_Controller {
 		}
 
         // Establish the interface
-        $sys = $this->impulselib->get_active_system();
+        try {
+            $sys = $this->impulselib->get_active_system();
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $this->error($onfE->getMessage());
+        }
+
         $int = $sys->get_interface($mac);
 		$addr = $int->get_address($address);
 		
