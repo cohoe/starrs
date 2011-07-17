@@ -143,12 +143,8 @@ class Systems extends IMPULSE_Controller {
 			// Load the main view
 			$this->load->view('core/main',$info);
 			
-			// Set the active system object to prepare for changes
-			#$this->impulselib->set_session('activeSystem',$sys);
-			if(session_id() == "") { 
-				session_start();
-			}
-			$_SESSION['activeSystem'] = $sys;
+			// Set the system object
+			$this->impulselib->set_active_system($sys);
 		}
 	}
 
@@ -159,7 +155,7 @@ class Systems extends IMPULSE_Controller {
 	public function edit() {
 
 		// Get the system object that we will be editing
-		$sys = $this->impulselib->get_session('activeSystem');
+		$sys = $this->impulselib->get_active_system();
 		
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
@@ -241,7 +237,7 @@ class Systems extends IMPULSE_Controller {
 	public function delete() {
 		
 		// Get the current system object
-		$sys = $this->impulselib->get_session('activeSystem');
+		$sys = $this->impulselib->get_active_system();
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
@@ -283,7 +279,7 @@ class Systems extends IMPULSE_Controller {
      */
 	public function renew() {
 		// Get the current system object
-		$sys = $this->impulselib->get_session('activeSystem');
+		$sys = $this->impulselib->get_active_system();
 		
 		// Renew
 		$query = $this->api->systems->renew($sys);
@@ -331,9 +327,6 @@ class Systems extends IMPULSE_Controller {
 		// Value of all interface view data
 		$interfaceViewData = "";
 		
-		// Start the session
-		session_start();
-		
 		// Concatenate all view data into one string
 		foreach ($interfaces as $interface) {
 			
@@ -348,7 +341,7 @@ class Systems extends IMPULSE_Controller {
 		
 			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$interface, 'navbar'=>$navbar),TRUE);
 			
-			$_SESSION['interfaces'][$interface->get_mac()] = $interface;
+			$this->impulselib->add_active_interface($interface);
 		}
 		
 		// If there were no interfaces....

@@ -109,7 +109,40 @@ class Impulselib {
 	public function get_name() {
 		return "$this->fname $this->lname";
 	}
-	
+
+	public function get_active_system() {
+		if(session_id() == "") { 
+			session_start();
+		}
+
+		return unserialize($_SESSION['activeSystem']);
+	}
+
+	public function set_active_system($sys) {
+		if(session_id() == "") { 
+			session_start();
+		}
+
+		$_SESSION['activeSystem'] = serialize($sys);
+	}
+
+	public function add_active_interface($int) {
+		if(session_id() == "") { 
+			session_start();
+		}
+
+		$_SESSION['interfaces'][$int->get_mac()] = serialize($int);
+	}
+
+	public function get_active_interface($mac) {
+		if(session_id() == "") { 
+			session_start();
+		}
+
+		# I have absolutely no idea why this works... or is necessary
+		require_once(APPPATH . "controllers/systems.php");
+		return unserialize($_SESSION['interfaces'][$mac]);
+	}
 	
 }
 

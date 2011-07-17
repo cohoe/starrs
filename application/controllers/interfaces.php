@@ -56,10 +56,7 @@ class Interfaces extends IMPULSE_Controller {
 			$this->error("No interface was specified");
 		}
 		
-		#$interface = $this->api->systems->get_system_interface_data($mac);
-		session_start();
-		$interface = $_SESSION['interfaces'][$mac];
-		
+		$interface = $this->impulselib->get_active_interface($mac);	
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			$this->_edit($interface);
@@ -162,7 +159,7 @@ class Interfaces extends IMPULSE_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 		
-		$_SESSION['interfaces'][$int->get_mac()] = $int;
+		$this->impulselib->add_active_interface($int);
 	}
 	
 	private function _create() {
@@ -223,14 +220,10 @@ class Interfaces extends IMPULSE_Controller {
 		$addressViewData = "";
 		
 		$addrs = $this->api->systems->get_system_interface_addresses($int->get_mac(), true);
-		#$addrs = $int->get_interface_addresses();
-		
-		session_start();
 		
 		foreach($addrs as $address) {
 			$navbar = new Navbar("Address", null, null);
 			$addressViewData .= $this->load->view('systems/address',array('address'=>$address, 'navbar'=>$navbar),TRUE);
-			#$_SESSION['intaddrs'][$address->get_address()] = $address;
 			$int->add_address($address);
 		}
 		

@@ -13,8 +13,7 @@ class Addresses extends IMPULSE_Controller {
 			$this->error("No IP address specified!");
 		}
 		
-		session_start();
-		$int = $_SESSION['interfaces'][$mac];
+		$int = $this->impulselib->get_active_interface($mac);
 		$addr = $int->get_address($address);
 		
 		// Navbar
@@ -64,8 +63,7 @@ class Addresses extends IMPULSE_Controller {
 			$this->error("No interface specified!");
 		}
 		
-		session_start();
-		$int = $_SESSION['interfaces'][$mac];
+		$int = $this->impulselib->get_active_interface($mac);
 		
 		// Information is there. Create the address
 		if($this->input->post('submit')) {
@@ -104,8 +102,7 @@ class Addresses extends IMPULSE_Controller {
 			$this->error("No interface specified!");
 		}
 		
-		session_start();
-		$int = $_SESSION['interfaces'][$mac];
+		$int = $this->impulselib->get_active_interface($mac);
 		
 		// Information is there. Delete the address
 		if($this->input->post('submit')) {
