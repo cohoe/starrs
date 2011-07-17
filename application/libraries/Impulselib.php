@@ -98,7 +98,7 @@ class Impulselib {
         // I have no idea why this works.
         require_once(APPPATH . "controllers/systems.php");
         if(!isset($_SESSION['activeSystem'])) {
-            throw new ObjectNotFoundException("Could not find your system. Make sure you aren't pulling any URL shenanigans");
+            throw new ObjectNotFoundException("Could not find your system. Make sure you aren't pulling any URL shenanigans. Otherwise, click Systems on the left and start again.");
         }
 		return unserialize($_SESSION['activeSystem']);
 	}
