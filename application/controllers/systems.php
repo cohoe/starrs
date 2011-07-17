@@ -416,6 +416,9 @@ class Systems extends IMPULSE_Controller {
 		else {
 			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 		}
+
+        // Set the SESSION information
+        $this->impulselib->set_active_system($sys);
 	}
 
     /**

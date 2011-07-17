@@ -280,7 +280,7 @@ class Interfaces extends IMPULSE_Controller {
 
     /**
      * Load all of the interface address data. 
-     * @param $int  The interface object to add to
+     * @param &$int  The interface object to add to. (WARNING: This does by ref, so be careful!)
      * @return string|void
      */
 	private function _load_addresses(&$int) {
