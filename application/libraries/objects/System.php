@@ -61,6 +61,7 @@ class System extends ImpulseObject {
 		// Initialize other vars
 		$hasInterfaces = false;
 		$interfaces = array();
+
 	}
 	
 	////////////////////////////////////////////////////////////////////////

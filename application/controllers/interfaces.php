@@ -178,8 +178,10 @@ class Interfaces extends IMPULSE_Controller {
 		}
 
         // Define the local interface object
-		$int = $this->api->systems->get_system_interface_data($mac, false);
-		
+		#$int = $this->api->systems->get_system_interface_data($mac, false);
+		$sys = $this->impulselib->get_active_system();
+		$int = $sys->get_interface($mac);		
+
 		// Navbar
 		$navModes['CREATE'] = "/addresses/create/".$mac;
 		$navModes['DELETE'] = "/addresses/delete/".$mac;
@@ -197,7 +199,9 @@ class Interfaces extends IMPULSE_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 		
-		$this->impulselib->add_active_interface($int);
+		// Update the session data
+		$sys->add_interface($int);
+		$this->impulselib->set_active_system($sys);
 	}
 
     /**
@@ -279,7 +283,7 @@ class Interfaces extends IMPULSE_Controller {
      * @param $int  The interface object to add to
      * @return string|void
      */
-	private function _load_addresses($int) {
+	private function _load_addresses(&$int) {
 
         // View data
 		$addressViewData = "";

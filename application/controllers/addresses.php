@@ -26,7 +26,6 @@ class Addresses extends IMPULSE_Controller {
         // Establish the interface
         $sys = $this->impulselib->get_active_system();
         $int = $sys->get_interface($mac);
-		#$int = $this->impulselib->get_active_interface($mac);
 		$addr = $int->get_address($address);
 		
 		// Navbar
