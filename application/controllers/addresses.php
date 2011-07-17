@@ -92,8 +92,9 @@ class Addresses extends IMPULSE_Controller {
 		
 		// Information is there. Create the address
 		if($this->input->post('submit')) {
-			$this->_create($int);
-            return;
+			$addr = $this->_create($int);
+            $sys->add_interface($int);
+            redirect(base_url()."/interfaces/addresses/".$int->get_mac()."/".$addr->get_address(),'location');
 		}
         
         // Navbar
@@ -145,7 +146,7 @@ class Addresses extends IMPULSE_Controller {
 		if($this->input->post('submit')) {
 			$addr = $int->get_address($this->input->post('address'));
 			$this->_delete($addr);
-            return;
+            redirect(base_url()."interfaces/addresses/".$addr->get_mac(),'location');
 		}
         
         // Navbar
@@ -206,9 +207,9 @@ class Addresses extends IMPULSE_Controller {
 			$this->error($query);
 		}
 		else {
-			$address = $this->api->systems->get_system_inteface_address($address);
-			$int->add_address($address);
-			redirect(base_url()."/interfaces/addresses/".$int->get_mac()."/".$address->get_address(),'location');
+			$addr = $this->api->systems->get_system_inteface_address($address);
+			$int->add_address($addr);
+			return $addr;
 		}
 	}
 
@@ -225,9 +226,6 @@ class Addresses extends IMPULSE_Controller {
         // Check for error
 		if($query != "OK") {
 			$this->error($query);
-		}
-		else {
-			redirect(base_url()."interfaces/addresses/".$addr->get_mac(),'location');
 		}
 	}
 	

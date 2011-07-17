@@ -117,7 +117,7 @@ class NetworkInterface extends ImpulseObject {
 	}
 	
 	public function get_address($address) {
-        if($this->addresses[$address] == NULL) {
+        if(!$this->addresses[$address]) {
             throw new APIException("Unable to locate the address object for address $address on interface ".$this->mac);
         }
 		return $this->addresses[$address];
