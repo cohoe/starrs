@@ -11,6 +11,6 @@
 				}
 			} ?>
 		</select></br>
-		<input type="submit" name="submit" value="Delete" class="submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Delete" class="submit"/>
 	</form>
 </div>
