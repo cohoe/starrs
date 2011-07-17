@@ -44,7 +44,7 @@ class System extends ImpulseObject {
 	 * @param	long	$renewDate		The date the system needs renewed on
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
 	 * @param	long	$dateModified	Unix timestamp when the record was modifed
-	 * @param	string	$lastModifer	The last user to modify the record 
+	 * @param	string	$lastModifier	The last user to modify the record
 	 */
 	public function __construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -149,3 +149,6 @@ class System extends ImpulseObject {
         return $this->interfaces[$mac];
     }
 }
+
+/* End of file System.php */
+/* Location: ./application/libraries/objects/System.php */

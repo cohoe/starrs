@@ -123,3 +123,6 @@ class NetworkInterface extends ImpulseObject {
 		return $this->addresses[$address];
 	}
 }
+
+/* End of file NetworkInterface.php */
+/* Location: ./application/libraries/objects/NetworkInterface.php */

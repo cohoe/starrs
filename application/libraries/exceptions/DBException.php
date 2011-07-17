@@ -1,31 +1,33 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- *
+ * An exception thrown from the IMPULSE core.
  */
 class DBException extends Exception {
 
-	protected $message;
+    ////////////////////////////////////////////////////////////////////////
+	// MEMBER VARIABLES
+
+    ////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTOR
 
     /**
-     * @param $message
+     * @param $message  The message from the error source
      */
 	public function __construct($message) {
-		
-		// I hate PHP regex. It wouldnt let me do (.*?) 
+
+        // Parse the error message for only the ERROR portion, not CONTEXT as well
+		// I hate PHP regex. It wouldn't let me do (.*?)
 		$message = preg_replace('/^ERROR: ([^&]*)CONTEXT([^&]*)$/i', '\1', $message);
 		$this->message = $message;
 	}
 
-    /**
-     * @return bool
-     */
-	public function permissiondenied() {
-		if(preg_match("/permission/i", $this->message)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+    ////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
 }
+
+/* End of file DBException.php */
+/* Location: ./application/libraries/exceptions/DBException.php */

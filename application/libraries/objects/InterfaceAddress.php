@@ -73,7 +73,7 @@ class InterfaceAddress extends ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// FIREWALL RELATED VARIABLES
 	
-	// bool					Firewall defauly action (t for deny, f for all)
+	// bool					Firewall default action (t for deny, f for all)
 	private $fwDefault;
 	
 	// array<FirewallRule>	All firewall rules that relate to this address
@@ -94,7 +94,7 @@ class InterfaceAddress extends ImpulseObject {
 	 * @param 	string	$comment		A comment about the address
 	 * @param	long	$dateCreated	Unix timestamp when the address was created
 	 * @param	long	$dateModified	Unix timestamp when the address was modifed
-	 * @param	string	$lastModifer	The last user to modify the address 
+	 * @param	string	$lastModifier	The last user to modify the address
 	 */
 	public function __construct($address, $class, $config, $mac, $renewDate, $isPrimary, $comment, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -122,13 +122,6 @@ class InterfaceAddress extends ImpulseObject {
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
         $this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
 		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
-		
-		// Loaders
-		#$this->_load_pointer_records();
-		#$this->_load_text_records();
-		#$this->_load_mx_records();
-		#$this->_load_ns_records();
-		
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -239,6 +232,7 @@ class InterfaceAddress extends ImpulseObject {
 		// Add the record to the local array
 		$this->dnsMxRecords[] = $mxRecord;
 	}
-
-
 }
+
+/* End of file InterfaceAddress.php */
+/* Location: ./application/libraries/objects/InterfaceAddress.php */

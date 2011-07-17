@@ -47,7 +47,7 @@ class FirewallRule extends ImpulseObject {
 	 * @param	string	$source		The source of the rule
 	 * @param	long	$dateCreated	Unix timestamp when the rule was created
 	 * @param	long	$dateModified	Unix timestamp when the rule was modifed
-	 * @param	string	$lastModifer	The last user to modify the rule 
+	 * @param	string	$lastModifier	The last user to modify the rule
 	 */
 	public function __construct($port, $transport, $deny, $comment, $address, $owner, $source, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -89,3 +89,6 @@ class FirewallRule extends ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 }
+
+/* End of file FirewallRule.php */
+/* Location: ./application/libraries/objects/FirewallRule.php */

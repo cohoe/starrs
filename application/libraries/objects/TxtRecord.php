@@ -24,7 +24,7 @@ class TxtRecord extends DnsRecord {
 	 * @param	string	$text			The text to place in the record
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
 	 * @param	long	$dateModified	Unix timestamp when the record was modifed
-	 * @param	string	$lastModifer	The last user to modify the record 
+	 * @param	string	$lastModifier	The last user to modify the record
 	 */
 	public function __construct($hostname, $zone, $address, $type, $ttl, $owner, $text, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -45,3 +45,6 @@ class TxtRecord extends DnsRecord {
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 }
+
+/* End of file TxtRecord.php */
+/* Location: ./application/libraries/objects/TxtRecord.php */

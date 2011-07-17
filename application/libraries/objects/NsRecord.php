@@ -24,7 +24,7 @@ class NsRecord extends DnsRecord {
 	 * @param	bool	$isPrimary		Is this nameserver the primary for the zone?
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
 	 * @param	long	$dateModified	Unix timestamp when the record was modifed
-	 * @param	string	$lastModifer	The last user to modify the record 
+	 * @param	string	$lastModifier	The last user to modify the record
 	 */
 	public function __construct($hostname, $zone, $address, $type, $ttl, $owner, $isPrimary, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -45,3 +45,6 @@ class NsRecord extends DnsRecord {
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 }
+
+/* End of file NsRecord.php */
+/* Location: ./application/libraries/objects/NsRecord.php */

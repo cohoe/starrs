@@ -28,7 +28,7 @@ class PointerRecord extends DnsRecord {
 	 * @param	string	$extra			Extra information required by the record
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
 	 * @param	long	$dateModified	Unix timestamp when the record was modifed
-	 * @param	string	$lastModifer	The last user to modify the record 
+	 * @param	string	$lastModifier	The last user to modify the record
 	 */
 	public function __construct($hostname, $zone, $address, $type, $ttl, $owner, $alias, $extra, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
@@ -51,3 +51,6 @@ class PointerRecord extends DnsRecord {
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 }
+
+/* End of file PointerRecord.php */
+/* Location: ./application/libraries/objects/PointerRecord.php */

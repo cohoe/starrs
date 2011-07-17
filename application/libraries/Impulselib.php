@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- *
+ * Library of general functions for the operation of IMPULSE
  */
 class Impulselib {
 
@@ -10,7 +10,7 @@ class Impulselib {
 	private $CI;
 
     /**
-     *
+     * Constructor. This will load in your identification information for use in privilege leveling
      */
 	function __construct() {
 		$CI =& get_instance();
@@ -23,20 +23,20 @@ class Impulselib {
 	}
 
     /**
-     * @param $mac
-     * @return
+     * Get a standard IPv6 autoconf address from your MAC address
+     * @param $mac  The MAC address of the interface
+     * @return string
      */
-	function get_eui64_address($mac)
-	{
+	function get_eui64_address($mac) {
 		return $mac;
 	}
 
     /**
-     * @param $osname
+     * Get the path of the OS image based on the OS name
+     * @param $osname   The name of the OS to get
      * @return
      */
-	function get_os_img_path($osname)
-	{
+	function get_os_img_path($osname) {
 		$paths['Arch'] = "media/images/os/Arch.jpg";
 		$paths['CentOS'] = "media/images/os/CentOS.jpg";
 		$paths['Cisco IOS'] = "media/images/os/Cisco IOS.jpg";
@@ -61,56 +61,36 @@ class Impulselib {
 	}
 
     /**
-     * @param $url
-     * @return mixed
+     * Clean up a URL that has spaces in it to have %20's
+     * @param $url  The URL to parse
+     * @return string
      */
 	public function remove_url_space($url) {
 		return preg_replace("/%20/"," ",$url);
 	}
 
     /**
-     * @param $key
-     * @param $value
-     * @return void
-     */
-	public function set_session($key, $value) {
-		session_start();
-		$_SESSION[$key] = $value;
-	}
-
-    /**
-     * @param $key
-     * @return
-     */
-	public function get_session($key) {
-		session_start();
-		return $_SESSION[$key];
-	}
-
-    /**
-     * @param $key
-     * @return void
-     */
-	public function clear_session($key) {
-		session_start();
-		unset($_SESSION[$key]);
-	}
-
-    /**
-     * @return
+     * Get your username
+     * @return string
      */
 	public function get_username() {
 		return $this->uname;
 	}
 
     /**
+     * Get your real name
      * @return string
      */
 	public function get_name() {
 		return "$this->fname $this->lname";
 	}
 
+    /**
+     * Get the object of the current active system from $_SESSION
+     * @return System
+     */
 	public function get_active_system() {
+        // Check if the session was started
 		if(session_id() == "") { 
 			session_start();
 		}
@@ -120,32 +100,26 @@ class Impulselib {
 		return unserialize($_SESSION['activeSystem']);
 	}
 
+    /**
+     * Set the active system in $_SESSION
+     * @param $sys  The system to set to
+     * @return void
+     */
 	public function set_active_system($sys) {
+        // Check if the session was started
 		if(session_id() == "") { 
 			session_start();
 		}
 
+        // Set it up!
 		$_SESSION['activeSystem'] = serialize($sys);
 	}
 
-	public function add_active_interface($int) {
-		if(session_id() == "") { 
-			session_start();
-		}
-
-		$_SESSION['interfaces'][$int->get_mac()] = serialize($int);
-	}
-
-//	public function get_active_interface($mac) {
-//		if(session_id() == "") {
-//			session_start();
-//		}
-//
-//		# I have absolutely no idea why this works... or is necessary
-//		require_once(APPPATH . "controllers/systems.php");
-//		return unserialize($_SESSION['interfaces'][$mac]);
-//	}
-
+    /**
+     * Clean up Postgres's extreme timestamp to only have what we want
+     * @param $timestamp    The timestamp string to parse
+     * @return string
+     */
 	public function clean_timestamp($timestamp) { 
 		return preg_replace('/:(\d+).(\d+)$/','',$timestamp); 
 	}
@@ -153,3 +127,4 @@ class Impulselib {
 }
 
 /* End of file Impulselib.php */
+/* Location: ./application/libraries/Impulselib.php */

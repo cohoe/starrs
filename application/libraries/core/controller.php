@@ -1,10 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * The replacement IMPULSE controller class. All controllers should extend from this rather than the builtin
+ */
 class IMPULSE_Controller extends CI_Controller {
 
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+    
 	/**
 	 * Print an error message (thrown by the DB)
-     * @param $message
+     * @param $message  The message to display
      * @return void
      */
 	public function error($message) {
@@ -26,7 +31,7 @@ class IMPULSE_Controller extends CI_Controller {
 	
 	/**
 	 * Print a success message
-     * @param $message
+     * @param $message  The message to display
      * @return void
      */
 	public function success($message) {
@@ -49,7 +54,7 @@ class IMPULSE_Controller extends CI_Controller {
 	
 	/**
 	 * Print a warning message
-     * @param $message
+     * @param $message  The message to display
      * @return void
      */
 	public function warning($message) {
@@ -70,5 +75,7 @@ class IMPULSE_Controller extends CI_Controller {
 		
 		return $this->load->view('core/warning',$data,TRUE);
 	}
-
 }
+
+/* End of file controller.php */
+/* Location: ./application/libraries/core/controller.php */

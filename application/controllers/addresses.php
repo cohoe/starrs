@@ -228,5 +228,7 @@ class Addresses extends IMPULSE_Controller {
 			$this->error($query);
 		}
 	}
-	
 }
+
+/* End of file addresses.php */
+/* Location: ./application/controllers/addresses.php */
