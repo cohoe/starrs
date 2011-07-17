@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/geekzilla201.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/addresses.php" afterPath="$PROJECT_DIR$/application/controllers/addresses.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/interfaces.php" afterPath="$PROJECT_DIR$/application/controllers/interfaces.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/systems.php" afterPath="$PROJECT_DIR$/application/controllers/systems.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/Impulselib.php" afterPath="$PROJECT_DIR$/application/libraries/Impulselib.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/System.php" afterPath="$PROJECT_DIR$/application/libraries/objects/System.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,10 +35,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="addresses.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="addresses.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="9" selection-start="740" selection-end="740" vertical-scroll-proportion="0.43103448">
+            <state line="23" column="9" selection-start="812" selection-end="812" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -52,7 +47,7 @@
       <file leaf-file-name="interfaces.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/interfaces.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="93" column="12" selection-start="2907" selection-end="2907" vertical-scroll-proportion="0.0">
+            <state line="95" column="24" selection-start="2948" selection-end="2948" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -67,10 +62,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Impulselib.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Impulselib.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="121" column="33" selection-start="2828" selection-end="2828" vertical-scroll-proportion="0.0">
+            <state line="116" column="0" selection-start="2704" selection-end="2704" vertical-scroll-proportion="0.28879312">
               <folding />
             </state>
           </provider>
@@ -103,9 +98,9 @@
         <option value="$PROJECT_DIR$/application/controllers/statistics.php" />
         <option value="$PROJECT_DIR$/application/controllers/systems.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
-        <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
         <option value="$PROJECT_DIR$/application/controllers/interfaces.php" />
         <option value="$PROJECT_DIR$/application/controllers/addresses.php" />
+        <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
       </list>
     </option>
   </component>
@@ -322,6 +317,7 @@
     <frame x="0" y="22" width="1440" height="843" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995194" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -335,7 +331,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -366,7 +361,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added PHPDoc comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up controllers, deprecated SESSION interfaces" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -379,7 +374,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="firewall rules now deal with objects in API" />
     <MESSAGE value="loop derp" />
     <MESSAGE value="API" />
     <MESSAGE value="changed address record object to come from API" />
@@ -404,6 +398,7 @@
     <MESSAGE value="forgot to add a file" />
     <MESSAGE value="added new navbar" />
     <MESSAGE value="added PHPDoc comments" />
+    <MESSAGE value="Cleaned up controllers, deprecated SESSION interfaces" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -479,20 +474,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="33" selection-start="2828" selection-end="2828" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/interfaces.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="12" selection-start="2907" selection-end="2907" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="8" column="0" selection-start="340" selection-end="340" vertical-scroll-proportion="0.0">
@@ -502,7 +483,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="9" selection-start="740" selection-end="740" vertical-scroll-proportion="0.43103448">
+        <state line="23" column="9" selection-start="812" selection-end="812" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/interfaces.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="24" selection-start="2948" selection-end="2948" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="0" selection-start="2704" selection-end="2704" vertical-scroll-proportion="0.28879312">
           <folding />
         </state>
       </provider>

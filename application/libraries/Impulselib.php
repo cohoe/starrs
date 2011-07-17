@@ -115,6 +115,8 @@ class Impulselib {
 			session_start();
 		}
 
+        // I have no idea why this works.
+        require_once(APPPATH . "controllers/systems.php");
 		return unserialize($_SESSION['activeSystem']);
 	}
 
