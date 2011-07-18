@@ -301,7 +301,7 @@ class Systems extends IMPULSE_Controller {
 
 		// Navbar
         $navOptions = array('Create System'=>'/systems/create');
-        $navbar = new Navbar("Getting Started", null, $navOptions);
+        $navbar = new Navbar("Getting Started", $navModes, $navOptions);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -311,7 +311,7 @@ class Systems extends IMPULSE_Controller {
 		$info['title'] = "Getting Started";
 		
 		// Load the main view
-		$this->load->view('mockup/main',$info);
+		$this->load->view('core/main',$info);
 	}
 
     /**
@@ -331,7 +331,6 @@ class Systems extends IMPULSE_Controller {
 		foreach ($ints as $int) {
 			
 			// Navbar
-			$navModes = array();
 			if($this->api->get_editable($int) == true) {
 				$navModes['EDIT'] = "/interfaces/edit/".$int->get_mac();
 				$navModes['DELETE'] = "/interfaces/delete/".$int->get_mac();
@@ -348,7 +347,6 @@ class Systems extends IMPULSE_Controller {
 		
 		// If there were no interfaces....
 		if(count($ints) == 0) {
-		
 			$navbar = new Navbar("Interface", null, null);
 			$interfaceViewData = $this->load->view('core/warning',array("message"=>"No interfaces found!"),TRUE);
 		}

@@ -1,5 +1,7 @@
 <?php
 
+require_once(APPPATH . "controllers/interfaces.php");
+
 /**
  * This class contains the definition of an InterfaceAddress object. These
  * objects represent an address tied to the
@@ -47,6 +49,9 @@ class InterfaceAddress extends ImpulseObject {
 	
 	// string		The name of the containing system
 	private $systemName;
+	
+	// string		The name of the containing range
+	private $range;
 
 	
 	////////////////////////////////////////////////////////////////////////
@@ -122,6 +127,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
         $this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
 		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
+		$this->range = $this->CI->api->ip->get_address_range($this->address);
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -144,6 +150,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_pointer_records() { return $this->dnsPointerRecords; }
 	public function get_text_records()    { return $this->dnsTxtRecords; }
 	public function get_system_name()     { return $this->systemName; }
+	public function get_range()           { return $this->range; }
 	
 	public function get_help() {
 		return "Interfaces are assigned IP addresses in multiple ways from configured resource pools. 
@@ -155,6 +162,49 @@ class InterfaceAddress extends ImpulseObject {
 	
 	public function get_start() {
 		return "To get started, click a view above, then click Create.";
+	}
+	
+	////////////////////////////////////////////////////////////////////////
+	// SETTERS
+	
+	public function set_address($new) {
+		$err = $this->CI->api->systems->modify_interface_address($this->address, 'address', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->address = $new; 
+	}
+	
+	public function set_config($new) {
+		$err = $this->CI->api->systems->modify_interface_address($this->address, 'config', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->config = $new; 
+	}
+	
+	public function set_class($new) {
+		$err = $this->CI->api->systems->modify_interface_address($this->address, 'class', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->class = $new; 
+	}
+	
+	public function set_isprimary($new) {
+		$err = $this->CI->api->systems->modify_interface_address($this->address, 'isprimary', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->isPrimary = $new; 
+	}
+	
+	public function set_comment($new) {
+		$err = $this->CI->api->systems->modify_interface_address($this->address, 'comment', $new);	
+		if($err != "OK") {
+			throw new APIException($err);
+		}
+		$this->comment = $new; 
 	}
 	
 	////////////////////////////////////////////////////////////////////////

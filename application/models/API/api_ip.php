@@ -22,4 +22,10 @@ class Api_ip extends CI_Model {
 		$query = $this->db->query($sql);
 		return $query->row()->get_address_from_range;
 	}
+	
+	public function get_address_range($address) {
+		$sql = "SELECT api.get_address_range({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+		return $query->row()->get_address_range;
+	}
 }

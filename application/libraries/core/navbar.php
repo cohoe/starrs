@@ -33,6 +33,9 @@ class Navbar {
 
     // string           The link for the cancel button
 	private $cancelLink;
+	
+	// string			The link for the help button
+	private $helpLink;
 
     // string           The page title to display in the bar
 	private $title;
@@ -98,6 +101,10 @@ class Navbar {
 			$this->cancel = TRUE;
 			$this->cancelLink = $this->referer;
 		}
+		if(isset($modes['HELP'])) {
+			#$this->helpLink = $modes['HELP'];
+		}
+		$this->helpLink = "/reference/help/".$this->CI->uri->segment(1);
 
         // Load your user information
 		$this->user = $this->CI->impulselib->get_name();
@@ -131,6 +138,7 @@ class Navbar {
 	public function get_edit_link()		{ return $this->editLink; }
 	public function get_delete_link()	{ return $this->deleteLink; }
 	public function get_cancel_link()	{ return $this->cancelLink; }
+	public function get_help_link()		{ return $this->helpLink; }
 	public function get_create()		{ return $this->create; }
 
     ////////////////////////////////////////////////////////////////////////

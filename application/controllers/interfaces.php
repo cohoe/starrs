@@ -84,6 +84,12 @@ class Interfaces extends IMPULSE_Controller {
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			$this->_edit($int);
+			
+			// Update the session data
+			$sys->add_interface($int);
+			$this->impulselib->set_active_system($sys);
+			
+			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
 		}
 		
 		// Need to input the information
@@ -231,7 +237,7 @@ class Interfaces extends IMPULSE_Controller {
      * @param $int  The interface object to modify
      * @return void
      */
-	private function _edit($int) {
+	private function _edit(&$int) {
 		$err = "";
 		
 		if($int->get_system_name() != $this->input->post('systemName')) {
@@ -254,9 +260,6 @@ class Interfaces extends IMPULSE_Controller {
         // If there were/were not errors
 		if($err != "") {
 			$this->error($err);
-		}
-		else {
-			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
 		}
 	}
 

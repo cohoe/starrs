@@ -515,7 +515,21 @@ class API_Systems extends CI_Model {
 		return $return;
 	}
 	
-	
+	public function modify_interface_address($address, $field, $newValue) {
+		$sql = "SELECT api.modify_interface_address({$this->db->escape($address)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
+		$query = $this->db->query($sql);
+		$return = "OK";
+		// Error conditions
+		try {
+			if($this->db->_error_message() != "") {
+				throw new DBException($this->db->_error_message());
+			}
+		}
+		catch (DBException $dbE) {
+			$return = $dbE->getMessage();
+		}
+		return $return;
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// REMOVE FUNCTIONS

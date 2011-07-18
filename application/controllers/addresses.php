@@ -42,18 +42,17 @@ class Addresses extends IMPULSE_Controller {
         }
 		
 		// Navbar
-		$navOptions['Main'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/main";
+		$navOptions['Overview'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/overview";
 		$navOptions['DNS Records'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/dns";
 		$navOptions['Firewall Rules'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/firewall";
 		$navOptions['All Addresses'] = "/interfaces/addresses/".$addr->get_mac();
-		
-		$navModes['EDIT'] = "";
-		$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 
+		$navModes = array();
+		
         // Switch views depending on what the user wants
 		switch($target) {
 			case "dns":
@@ -70,11 +69,12 @@ class Addresses extends IMPULSE_Controller {
 				$navbar = new Navbar("Firewall Rules for ".$addr->get_address(), $navModes, $navOptions);
 				break;
 			default:
-				$viewData['help'] = $addr->get_help();
-				$viewData['start'] = $addr->get_start();
-				$data = $this->load->view('core/getstarted',$viewData,TRUE);
-				$info['title'] = "Getting Started";
-				$navbar = new Navbar("Getting Started", $navModes, $navOptions);
+				$navModes['EDIT'] = "/addresses/edit/".$addr->get_mac()."/".$addr->get_address();
+				$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
+				$viewData['address'] = $addr;
+				$data = $this->load->view('addresses/overview', $viewData, TRUE);
+				$info['title'] = "Overview - ".$addr->get_address();
+				$navbar = new Navbar("Address Overview", $navModes, $navOptions);
 				break;
 		}
 
@@ -188,6 +188,66 @@ class Addresses extends IMPULSE_Controller {
         // Load the main view
         $this->load->view('core/main',$info);
 	}
+	
+	public function edit($mac=NULL,$address=NULL) {
+		// If the user forgot to specify something
+		if($mac == NULL) {
+			$this->error("No interface specified!");
+			return;
+		}
+		if($address == NULL) {
+			$this->error("No address specified!");
+			return;
+		}
+		
+		// Create the local interface object from the SESSION array.
+		$sys = $this->impulselib->get_active_system();
+        $int = $sys->get_interface($mac);
+		$addr = $int->get_address($address);
+		
+		// Information is there. Execute the edit
+		if($this->input->post('submit')) {
+			$err = $this->_edit($addr);
+			
+			if($err == "") {
+				// Update the session data
+				$int->add_address($addr);
+				$sys->add_interface($int);
+				$this->impulselib->set_active_system($sys);
+				redirect(base_url()."addresses/view/".$addr->get_mac()."/".$addr->get_address());
+			}
+		}
+		
+		// Need to input the information
+		else {
+			// Navbar
+			$navModes['CANCEL'] = "";
+			$navbar = new Navbar("Edit Address", $navModes, null);
+			
+			// Load the view data
+			$info['header'] = $this->load->view('core/header',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+			
+			// Get the preset form data for drop down lists and things
+			$form['ranges'] = $this->api->ip->get_ranges();
+			$form['configs'] = $this->api->dhcp->get_config_types();
+			$form['classes'] = $this->api->dhcp->get_classes();
+			$form['addr'] = $addr;
+
+			// Are you an admin?
+			if($this->api->isadmin() == TRUE) {
+				$form['admin'] = TRUE;
+			}
+			
+			// Continue loading view data
+			$info['data'] = $this->load->view('addresses/edit',$form,TRUE);
+			$info['title'] = "Edit Address";
+			
+			// Load the main view
+			$this->load->view('core/main',$info);
+		}
+	}
 
     /**
      * Create a new address
@@ -224,6 +284,54 @@ class Addresses extends IMPULSE_Controller {
 			$int->add_address($addr);
 			return $addr;
 		}
+	}
+	
+	private function _edit(&$addr) {
+	
+		$err = "";
+		
+		// If no address was given, get one from the selected range
+		$address = $this->input->post('address');
+		if($address == "") {
+			$range = $this->input->post('range');
+			if($range == "") {
+				$range = $addr->get_range();
+			}
+			$address = $this->api->ip->get_address_from_range($range);
+			try { $addr->set_address($address); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		elseif($addr->get_address() != $this->input->post('address')) {
+			try { $addr->set_address($this->input->post('address')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		if($addr->get_config() != $this->input->post('config')) {
+			try { $addr->set_config($this->input->post('config')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		if($addr->get_class() != $this->input->post('class')) {
+			try { $addr->set_class($this->input->post('class')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		echo $addr->get_isprimary();
+		echo $this->input->post('isprimary');
+		if($addr->get_isprimary() != $this->input->post('isprimary')) {
+			try { $addr->set_isprimary($this->input->post('isprimary')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		if($addr->get_comment() != $this->input->post('comment')) {
+			try { $addr->set_comment($this->input->post('comment')); }
+			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+		}
+		
+		
+		
+		// If there were/were not errors
+		if($err != "") {
+			$this->error($err);
+		}
+		
+		return $err;
 	}
 
     /**
