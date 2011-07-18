@@ -45,7 +45,6 @@ class Addresses extends IMPULSE_Controller {
 		$navOptions['Overview'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/overview";
 		$navOptions['DNS Records'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/dns";
 		$navOptions['Firewall Rules'] = "/addresses/view/".$addr->get_mac()."/".$addr->get_address()."/firewall";
-		$navOptions['All Addresses'] = "/interfaces/addresses/".$addr->get_mac();
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
