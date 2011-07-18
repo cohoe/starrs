@@ -128,3 +128,11 @@ CREATE OR REPLACE FUNCTION "api"."get_subnet_utilization"(input_subnet cidr) RET
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_subnet_utilization"(cidr) IS 'Get the percent usage of a subnet';
+
+/* API - get_address_range */
+CREATE OR REPLACE FUNCTION "api"."get_address_range"(input_address inet) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "name" FROM "ip"."ranges" WHERE "first_ip" <= input_address AND "last_ip" >= input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_address_range"(inet) IS 'Get the name of the range an address is in';
