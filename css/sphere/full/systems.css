@@ -1,0 +1,9 @@
+.system_list_box {
+	border: 1px solid black;
+	height: 2em;
+	line-height: 2em;
+	width: 20%;
+	float: left;
+	margin: .5em;
+	padding: .5em;
+}
