@@ -312,8 +312,6 @@ class Addresses extends IMPULSE_Controller {
 			try { $addr->set_class($this->input->post('class')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		echo $addr->get_isprimary();
-		echo $this->input->post('isprimary');
 		if($addr->get_isprimary() != $this->input->post('isprimary')) {
 			try { $addr->set_isprimary($this->input->post('isprimary')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
