@@ -106,6 +106,16 @@ INSERT INTO "firewall"."programs"
 */
 INSERT INTO "firewall"."software" ("software_name") VALUES ('Cisco IOS'),('iptables'),('pf');
 
-/* Processes
-	The output jobs
+/* DNS types
+	record types for DNS
 */
+INSERT INTO "dns"."types" ("type","comment") VALUES
+	('A','IPv4 address'),
+	('AAAA','IPv6 address'),
+	('NS','Nameserver'),
+	('MX','Mail Exchange'),
+	('TXT','Text'),
+	('SPF','New Text'),
+	('CNAME','Pointer'),
+	('SRV','Special service');
+	
