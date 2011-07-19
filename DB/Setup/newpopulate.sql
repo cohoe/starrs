@@ -189,7 +189,7 @@ COMMIT;
 
 -- Admin
 SELECT api.deinitialize();
-SELECT api.initialize('admin');
+SELECT api.initialize('root');
 
 BEGIN;
 SELECT api.create_system('Firewall','root','Firewall','Cisco IOS','Firewall for all out');
@@ -280,7 +280,6 @@ SELECT api.initialize('root');
 
 BEGIN;
 SELECT api.create_dns_cname('alan','tron','impulse.net',NULL,NULL);
-SELECT api.create_dns_cname('desktop','tron','impulse.net',NULL,NULL);
 SELECT api.create_dns_cname('srv1','tron','impulse.net',NULL,NULL);
 SELECT api.create_dns_srv('_ldap._tcp','tron','impulse.net',0,0,389,NULL,NULL);
 SELECT api.create_dns_txt('tron','impulse.net','located in a black hole','TXT',NULL,NULL);
@@ -292,11 +291,8 @@ SELECT api.create_dns_cname('flynn','tron','impulse.net',NULL,NULL);
 SELECT api.create_dns_cname('desktop','tron','impulse.net',NULL,NULL);
 SELECT api.create_dns_mailserver('tron','impulse.net','10',NULL,NULL);
 SELECT api.create_dns_nameserver('tron','impulse.net','TRUE',NULL,NULL);
-SELECT api.create_dns_srv('_ldap._tcp','tron','impulse.net',0,0,389,NULL,NULL);
 SELECT api.create_dns_srv('_www._tcp','tron','impulse.net',0,0,80,NULL,NULL);
-SELECT api.create_dns_txt('tron','impulse.net','in a black hole','TXT',NULL,NULL);
 COMMIT;
-
 
 
 
