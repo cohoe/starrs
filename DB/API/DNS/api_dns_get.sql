@@ -43,10 +43,10 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet) RETURNS SETOF "
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for an address';
 
-/* API - get_dns_types */
-CREATE OR REPLACE FUNCTION "api"."get_dns_types"() RETURNS SETOF TEXT AS $$
+/* API - get_record_types */
+CREATE OR REPLACE FUNCTION "api"."get_record_types"() RETURNS SETOF TEXT AS $$
 	BEGIN
 		RETURN QUERY (SELECT "type" FROM "dns"."types");
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dns_types"() IS 'Get all of the valid DNS types for this application';
+COMMENT ON FUNCTION "api"."get_record_types"() IS 'Get all of the valid DNS types for this application';
