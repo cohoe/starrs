@@ -136,13 +136,13 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_class_options"(input_class text) RET
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_class_options"(text) IS 'Get class options for the dhcpd.conf file';
 
-/* API - get_classes */
-CREATE OR REPLACE FUNCTION "api"."get_classes"() RETURNS SETOF "dhcp"."classes" AS $$
+/* API - get_dhcp_classes*/
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."classes" AS $$
 	BEGIN
 		RETURN QUERY (SELECT * FROM "dhcp"."classes");
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_classes"() IS 'Get all DHCP class information';
+COMMENT ON FUNCTION "api"."get_dhcp_classes"() IS 'Get all DHCP class information';
 
 /* API - get_dhcp_config_types */
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_types" AS $$
