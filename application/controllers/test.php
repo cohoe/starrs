@@ -1,19 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-require_once(APPPATH . "libraries/core/controller.php");
-
-class Test extends IMPULSE_Controller {
+require_once(APPPATH . "libraries/core/ImpulseController.php");
+/**
+ * 
+ */
+class Test extends ImpulseController {
 	
 	public function index() {
-		$navModes['CREATE'] = "test/create";
-		$navModes['EDIT'] = "test/edit";
-		$navModes['DELETE'] = "test/delete";
-		$navModes['CANCEL'] = "";
-		$navOptions = array("OS Distribution"=>'os_distribution',"OS Family Distribution"=>'os_family_distribution');
-		$navbar = new Navbar("Testing Bar", $navModes, $navOptions);
-		
-		echo link_tag("/css/mockup/main.css");
-		$this->load->view('core/navbar',array("navbar"=>$navbar));
-		$this->error("test");
+		echo "Hello";
+		echo $this->api->dhcp->get_dhcp_classes(5);
 	}
+	
 }
+
+/* End of file test.php */
+/* Location: ./application/controllers/test.php */

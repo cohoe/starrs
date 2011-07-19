@@ -148,6 +148,24 @@ class System extends ImpulseObject {
         // Return the interface object that corresponds to the given MAC address
         return $this->interfaces[$mac];
     }
+	
+	public function get_address($address) {
+		foreach($this->interfaces as $int) {
+			try {
+				$addr = $int->get_address($address);
+				if($addr instanceof InterfaceAddress) {
+					break;
+				}
+			}
+			catch (APIException $apiE) {
+				$addr = NULL;
+			}
+		}
+		if($addr==NULL) {
+			throw new APIException("Unable to locate address $address on system ".$this->get_system_name());
+		}
+		return $addr;
+	}
 }
 
 /* End of file System.php */

@@ -14,12 +14,12 @@ class Impulselib {
      */
 	function __construct() {
 		$CI =& get_instance();
-		$this->uname = $CI->input->server('WEBAUTH_USER');
-		$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
-		$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
-		#$this->uname = "user";
-		#$this->fname = "Grant";
-		#$this->lname = "Cohoe";
+		#$this->uname = $CI->input->server('WEBAUTH_USER');
+		#$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
+		#$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
+		$this->uname = "user";
+		$this->fname = "Grant";
+		$this->lname = "Cohoe";
 	}
 
     /**
@@ -37,25 +37,39 @@ class Impulselib {
      * @return
      */
 	function get_os_img_path($osname) {
-		$paths['Arch'] = "media/images/os/Arch.jpg";
-		$paths['CentOS'] = "media/images/os/CentOS.jpg";
-		$paths['Cisco IOS'] = "media/images/os/Cisco IOS.jpg";
-		$paths['Debian'] = "media/images/os/Debian.jpg";
-		$paths['Exherbo'] = "media/images/os/Exherbo.jpg";
-		$paths['Fedora'] = "media/images/os/Fedora.jpg";
-		$paths['FreeBSD'] = "media/images/os/FreeBSD.jpg";
-		$paths['Gentoo'] = "media/images/os/Gentoo.jpg";
-		$paths['NetBSD'] = "media/images/os/NetBSD.jpg";
-		$paths['OpenBSD'] = "media/images/os/OpenBSD.jpg";
-		$paths['Slackware'] = "media/images/os/Slackware.jpg";
-		$paths['Ubuntu'] = "media/images/os/Ubuntu.jpg";
-		$paths['Windows 7'] = "media/images/os/Windows7.jpg";
-		$paths['Windows Server 2003'] = "media/images/os/WindowsServer2003.jpg";
-		$paths['Windows Server 2008'] = "media/images/os/WindowsServer2008.jpg";
-		$paths['Windows Server 2008 R2'] = "media/images/os/WindowsServer2008R2.jpg";
-		$paths['Windows Vista'] = "media/images/os/WindowsVista.jpg";
-		$paths['Windows XP'] = "media/images/os/WindowsXP.jpg";
-		$paths['Mac OS X'] = "media/images/os/MacOSX.jpg";
+		$paths['Cisco IOS'] = "/media/images/os/CiscoIOS.png";
+		$paths['Windows XP'] = "/media/images/os/WindowsXP.png";
+		$paths['Windows Vista'] = "/media/images/os/WindowsVista.png";
+		$paths['Windows 7'] = "/media/images/os/Windows7.png";
+		$paths['Windows Server 2003'] = "/media/images/os/WindowsServer2003.png";
+		$paths['Windows Server 2008'] = "/media/images/os/WindowsServer2008.png";
+		$paths['Windows Server 2008 R2'] = "/media/images/os/WindowsServer2008R2.png";
+		$paths['Gentoo'] = "/media/images/os/Gentoo.png";
+		$paths['Ubuntu'] = "/media/images/os/Ubuntu.png";
+		$paths['Fedora'] = "/media/images/os/Fedora.png";
+		$paths['CentOS'] = "/media/images/os/CentOS.png";
+		$paths['Slackware'] = "/media/images/os/Slackware.png";
+		$paths['Arch'] = "/media/images/os/Arch.png";
+		$paths['Exherbo'] = "/media/images/os/Exherbo.png";
+		$paths['Debian'] = "/media/images/os/Debian.png";
+		$paths['FreeBSD'] = "/media/images/os/FreeBSD.png";
+		$paths['OpenBSD'] = "/media/images/os/OpenBSD.png";
+		$paths['NetBSD'] = "/media/images/os/NetBSD.png";
+		$paths['DragonflyBSD'] = "/media/images/os/DragonflyBSD.png";
+		$paths['ClockyOS'] = "/media/images/os/ClockyOS.png";
+		$paths['Xbox'] = "/media/images/os/Xbox.png";
+		$paths['Playstation'] = "/media/images/os/Playstation.png";
+		$paths['Wii'] = "/media/images/os/Wii.png";
+		$paths['Cisco CatOS'] = "/media/images/os/CiscoCatOS.png";
+		$paths['Mac OS X'] = "/media/images/os/MacOSX.png";
+		$paths['Solaris'] = "/media/images/os/Solaris.png";
+		$paths['openSuSE'] = "/media/images/os/openSuSE.png";
+		$paths['Red Hat Enterprise Linux'] = "/media/images/os/RedHatEnterpriseLinux.png";
+		$paths['VMware ESX'] = "/media/images/os/VMwareESX.png";
+		$paths['ChromeOS'] = "/media/images/os/ChromeOS.png";
+		$paths['OpenWRT'] = "/media/images/os/OpenWRT.png";
+		$paths['Vyatta'] = "/media/images/os/Vyatta.png";
+		$paths['Android'] = "/media/images/os/Android.png";
 
 		return $paths[$osname];
 	}

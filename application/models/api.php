@@ -52,32 +52,6 @@ class Api extends CI_Model {
 			return false;
 		}
 	}
-	
-	public function get_editable($obj) {
-		if($this->isadmin() == false) {
-			if($obj instanceof System) {
-				if($this->impulselib->get_username() != $obj->get_owner()) {
-					return false;
-				}
-				else {
-					return true;
-				}
-			}
-			elseif($obj instanceof NetworkInterface) {
-				if($this->impulselib->get_username() != $this->systems->get_interface_owner($obj)) {
-					return false;
-				}
-				else {
-					return true;
-				}
-			}
-			
-		}
-		else {
-			return true;
-		}
-	}
-	
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

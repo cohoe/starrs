@@ -1,6 +1,7 @@
 <?php
 
-require_once(APPPATH . "controllers/interfaces.php");
+########## MIGHT NEED TO FIX THIS
+#require_once(APPPATH . "controllers/interfaces.php");
 
 /**
  * This class contains the definition of an InterfaceAddress object. These
@@ -213,6 +214,8 @@ class InterfaceAddress extends ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	
+	
+	
 	/**
 	 * Adds a firewall rule to the address
 	 * @param FirewallRule	$rule	The rule object to add
@@ -225,6 +228,14 @@ class InterfaceAddress extends ImpulseObject {
 		
 		// Add the rule to the local array
 		$this->fwRules[] = $rule;
+	}
+	
+	public function set_address_record($addressRecord) {
+		if(!$addressRecord instanceof AddressRecord) {
+			throw new APIException("Cannot add a non-address-record as a address-record");
+		}
+		
+		$this->dnsAddressRecord = $addressRecord;
 	}
 
     /**

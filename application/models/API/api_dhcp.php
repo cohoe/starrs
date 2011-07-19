@@ -1,24 +1,79 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseModel.php");
+
 /**
  * DHCP
  */
-class Api_dhcp extends CI_Model {
+class Api_dhcp extends ImpulseModel {
+
     /**
      * Constructor
      */
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 	}
 	
-	public function get_config_types() {
-		$sql = "SELECT * FROM dhcp.config_types";
+	public function get_dhcp_config_types($family=NULL) {
+	
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_config_types({$this->db->escape($family)})";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $configType) {
+			$resultSet[] = new ConfigType(
+				$configType['config'],
+				$configType['comment'],
+				$configType['family'],
+				$configType['date_created'],
+				$configType['date_modified'],
+				$configType['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP config types found. This is a big problem. Talk to your administrator.");
+		}
 	}
 	
-	public function get_classes() {
-		$sql = "SELECT * FROM dhcp.classes";
+	public function get_dhcp_classes() {
+	
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_classes()";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $class) {
+			$resultSet[] = new ConfigClass(
+				$class['class'],
+				$class['comment'],
+				$class['date_created'],
+				$class['date_modified'],
+				$class['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP classes found. This is a big problem. Talk to your administrator.");
+		}
 	}
 }
+
+/* End of file api_dhcp.php */
+/* Location: ./application/models/API/api_dhcp.php */

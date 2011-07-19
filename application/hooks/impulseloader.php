@@ -4,8 +4,10 @@
 
 class ImpulseLoader {
 	public function initialize() {
+		# Core
+		require_once(APPPATH . "libraries/core/ImpulseObject.php");
+		
 		# Objects
-		require_once(APPPATH . "libraries/objects/ImpulseObject.php");
 		require_once(APPPATH . "libraries/objects/DnsRecord.php");
 		require_once(APPPATH . "libraries/objects/AddressRecord.php");
 		require_once(APPPATH . "libraries/objects/FirewallRule.php");
@@ -16,9 +18,12 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/PointerRecord.php");
 		require_once(APPPATH . "libraries/objects/System.php");
 		require_once(APPPATH . "libraries/objects/TxtRecord.php");
+		require_once(APPPATH . "libraries/objects/ConfigType.php");
+		require_once(APPPATH . "libraries/objects/ConfigClass.php");
 		
 		# Exceptions
-		require_once(APPPATH . "libraries/exceptions/APIException.php");
+		require_once(APPPATH . "libraries/exceptions/ControllerException.php");
+		require_once(APPPATH . "libraries/exceptions/ObjectException.php");
 		require_once(APPPATH . "libraries/exceptions/AmbiguousTargetException.php");
 		require_once(APPPATH . "libraries/exceptions/DBException.php");
 		require_once(APPPATH . "libraries/exceptions/ObjectNotFoundException.php");
@@ -26,6 +31,5 @@ class ImpulseLoader {
 		# UI Stuff
 		require_once(APPPATH . "libraries/core/navbar.php");
 		
-
 	}
 }

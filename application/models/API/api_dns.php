@@ -1,14 +1,32 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseModel.php");
+
 /**
- *
+ *	DNS
  */
-class Api_dns extends CI_Model {
+class Api_dns extends ImpulseModel {
 
     /**
-     *
+     * Constructor
      */
 	public function __construct() {
 		parent::__construct();
+	}
+	
+	public function create_dns_address($address, $hostname, $zone, $ttl, $owner) {
+	
+		// SQL Query
+		$sql = "SELECT api.create_dns_address(
+			{$this->db->escape($address)},
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	/**
@@ -17,26 +35,31 @@ class Api_dns extends CI_Model {
      * @return \AddressRecord   The object of the record
      */
     public function get_address_record($address) {
+	
+		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
-        $info = $query->row_array();
-
-        // Establish and return the record object
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate & return result
+        $aRecord = $query->row_array();
         if($query->num_rows() == 1) {
             return new AddressRecord(
-                $info['hostname'],
-                $info['zone'],
-                $info['address'],
-                $info['type'],
-                $info['ttl'],
-                $info['owner'],
-                $info['date_created'],
-                $info['date_modified'],
-                $info['last_modifier']
+                $aRecord['hostname'],
+                $aRecord['zone'],
+                $aRecord['address'],
+                $aRecord['type'],
+                $aRecord['ttl'],
+                $aRecord['owner'],
+                $aRecord['date_created'],
+                $aRecord['date_modified'],
+                $aRecord['last_modifier']
             );
         }
         else {
-            return null;
+            throw new ObjectNotFoundException("Could not locate DNS address record for address $address");
         }
 	}
 
@@ -46,15 +69,19 @@ class Api_dns extends CI_Model {
      * @return array<PointerRecord> An array of PointerRecords
      */
     public function get_pointer_records($address) {
+	
+		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_pointers({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
-        // Declare the array of record objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
+		// Check error
+		$this->_check_error($query);
+		
+		
+        // Generate results
+        $resultSet = array();
         foreach ($query->result_array() as $pointerRecord) {
-            $recordSet[] = new PointerRecord(
+            $resultSet[] = new PointerRecord(
                 $pointerRecord['hostname'],
                 $pointerRecord['zone'],
                 $pointerRecord['address'],
@@ -69,8 +96,13 @@ class Api_dns extends CI_Model {
             );
         }
 
-        // Return the array of objects
-        return $recordSet;
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No pointer records found for address $address");
+		}
 	}
 
     /**
@@ -78,16 +110,19 @@ class Api_dns extends CI_Model {
      * @param $address          The address to search for
      * @return array<TxtRecord> An array of NsRecords
      */
-    public function get_txt_records($address) {
-		$sql = "SELECT * FROM api.get_dns_txt({$this->db->escape($address)})";
+    public function get_text_records($address) {
+	
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_text({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
 
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
-        foreach ($query->result_array() as $txtRecord) {
-            $recordSet[] = new TxtRecord(
+        // Generate results
+        $resultSet = array();
+        foreach ($query->result_array() as $textRecord) {
+            $resultSet[] = new TextRecord(
                 $txtRecord['hostname'],
                 $txtRecord['zone'],
                 $txtRecord['address'],
@@ -101,8 +136,13 @@ class Api_dns extends CI_Model {
             );
         }
 
-        // Return the array of objects
-        return $recordSet;
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No text records found for address $address");
+		}
 	}
 
     /**
@@ -111,15 +151,18 @@ class Api_dns extends CI_Model {
      * @return array<NsRecord>  An array of NsRecords
      */
     public function get_ns_records($address) {
+	
+		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
         foreach ($query->result_array() as $nsRecord) {
-            $recordSet[] = new NsRecord(
+            $resultSet[] = new NsRecord(
                 $nsRecord['hostname'],
                 $nsRecord['zone'],
                 $nsRecord['address'],
@@ -133,8 +176,13 @@ class Api_dns extends CI_Model {
             );
         }
 
-        // Return the array of objects
-        return $recordSet;
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No NS records found for address $address");
+		}
 	}
 
     /**
@@ -144,15 +192,18 @@ class Api_dns extends CI_Model {
      * @todo: Make this only return one result since there can only ever be one MX record for an address
      */
     public function get_mx_records($address) {
+	
+		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
-        // Declare the array of text objects
-        $recordSet = array();
-
-        // Loop through the results, instantiating all of them
+        // Check error
+		$this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
         foreach ($query->result_array() as $mxRecord) {
-            $recordSet[] = new MxRecord(
+            $resultSet[] = new MxRecord(
                 $mxRecord['hostname'],
                 $mxRecord['zone'],
                 $mxRecord['address'],
@@ -166,25 +217,63 @@ class Api_dns extends CI_Model {
             );
         }
 
-        // Return the array of objects
-        return $recordSet;
-	}
-	
-	/**
-     * Get the DNS FQDN of a given IP address if it exists
-     * @param $address  The address to search on
-     * @return string   The FQDN of the address (or NULL if none)
-     */
-    public function get_ip_fqdn($address) {
-		$sql = "SELECT hostname||'.'||zone AS fqdn FROM dns.a WHERE address = '$address'";
-		$query = $this->db->query($sql);
-		#$arr = $query->result_array();
-		#echo $arr;
-		if($query->row()) {
-			return $query->row()->fqdn;
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
 		}
 		else {
-			return null;
+			throw new ObjectNotFoundException("No MX records found for address $address");
+		}
+	}
+	
+	public function get_record_types() {
+		
+		// SQL Query
+		$sql = "SELECT api.get_record_types()";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $recordType) {
+			$resultSet[] = $recordType['get_record_types'];
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DNS record types found. This is a big problem. Talk to your administrator.");
+		}
+	}
+	
+	public function get_dns_zones($username=NULL) {
+	
+		// SQL Query
+		$sql = "SELECT api.get_dns_zones({$this->db->escape($username)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $zone) {
+			$resultSet[] = $zone['get_dns_zones'];
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("You do not have access to any DNS zones. This could be a problem. Talk to your administrator.");
 		}
 	}
 }
+
+/* End of file api_dns.php */
+/* Location: ./application/models/API/api_dns.php */

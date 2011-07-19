@@ -349,7 +349,7 @@ class API_Systems extends CI_Model {
 		return $addressSet;
 	}
 	
-	public function get_system_inteface_address($address, $complete=false) {
+	public function get_system_interface_address($address, $complete=false) {
 				
 		// Run the query
 		$sql = "SELECT * FROM systems.interface_addresses WHERE address={$this->db->escape($address)}";
