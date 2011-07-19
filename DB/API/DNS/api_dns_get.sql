@@ -50,3 +50,11 @@ CREATE OR REPLACE FUNCTION "api"."get_record_types"() RETURNS SETOF TEXT AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_record_types"() IS 'Get all of the valid DNS types for this application';
+
+/* API - get_zones */
+CREATE OR REPLACE FUNCTION "api"."get_zones"(input_username text) RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY(SELECT "zone" FROM "dns"."zones" WHERE "forward" = TRUE AND ("shared" = TRUE OR "owner" = input_username));
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_zones"(text) IS 'Get the available zones to a user';
