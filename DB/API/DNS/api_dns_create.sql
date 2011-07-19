@@ -166,11 +166,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','creating new mailserver (MX)');
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner") VALUES
-			(input_hostname,input_zone,input_preference,DEFAULT,input_owner);
+			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
+			(input_hostname,input_zone,input_preference,DEFAULT,input_owner,'MX');
 		ELSE
-			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner") VALUES
-			(input_hostname,input_zone,input_preference,input_ttl,input_owner);
+			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
+			(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
 		END IF;
 
 		-- Done
@@ -212,11 +212,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','creating new NS record');
 		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
-			(input_hostname,input_zone,input_isprimary,DEFAULT,input_owner);
+			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
+			(input_hostname,input_zone,input_isprimary,DEFAULT,input_owner,'NS');
 		ELSE
-			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner") VALUES
-			(input_hostname,input_zone,input_isprimary,input_ttl,input_owner);
+			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
+			(input_hostname,input_zone,input_isprimary,input_ttl,input_owner,'NS');
 		END IF;
 
 		-- Done
@@ -268,7 +268,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
 			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,input_owner,'SRV');
 		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","TYPE") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
 			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,input_owner,'SRV');
 		END IF;
 
@@ -321,7 +321,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
 			(input_alias, input_target, input_zone, DEFAULT,input_owner,'CNAME');
 		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
+			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
 			(input_alias, input_target, input_zone, input_ttl,input_owner,'CNAME');
 		END IF;
 
