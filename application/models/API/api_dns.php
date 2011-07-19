@@ -12,8 +12,16 @@ class Api_dns extends ImpulseModel {
 	public function __construct() {
 		parent::__construct();
 	}
-	
-	public function create_dns_address($address, $hostname, $zone, $ttl, $owner) {
+
+    /**
+     * Create a DNS A/AAAA record
+     * @param $address      IP address
+     * @param $hostname     Hostname of the host
+     * @param $zone         Domain name of the record
+     * @param $ttl          Time-to-live
+     * @param $owner        Owner of the record
+     */
+    public function create_dns_address($address, $hostname, $zone, $ttl, $owner) {
 	
 		// SQL Query
 		$sql = "SELECT api.create_dns_address(
@@ -32,7 +40,7 @@ class Api_dns extends ImpulseModel {
 	/**
      * Get the DNS address record object for a given address
      * @param $address          The address to get on
-     * @return \AddressRecord   The object of the record
+     * @return AddressRecord    The object of the record
      */
     public function get_address_record($address) {
 	
@@ -58,6 +66,9 @@ class Api_dns extends ImpulseModel {
                 $aRecord['last_modifier']
             );
         }
+        elseif($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple address records detected. This indicates a database error. Contact your system administrator.");
+        }
         else {
             throw new ObjectNotFoundException("Could not locate DNS address record for address $address");
         }
@@ -65,8 +76,8 @@ class Api_dns extends ImpulseModel {
 
     /**
      * Get all of the pointer records that resolve to an IP address and return an array of PointerRecord objects
-     * @param $address              The address to search on
-     * @return array<PointerRecord> An array of PointerRecords
+     * @param $address                  The address to search on
+     * @return array<PointerRecord>     An array of PointerRecords
      */
     public function get_pointer_records($address) {
 	
@@ -107,8 +118,8 @@ class Api_dns extends ImpulseModel {
 
     /**
      * Get all of the TXT or SPF records that resolve to an IP address and return an array of TxtRecord objects
-     * @param $address          The address to search for
-     * @return array<TxtRecord> An array of NsRecords
+     * @param $address              The address to search for
+     * @return array<TxtRecord>     An array of NsRecords
      */
     public function get_text_records($address) {
 	
@@ -123,16 +134,16 @@ class Api_dns extends ImpulseModel {
         $resultSet = array();
         foreach ($query->result_array() as $textRecord) {
             $resultSet[] = new TextRecord(
-                $txtRecord['hostname'],
-                $txtRecord['zone'],
-                $txtRecord['address'],
-                $txtRecord['type'],
-                $txtRecord['ttl'],
-                $txtRecord['owner'],
-                $txtRecord['text'],
-                $txtRecord['date_created'],
-                $txtRecord['date_modified'],
-                $txtRecord['last_modifier']
+                $textRecord['hostname'],
+                $textRecord['zone'],
+                $textRecord['address'],
+                $textRecord['type'],
+                $textRecord['ttl'],
+                $textRecord['owner'],
+                $textRecord['text'],
+                $textRecord['date_created'],
+                $textRecord['date_modified'],
+                $textRecord['last_modifier']
             );
         }
 
@@ -140,9 +151,9 @@ class Api_dns extends ImpulseModel {
 		if(count($resultSet) > 0) {
 			return $resultSet;
 		}
-		else {
-			throw new ObjectNotFoundException("No text records found for address $address");
-		}
+        else {
+            throw new ObjectNotFoundException("No text records found for address $address");
+        }
 	}
 
     /**
@@ -189,7 +200,6 @@ class Api_dns extends ImpulseModel {
      * Get all of the MX records that resolve to an IP address and return an array of MxRecord objects
      * @param $address          The address to search for
      * @return array<MxRecord>  Array of MxRecord objects
-     * @todo: Make this only return one result since there can only ever be one MX record for an address
      */
     public function get_mx_records($address) {
 	
@@ -200,10 +210,10 @@ class Api_dns extends ImpulseModel {
         // Check error
 		$this->_check_error($query);
 		
-		// Generate results
-        $resultSet = array();
-        foreach ($query->result_array() as $mxRecord) {
-            $resultSet[] = new MxRecord(
+		// Generate and return results
+        $mxRecord = $query->row_array();
+        if($query->num_rows() == 1) {
+            return new MxRecord(
                 $mxRecord['hostname'],
                 $mxRecord['zone'],
                 $mxRecord['address'],
@@ -216,17 +226,19 @@ class Api_dns extends ImpulseModel {
                 $mxRecord['last_modifier']
             );
         }
-
-        // Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-		else {
-			throw new ObjectNotFoundException("No MX records found for address $address");
-		}
+		elseif($query->num_rows() > 0) {
+            throw new AmbiguousTargetException("Multiple MX records detected. This indicates a database error. Contact your administrator.");
+        }
+        else {
+            throw new ObjectNotFoundException("Could not locate a DNS MX record for address $address");
+        }
 	}
-	
-	public function get_record_types() {
+
+    /**
+     * Get a list of all supported DNS record type
+     * @return array<string>    List of all record types
+     */
+    public function get_record_types() {
 		
 		// SQL Query
 		$sql = "SELECT api.get_record_types()";
@@ -249,8 +261,13 @@ class Api_dns extends ImpulseModel {
 			throw new ObjectNotFoundException("No DNS record types found. This is a big problem. Talk to your administrator.");
 		}
 	}
-	
-	public function get_dns_zones($username=NULL) {
+
+    /**
+     * Get a list of all DNS zones that the current user has access to.
+     * @param null $username    The username (or NULL for the default)
+     * @return array<string>    A list of all DNS zones
+     */
+    public function get_dns_zones($username=NULL) {
 	
 		// SQL Query
 		$sql = "SELECT api.get_dns_zones({$this->db->escape($username)})";

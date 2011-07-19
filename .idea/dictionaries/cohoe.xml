@@ -2,7 +2,9 @@
   <dictionary name="cohoe">
     <words>
       <w>deinitialize</w>
+      <w>dhcp</w>
       <w>fqdn</w>
+      <w>isprimary</w>
     </words>
   </dictionary>
 </component>

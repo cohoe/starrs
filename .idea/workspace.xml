@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/cohoe.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/cohoe.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/addresses/create.php" afterPath="$PROJECT_DIR$/application/views/addresses/create.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/api_dhcp.php" afterPath="$PROJECT_DIR$/application/models/API/api_dhcp.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/api_dns.php" afterPath="$PROJECT_DIR$/application/models/API/api_dns.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,10 +28,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="create.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/views/addresses/create.php">
+      <file leaf-file-name="api_dns.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="36" selection-start="445" selection-end="445" vertical-scroll-proportion="0.32142857">
+            <state line="267" column="55" selection-start="8276" selection-end="8276" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_dhcp.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/models/API/api_dhcp.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="51" column="7" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_firewall.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/models/API/api_firewall.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="29" column="35" selection-start="665" selection-end="665" vertical-scroll-proportion="0.45310956">
               <folding />
             </state>
           </provider>
@@ -49,8 +69,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/libraries/objects/TxtRecord.php" />
-        <option value="$PROJECT_DIR$/application/libraries/navigation/navbar.php" />
         <option value="$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php" />
         <option value="$PROJECT_DIR$/application/libraries/exceptions/DBException.php" />
         <option value="$PROJECT_DIR$/application/libraries/exceptions/APIException.php" />
@@ -65,6 +83,8 @@
         <option value="$PROJECT_DIR$/application/views/addresses/delete.php" />
         <option value="$PROJECT_DIR$/css/mockup/main.css" />
         <option value="$PROJECT_DIR$/application/views/addresses/create.php" />
+        <option value="$PROJECT_DIR$/application/models/API/api_dns.php" />
+        <option value="$PROJECT_DIR$/application/models/API/api_dhcp.php" />
       </list>
     </option>
   </component>
@@ -116,6 +136,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
@@ -145,20 +166,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="sample" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="application" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -177,7 +184,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
+              <option name="myItemId" value="models" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -195,29 +202,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
+              <option name="myItemId" value="models" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="addresses" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hooks" />
+              <option name="myItemId" value="API" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -235,13 +224,56 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="exceptions" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -318,23 +350,23 @@
     </servers>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="843" extended-state="0" />
+    <frame x="-4" y="-4" width="1928" height="1180" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995194" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25017974" sideWeight="0.6703448" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25306994" sideWeight="0.6703448" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32965517" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965517" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -410,112 +442,81 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/application/hooks/impulseloader.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.13729978">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/core/controller.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="0" selection-start="2404" selection-end="2497" vertical-scroll-proportion="0.72540045">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.13729978" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/AmbiguousTargetException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="4" selection-start="167" selection-end="260" vertical-scroll-proportion="0.2402746">
-          <folding />
-        </state>
+        <state line="7" column="4" selection-start="167" selection-end="260" vertical-scroll-proportion="0.2402746" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/APIException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="385" selection-end="385" vertical-scroll-proportion="0.49234137">
-          <folding />
-        </state>
+        <state line="15" column="0" selection-start="385" selection-end="385" vertical-scroll-proportion="0.49234137" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/ObjectNotFoundException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="535" selection-end="659" vertical-scroll-proportion="0.65645516">
-          <folding />
-        </state>
+        <state line="20" column="0" selection-start="535" selection-end="659" vertical-scroll-proportion="0.65645516" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/exceptions/DBException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="0" selection-start="724" selection-end="724" vertical-scroll-proportion="0.5295405">
-          <folding />
-        </state>
+        <state line="23" column="0" selection-start="724" selection-end="724" vertical-scroll-proportion="0.5295405" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/ImpulseObject.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="54" selection-start="1659" selection-end="1659" vertical-scroll-proportion="1.4442014">
-          <folding />
-        </state>
+        <state line="49" column="54" selection-start="1659" selection-end="1659" vertical-scroll-proportion="1.4442014" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/css/mockup/main.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="4" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.17620137">
-          <folding />
-        </state>
+        <state line="131" column="4" selection-start="1843" selection-end="1843" vertical-scroll-proportion="0.17620137" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/addresses/delete.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="6" selection-start="622" selection-end="622" vertical-scroll-proportion="0.5447942">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/interfaces/create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="8" selection-start="502" selection-end="502" vertical-scroll-proportion="0.62355655">
-          <folding />
-        </state>
+        <state line="15" column="6" selection-start="622" selection-end="622" vertical-scroll-proportion="0.5447942" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="31" selection-start="4207" selection-end="4207" vertical-scroll-proportion="0.5608108">
-          <folding />
-        </state>
+        <state line="120" column="31" selection-start="4207" selection-end="4207" vertical-scroll-proportion="0.5608108" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="103" column="5" selection-start="3270" selection-end="3270" vertical-scroll-proportion="0.5563063">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/interfaces/edit.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="30" selection-start="717" selection-end="717" vertical-scroll-proportion="0.71428573">
-          <folding />
-        </state>
+        <state line="103" column="5" selection-start="3270" selection-end="3270" vertical-scroll-proportion="0.5563063" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="42" selection-start="760" selection-end="794" vertical-scroll-proportion="0.8314088">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="41" selection-start="1099" selection-end="1099" vertical-scroll-proportion="0.6389497">
-          <folding />
-        </state>
+        <state line="24" column="42" selection-start="760" selection-end="794" vertical-scroll-proportion="0.8314088" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/addresses/create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="36" selection-start="445" selection-end="445" vertical-scroll-proportion="0.32142857">
+        <state line="9" column="36" selection-start="445" selection-end="445" vertical-scroll-proportion="0.32142857" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="267" column="55" selection-start="8276" selection-end="8276" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/api_dhcp.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="7" selection-start="1308" selection-end="1308" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/api_firewall.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="35" selection-start="665" selection-end="665" vertical-scroll-proportion="0.45310956">
           <folding />
         </state>
       </provider>

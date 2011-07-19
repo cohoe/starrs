@@ -12,8 +12,13 @@ class Api_dhcp extends ImpulseModel {
 	public function __construct() {
 		parent::__construct();
 	}
-	
-	public function get_dhcp_config_types($family=NULL) {
+
+    /**
+     * Get an array of ConfigType objects for address configuration
+     * @param null $family          The address family (4, 6, 0 (both))
+     * @return array<ConfigType>    Configuration types for your family
+     */
+    public function get_dhcp_config_types($family=NULL) {
 	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dhcp_config_types({$this->db->escape($family)})";
@@ -43,8 +48,12 @@ class Api_dhcp extends ImpulseModel {
 			throw new ObjectNotFoundException("No DHCP config types found. This is a big problem. Talk to your administrator.");
 		}
 	}
-	
-	public function get_dhcp_classes() {
+
+    /**
+     * Get an array of all DHCP class objects
+     * @return array<string>    Array of class objects
+     */
+    public function get_dhcp_classes() {
 	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dhcp_classes()";
