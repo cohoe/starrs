@@ -20,6 +20,7 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/TxtRecord.php");
 		require_once(APPPATH . "libraries/objects/ConfigType.php");
 		require_once(APPPATH . "libraries/objects/ConfigClass.php");
+        require_once(APPPATH . "libraries/objects/IpRange.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");

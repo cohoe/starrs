@@ -22,7 +22,6 @@ class Api_dns extends ImpulseModel {
      * @param $owner        Owner of the record
      */
     public function create_dns_address($address, $hostname, $zone, $ttl, $owner) {
-	
 		// SQL Query
 		$sql = "SELECT api.create_dns_address(
 			{$this->db->escape($address)},
@@ -43,7 +42,6 @@ class Api_dns extends ImpulseModel {
      * @return AddressRecord    The object of the record
      */
     public function get_address_record($address) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -80,7 +78,6 @@ class Api_dns extends ImpulseModel {
      * @return array<PointerRecord>     An array of PointerRecords
      */
     public function get_pointer_records($address) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_pointers({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -122,7 +119,6 @@ class Api_dns extends ImpulseModel {
      * @return array<TxtRecord>     An array of NsRecords
      */
     public function get_text_records($address) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_text({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -162,7 +158,6 @@ class Api_dns extends ImpulseModel {
      * @return array<NsRecord>  An array of NsRecords
      */
     public function get_ns_records($address) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -202,7 +197,6 @@ class Api_dns extends ImpulseModel {
      * @return array<MxRecord>  Array of MxRecord objects
      */
     public function get_mx_records($address) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -239,7 +233,6 @@ class Api_dns extends ImpulseModel {
      * @return array<string>    List of all record types
      */
     public function get_record_types() {
-		
 		// SQL Query
 		$sql = "SELECT api.get_record_types()";
 		$query = $this->db->query($sql);
@@ -268,7 +261,6 @@ class Api_dns extends ImpulseModel {
      * @return array<string>    A list of all DNS zones
      */
     public function get_dns_zones($username=NULL) {
-	
 		// SQL Query
 		$sql = "SELECT api.get_dns_zones({$this->db->escape($username)})";
 		$query = $this->db->query($sql);

@@ -19,7 +19,6 @@ class Api_dhcp extends ImpulseModel {
      * @return array<ConfigType>    Configuration types for your family
      */
     public function get_dhcp_config_types($family=NULL) {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dhcp_config_types({$this->db->escape($family)})";
 		$query = $this->db->query($sql);
@@ -54,7 +53,6 @@ class Api_dhcp extends ImpulseModel {
      * @return array<string>    Array of class objects
      */
     public function get_dhcp_classes() {
-	
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dhcp_classes()";
 		$query = $this->db->query($sql);
