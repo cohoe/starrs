@@ -17,7 +17,7 @@ class Impulselib {
 		#$this->uname = $CI->input->server('WEBAUTH_USER');
 		#$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
 		#$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
-		$this->uname = "user";
+		$this->uname = "root";
 		$this->fname = "Grant";
 		$this->lname = "Cohoe";
 	}

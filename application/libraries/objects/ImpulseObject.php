@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * This class contains the definition of an IMPULSE Object. Basically any true 
  * object in the Impulse system has a date modified, created, and a user who
@@ -6,7 +6,7 @@
  * access all that data. 
  */
 
-abstract class ImpulseObject {
+class ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// CI OUTSIDE WORLD
 	

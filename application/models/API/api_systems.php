@@ -35,6 +35,9 @@ class API_Systems extends ImpulseModel {
 
         // Check errors
 		$this->_check_error($query);
+		
+		// Return object
+		return $this->get_system_data($systemName,false);
 	}
 
     /**
@@ -56,6 +59,9 @@ class API_Systems extends ImpulseModel {
 		
 		// Check error
         $this->_check_error($query);
+		
+		// Return object
+		return $this->get_system_interface_data($mac, false);
 	}
 
     /**
@@ -82,6 +88,9 @@ class API_Systems extends ImpulseModel {
 		
 		// Check error
         $this->_check_error($query);
+		
+		// Return object
+		return $this->api->systems->get_system_interface_address($address, false);
 	}
 	
 	
@@ -140,7 +149,7 @@ class API_Systems extends ImpulseModel {
 		
 		// Generate results
 		$systemData = $query->row_array();
-		$system = new System(
+		$sys = new System(
 			$systemData['system_name'],
 			$systemData['owner'],
 			$systemData['comment'],
@@ -155,12 +164,12 @@ class API_Systems extends ImpulseModel {
 		if($complete == true) {
 			// Grab the interfaces that the system has
 			foreach($this->get_system_interfaces($systemName, $complete) as $interface) {
-				$system->add_interface($interface);
+				$sys->add_interface($interface);
 			} 
 		}
 		
 		// Return result
-		return $system;
+		return $sys;
 	}
 	
 	/**
@@ -185,7 +194,7 @@ class API_Systems extends ImpulseModel {
 		$resultSet = array();
 		foreach($query->result_array() as $row) {
 			// Create the interface
-			$interface = new NetworkInterface(
+			$int = new NetworkInterface(
 				$row['mac'], 
 				$row['comment'], 
 				$row['system_name'], 
@@ -197,34 +206,39 @@ class API_Systems extends ImpulseModel {
 
             // Generate a complete object
 			if($complete == true) {
-				$iA = $this->get_interface_addresses($row['mac'],$complete);
-				foreach($iA as $address) {
-					$interface->add_address($address);
+				$addrs = $this->get_interface_addresses($row['mac'],$complete);
+				foreach($addrs as $addr) {
+					$int->add_address($addr);
 				}
 			}
 			
 			// Add the machine to the result set
-			$interfaceSet[] = $interface;
+			$resultSet[] = $int;
 		}
 
-        // Return result
-		return $interfaceSet;
+        // Return results
+        if(count($resultSet) > 0) {
+            return $resultSet;
+        }
+        else {
+            throw new ObjectNotFoundException("No interfaces found!");
+        }
 	}
 	
 	public function get_system_interface_data($mac, $complete=false) {
-		
+		// SQL Query
 		$sql = "SELECT * FROM api.get_system_interface_data({$this->db->escape($mac)})";
 		$query = $this->db->query($sql);
-		// Error conditions
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($this->db->_error_message() != "") {
-			throw new DBException($this->db->_error_message());
+		
+		// Check error
+		$this->_check_error($query);
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("More than one interface matches '{$mac}'. This indicates a database error. Contact your system administrator.");
 		}
 		
+		// Generate results
 		$result = $query->row_array();
-		$interface = new NetworkInterface(
+		$int = new NetworkInterface(
 			$result['mac'],
 			$result['comment'],
 			$result['system_name'],
@@ -235,13 +249,14 @@ class API_Systems extends ImpulseModel {
 		);
 		
 		if($complete == true) {
-			$iA = $this->get_system_interface_addresses($result['mac'],$complete);
-			foreach($iA as $address) {
-				$interface->add_address($address);
+			$addrs = $this->get_system_interface_addresses($result['mac'],$complete);
+			foreach($addrs as $addr) {
+				$int->add_address($addr);
 			}
 		}
 		
-		return $interface;
+		// Return result
+		return $int;
 	}
 
     /**
@@ -253,21 +268,17 @@ class API_Systems extends ImpulseModel {
      * @return array<InterfaceAddress>  An array of InterfaceAddress objects
      */
     public function get_system_interface_addresses($mac, $complete=false) {
-				
-		// Run the query
-		// This is DESC for temporary viewing purposes. It will be made ASC later
+		// SQL Query
 		$sql = "SELECT * FROM api.get_system_interface_addresses({$this->db->escape($mac)})";
 		$query = $this->db->query($sql);
 		
-		// Check for errors
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
+		// Check error
+		$this->_check_error($query);
 		
-		// Create the objects
-		$addressSet = array();
+		// Generate results
+		$resultSet = array();
 		foreach($query->result_array() as $row) {
-			$address = new InterfaceAddress(
+			$addr = new InterfaceAddress(
 				$row['address'], 
 				$row['class'], 
 				$row['config'], 
@@ -283,59 +294,76 @@ class API_Systems extends ImpulseModel {
             // If we are building all information about the system, do all this stuff
             if($complete == true) {
                 // Load firewall rules
-                $fwRules = $this->api->firewall->get_address_rules($row['address']);
-                foreach($fwRules as $fwRule) {
-                    $address->add_firewall_rule($fwRule);
-                }
+				try {
+					$fwRules = $this->api->firewall->get_address_rules($row['address']);
+					foreach($fwRules as $fwRule) {
+						$addr->add_firewall_rule($fwRule);
+					}
+				}
+				catch (ObjectNotFoundException $onfE) {}
 
-                // Load DNS pointer records
-                $pointerRecords = $this->api->dns->get_pointer_records($row['address']);
-                foreach ($pointerRecords as $pointerRecord) {
-                    $address->add_pointer_record($pointerRecord);
-                }
+				// Load DNS pointer records
+				try {
+					$pointerRecords = $this->api->dns->get_pointer_records($row['address']);
+					foreach ($pointerRecords as $pointerRecord) {
+						$addr->add_pointer_record($pointerRecord);
+					}
+				}
+				catch (ObjectNotFoundException $onfE) {}
 
-                // Load DNS text records
-                $txtRecords = $this->api->dns->get_txt_records($row['address']);
-                foreach ($txtRecords as $txtRecord) {
-                    $address->add_txt_record($txtRecord);
-                }
+				// Load DNS text records
+				try {
+					$textRecords = $this->api->dns->get_text_records($row['address']);
+					foreach ($textRecords as $textRecord) {
+						$addr->add_text_record($textRecord);
+					}
+				}
+				catch (ObjectNotFoundException $onfE) {}
+				
+				// Load DNS nameserver records
+				try {
+					$nsRecords = $this->api->dns->get_ns_records($row['address']);
+					foreach ($nsRecords as $nsRecord) {
+						$addr->add_ns_record($nsRecord);
+					}
+				}
+				catch (ObjectNotFoundException $onfE) {}
 
-                // Load DNS nameserver records
-                $nsRecords = $this->api->dns->get_ns_records($row['address']);
-                foreach ($nsRecords as $nsRecord) {
-                    $address->add_ns_record($nsRecord);
-                }
-
-                // Load DNS mailserver records
-                $mxRecords = $this->api->dns->get_mx_records($row['address']);
-                foreach ($mxRecords as $mxRecord) {
-                    $address->add_mx_record($mxRecord);
-                }
+				// Load DNS mailserver records
+				try {
+					$mxRecord = $this->api->dns->get_mx_records($row['address']);
+					$addr->add_mx_record($mxRecord);
+				}
+				catch (ObjectNotFoundException $onfE) {}
             }
 
             // Add the address to the array
-            $addressSet[] = $address;
+            $resultSet[] = $addr;
 		}
 
-        // Return the array of addresses
-		return $addressSet;
+        // Return results
+        if(count($resultSet) > 0) {
+            return $resultSet;
+        }
+        else {
+            throw new ObjectNotFoundException("No addresses found!");
+        }
 	}
 	
 	public function get_system_interface_address($address, $complete=false) {
-				
-		// Run the query
-		$sql = "SELECT * FROM systems.interface_addresses WHERE address={$this->db->escape($address)}";
+		// SQL Query
+		$sql = "SELECT * FROM api.get_system_interface_address({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 		
-		// Check for errors
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
+		// Check error
+		$this->_check_error($query);
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("More than one interface matches '{$mac}'. This indicates a database error. Contact your system administrator.");
 		}
 		
+		// Generate results
 		$row = $query->row_array();
-		
-		// Create the objects
-		$address = new InterfaceAddress(
+		$addr = new InterfaceAddress(
 				$row['address'], 
 				$row['class'], 
 				$row['config'], 
@@ -351,52 +379,74 @@ class API_Systems extends ImpulseModel {
 		// If we are building all information about the system, do all this stuff
 		if($complete == true) {
 			// Load firewall rules
-			$fwRules = $this->api->firewall->get_address_rules($row['address']);
-			foreach($fwRules as $fwRule) {
-				$address->add_firewall_rule($fwRule);
+			try {
+				$fwRules = $this->api->firewall->get_address_rules($row['address']);
+				foreach($fwRules as $fwRule) {
+					$addr->add_firewall_rule($fwRule);
+				}
 			}
+			catch (ObjectNotFoundException $onfE) {}
+
 
 			// Load DNS pointer records
-			$pointerRecords = $this->api->dns->get_pointer_records($row['address']);
-			foreach ($pointerRecords as $pointerRecord) {
-				$address->add_pointer_record($pointerRecord);
+			try {	
+				$pointerRecords = $this->api->dns->get_pointer_records($row['address']);
+				foreach ($pointerRecords as $pointerRecord) {
+					$addr->add_pointer_record($pointerRecord);
+				}
 			}
+			catch (ObjectNotFoundException $onfE) {}
 
 			// Load DNS text records
-			$txtRecords = $this->api->dns->get_txt_records($row['address']);
-			foreach ($txtRecords as $txtRecord) {
-				$address->add_txt_record($txtRecord);
+			try {
+				$textRecords = $this->api->dns->get_text_records($row['address']);
+				foreach ($textRecords as $textRecord) {
+					$addr->add_text_record($textRecord);
+				}
 			}
+			catch (ObjectNotFoundException $onfE) {}
 
 			// Load DNS nameserver records
-			$nsRecords = $this->api->dns->get_ns_records($row['address']);
-			foreach ($nsRecords as $nsRecord) {
-				$address->add_ns_record($nsRecord);
+			try {
+				$nsRecords = $this->api->dns->get_ns_records($row['address']);
+				foreach ($nsRecords as $nsRecord) {
+					$addr->add_ns_record($nsRecord);
+				}
 			}
+			catch (ObjectNotFoundException $onfE) {}
 
 			// Load DNS mailserver records
-			$mxRecords = $this->api->dns->get_mx_records($row['address']);
-			foreach ($mxRecords as $mxRecord) {
-				$address->add_mx_record($mxRecord);
+			try {
+				$mxRecords = $this->api->dns->get_mx_records($row['address']);
+				foreach ($mxRecords as $mxRecord) {
+					$addr->add_mx_record($mxRecord);
+				}
 			}
+			catch (ObjectNotFoundException $onfE) {}
 		}
 
-        // Return the array of addresses
-		return $address;
+        // Return results
+		return $addr;
 	}
 
     /**
      * @return array
      */
 	public function get_system_types() {
+		// SQL Query
 		$sql = "SELECT api.get_system_types()";
 		$query = $this->db->query($sql);
 		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
 		$types = array();
 		foreach($query->result_array() as $result) {
 			$types[] = $result['get_system_types'];
 		}
 
+		// Return results
 		return $types;
 	}
 
@@ -404,14 +454,20 @@ class API_Systems extends ImpulseModel {
      * @return array
      */
 	public function get_operating_systems() {
+		// SQL Query
 		$sql = "SELECT api.get_operating_systems()";
 		$query = $this->db->query($sql);
 		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
 		$oss = array();
 		foreach($query->result_array() as $os) {
 			$oss[] = $os['get_operating_systems'];
 		}
 
+		// Return results
 		return $oss;
 	}
 
@@ -434,15 +490,32 @@ class API_Systems extends ImpulseModel {
 	}
 	
 	public function get_interface_owner($int) {
+		// SQL Query
 		$sql = "SELECT api.get_interface_owner('{$int->get_mac()}')";
 		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return results
 		return $query->row()->get_interface_owner;
 	}
 	
 	public function get_interface_address_system($address) {
+		// SQL Query
 		$sql = "SELECT api.get_interface_address_system({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
-		return $query->row()->get_interface_address_system;
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return results
+		if($query->num_rows() == 1) {
+			return $query->row()->get_interface_address_system;
+		}
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("More than one match for '{$address}'. This indicates a database error. Contact your system administrator.");
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -456,51 +529,30 @@ class API_Systems extends ImpulseModel {
      * @return string
      */
 	public function modify_system($systemName, $field, $newValue) {
+		// SQL Query
 		$sql = "SELECT api.modify_system({$this->db->escape($systemName)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	public function modify_interface($mac, $field, $newValue) {
+		// SQL Query
 		$sql = "SELECT api.modify_interface({$this->db->escape($mac)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	public function modify_interface_address($address, $field, $newValue) {
+		// SQL Query
 		$sql = "SELECT api.modify_interface_address({$this->db->escape($address)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -512,72 +564,44 @@ class API_Systems extends ImpulseModel {
      * @return string
      */
 	public function remove_system($sys) {
+		// SQL Query
 		$sql = "SELECT api.remove_system({$this->db->escape($sys->get_system_name())})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	public function remove_interface($int) {
+		// SQL Query
 		$sql = "SELECT api.remove_interface({$this->db->escape($int->get_mac())})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
 	
 	public function remove_interface_address($addr) {
+		// SQL Query
 		$sql = "SELECT api.remove_interface_address({$this->db->escape($addr->get_address())})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
-	
-	
 	
 	////////////////////////////////////////////////////////////////////////
 	// UTILITY FUNCTIONS
 
 	public function renew($sys) {
+		// SQL Query
 		$sql = "SELECT api.renew_system({$this->db->escape($sys->get_system_name())})";
 		$query = $this->db->query($sql);
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		
+		// Check error
+		$this->_check_error($query);
 	}
-	
 }
+
+/* End of file api_systems.php */
+/* Location: ./application/models/API/api_systems.php */

@@ -2,7 +2,7 @@
 /**
  * The replacement IMPULSE controller class. All controllers should extend from this rather than the builtin
  */
-class ImpulseController extends CI_Controller {
+class IMPULSE_Controller extends CI_Controller {
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -12,10 +12,9 @@ class ImpulseController extends CI_Controller {
      * @param $message  The message to display
      * @return void
      */
-	protected function _error($message) {
+	public function error($message) {
 		// Navbar
-		$navModes['CANCEL'] = current_url();
-		$navbar = new Navbar("Error", $navModes, null);
+		$navbar = new Navbar("Error", null, null);
 
 		$data['message'] = $message;
 		
@@ -35,7 +34,7 @@ class ImpulseController extends CI_Controller {
      * @param $message  The message to display
      * @return void
      */
-	protected function _success($message) {
+	public function success($message) {
 		// Navbar
 		$navOptions['Back'] = $this->input->server('HTTP_REFERER');
 		$navbar = new Navbar("Success", null, $navOptions);
@@ -58,7 +57,7 @@ class ImpulseController extends CI_Controller {
      * @param $message  The message to display
      * @return void
      */
-	protected function _warning($message) {
+	public function warning($message) {
 		// Navbar
         #$navbar = new Navbar("Warning", null, null);
 		
@@ -78,5 +77,5 @@ class ImpulseController extends CI_Controller {
 	}
 }
 
-/* End of file ImpulseController.php */
-/* Location: ./application/libraries/core/ImpulseController.php */
+/* End of file controller.php */
+/* Location: ./application/libraries/core/controller.php */

@@ -1,7 +1,6 @@
-<?php
-
-########## MIGHT NEED TO FIX THIS
-#require_once(APPPATH . "controllers/interfaces.php");
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "controllers/interfaces.php");
+require_once(APPPATH . "controllers/dns.php");
 
 /**
  * This class contains the definition of an InterfaceAddress object. These
@@ -73,8 +72,8 @@ class InterfaceAddress extends ImpulseObject {
 	// array<MxRecords>		All mail server (MX) records that resolve to this address
 	private $dnsMxRecords;
 	
-	// array<TxtRecord>		All TXT or SPF records that describe this address
-	private $dnsTxtRecords;
+	// array<TextRecord>		All TXT or SPF records that describe this address
+	private $dnsTextRecords;
 	
 	////////////////////////////////////////////////////////////////////////
 	// FIREWALL RELATED VARIABLES
@@ -122,11 +121,17 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsPointerRecords = array();
 		$this->dnsNsRecords = array();
 		$this->dnsMxRecords = array();
-		$this->dnsTxtRecords = array();
+		$this->dnsTextRecords = array();
 		$this->fwRules = array();
-		$this->dnsFqdn = $this->CI->api->dns->get_ip_fqdn($this->address);
+		try {
+			$this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
+			$this->dnsFqdn = $this->dnsAddressRecord->get_hostname().".".$this->dnsAddressRecord->get_zone();
+		}
+		catch (ObjectNotFoundException $onfE) {
+			$this->dnsAddressRecord = null;
+			$this->dnsFqdn = null;
+		}
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
-        $this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
 		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
 		$this->range = $this->CI->api->ip->get_address_range($this->address);
 	}
@@ -149,7 +154,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_ns_records()      { return $this->dnsNsRecords; }
 	public function get_mx_records()      { return $this->dnsMxRecords; }
 	public function get_pointer_records() { return $this->dnsPointerRecords; }
-	public function get_text_records()    { return $this->dnsTxtRecords; }
+	public function get_text_records()    { return $this->dnsTextRecords; }
 	public function get_system_name()     { return $this->systemName; }
 	public function get_range()           { return $this->range; }
 	
@@ -169,42 +174,27 @@ class InterfaceAddress extends ImpulseObject {
 	// SETTERS
 	
 	public function set_address($new) {
-		$err = $this->CI->api->systems->modify_interface_address($this->address, 'address', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface_address($this->address, 'address', $new);	
 		$this->address = $new; 
 	}
 	
 	public function set_config($new) {
-		$err = $this->CI->api->systems->modify_interface_address($this->address, 'config', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface_address($this->address, 'config', $new);	
 		$this->config = $new; 
 	}
 	
 	public function set_class($new) {
-		$err = $this->CI->api->systems->modify_interface_address($this->address, 'class', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface_address($this->address, 'class', $new);	
 		$this->class = $new; 
 	}
 	
 	public function set_isprimary($new) {
-		$err = $this->CI->api->systems->modify_interface_address($this->address, 'isprimary', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface_address($this->address, 'isprimary', $new);	
 		$this->isPrimary = $new; 
 	}
 	
 	public function set_comment($new) {
-		$err = $this->CI->api->systems->modify_interface_address($this->address, 'comment', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface_address($this->address, 'comment', $new);	
 		$this->comment = $new; 
 	}
 	
@@ -223,7 +213,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function add_firewall_rule($rule) {
 		// If it's not a rule, blow up
 		if(!$rule instanceof FirewallRule) {
-			throw new APIException("Cannot add a non-rule as a rule");
+			throw new ObjectException("Cannot add a non-rule as a rule");
 		}
 		
 		// Add the rule to the local array
@@ -232,7 +222,7 @@ class InterfaceAddress extends ImpulseObject {
 	
 	public function set_address_record($addressRecord) {
 		if(!$addressRecord instanceof AddressRecord) {
-			throw new APIException("Cannot add a non-address-record as a address-record");
+			throw new ObjectException("Cannot add a non-address-record as a address-record");
 		}
 		
 		$this->dnsAddressRecord = $addressRecord;
@@ -245,7 +235,7 @@ class InterfaceAddress extends ImpulseObject {
     public function add_pointer_record($pointerRecord) {
 		// If it's not a proper record, blow up
 		if(!$pointerRecord instanceof PointerRecord) {
-			throw new APIException("Cannot add a non-pointer-record as a pointer-record");
+			throw new ObjectException("Cannot add a non-pointer-record as a pointer-record");
 		}
 
 		// Add the record to the local array
@@ -256,14 +246,14 @@ class InterfaceAddress extends ImpulseObject {
      * Add a TXT or SPF record for this address
      * @param $txtRecord    The record object to add
      */
-    public function add_txt_record($txtRecord) {
+    public function add_text_record($textRecord) {
 		// If it's not a proper record, blow up
-		if(!$txtRecord instanceof TxtRecord) {
-			throw new APIException("Cannot add a non-txt-record as a txt-record");
+		if(!$textRecord instanceof TextRecord) {
+			throw new ObjectException("Cannot add a non-txt-record as a text-record");
 		}
 
 		// Add the record to the local array
-		$this->dnsTxtRecords[] = $txtRecord;
+		$this->dnsTextRecords[] = $textRecord;
 	}
 
     /**
@@ -273,7 +263,7 @@ class InterfaceAddress extends ImpulseObject {
     public function add_ns_record($nsRecord) {
 		// If it's not a proper record, blow up
 		if(!$nsRecord instanceof NsRecord) {
-			throw new APIException("Cannot add a non-ns-record as a ns-record");
+			throw new ObjectException("Cannot add a non-ns-record as a ns-record");
 		}
 
 		// Add the record to the local array
@@ -286,12 +276,27 @@ class InterfaceAddress extends ImpulseObject {
      */
     public function add_mx_record($mxRecord) {
 		// If it's not a proper record, blow up
-		if(!$mxRecord instanceof MxRecord) {
-			throw new APIException("Cannot add a non-mx-record as a mx-record");
+		if(!($mxRecord instanceof MxRecord)) {
+			throw new ObjectException("Cannot add a non-mx-record as a mx-record");
 		}
 
 		// Add the record to the local array
 		$this->dnsMxRecords[] = $mxRecord;
+	}
+	
+	//@todo: finish this
+	public function add_record($record) {
+		echo get_class($record);
+		switch (get_class($record)) {
+			case "AddressRecord":
+				$this->set_address_record($record);
+				break;
+			case "NsRecord":
+				$this->add_ns_record($record);
+				break;
+			default:
+				throw new ObjectException("Unsupported DNS record given");
+		}
 	}
 }
 

@@ -1,17 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-require_once(APPPATH . "libraries/core/controller.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 /**
  * Network Interface handling. These functions will handle the editing of the actual interface objects.
  */
-class Interfaces extends IMPULSE_Controller {
+class Interfaces extends ImpulseController {
 
     /**
      * @return void
      */
 	public function index() {
-		$this->error("No action or object was specified.");
+		$this->_error("No action or object was specified.");
         return;
 	}
 
@@ -24,13 +23,22 @@ class Interfaces extends IMPULSE_Controller {
 
         // If the user tried to do something silly. 
 		if($systemName == NULL) {
-			$this->error("No system was specified");
+			$this->_error("No system was specified");
             return;
 		}
+		
+		// Create the local system object from the SESSION array.
+        $sys = $this->impulselib->get_active_system();
 
         // Information is there. Create the system
         if($this->input->post('submit')) {
-            $this->_create();
+            $int = $this->_create();
+			
+			// Add the interface
+			$sys->add_interface($int);
+			
+			// Send you on your way
+			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
         }
 			
         // Need to input the information
@@ -72,12 +80,11 @@ class Interfaces extends IMPULSE_Controller {
 
         // If the user tried to do something silly. 
 		if($mac == NULL) {
-			$this->error("No interface was specified");
+			$this->_error("No interface was specified");
             return;
 		}
 
         // Create the local interface object from the SESSION array.
-		#$int = $this->impulselib->get_active_interface($mac);
         $sys = $this->impulselib->get_active_system();
         $int = $sys->get_interface($mac);
 
@@ -89,6 +96,7 @@ class Interfaces extends IMPULSE_Controller {
 			$sys->add_interface($int);
 			$this->impulselib->set_active_system($sys);
 			
+			// Semd ypi pm ypir wau
 			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
 		}
 		
@@ -129,7 +137,7 @@ class Interfaces extends IMPULSE_Controller {
 
         // If the user tried to do something silly. 
 		if($mac == NULL) {
-			$this->error("No interface was specified");
+			$this->_error("No interface was specified");
             return;
 		}
 
@@ -139,6 +147,8 @@ class Interfaces extends IMPULSE_Controller {
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
 			$this->_delete($int);
+			// Send you on your way
+			redirect(base_url()."systems/view/".$int->get_system_name()."/interfaces",'location');
 		}
 		
 		// They hit no, don't delete the system
@@ -179,12 +189,11 @@ class Interfaces extends IMPULSE_Controller {
 
         // If the user did something silly.
 		if($mac ==  NULL) {
-			$this->error("No interface was given!");
+			$this->_error("No interface was given!");
 			return;
 		}
 
         // Define the local interface object
-		#$int = $this->api->systems->get_system_interface_data($mac, false);
 		$sys = $this->impulselib->get_active_system();
 		$int = $sys->get_interface($mac);		
 
@@ -205,7 +214,7 @@ class Interfaces extends IMPULSE_Controller {
 		// Load the main view
 		$this->load->view('core/main',$info);
 		
-		// Update the session data
+		// Update data
 		$sys->add_interface($int);
 		$this->impulselib->set_active_system($sys);
 	}
@@ -216,21 +225,26 @@ class Interfaces extends IMPULSE_Controller {
      */
 	private function _create() {
         // Call the function
-		$query = $this->api->systems->create_interface(
-			$this->input->post('systemName'),
-			$this->input->post('mac'),
-			$this->input->post('name'),
-			$this->input->post('comment')
-		);
-
-        // Check the result
-		if($query != "OK") {
-			$this->error($query);
+		try {
+			$int = $this->api->systems->create_interface(
+				$this->input->post('systemName'),
+				$this->input->post('mac'),
+				$this->input->post('name'),
+				$this->input->post('comment')
+			);
 		}
-		else {
-			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
+        catch (DBException $dbE) {
+			$this->_error("DB:".$dbE->getMessage());
+			return;
 		}
+		catch (ObjectException $oE) {
+			$this->_error("Obj:".$dbE->getMessage());
+			return;
+		}
+		
+		return $int;
 	}
+	
 
     /**
      * Edit an interface
@@ -259,7 +273,8 @@ class Interfaces extends IMPULSE_Controller {
 
         // If there were/were not errors
 		if($err != "") {
-			$this->error($err);
+			$this->_error($err);
+			return;
 		}
 	}
 
@@ -270,14 +285,16 @@ class Interfaces extends IMPULSE_Controller {
      */
 	private function _delete($int) {
         // Run the query
-		$query = $this->api->systems->remove_interface($int);
-
-        // Check for errors
-        if($query != "OK") {
-			$this->error($query);
+		try {
+			$this->api->systems->remove_interface($int);
 		}
-		else {
-			redirect(base_url()."systems/view/".$int->get_system_name()."/interfaces",'location');
+		catch (DBException $dbE) {
+			$this->_error("DB:".$dbE->getMessage());
+			return;
+		}
+		catch (ObjectException $oE) {
+			$this->_error("Obj:".$dbE->getMessage());
+			return;
 		}
 	}
 
@@ -292,21 +309,21 @@ class Interfaces extends IMPULSE_Controller {
 		$addressViewData = "";
 
         // Array of address objects
-		$addrs = $this->api->systems->get_system_interface_addresses($int->get_mac(), true);
+		try {
+			$addrs = $this->api->systems->get_system_interface_addresses($int->get_mac(), true);
 
-        // For each of the address objects, draw it's box and append it to the view
-		foreach($addrs as $address) {
-			$navbar = new Navbar("Address", null, null);
-			$addressViewData .= $this->load->view('systems/address',array('address'=>$address, 'navbar'=>$navbar),TRUE);
-			$int->add_address($address);
-		}
-
-        // Return value based on number of interfaces
-		if(count($addrs) == 0) {
-			return $this->warning("No addresses found!");
-		}
-		else {
+			// For each of the address objects, draw it's box and append it to the view
+			foreach($addrs as $address) {
+				$navbar = new Navbar("Address", null, null);
+				$addressViewData .= $this->load->view('systems/address',array('address'=>$address, 'navbar'=>$navbar),TRUE);
+				$int->add_address($address);
+			}
+			
 			return $addressViewData;
+		}
+		// There were no addresses
+		catch (ObjectNotFoundException $onfE) {
+			return $this->_warning("No addresses found!");
 		}
 	}	
 }

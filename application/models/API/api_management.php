@@ -5,7 +5,7 @@ require_once(APPPATH . "libraries/core/ImpulseModel.php");
  * Management access to the general site configuration.
  * @throws DBException
  */
-class Api_management extends CI_Model {
+class Api_management extends ImpulseModel {
 
     /**
      * Constructor

@@ -74,5 +74,5 @@ abstract class DnsRecord extends ImpulseObject {
 	// PUBLIC METHODS
 }
 
-/* End of file NsRecord.php */
-/* Location: ./application/libraries/objects/NsRecord.php */
+/* End of file DnsRecord.php */
+/* Location: ./application/libraries/objects/DnsRecord.php */

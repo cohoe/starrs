@@ -7,7 +7,29 @@ class Test extends ImpulseController {
 	
 	public function index() {
 		echo "Hello";
-		echo $this->api->dhcp->get_dhcp_classes(5);
+		
+		$this->remove_system('bvlisofwks003');
+	}
+	
+	public function remove_system($name) {
+		// SQL Query
+		$sql = "SELECT api.get_system_interfaces('$name')";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	protected function _check_error($query) {
+		if($this->db->_error_number() > 0) {
+			throw new DBException($this->db->_error_message());
+		}
+		if($this->db->_error_message() != "") {
+			throw new DBException($this->db->_error_message());
+		}
+		if($query->num_rows() == 0) {
+			throw new ObjectNotFoundException("Object not found!");
+		}
 	}
 	
 }

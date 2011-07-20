@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH . "libraries/core/controller.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 /**
  * This controller handles all information regarding the system objects. You can create, edit, and delete systems
  * that you have permission to do so on. 
  */
-class Reference extends IMPULSE_Controller {
+class Reference extends ImpulseController {
 
     /**
 	 * If no additional URL paramters were specified, load this default view

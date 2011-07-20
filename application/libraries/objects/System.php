@@ -84,42 +84,27 @@ class System extends ImpulseObject {
 	// SETTERS
 	
 	public function set_system_name($new) {
-		$err = $this->CI->api->systems->modify_system($this->systemName, 'system_name', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_system($this->systemName, 'system_name', $new);	
 		$this->systemName = $new; 
 	}
 	
 	public function set_owner($new) { 
-		$err = $this->CI->api->systems->modify_system($this->systemName, 'owner', $new);
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_system($this->systemName, 'owner', $new);
 		$this->owner = $new; 
 	}
 	
 	public function set_comment($new) { 
-		$err = $this->CI->api->systems->modify_system($this->systemName, 'comment', $new);
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_system($this->systemName, 'comment', $new);
 		$this->comment = $new; 
 	}
 	
 	public function set_type($new) { 
-		$err = $this->CI->api->systems->modify_system($this->systemName, 'type', $new);
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_system($this->systemName, 'type', $new);
 		$this->type = $new; 
 	}
 	
 	public function set_os_name($new) { 
-		$err = $this->CI->api->systems->modify_system($this->systemName, 'os_name', $new);
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_system($this->systemName, 'os_name', $new);
 		$this->osName = $new; 
 	}
 	
@@ -136,7 +121,7 @@ class System extends ImpulseObject {
 	public function add_interface($interface) {
 		// If it's not an interface, blow up
 		if($interface instanceof InterfaceObject) {
-			throw new APIException("Cannot add a non-interface as an interface");
+			throw new ObjectException("Cannot add a non-interface as an interface");
 		}
 		
 		// Add an interface to the local interfaces array
@@ -157,12 +142,12 @@ class System extends ImpulseObject {
 					break;
 				}
 			}
-			catch (APIException $apiE) {
+			catch (ObjectException $oE) {
 				$addr = NULL;
 			}
 		}
 		if($addr==NULL) {
-			throw new APIException("Unable to locate address $address on system ".$this->get_system_name());
+			throw new ObjectException("Unable to locate address $address on system ".$this->get_system_name());
 		}
 		return $addr;
 	}

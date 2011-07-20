@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH . "libraries/core/controller.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 /**
  * This controller handles all information regarding the system objects. You can create, edit, and delete systems
  * that you have permission to do so on. 
  */
-class Systems extends IMPULSE_Controller {
+class Systems extends ImpulseController {
 
     /**
 	 * If no additional URL paramters were specified, load this default view
@@ -105,7 +105,7 @@ class Systems extends IMPULSE_Controller {
 			$navOptions['Overview'] = "/systems/view/".$sys->get_system_name()."/overview";
 			$navOptions['Interfaces'] = "/systems/view/".$sys->get_system_name()."/interfaces";
 			
-			if($this->api->get_editable($sys) == true) {
+			if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
 				$navOptions['Renew'] = "/systems/renew/".$sys->get_system_name();
 				$navModes['EDIT'] = "/systems/edit/";
 				$navModes['DELETE'] = "/systems/delete/";
@@ -122,7 +122,7 @@ class Systems extends IMPULSE_Controller {
 			switch(strtolower($target)) {
 				case 'interfaces':
 					$info['data'] = $this->_load_interfaces($sys);
-					if($this->api->get_editable($sys) == true) {
+					if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
 						$navbar->set_create(TRUE,"/interfaces/create/".$sys->get_system_name());
 					}
 					$navbar->set_edit(FALSE,NULL);
@@ -159,7 +159,8 @@ class Systems extends IMPULSE_Controller {
 		
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
-			$this->_edit_system($sys);
+			$this->_edit($sys);
+			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
 		}
 		
 		// Need to input the information
@@ -189,6 +190,9 @@ class Systems extends IMPULSE_Controller {
 			// Load the main view
 			$this->load->view('core/main',$info);
 		}
+		
+		// Set the active SESSION object
+		$this->impulselib->set_active_system($sys);
 	}
 
     /**
@@ -199,7 +203,9 @@ class Systems extends IMPULSE_Controller {
 	
 		// Information is there. Create the system
 		if($this->input->post('submit')) {
-			$this->_create_system();
+			$sys = $this->_create();
+			$this->impulselib->set_active_system($sys);
+			redirect("/systems/view/".$sys->get_system_name(),'location');
 		}
 		
 		// Need to input the information
@@ -241,7 +247,7 @@ class Systems extends IMPULSE_Controller {
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
-			$this->_delete_system($sys);
+			$this->_delete($sys);
 		}
 		
 		// They hit no, don't delete the system
@@ -282,14 +288,17 @@ class Systems extends IMPULSE_Controller {
 		$sys = $this->impulselib->get_active_system();
 		
 		// Renew
-		$query = $this->api->systems->renew($sys);
-		
-		// View
-		if($query != "OK") {
-			$this->_error($query);
+		try {
+			$this->api->systems->renew($sys);
+			$this->_success("Successfully renewed \"".$sys->get_system_name()."\" for another year.");
 		}
-		else {
-			$this->success("Successfully renewed \"".$sys->get_system_name()."\" for another year.");
+		catch (DBException $dbE) {
+			$this->_error("DB:".$dbE->getMessage());
+			return;
+		}
+		catch (ObjectException $oE) {
+			$this->_error("Obj:".$dbE->getMessage());
+			return;
 		}
 	}
 
@@ -320,37 +329,36 @@ class Systems extends IMPULSE_Controller {
      * @return string
      */
 	private function _load_interfaces($sys) {
-	
-		// Get the interface objects for the system
-		$ints = $this->api->systems->get_system_interfaces($sys->get_system_name(),false);
-		
 		// Value of all interface view data
 		$interfaceViewData = "";
 		
-		// Concatenate all view data into one string
-		foreach ($ints as $int) {
+		// Get the interface objects for the system
+		try {
+			$ints = $this->api->systems->get_system_interfaces($sys->get_system_name(),false);
 			
-			// Navbar
-			if($this->api->get_editable($int) == true) {
-				$navModes['EDIT'] = "/interfaces/edit/".$int->get_mac();
-				$navModes['DELETE'] = "/interfaces/delete/".$int->get_mac();
+			// Concatenate all view data into one string
+			foreach ($ints as $int) {
+				
+				// Navbar
+				if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
+					$navModes['EDIT'] = "/interfaces/edit/".$int->get_mac();
+					$navModes['DELETE'] = "/interfaces/delete/".$int->get_mac();
+				}
+				$navOptions['Addresses'] = "/interfaces/addresses/".$int->get_mac();
+				$navbar = new Navbar("Interface", $navModes, $navOptions);
+			
+				$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);
+				
+				#$this->impulselib->add_active_interface($interface);
+				# Should be using the system object
+				$sys->add_interface($int);
 			}
-			$navOptions['Addresses'] = "/interfaces/addresses/".$int->get_mac();
-			$navbar = new Navbar("Interface", $navModes, $navOptions);
-		
-			$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);
-			
-			#$this->impulselib->add_active_interface($interface);
-            # Should be using the system object
-            $sys->add_interface($int);
 		}
-		
-		// If there were no interfaces....
-		if(count($ints) == 0) {
+		catch (ObjectNotFoundException $onfE) {
 			$navbar = new Navbar("Interface", null, null);
 			$interfaceViewData = $this->load->view('core/warning',array("message"=>"No interfaces found!"),TRUE);
 		}
-
+		
 		// Spit back all of the interface data
 		return $this->load->view('core/data',array('data'=>$interfaceViewData),TRUE);
 	}
@@ -359,21 +367,34 @@ class Systems extends IMPULSE_Controller {
 	 * Create a system from the given values. 
      * @return void
      */
-	private function _create_system() {
-		$query = $this->api->systems->create_system(
-			$this->input->post('systemName'),
-			$this->impulselib->get_username(),
-			$this->input->post('type'),
-			$this->input->post('osName'),
-			$this->input->post('comment')
-		);
-		
-		if($query != "OK") {
-			$this->_error($query);
+	private function _create() {
+		try {
+			$sys = $this->api->systems->create_system(
+				$this->input->post('systemName'),
+				$this->impulselib->get_username(),
+				$this->input->post('type'),
+				$this->input->post('osName'),
+				$this->input->post('comment')
+			);
+			
+			if(!($sys instanceof System)) {
+				throw new APIException("Could not instantate your system.");
+			}
 		}
-		else {
-			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
-		}		
+		catch (DBException $dbE) {
+			$this->_error("DB: ".$dbE->getMessage());
+			return;
+		}
+		catch (ObjectException $oE) {
+			$this->_error("Obj: ".$dbE->getMessage());
+			return;
+		}	
+		catch (APIException $apiE) {
+			$this->_error("API: ".$apiE->getMessage());
+			return;
+		}
+		
+		return $sys;
 	}
 
     /**
@@ -381,7 +402,7 @@ class Systems extends IMPULSE_Controller {
      * @param $sys
      * @return void
      */
-	private function _edit_system($sys) {
+	private function _edit(&$sys) {
 		
 		// The error return message
 		$err = "";
@@ -389,34 +410,29 @@ class Systems extends IMPULSE_Controller {
 		// Check for which field was modified
 		if($sys->get_system_name() != $this->input->post('systemName')) {
 			try { $sys->set_system_name($this->input->post('systemName')); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+			catch (DBException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_type() != $this->input->post('type')) {
 			try { $sys->set_type($this->input->post('type')); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+			catch (DBException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_os_name() != $this->input->post('osName')) {
 			try { $sys->set_os_name($this->input->post('osName')); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+			catch (DBException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_comment() != $this->input->post('comment')) {
 			try { $sys->set_comment($this->input->post('comment')); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+			catch (DBException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		if($sys->get_owner() != $this->input->post('owner')) {
 			try { $sys->set_owner($this->input->post('owner')); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
+			catch (DBException $apiE) { $err .= $apiE->getMessage(); }
 		}
 		
 		if($err != "") {
 			$this->_error($err);
+			return;
 		}
-		else {
-			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
-		}
-
-        // Set the SESSION information
-        $this->impulselib->set_active_system($sys);
 	}
 
     /**
@@ -424,13 +440,17 @@ class Systems extends IMPULSE_Controller {
      * @param $sys
      * @return int
      */
-	private function _delete_system($sys) {
-		$query = $this->api->systems->remove_system($sys);
-		if($query != "OK") {
-			$this->_error($query);
+	private function _delete($sys) {
+		try {
+			$this->api->systems->remove_system($sys);
 		}
-		else {
-			redirect(base_url()."systems/",'location');
+		catch (DBException $dbE) {
+			$this->_error("DB:".$dbE->getMessage());
+			return;
+		}
+		catch (ObjectException $oE) {
+			$this->_error("Obj:".$dbE->getMessage());
+			return;
 		}
 	}
 }

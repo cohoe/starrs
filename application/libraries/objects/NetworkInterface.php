@@ -51,7 +51,6 @@ class NetworkInterface extends ImpulseObject {
 		
 		// Initialize variables
 		$this->addresses = array();
-		$address_info = $this->CI->api->systems->get_system_interface_addresses($this->mac);
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -67,34 +66,22 @@ class NetworkInterface extends ImpulseObject {
 	// SETTERS
 	
 	public function set_system_name($new) {
-		$err = $this->CI->api->systems->modify_interface($this->mac, 'system_name', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface($this->mac, 'system_name', $new);	
 		$this->systemName = $new; 
 	}
 	
 	public function set_mac($new) {
-		$err = $this->CI->api->systems->modify_interface($this->mac, 'mac', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface($this->mac, 'mac', $new);	
 		$this->mac = $new; 
 	}
 	
 	public function set_interface_name($new) {
-		$err = $this->CI->api->systems->modify_interface($this->mac, 'name', $new);	
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface($this->mac, 'name', $new);	
 		$this->interfaceName = $new; 
 	}
 	
 	public function set_comment($new) { 
-		$err = $this->CI->api->systems->modify_interface($this->mac, 'comment', $new);
-		if($err != "OK") {
-			throw new APIException($err);
-		}
+		$this->CI->api->systems->modify_interface($this->mac, 'comment', $new);
 		$this->comment = $new; 
 	}
 	
@@ -111,14 +98,14 @@ class NetworkInterface extends ImpulseObject {
 	 */
 	public function add_address($interfaceAddress) {
 		if(!($interfaceAddress instanceof InterfaceAddress)) {
-			throw new APIException("The given interface address (" . get_class($interfaceAddress) . ") is not an InterfaceAddress!");
+			throw new ObjectException("The given interface address (" . get_class($interfaceAddress) . ") is not an InterfaceAddress!");
 		}
 		$this->addresses[$interfaceAddress->get_address()] = $interfaceAddress;
 	}
 	
 	public function get_address($address) {
         if(!isset($this->addresses[$address])) {
-            throw new APIException("Unable to locate the address object for address $address on interface ".$this->mac.". Are you sure the address still exists?");
+            throw new ObjectException("Unable to locate the address object for address $address on interface ".$this->mac.". Are you sure the address still exists?");
         }
 		return $this->addresses[$address];
 	}

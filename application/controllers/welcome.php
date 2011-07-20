@@ -1,14 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
-require_once(APPPATH . "libraries/core/controller.php");
-
-class Welcome extends IMPULSE_Controller {
+class Welcome extends ImpulseController {
 
 	public function index()
 	{
 		#$this->_load_get_started();
 		#$this->_load_demo();
-		$this->success("Success");
+		$this->_success("Success");
 		#$this->warning("warning");
 		#$this->error("Error");
 	}

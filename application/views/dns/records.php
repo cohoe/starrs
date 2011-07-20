@@ -7,7 +7,7 @@
 		<div class="item_information_area_container">
 		Address Records (A, AAAA)
 			<table class="dns_information_area_table">
-				<tr><th>DNS Name</th><th>Type</th><th>TTL</th><th>Last Modifier</th></tr>
+				<tr><th>DNS Name</th><th>Type</th><th>TTL</th><th>Last Modifier</th><th>Delete</th></tr>
 				<tr><td><?echo $address_record->get_hostname().".".$address_record->get_zone();?></td><td><?echo $address_record->get_type();?></td><td><?echo $address_record->get_ttl();?></td><td><?echo $address_record->get_last_modifier();?></td></tr>
 			</table>
 		</div>

@@ -1,9 +1,9 @@
 <div class="item_container">
 	<form method="POST" class="input_form">
-		<label for="mac">Interface: </label><input type="text" name="mac" value="<?echo $interface->get_mac();?>" disabled="disabled" class="input_form_input" /><br />
+		<label for="mac">Interface: </label><input type="text" name="mac" value="<?echo $interface->get_mac();?>" readonly class="input_form_input" /><br />
 		<label for="range">Range: </label><select name="range" class="input_form_input">
 			<? foreach ($ranges as $range) {
-				echo "<option value=\"$range[name]\">$range[name]</option>";
+				echo "<option value=\"".$range->get_name()."\">".$range->get_name()."</option>";
 			} ?>
 		</select></br>
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
@@ -11,12 +11,12 @@
 		<label for="address">Address: </label><input type="text" name="address" class="input_form_input" /><br />
 		<label for="config">Configuration: </label><select name="config" class="input_form_input">
 			<? foreach ($configs as $config) {
-				echo "<option value=\"$config[config]\">$config[config]</option>";
+				echo "<option value=\"".$config->get_config()."\">".$config->get_config()."</option>";
 			} ?>
 		</select><br />
 		<label for="class">Class: </label><select name="class" class="input_form_input">
 			<? foreach ($classes as $class) {
-				echo "<option value=\"$class[class]\">$class[class]</option>";
+				echo "<option value=\"".$class->get_class()."\">".$class->get_class()."</option>";
 			} ?>
 		</select><br />
 		

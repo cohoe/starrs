@@ -34,6 +34,34 @@ class Api_dns extends ImpulseModel {
 		
 		// Check error
 		$this->_check_error($query);
+		
+		// Return object
+		return $this->get_address_record($address);
+	}
+
+	public function create_dns_nameserver($hostname, $zone, $isprimary, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_nameserver(
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($isprimary)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		
+		// Return object
+
+			foreach($this->get_ns_records($this->resolve($hostname, $zone, 4)) as $record) {
+				if($record->get_isprimary() == $isprimary) {
+					return $record;
+				}
+			}
+
 	}
 	
 	/**
@@ -281,6 +309,35 @@ class Api_dns extends ImpulseModel {
 		else {
 			throw new ObjectNotFoundException("You do not have access to any DNS zones. This could be a problem. Talk to your administrator.");
 		}
+	}
+	
+	public function remove_dns_address($address) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_address({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	public function remove_dns_nameserver($hostname, $zone) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_nameserver({$this->db->escape($hostname)},{$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	public function resolve($hostname, $zone, $family) {
+		// SQL Query
+		$sql = "SELECT api.dns_resolve({$this->db->escape($hostname)},{$this->db->escape($zone)},{$this->db->escape($family)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		#$this->_check_error($query);
+		
+		return $query->row()->dns_resolve;
 	}
 }
 

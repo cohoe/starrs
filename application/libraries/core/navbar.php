@@ -99,7 +99,12 @@ class Navbar {
 		}
 		if(isset($modes['CANCEL'])) {
 			$this->cancel = TRUE;
-			$this->cancelLink = $this->referer;
+			if($modes['CANCEL'] == "") {
+				$this->cancelLink = $this->referer;
+			}
+			else {
+				$this->cancelLink = $modes['CANCEL'];
+			}
 		}
 		if(isset($modes['HELP'])) {
 			#$this->helpLink = $modes['HELP'];

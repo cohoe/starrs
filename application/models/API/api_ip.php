@@ -83,6 +83,18 @@ class Api_ip extends ImpulseModel {
         // Generate and return result
 		return $query->row()->get_address_range;
 	}
+	
+	public function arp($address) {
+		// SQL Query
+		$sql = "SELECT api.ip_arp({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return result
+		return $query->row()->ip_arp;
+	}
 }
 
 /* End of file api_ip.php */

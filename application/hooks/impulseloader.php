@@ -17,7 +17,7 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/NsRecord.php");
 		require_once(APPPATH . "libraries/objects/PointerRecord.php");
 		require_once(APPPATH . "libraries/objects/System.php");
-		require_once(APPPATH . "libraries/objects/TxtRecord.php");
+		require_once(APPPATH . "libraries/objects/TextRecord.php");
 		require_once(APPPATH . "libraries/objects/ConfigType.php");
 		require_once(APPPATH . "libraries/objects/ConfigClass.php");
         require_once(APPPATH . "libraries/objects/IpRange.php");
@@ -28,9 +28,9 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/exceptions/AmbiguousTargetException.php");
 		require_once(APPPATH . "libraries/exceptions/DBException.php");
 		require_once(APPPATH . "libraries/exceptions/ObjectNotFoundException.php");
+		require_once(APPPATH . "libraries/exceptions/APIException.php");
 		
 		# UI Stuff
 		require_once(APPPATH . "libraries/core/navbar.php");
-		
 	}
 }
