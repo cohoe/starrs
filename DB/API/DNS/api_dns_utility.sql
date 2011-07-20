@@ -93,3 +93,11 @@ CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	return "true";
 $$ LANGUAGE 'plperl';
 COMMENT ON FUNCTION "api"."validate_srv"(text) IS 'Validate SRV records';
+
+/* API - dns_resolve */
+CREATE OR REPLACE FUNCTION "api"."dns_resolve"(input_hostname text, input_zone text, input_family integer) RETURNS INET AS $$
+	BEGIN
+		RETURN (SELECT "address" FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone AND family("address") = input_family);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostname/zone to its IP address';
