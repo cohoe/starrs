@@ -137,18 +137,18 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_class_options"(text) IS 'Get class options for the dhcpd.conf file';
 
 /* API - get_dhcp_classes*/
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."classes" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."class_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "dhcp"."classes");
+		RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" FROM "dhcp"."classes");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_classes"() IS 'Get all DHCP class information';
 
 /* API - get_dhcp_config_types */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_types" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_type_data" AS $$
 	BEGIN
 		IF input_family IS NULL THEN
-			RETURN QUERY (SELECT * FROM "dhcp"."config_types");
+			RETURN QUERY (SELECT "config","family","comment","date_created","date_modified","last_modifier" FROM "dhcp"."config_types");
 		ELSE
 			RETURN QUERY (SELECT * FROM "dhcp"."config_types" WHERE "family" = input_family);
 		END IF;
