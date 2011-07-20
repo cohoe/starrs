@@ -26,6 +26,7 @@ GRANT SELECT ON "dhcp"."config_types" TO "impulse_client";
 GRANT SELECT ON "systems"."os" TO "impulse_client";
 GRANT SELECT ON "network"."switchport_types" TO "impulse_client";
 GRANT SELECT ON "firewall"."programs" TO "impulse_client";
+GRANT SELECT ON "dns"."types" TO "impulse_client";
 
 /* User Data
 	This is all the stuff that clients can (depending on user permission level) modify
