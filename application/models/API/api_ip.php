@@ -48,7 +48,6 @@ class Api_ip extends ImpulseModel {
         else {
             throw new ObjectNotFoundException("No ranges were found. This indicates a database error. Contact your system administrator");
         }
-		return $query->result_array();
 	}
 
     /**

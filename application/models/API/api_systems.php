@@ -3,14 +3,11 @@
  * @throws AmbiguousTargetException|DBException|ObjectNotFoundException
  *
  */
-class API_Systems extends CI_Model {
+class API_Systems extends ImpulseModel {
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 
-    /**
-     *
-     */
 	public function __construct() {
 		parent::__construct();
 	}
@@ -27,58 +24,52 @@ class API_Systems extends CI_Model {
 	 * @param	string	$comment	A comment on the system
 	 */
 	public function create_system($systemName,$owner=NULL,$type,$osName,$comment) {
+        // SQL Query
 		$sql = "SELECT api.create_system(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($owner)},
 			{$this->db->escape($type)},
 			{$this->db->escape($osName)},
 			{$this->db->escape($comment)})";
-			
 		$query = $this->db->query($sql);
-		
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_number() > 0) {
-				throw new DBException($this->db->_error_message());
-			}
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+
+        // Check errors
+		$this->_check_error($query);
 	}
-	
+
+    /**
+     * @throws DBException
+     * @param $systemName
+     * @param $mac
+     * @param $interfaceName
+     * @param $comment
+     * @return string
+     */
 	public function create_interface($systemName, $mac, $interfaceName, $comment) {
+        // SQL Query
 		$sql = "SELECT api.create_interface(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($mac)},
 			{$this->db->escape($interfaceName)},
 			{$this->db->escape($comment)})";
-			
 		$query = $this->db->query($sql);
 		
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_number() > 0) {
-				throw new DBException($this->db->_error_message());
-			}
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		// Check error
+        $this->_check_error($query);
 	}
-	
+
+    /**
+     * @throws DBException
+     * @param $mac
+     * @param $address
+     * @param $config
+     * @param $class
+     * @param $isprimary
+     * @param $comment
+     * @return string
+     */
 	public function create_interface_address($mac, $address, $config, $class, $isprimary, $comment) {
-	
+	    // SQL Query
 		$sql = "SELECT api.create_interface_address(
 			{$this->db->escape($mac)},
 			{$this->db->escape($address)},
@@ -87,23 +78,10 @@ class API_Systems extends CI_Model {
 			{$this->db->escape($isprimary)},
 			{$this->db->escape($comment)}
 		)";
-		
 		$query = $this->db->query($sql);
 		
-		$return = "OK";
-		// Error conditions
-		try {
-			if($this->db->_error_number() > 0) {
-				throw new DBException($this->db->_error_message());
-			}
-			if($this->db->_error_message() != "") {
-				throw new DBException($this->db->_error_message());
-			}
-		}
-		catch (DBException $dbE) {
-			$return = $dbE->getMessage();
-		}
-		return $return;
+		// Check error
+        $this->_check_error($query);
 	}
 	
 	
@@ -115,21 +93,26 @@ class API_Systems extends CI_Model {
      * @return array
      */
 	public function get_systems($owner=null) {
-        // Generate the SQL
-		// This function can take NULL as an arg
+        // SQL Query
         $sql = "SELECT api.get_systems({$this->db->escape($owner)})";
-
-        // Run the query
         $query = $this->db->query($sql);
 
-        // Create the array of objects
-        $systemSet = array();
+        // Check error
+        $this->_check_error($query);
+
+        // Generate results
+        $resultSet = array();
         foreach($query->result_array() as $system) {
-            $systemSet[] = $system['get_systems'];
+            $resultSet[] = $system['get_systems'];
         }
 
-        // Return the array
-        return $systemSet;
+        // Return results
+        if(count($resultSet) > 0) {
+            return $resultSet;
+        }
+        else {
+            throw new ObjectNotFoundException("No systems found!");
+        }
     }
 	
 	/**
@@ -145,47 +128,39 @@ class API_Systems extends CI_Model {
 	 * @return	System				The system desired
 	 */
 	public function get_system_data($systemName, $complete=false) {
-
-		// Run the query
+        // SQL Query
 		$sql = "SELECT * FROM api.get_system_data({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
-				
-		// Error conditions
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($query->num_rows() == 0) {
-			throw new ObjectNotFoundException("The system could not be found: '{$systemName}'");
-		}
+        // Check errors
+        $this->_check_error($query);
 		if($query->num_rows() > 1) {
 			throw new AmbiguousTargetException("More than one system matches '{$systemName}'");
 		}
 		
-		// It was valid! Create the system
-		$system = $query->row_array();
-		#$system = $system[0];
-		$systemResult = new System(
-			$system['system_name'], 
-			$system['owner'], 
-			$system['comment'], 
-			$system['type'], 
-			$system['os_name'],
-			$system['renew_date'],
-			$system['date_created'],
-			$system['date_modified'],
-			$system['last_modifier']);
+		// Generate results
+		$systemData = $query->row_array();
+		$system = new System(
+			$systemData['system_name'],
+			$systemData['owner'],
+			$systemData['comment'],
+			$systemData['type'],
+			$systemData['os_name'],
+			$systemData['renew_date'],
+			$systemData['date_created'],
+			$systemData['date_modified'],
+			$systemData['last_modifier']);
 		
-		//Are we making a complete system
+		// Generate a complete object
 		if($complete == true) {
 			// Grab the interfaces that the system has
 			foreach($this->get_system_interfaces($systemName, $complete) as $interface) {
-				$systemResult->add_interface($interface);
+				$system->add_interface($interface);
 			} 
 		}
 		
-		// Return the system object
-		return $systemResult;
+		// Return result
+		return $system;
 	}
 	
 	/**
@@ -199,20 +174,15 @@ class API_Systems extends CI_Model {
 	 * @return	array<Interface>	An array of interface objects associated with the system
 	 */
 	public function get_system_interfaces($systemName, $complete=false) {
-
+        // SQL Query
 		$sql = "SELECT * FROM api.get_system_interfaces({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
-		// Error conditions
-		if($this->db->_error_number() > 0) {
-			throw new DBException("A database error occurred: " . $this->db->_error_message());
-		}
-		if($query->num_rows() == 0) {
-			#throw new ObjectNotFoundException("No interfaces matching the system name '{$systemName}' could not be found.");
-		}
-		
-		// There were interfaces that matched, build them and return them
-		$interfaceSet = array();
+        // Check error
+        $this->_check_error($query);
+        
+		// Generate results
+		$resultSet = array();
 		foreach($query->result_array() as $row) {
 			// Create the interface
 			$interface = new NetworkInterface(
@@ -224,7 +194,8 @@ class API_Systems extends CI_Model {
 				$row['date_modified'], 
 				$row['last_modifier']
 			);
-			
+
+            // Generate a complete object
 			if($complete == true) {
 				$iA = $this->get_interface_addresses($row['mac'],$complete);
 				foreach($iA as $address) {
@@ -235,7 +206,8 @@ class API_Systems extends CI_Model {
 			// Add the machine to the result set
 			$interfaceSet[] = $interface;
 		}
-		
+
+        // Return result
 		return $interfaceSet;
 	}
 	
