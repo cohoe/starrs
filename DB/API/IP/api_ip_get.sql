@@ -138,8 +138,8 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_address_range"(inet) IS 'Get the name of the range an address is in';
 
 /* API - get_ip_ranges */
-CREATE OR REPLACE FUNCTION "api"."get_ip_ranges"() RETURNS SETOF "ip"."ranges" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_ip_ranges"() RETURNS SETOF "ip"."range_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "ip"."ranges");
+		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" FROM "ip"."ranges");
 	END;
 $$ LANGUAGE 'plpgsql';
