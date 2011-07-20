@@ -248,6 +248,7 @@ class Systems extends ImpulseController {
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
 			$this->_delete($sys);
+			redirect("/systems/","location");
 		}
 		
 		// They hit no, don't delete the system
