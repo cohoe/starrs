@@ -95,3 +95,7 @@ COMMENT ON TYPE "systems"."os_family_distribution" IS 'OS distribution statistic
 /* Systems - os_distribution */
 CREATE TYPE "systems"."os_distribution" AS (name text, count integer, percentage integer);
 COMMENT ON TYPE "systems"."os_distribution" IS 'OS distribution statistics';
+
+CREATE TYPE "dhcp"."config_types" AS (config text, family integer, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+
+CREATE TYPE "dhcp"."classes" AS (class text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
