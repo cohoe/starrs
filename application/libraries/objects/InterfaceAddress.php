@@ -286,7 +286,6 @@ class InterfaceAddress extends ImpulseObject {
 	
 	//@todo: finish this
 	public function add_record($record) {
-		echo get_class($record);
 		switch (get_class($record)) {
 			case "AddressRecord":
 				$this->set_address_record($record);
