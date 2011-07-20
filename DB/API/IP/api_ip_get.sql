@@ -136,3 +136,10 @@ CREATE OR REPLACE FUNCTION "api"."get_address_range"(input_address inet) RETURNS
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_address_range"(inet) IS 'Get the name of the range an address is in';
+
+/* API - get_ip_ranges */
+CREATE OR REPLACE FUNCTION "api"."get_ip_ranges"() RETURNS SETOF "ip"."ranges" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "ip"."ranges");
+	END;
+$$ LANGUAGE 'plpgsql';
