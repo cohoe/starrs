@@ -14,6 +14,10 @@ class Api extends CI_Model {
 	public $network;
 	public $systems;
 
+    private $fname;
+	private $lname;
+	private $uname;
+
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -31,7 +35,14 @@ class Api extends CI_Model {
 		$this->ip = new API_IP();
 		$this->management = new API_Management();
 		$this->network = new API_Network();
-		$this->systems = new API_Systems();		
+		$this->systems = new API_Systems();
+
+        $this->uname = $this->input->server('WEBAUTH_USER');
+		$this->fname = $this->input->server('WEBAUTH_LDAP_GIVENNAME');
+		$this->lname = $this->input->server('WEBAUTH_LDAP_SN');
+		#$this->uname = "sean";
+		#$this->fname = "Grant";
+		#$this->lname = "Cohoe";
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -69,5 +80,21 @@ class Api extends CI_Model {
 		$this->load->model('API/api_systems');
 
 		$this->load->library('impulselib');
+	}
+
+    /**
+     * Get your username
+     * @return string
+     */
+	public function get_username() {
+		return $this->uname;
+	}
+
+    /**
+     * Get your real name
+     * @return string
+     */
+	public function get_name() {
+		return "$this->fname $this->lname";
 	}
 }

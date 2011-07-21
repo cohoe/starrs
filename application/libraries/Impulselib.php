@@ -14,12 +14,7 @@ class Impulselib {
      */
 	function __construct() {
 		$CI =& get_instance();
-		$this->uname = $CI->input->server('WEBAUTH_USER');
-		$this->fname = $CI->input->server('WEBAUTH_LDAP_GIVENNAME');
-		$this->lname = $CI->input->server('WEBAUTH_LDAP_SN');
-		#$this->uname = "sean";
-		#$this->fname = "Grant";
-		#$this->lname = "Cohoe";
+		
 	}
 
 	public function test() {
@@ -88,21 +83,7 @@ class Impulselib {
 		return preg_replace("/%20/"," ",$url);
 	}
 
-    /**
-     * Get your username
-     * @return string
-     */
-	public function get_username() {
-		return $this->uname;
-	}
 
-    /**
-     * Get your real name
-     * @return string
-     */
-	public function get_name() {
-		return "$this->fname $this->lname";
-	}
 
     /**
      * Get the object of the current active system from $_SESSION
