@@ -178,11 +178,11 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns cname record for a host';
 
-/* API - remove_dns_txt
+/* API - remove_dns_text
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zone text, input_type text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_text"(input_hostname text, input_zone text, input_type text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_txt');
 
@@ -200,4 +200,4 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zon
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns txt record for a host';
+COMMENT ON FUNCTION "api"."remove_dns_text"(text, text, text) IS 'remove a dns text record for a host';
