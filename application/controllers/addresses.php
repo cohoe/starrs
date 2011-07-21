@@ -24,13 +24,21 @@ class Addresses extends ImpulseController {
         // Establish the interface
         try {
             $sys = $this->impulselib->get_active_system();
+			$int = $sys->get_interface($this->api->ip->arp($address));
         }
         catch (ObjectNotFoundException $onfE) {
             $this->_error($onfE->getMessage());
             return;
         }
+		catch (ObjectException $oE) {
+			$this->_error($oE->getMessage());
+            return;
+		}
 
-        $int = $sys->get_interface($this->api->ip->arp($address));
+		if(!($int instanceof NetworkInterface)) {
+			$this->_error("No interface could be found. Click Systems on the left to try again");
+			return;
+		}
         try {
 		    $addr = $int->get_address($address);
         }
@@ -40,44 +48,22 @@ class Addresses extends ImpulseController {
         }
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".$addr->get_address()."/overview";
+		$navOptions['Overview'] = "/addresses/view/".$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
-		$navOptions['Firewall Rules'] = "/addresses/view/".$addr->get_address()."/firewall";
+		$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
+		$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
+		$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-
-		$navModes = array();
-		
-        // Switch views depending on what the user wants
-		switch($target) {
-			case "dns":
-				$viewData['address'] = $addr;
-				$data = $this->load->view('dns/address', $viewData, TRUE);
-				$info['title'] = "DNS - ".$addr->get_address();
-				$navbar = new Navbar("DNS for ".$addr->get_address(), $navModes, $navOptions);
-				break;
-			case "firewall":
-				$viewData['rules'] = $addr->get_rules();
-				$viewData['deny'] = $addr->get_fw_default();
-				$data = $this->load->view('firewall/address', $viewData, TRUE);
-				$info['title'] = "Firewall Rules - ".$addr->get_address();
-				$navbar = new Navbar("Firewall Rules for ".$addr->get_address(), $navModes, $navOptions);
-				break;
-			default:
-				$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
-				$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
-				$viewData['address'] = $addr;
-				$data = $this->load->view('addresses/overview', $viewData, TRUE);
-				$info['title'] = "Overview - ".$addr->get_address();
-				$navbar = new Navbar("Address Overview", $navModes, $navOptions);
-				break;
-		}
+		$info['title'] = "Overview - ".$addr->get_address();
+		$viewData['address'] = $addr;
+		$navbar = new Navbar("Address Overview", $navModes, $navOptions);
 
         // More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $data;
+		$info['data'] = $this->load->view('addresses/overview', $viewData, TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);

@@ -284,7 +284,6 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsMxRecords[] = $mxRecord;
 	}
 	
-	//@todo: finish this
 	public function add_record($record) {
 		switch (get_class($record)) {
 			case "AddressRecord":
@@ -292,6 +291,15 @@ class InterfaceAddress extends ImpulseObject {
 				break;
 			case "NsRecord":
 				$this->add_ns_record($record);
+				break;
+			case "MxRecord":
+				$this->add_mx_record($record);
+				break;
+			case "TextRecord":
+				$this->add_text_record($record);
+				break;
+			case "PointerRecord":
+				$this->add_pointer_record($record);
 				break;
 			default:
 				throw new ObjectException("Unsupported DNS record given");

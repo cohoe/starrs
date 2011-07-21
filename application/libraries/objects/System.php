@@ -131,7 +131,12 @@ class System extends ImpulseObject {
 
     public function get_interface($mac) {
         // Return the interface object that corresponds to the given MAC address
-        return $this->interfaces[$mac];
+		if(!isset($this->interfaces[$mac])) {
+			throw new ObjectException("No interface found!");
+		}
+		else {
+			return $this->interfaces[$mac];
+		}
     }
 	
 	public function get_address($address) {

@@ -53,15 +53,101 @@ class Api_dns extends ImpulseModel {
 		// Check error
 		$this->_check_error($query);
 		
+		// Return object
+		foreach($this->get_ns_records($this->resolve($hostname, $zone, 4)) as $record) {
+			if($record->get_isprimary() == $isprimary) {
+				return $record;
+			}
+		}
+	}
+	
+	public function create_dns_mailserver($hostname, $zone, $preference, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_mailserver(
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($preference)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
 		
 		// Return object
-
-			foreach($this->get_ns_records($this->resolve($hostname, $zone, 4)) as $record) {
-				if($record->get_isprimary() == $isprimary) {
-					return $record;
-				}
+		$record = $this->get_mx_records($this->resolve($hostname, $zone, 4));
+		return $record;
+	}
+	
+	public function create_dns_cname($alias, $hostname, $zone, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_cname(
+			{$this->db->escape($alias)},
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return object
+		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
+			if($record->get_alias() == $alias && $record->get_type() == "CNAME") {
+				return $record;
 			}
-
+		}
+	}
+	
+	public function create_dns_srv($alias, $hostname, $zone, $priority, $weight, $port, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_srv(
+			{$this->db->escape($alias)},
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($priority)},
+			{$this->db->escape($weight)},
+			{$this->db->escape($port)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return object
+		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
+			if($record->get_alias() == $alias && $record->get_type() == "SRV") {
+				return $record;
+			}
+		}
+	}
+	
+	public function create_dns_text($hostname, $zone, $text, $type, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_text(
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($text)},
+			{$this->db->escape($type)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return object
+		foreach($this->get_text_records($this->resolve($hostname, $zone, 4)) as $record) {
+			if($record->get_text() == $text && $record->get_type() == $type) {
+				return $record;
+			}
+		}
 	}
 	
 	/**
@@ -328,6 +414,44 @@ class Api_dns extends ImpulseModel {
 		// Check error
 		$this->_check_error($query);
 	}
+	
+	public function remove_dns_cname($alias, $hostname, $zone) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_cname({$this->db->escape($alias)},{$this->db->escape($hostname)},{$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	public function remove_dns_srv($alias, $hostname, $zone) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_srv({$this->db->escape($alias)},{$this->db->escape($hostname)},{$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	public function remove_dns_mailserver($hostname, $zone) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_mailserver({$this->db->escape($hostname)},{$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	public function remove_dns_text($hostname, $zone, $type) {
+		// SQL Query
+		$sql = "SELECT api.remove_dns_text({$this->db->escape($hostname)},{$this->db->escape($zone)},{$this->db->escape($type)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+
 	
 	public function resolve($hostname, $zone, $family) {
 		// SQL Query

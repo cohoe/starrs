@@ -1,9 +1,39 @@
 <div class="item_information_area">
-	<a href="/addresses/view/<?echo $address->get_address();?>">
-	<div class="address_box">
-		<div style="float: left"><?echo $address->get_address();?></div>
-		<div style="float: right"><?echo $address->get_fqdn();?></div>
-		<br>
+	<div class="interface_box">
+		<div class="interface_box_nav">
+			<? foreach ($navbar->get_navOptions() as $menuOption) {
+				if(strcasecmp($menuOption['title'],$navbar->get_active_page()) == 0) {?>
+					<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left nav_item_left_active"><span><?echo $menuOption['title'];?></span></div></a>
+				<?} 
+				else {?>
+					<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left"><span><?echo $menuOption['title'];?></span></div></a>
+				<?}
+			}
+			if($navbar->get_cancel() == true) {
+				echo "<a href=\"".$navbar->get_cancel_link()."\"><div class=\"nav_item_right\"><span>Cancel</span></div></a>";
+			}
+			if($navbar->get_delete() == true) {
+				echo "<a href=\"".$navbar->get_delete_link()."\"><div class=\"nav_item_right\"><span>Delete</span></div></a>";
+			}
+			if($navbar->get_edit() == true) {
+				echo "<a href=\"".$navbar->get_edit_link()."\"><div class=\"nav_item_right\"><span>Edit</span></div></a>";
+			}
+			if($navbar->get_create() == true) {
+				echo "<a href=\"".$navbar->get_create_link()."\"><div class=\"nav_item_right\"><span>Create</span></div></a>";
+			}?>
+		</div>
+		<table class="item_information_area_table">
+			<tr><td><em>Address:</em></td><td><?echo htmlentities($address->get_address());?></td></tr>
+			<tr><td><em>Family:</em></td><td><?echo htmlentities("IPv".$address->get_family());?></td></tr>
+			<tr><td><em>Range:</em></td><td><?echo htmlentities($address->get_range());?></td></tr>
+			<tr><td><em>Configuration:</em></td><td><?echo htmlentities($address->get_config());?></td></tr>
+			<tr><td><em>Class:</em></td><td><?echo htmlentities($address->get_class());?></td></tr>
+			<tr><td><em>Primary?:</em></td><td><?echo htmlentities(($address->get_isprimary() == 't') ? "True" : "False");?></td></tr>
+			<tr><td><em>Comment:</em></td><td><?echo htmlentities($address->get_comment());?></td></tr>
+		</table>
+		<!--<img class="system_image" src=<?#echo base_url() . $this->impulselib->get_os_img_path($system->get_os_name())?>></img>-->
+		<div class="infobar">
+			<span class="infobar_text">Created on <?echo htmlentities($address->get_date_created());?> - Modified by <?echo htmlentities($address->get_last_modifier());?> on <?echo htmlentities($address->get_date_modified());?></span>
+		</div>
 	</div>
-	</a>
 </div>

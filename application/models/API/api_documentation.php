@@ -1,9 +1,9 @@
-<?php
-require_once(APPPATH . "libraries/core/ImpulseController.php");
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseModel.php");
 /**
  * 
  */
-class Api_documentation extends ImpulseController {
+class Api_documentation extends ImpulseModel {
 
     /**
      *
@@ -17,11 +17,15 @@ class Api_documentation extends ImpulseController {
      * @return array
      */
     public function get_schema_documentation($schema) {
-		if ($schema != "none") {
-			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
+		
+		if ($schema == "none") {
+			$sql = "SELECT * FROM documentation.functions WHERE schema IS NULL ORDER BY schema,name ASC";
+		}
+		elseif ($schema == "all") {
+			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
 		}
 		else {
-			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
+			$sql = "SELECT * FROM documentation.functions WHERE schema = '$schema' ORDER BY schema,name ASC";
 		}
 		$query = $this->db->query($sql);
 		$this->_check_error($query);

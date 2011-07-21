@@ -8,7 +8,13 @@ class Test extends ImpulseController {
 	public function index() {
 		echo "Hello";
 		
-		$this->remove_system('bvlisofwks003');
+		echo $this->impulselib->test();
+		echo $this->api->get_username();
+		
+		$navbar = new Navbar("Testing",null,null);
+		$this->load->view('core/navbar',array('navbar'=>$navbar));
+		
+		#$this->remove_system('bvlisofwks003');
 	}
 	
 	public function remove_system($name) {

@@ -4,6 +4,9 @@
  */
 class ImpulseController extends CI_Controller {
 
+	protected static $sys;
+	protected static $int;
+	protected static $addr;
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
     
@@ -75,6 +78,39 @@ class ImpulseController extends CI_Controller {
 		#$this->load->view('core/main',$info);
 		
 		return $this->load->view('core/warning',$data,TRUE);
+	}
+	
+	protected function _load_system() {
+		// Establish the system and address objects
+        try {
+            self::$sys = $this->impulselib->get_active_system();
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $this->_error($onfE->getMessage());
+            return;
+        }
+	}
+	
+	protected function _load_address($address) {
+		try {
+			$ints = self::$sys->get_interfaces();
+			foreach ($ints as $int) {
+				try {
+					self::$addr = $int->get_address($address);
+					if(self::$addr instanceof InterfaceAddress) {
+						self::$int = $int;
+						break;
+					}
+				}
+				catch (ObjectException $apiE) {
+					$addr = NULL;
+				}
+			}
+		}
+		catch (ObjectException $apiE) {
+			$this->_error($apiE->getMessage());
+			return;
+		}
 	}
 }
 

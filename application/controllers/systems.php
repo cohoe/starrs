@@ -13,7 +13,7 @@ class Systems extends ImpulseController {
      */
 	public function index() {
 	
-		$this->owned();
+		redirect(base_url()."systems/owned",'location');
 	}
 
     /**
@@ -211,7 +211,7 @@ class Systems extends ImpulseController {
 		if($this->input->post('submit')) {
 			$sys = $this->_create();
 			$this->impulselib->set_active_system($sys);
-			redirect("/systems/view/".$sys->get_system_name(),'location');
+			redirect(base_url()."systems/view/".$sys->get_system_name(),'location');
 		}
 		
 		// Need to input the information
@@ -254,7 +254,7 @@ class Systems extends ImpulseController {
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
 			$this->_delete($sys);
-			redirect("/systems/","location");
+			redirect(base_url()."systems/","location");
 		}
 		
 		// They hit no, don't delete the system

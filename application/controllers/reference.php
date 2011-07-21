@@ -31,8 +31,11 @@ class Reference extends ImpulseController {
 	
 	public function api($schema=NULL) {
 	
-		if($schema == 'all') {
+		if($schema == 'none') {
 			$this->_load_api_functions("none");
+		}
+		elseif($schema == 'all') {
+			$this->_load_api_functions("all");
 		}
 		elseif($schema != NULL) {
 			$this->_load_api_functions($schema);
@@ -74,6 +77,23 @@ class Reference extends ImpulseController {
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view("core/data",array('data'=>$viewData),TRUE);
 		$info['title'] = "API Reference";
+		
+		// Load the main view
+		$this->load->view('core/main',$info);
+	}
+	
+	public function help($object=NULL,$view=NULL) {
+		// Navbar
+        $navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'reference/help');
+		$navModes['CANCEL'] = "";
+        $navbar = new Navbar("Help", $navModes, $navOptions);
+		
+		// Load view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view("help/$object/$view",null,TRUE);
+		$info['title'] = "Help: $object/$view";
 		
 		// Load the main view
 		$this->load->view('core/main',$info);

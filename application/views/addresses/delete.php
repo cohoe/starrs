@@ -4,10 +4,10 @@
 		<label for="address">Address: </label><select name="address">
 			<? foreach ($addresses as $intAddr) {
 				if($intAddr->get_address() == $address) {
-					echo "<option value=\"".$intAddr->get_address()."\" selected=\"true\" >".$intAddr->get_address()."</option>";
+					echo "<option value=\"".htmlentities($intAddr->get_address())."\" selected=\"true\" >".htmlentities($intAddr->get_address())."</option>";
 				}
 				else {
-					echo "<option value=\"".$intAddr->get_address()."\">".$intAddr->get_address()."</option>";
+					echo "<option value=\"".htmlentities($intAddr->get_address())."\">".htmlentities($intAddr->get_address())."</option>";
 				}
 			} ?>
 		</select></br>

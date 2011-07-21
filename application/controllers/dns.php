@@ -6,9 +6,9 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
  */
 class Dns extends ImpulseController {
 	
-	private static $sys;
-	private static $int;
-	private static $addr;
+	public function __construct() {
+		parent::__construct();
+	}
 	
 	public function index() {
 		
@@ -28,9 +28,9 @@ class Dns extends ImpulseController {
 		}
 
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address()."/overview";
+		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
-		$navOptions['Firewall Rules'] = "/addresses/view/".self::$addr->get_address()."/firewall";
+		$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
 		
 		$navModes['CREATE'] = "/dns/create/".self::$addr->get_address();
 		$navModes['DELETE'] = "/dns/delete/".self::$addr->get_address();
@@ -39,17 +39,43 @@ class Dns extends ImpulseController {
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$viewData['address'] = self::$addr;
-		$data = $this->load->view('dns/address', $viewData, TRUE);
 		$info['title'] = "DNS - ".self::$addr->get_address();
 		$navbar = new Navbar("DNS for ".self::$addr->get_address(), $navModes, $navOptions);
 		
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $data;
+		
+		$data = $this->_load_records();
+		$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
 	
+	}
+	
+	private function _load_records() {
+		$viewData = "";
+		if(self::$addr->get_address_record()) {
+			$viewData .= $this->load->view('dns/records/a',array("record"=>self::$addr->get_address_record()),TRUE);
+		}
+		if(self::$addr->get_pointer_records()) {
+			$viewData .= $this->load->view('dns/records/pointer',array("records"=>self::$addr->get_pointer_records()),TRUE);
+		}
+		if(self::$addr->get_text_records()) {
+			$viewData .= $this->load->view('dns/records/text',array("records"=>self::$addr->get_text_records()),TRUE);
+		}
+		if(self::$addr->get_ns_records()) {
+			$viewData .= $this->load->view('dns/records/ns',array("records"=>self::$addr->get_ns_records()),TRUE);
+		}
+		if(self::$addr->get_mx_records()) {
+			$viewData .= $this->load->view('dns/records/mx',array("records"=>self::$addr->get_mx_records()),TRUE);
+		}
+		
+		if($viewData == "") {
+			$viewData = $this->load->view('dns/records/none',null,TRUE);
+		}
+		
+		return $viewData;
 	}
 	
 	public function create($address) {
@@ -354,39 +380,6 @@ class Dns extends ImpulseController {
 	private function _edit(&$obj) {}
 	
 	private function _delete(&$obj) {}
-	
-	private function _load_system() {
-		// Establish the system and address objects
-        try {
-            self::$sys = $this->impulselib->get_active_system();
-        }
-        catch (ObjectNotFoundException $onfE) {
-            $this->_error($onfE->getMessage());
-            return;
-        }
-	}
-	
-	private function _load_address($address) {
-		try {
-			$ints = self::$sys->get_interfaces();
-			foreach ($ints as $int) {
-				try {
-					self::$addr = $int->get_address($address);
-					if(self::$addr instanceof InterfaceAddress) {
-						self::$int = $int;
-						break;
-					}
-				}
-				catch (ObjectException $apiE) {
-					$addr = NULL;
-				}
-			}
-		}
-		catch (ObjectException $apiE) {
-			$this->_error($apiE->getMessage());
-			return;
-		}
-	}
 }
 
 /* End of file dns.php */

@@ -20,16 +20,84 @@
 				<input type="radio" name="isprimary" value="t" class="input_form_radio" checked />Yes
 				<input type="radio" name="isprimary" value="f" class="input_form_radio" />No
 				<?break;
-			case "MX":
-				break;
-			case "CNAME":
-				break;
-			case "SRV":
-				break;
-			case "TXT":
-				break;
-			case "SPF":
-				break;
+			case "MX":?>
+				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $addr->get_address_record()->get_hostname();?>" readonly /><br>
+				<label for="zone">Domain: </label>
+				<select name="zone" class="input_form_input" readonly>
+					<? foreach ($zones as $zone) {
+						if($zone = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						}
+						else {
+							echo "<option value=\"$zone\">$zone</option>";
+						}
+					} ?>
+				</select><br />
+				<label for="preference">Preference: </label><input type="text" name="preference" class="input_form_input" /><br>
+				<?break;
+			case "CNAME":?>
+				<label for="alias">Alias: </label><input type="text" name="alias" class="input_form_input" /><br>
+				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $addr->get_address_record()->get_hostname();?>" readonly /><br>
+				<label for="zone">Domain: </label>
+				<select name="zone" class="input_form_input" readonly>
+					<? foreach ($zones as $zone) {
+						if($zone = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						}
+						else {
+							echo "<option value=\"$zone\">$zone</option>";
+						}
+					} ?>
+				</select><br />
+				<?break;
+			case "SRV":?>
+				<label for="alias">Alias: </label><input type="text" name="alias" class="input_form_input" /><br>
+				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $addr->get_address_record()->get_hostname();?>" readonly /><br>
+				<label for="zone">Domain: </label>
+				<select name="zone" class="input_form_input" readonly>
+					<? foreach ($zones as $zone) {
+						if($zone = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						}
+						else {
+							echo "<option value=\"$zone\">$zone</option>";
+						}
+					} ?>
+				</select><br />
+				<label for="priority">Priority: </label><input type="text" name="priority" class="input_form_input" /><br>
+				<label for="weight">Weight: </label><input type="text" name="weight" class="input_form_input" /><br>
+				<label for="port">Port: </label><input type="text" name="port" class="input_form_input" /><br>
+				<?break;
+			case "TXT":?>
+				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $addr->get_address_record()->get_hostname();?>" readonly /><br>
+				<label for="zone">Domain: </label>
+				<select name="zone" class="input_form_input" readonly>
+					<? foreach ($zones as $zone) {
+						if($zone = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						}
+						else {
+							echo "<option value=\"$zone\">$zone</option>";
+						}
+					} ?>
+				</select><br />
+				<label for="text">Text: </label><input type="text" name="text" class="input_form_input" /><br>
+				<?break;
+			case "SPF":?>
+				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $addr->get_address_record()->get_hostname();?>" readonly /><br>
+				<label for="zone">Domain: </label>
+				<select name="zone" class="input_form_input" readonly>
+					<? foreach ($zones as $zone) {
+						if($zone = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						}
+						else {
+							echo "<option value=\"$zone\">$zone</option>";
+						}
+					} ?>
+				</select><br />
+				<label for="text">Text: </label><input type="text" name="text" class="input_form_input" /><br>
+				<?break;
 			default:?>
 				<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" /><br>
 				<label for="zone">Domain: </label>
