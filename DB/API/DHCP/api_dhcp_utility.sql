@@ -176,16 +176,24 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	spi_exec_query("SELECT api.deinitialize()");
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."generate_dhcpd_config"() IS 'Generate the config file for the dhcpd server, and store it in the db';
-
-CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
+	my $configFile = "/etc/dhcpd.conf";
+	my $tempConfigFile = "/tmp/dhcpd.conf.temp";
+	
+	if (! open (CONFIG, ">", "$configFile"))
+	{
+		warn("Cannot open $configFile for writing, using $tempConfigFile instead: $!");
+		open (CONFIG, ">", "$tempConfigFile") || die "Cannot open the tem config file at $tempConfigFile: $!";
+	}
+
 	my $row;
 	my $output;
 	my $cursor = spi_query("SELECT * FROM management.output where file = 'dhcpd.conf' order by output_id desc limit 1");
 	while (defined ($row = spi_fetchrow($cursor)))
 	{
 		$output = $row->{value};
-		return $output;
+		print CONFIG $output;
 	}
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."write_dhcpd_config"() IS 'Writes the dhcpd server config file from the database to the location of the users choice, default is to disk, as the main config for said server';
