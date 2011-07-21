@@ -112,8 +112,11 @@ class Navbar {
 		$this->helpLink = "/reference/help/".$this->CI->uri->segment(1);
 
         // Load your user information
-		$this->user = $this->CI->impulselib->get_name();
-		$this->priv = $this->CI->api->management->get_current_user_level();
+#print_r($this->CI->api);
+$this->CI->impulselib->test();
+die;
+#		$this->user = $this->CI->api->get_name();
+#		$this->priv = $this->CI->api->management->get_current_user_level();
 	}
 
 	//////////////////////////////////////////////////////////////////////

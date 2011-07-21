@@ -4,6 +4,7 @@
 
 class ImpulseLoader {
 	public function initialize() {
+
 		# Core
 		require_once(APPPATH . "libraries/core/ImpulseObject.php");
 		

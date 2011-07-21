@@ -19,7 +19,6 @@ class Impulselib {
 
 	public function test() {
 		echo "Hi";
-		die;
 	}
 
     /**

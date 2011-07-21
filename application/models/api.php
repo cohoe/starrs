@@ -37,7 +37,7 @@ class Api extends CI_Model {
 		$this->network = new API_Network();
 		$this->systems = new API_Systems();
 
-        $this->uname = $this->input->server('WEBAUTH_USER');
+       	$this->uname = $this->input->server('WEBAUTH_USER');
 		$this->fname = $this->input->server('WEBAUTH_LDAP_GIVENNAME');
 		$this->lname = $this->input->server('WEBAUTH_LDAP_SN');
 		#$this->uname = "sean";
