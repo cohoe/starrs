@@ -21,6 +21,8 @@ CREATE OR REPLACE FUNCTION "api"."regenerate_documentation"() RETURNS VOID AS $$
 			UPDATE "documentation"."functions" SET "schema" = schemas.schema_name WHERE "name" ~* regex;
 		END LOOP;
 
+		UPDATE "documentation"."functions" SET "schema" = 'systems' WHERE "name" ~* '(get|create|remove|modify)_system';
+
 		-- Insert new arguments
 		INSERT INTO "documentation"."arguments" ("specific_name","argument","type","position") (
 		SELECT "specific_name","parameter_name","udt_name","ordinal_position"
