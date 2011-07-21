@@ -179,12 +179,12 @@ COMMENT ON FUNCTION "api"."generate_dhcpd_config"() IS 'Generate the config file
 CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
 	my $configFile = "/etc/dhcpd.conf";
-	my $tempConfigFile = "/tmp/dhcpd.conf.temp";
+	my $tempConfigFile = "/tmp/dhcpd.conf.tmp";
 	
 	if (! open (CONFIG, ">", "$configFile"))
 	{
 		warn("Cannot open $configFile for writing, using $tempConfigFile instead: $!");
-		open (CONFIG, ">", "$tempConfigFile") || die "Cannot open the tem config file at $tempConfigFile: $!";
+		open (CONFIG, ">", "$tempConfigFile") || die "Cannot open the temp config file at $tempConfigFile: $!";
 	}
 
 	my $row;
