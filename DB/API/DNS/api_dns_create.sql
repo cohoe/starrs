@@ -331,13 +331,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer, text) IS 'create a new dns cname record for a host';
 
-/* API - create_dns_txt
+/* API - create_dns_text
 	1) Set owner
 	2) Set zone
 	3) Check privileges
 	4) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zone text, input_text text, input_type text, input_ttl integer, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zone text, input_text text, input_type text, input_ttl integer, input_owner text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_txt');
 
@@ -376,4 +376,4 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, text, integer, text) IS 'create a new dns txt record for a host';
+COMMENT ON FUNCTION "api"."create_dns_text"(text, text, text, text, integer, text) IS 'create a new dns text record for a host';
