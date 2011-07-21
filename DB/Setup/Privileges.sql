@@ -14,6 +14,7 @@ GRANT USAGE ON SCHEMA "ip" TO "impulse_client";
 GRANT USAGE ON SCHEMA "management" TO "impulse_client";
 GRANT USAGE ON SCHEMA "network" TO "impulse_client";
 GRANT USAGE ON SCHEMA "systems" TO "impulse_client";
+GRANT USAGE ON SCHEMA "documentation" TO "impulse_client";
 
 /* System Data
 	Clients should never be able to modify these. They are for administrators only (superuser)
@@ -27,6 +28,7 @@ GRANT SELECT ON "systems"."os" TO "impulse_client";
 GRANT SELECT ON "network"."switchport_types" TO "impulse_client";
 GRANT SELECT ON "firewall"."programs" TO "impulse_client";
 GRANT SELECT ON "dns"."types" TO "impulse_client";
+GRANT SELECT ON "documentation"."functions" TO "impulse_client";
 
 /* User Data
 	This is all the stuff that clients can (depending on user permission level) modify
