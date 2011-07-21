@@ -19,7 +19,7 @@ body {
 	width: 199px;
 	border: 1px solid black;
 	float: left;
-	height: 10%;
+	min-height: 200px;
 }
 
 .information {

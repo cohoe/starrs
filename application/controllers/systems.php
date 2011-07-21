@@ -53,13 +53,19 @@ class Systems extends ImpulseController {
 		$navbar = new Navbar("Owned Systems", $navModes, $navOptions);
 		
 		// List of systems
-		$systemList = $this->api->systems->get_systems($this->impulselib->get_username());
+		try {
+			$systemList = $this->api->systems->get_systems($this->impulselib->get_username());
+			$viewData = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
+		}
+		catch (ObjectNotFoundException $onfE) {
+			$viewData = $this->_warning("No systems found!");
+		}
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
+		$info['data'] = $viewData;
 		$info['title'] = "Owned Systems";
 
 		// Load the main view

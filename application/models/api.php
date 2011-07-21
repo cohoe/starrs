@@ -32,8 +32,6 @@ class Api extends CI_Model {
 		$this->management = new API_Management();
 		$this->network = new API_Network();
 		$this->systems = new API_Systems();		
-		
-		$this->management->initialize($this->impulselib->get_username());
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -69,5 +67,7 @@ class Api extends CI_Model {
 		$this->load->model('API/api_management');
 		$this->load->model('API/api_network');
 		$this->load->model('API/api_systems');
+
+		$this->load->library('impulselib');
 	}
 }

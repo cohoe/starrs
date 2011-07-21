@@ -1,8 +1,9 @@
 <?php
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 /**
  * 
  */
-class Api_documentation extends CI_Model {
+class Api_documentation extends ImpulseController {
 
     /**
      *
@@ -23,6 +24,7 @@ class Api_documentation extends CI_Model {
 			$sql = "SELECT * FROM documentation.functions ORDER BY schema,name ASC";
 		}
 		$query = $this->db->query($sql);
+		$this->_check_error($query);
 		return $query->result_array();
 	}
 
