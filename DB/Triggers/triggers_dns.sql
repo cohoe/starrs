@@ -231,7 +231,7 @@ CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text,
 		RETURN (SELECT "dns"."a"."address"
 		FROM "dns"."a"
 		WHERE "dns"."a"."hostname" = input_hostname
-		AND "dns"."a"."zone" = input_zone);
+		AND "dns"."a"."zone" = input_zone LIMIT 1);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
