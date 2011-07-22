@@ -36,6 +36,7 @@ class Systems extends ImpulseController {
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
 		$info['title'] = "All Systems";
+		$info['help'] = $info['data'] = $this->load->view("help/$object/$view",null,TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
