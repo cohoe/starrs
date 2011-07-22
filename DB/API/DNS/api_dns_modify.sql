@@ -345,9 +345,9 @@ COMMENT ON FUNCTION "api"."modify_dns_cname"(text, text, text, text) IS 'Modify 
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_txt');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_text');
 
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -381,7 +381,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input
 		END IF;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_txt');
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_text');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_txt"(text, text, text, text) IS 'Modify an existing DNS TXT or SPF record';
+COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text) IS 'Modify an existing DNS TXT or SPF record';
