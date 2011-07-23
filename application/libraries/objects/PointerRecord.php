@@ -13,6 +13,11 @@ class PointerRecord extends DnsRecord {
 	// string		Extra information required for certain records
 	private $extra;
 	
+	private $priority;
+	private $weight;
+	private $port;
+	
+	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -37,6 +42,8 @@ class PointerRecord extends DnsRecord {
 		// PointerRecord-specific stuff
 		$this->alias = $alias;
 		$this->extra = $extra;
+		
+		list($this->priority, $this->weight, $this->port) = split(' ',$extra);
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -45,11 +52,97 @@ class PointerRecord extends DnsRecord {
 	public function get_alias() { return $this->alias; }
 	public function get_extra() { return $this->extra; }
 	
+	public function get_priority() { return $this->priority; }
+	public function get_weight()   { return $this->weight; }
+	public function get_port()     { return $this->port; }
+	
+	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
+	
+	public function set_hostname($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'hostname', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'hostname', $new);	
+		}
+		$this->hostname = $new; 
+	}
+	
+	public function set_zone($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'zone', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'zone', $new);	
+		}
+		$this->zone = $new; 
+	}
+	
+	public function set_ttl($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'ttl', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'ttl', $new);	
+		}
+		$this->ttl = $new; 
+	}
+	
+	public function set_owner($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'owner', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'owner', $new);	
+		}
+		$this->owner = $new; 
+	}
+	
+	public function set_alias($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'alias', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'alias', $new);	
+		}
+		$this->alias = $new; 
+	}
+	
+	public function set_extra($new) {
+		if($this->get_type() == "CNAME") {
+			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'extra', $new);	
+		}
+		else {
+			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'extra', $new);	
+		}
+		$this->extra = $new; 
+	}
+	
+	public function set_priority($new) {
+		if($this->get_type() != "SRV") {
+			throw new ObjectException("Cannot set priority of a non-SRV record");
+		}
+		$this->set_extra(preg_replace('/^\d+/',$new,$this->get_extra()));
+	}
+	
+	public function set_weight($new) {
+		if($this->get_type() != "SRV") {
+			throw new ObjectException("Cannot set weight of a non-SRV record");
+		}
+		$this->set_extra(preg_replace('/ \d+ /'," $new ",$this->get_extra()));
+	}
+	
+	public function set_port($new) {
+		if($this->get_type() != "SRV") {
+			throw new ObjectException("Cannot set priority of a non-SRV record");
+		}
+		$this->set_extra(preg_replace('/\d+$/',$new,$this->get_extra()));
+	}
 }
 
 /* End of file PointerRecord.php */

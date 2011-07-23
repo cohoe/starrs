@@ -58,6 +58,18 @@ class Api_management extends ImpulseModel {
 		// Check error
         $this->_check_error($query);
 	}
+	
+	public function get_site_configuration($directive) {
+		// SQL Query
+		$sql = "SELECT api.get_site_configuration({$this->db->escape($directive)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+        $this->_check_error($query);
+		
+		// Return result
+		return $query->row()->get_site_configuration;
+	}
 }
 
 /* End of file api_management.php */

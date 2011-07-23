@@ -22,8 +22,10 @@
 		<?echo $sidebar;?>
 		<div class="information">
 			<?echo $navbar;?>
-			<?echo $help;?>
+			<?if(isset($help)) { echo $help; }?>
+			<div id="dataDiv">
 			<?echo $data;?>
+			</div>
 		</div>
 	</div>
 </body>

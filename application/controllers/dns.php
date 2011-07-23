@@ -11,7 +11,8 @@ class Dns extends ImpulseController {
 	}
 	
 	public function index() {
-		
+		$this->_error("No action specified");
+		return;
 	}
 	
 	public function view($address=NULL) {
@@ -33,6 +34,7 @@ class Dns extends ImpulseController {
 		$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
 		
 		$navModes['CREATE'] = "/dns/create/".self::$addr->get_address();
+		$navModes['EDIT'] = "/dns/edit/".self::$addr->get_address();
 		$navModes['DELETE'] = "/dns/delete/".self::$addr->get_address();
 		
 		// Load view data
@@ -45,7 +47,7 @@ class Dns extends ImpulseController {
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		
-		$data = $this->_load_records();
+		$data = $this->_load_records("view");
 		$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 
 		// Load the main view
@@ -53,26 +55,26 @@ class Dns extends ImpulseController {
 	
 	}
 	
-	private function _load_records() {
+	private function _load_records($view="view") {
 		$viewData = "";
 		if(self::$addr->get_address_record()) {
-			$viewData .= $this->load->view('dns/records/a',array("record"=>self::$addr->get_address_record()),TRUE);
+			$viewData .= $this->load->view("dns/$view/a",array("record"=>self::$addr->get_address_record()),TRUE);
 		}
 		if(self::$addr->get_pointer_records()) {
-			$viewData .= $this->load->view('dns/records/pointer',array("records"=>self::$addr->get_pointer_records()),TRUE);
+			$viewData .= $this->load->view("dns/$view/pointer",array("records"=>self::$addr->get_pointer_records()),TRUE);
 		}
 		if(self::$addr->get_text_records()) {
-			$viewData .= $this->load->view('dns/records/text',array("records"=>self::$addr->get_text_records()),TRUE);
+			$viewData .= $this->load->view("dns/$view/text",array("records"=>self::$addr->get_text_records()),TRUE);
 		}
 		if(self::$addr->get_ns_records()) {
-			$viewData .= $this->load->view('dns/records/ns',array("records"=>self::$addr->get_ns_records()),TRUE);
+			$viewData .= $this->load->view("dns/$view/ns",array("records"=>self::$addr->get_ns_records()),TRUE);
 		}
 		if(self::$addr->get_mx_records()) {
-			$viewData .= $this->load->view('dns/records/mx',array("records"=>self::$addr->get_mx_records()),TRUE);
+			$viewData .= $this->load->view("dns/$view/mx",array("records"=>self::$addr->get_mx_records()),TRUE);
 		}
 		
 		if($viewData == "") {
-			$viewData = $this->load->view('dns/records/none',null,TRUE);
+			$viewData = $this->load->view("dns/$view/none",null,TRUE);
 		}
 		
 		return $viewData;
@@ -176,7 +178,100 @@ class Dns extends ImpulseController {
 		}
 	}
 	
-	public function edit($obj) {}
+	public function edit($address=NULL,$type=NULL,$zone=NULL,$hostname=NULL,$alias=NULL) {
+		if($address==NULL) {
+			$this->_error("No address specified");
+			return;
+		}
+		if(!(self::$sys instanceof System)) {
+			$this->_load_system();
+		}
+		if(!(self::$addr instanceof InterfaceAddress)) {
+			$this->_load_address($address);
+		}
+		
+		// A given type indicates that we are doing something
+		if($type != NULL) {
+			if(!$this->input->post('submit')) {
+				
+				$record = $this->_get_record_obj($address,$type,$zone,$hostname,$alias);
+				
+				// Navbar
+				$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+				$navbar = new Navbar("Edit DNS Record", $navModes, null);
+
+				// Load the view data
+				$info['header'] = $this->load->view('core/header',"",TRUE);
+				$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+				$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+
+				// Get the preset form data for drop down lists and things
+				$form['addr'] = self::$addr;
+				$form['type'] = $type;
+				$form['user'] = $this->impulselib->get_username();
+				$form['zones'] = $this->api->dns->get_dns_zones($form['user']);
+				$form['record'] = $record;
+
+				// Are you an admin?
+				if($this->api->isadmin() == TRUE) {
+					$form['admin'] = TRUE;
+				}
+
+				// Continue loading view data
+				$info['data'] = $this->load->view("dns/edit/$type",$form,TRUE);
+				$info['title'] = "Edit DNS Address";
+
+				// Load the main view
+				$this->load->view('core/main',$info);
+			}
+			else {
+				$record = $this->_get_record_obj($address,$type,$zone,$hostname,$alias);
+				$this->_edit($record);
+				
+				
+				// Add it to the address
+				#self::$addr->add_record($record);
+				self::$addr = $this->api->systems->get_system_interface_address($record->get_address(),true);
+				
+				// Update our information
+				self::$int->add_address(self::$addr);
+				self::$sys->add_interface(self::$int);
+				$this->impulselib->set_active_system(self::$sys);
+				
+				redirect(base_url()."/dns/edit/".self::$addr->get_address(),'location');
+			}
+		}
+		else {	
+			// Navbar
+			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+			$navbar = new Navbar("Edit DNS Record", $navModes, null);
+
+			// Load the view data
+			$info['header'] = $this->load->view('core/header',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+
+			// Get the preset form data for drop down lists and things
+			#$form['addr'] = self::$addr;
+			#$form['type'] = $this->input->post('type');
+			#$form['user'] = $this->impulselib->get_username();
+			#$form['address'] = self::$addr;
+
+			// Are you an admin?
+			#if($this->api->isadmin() == TRUE) {
+			#	$form['admin'] = TRUE;
+			#}
+
+			// Continue loading view data
+			#$data = $this->_load_records("delete");
+			$data = $this->_load_records("edit_select");
+			$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
+			$info['title'] = "Edit DNS Address";
+
+			// Load the main view
+			$this->load->view('core/main',$info);
+		}
+	}
 	
 	public function delete($address=NULL,$type=NULL,$zone=NULL,$hostname=NULL,$alias=NULL) {
 		// Check to make sure the user didnt forget anything
@@ -244,7 +339,8 @@ class Dns extends ImpulseController {
 		}
 		
 		else {
-			$type = $this->input->post('type');
+			# Not sure why this was here
+			#$type = $this->input->post('type');
 			
 			// Navbar
 			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
@@ -267,7 +363,9 @@ class Dns extends ImpulseController {
 			}
 
 			// Continue loading view data
-			$info['data'] = $this->load->view('dns/delete',$form,TRUE);
+			#$info['data'] = $this->load->view('dns/delete',$form,TRUE);
+			$data = $this->_load_records("delete");
+			$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 			$info['title'] = "Delete DNS Address";
 
 			// Load the main view
@@ -377,9 +475,122 @@ class Dns extends ImpulseController {
 		}
 	}
 	
-	private function _edit(&$obj) {}
+	private function _edit(&$record) {		
+		$err = "";
+			
+		if($record->get_hostname() != $this->input->post('hostname')) {
+			try { $record->set_hostname($this->input->post('hostname')); }
+			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+		}
+		if($record->get_zone() != $this->input->post('zone')) {
+			try { $record->get_zone($this->input->post('zone')); }
+			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+		}
+		if($record->get_ttl() != $this->input->post('ttl')) {
+			try { $record->set_ttl($this->input->post('ttl')); }
+			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+		}
+		if($record->get_owner() != $this->input->post('owner')) {
+			try { $record->set_owner($this->input->post('owner')); }
+			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+		}
+		
+		switch ($record->get_type()) {
+			case "A":
+				break;
+			case "AAAA":
+				break;
+			case "CNAME":
+				if($record->get_alias() != $this->input->post('alias')) {
+					try { $record->set_alias($this->input->post('alias')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			case "SRV":
+				if($record->get_alias() != $this->input->post('alias')) {
+					try { $record->set_alias($this->input->post('alias')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				if($record->get_priority() != $this->input->post('priority')) {
+					try { $record->set_priority($this->input->post('priority')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				if($record->get_weight() != $this->input->post('weight')) {
+					try { $record->set_weight($this->input->post('weight')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				if($record->get_port() != $this->input->post('port')) {
+					try { $record->set_port($this->input->post('port')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			case "TXT":
+				if($record->get_text() != $this->input->post('text')) {
+					try { $record->set_text($this->input->post('text')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			case "SPF":
+				if($record->get_text() != $this->input->post('text')) {
+					try { $record->set_text($this->input->post('text')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			case "NS":
+				if($record->get_isprimary() != $this->input->post('isprimary')) {
+					try { $record->set_isprimary($this->input->post('isprimary')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			case "MX":
+				if($record->get_preference() != $this->input->post('preference')) {
+					try { $record->set_preference($this->input->post('preference')); }
+					catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+				}
+				break;
+			default:
+				throw new ControllerException("Could not determine your record type");
+		}
+		
+		if($err != "") {
+			throw new ControllerException($err);
+		}
+	}
 	
 	private function _delete(&$obj) {}
+	
+	private function _get_record_obj($address=NULL,$type=NULL,$zone=NULL,$hostname=NULL,$alias=NULL) {
+		switch($type) {
+			case 'CNAME':
+				$record = self::$addr->get_pointer_record($alias, $hostname, $zone);
+				break;
+			case 'SRV':
+				$record = self::$addr->get_pointer_record($alias, $hostname, $zone);
+				break;
+			case 'TXT':
+				$record = self::$addr->get_text_record($hostname, $zone, $type);
+				break;
+			case 'SPF':
+				$record = self::$addr->get_text_record($hostname, $zone, $type);
+				break;
+			case 'NS':
+				$record = self::$addr->get_ns_record($hostname, $zone);
+				break;
+			case 'MX':
+				$record = self::$addr->get_mx_record($hostname, $zone);
+				break;
+			case 'A':
+				$record = self::$addr->get_address_record();
+				break;
+			case 'AAAA':
+				$record = self::$addr->get_address_record();
+				break;
+			default:
+				throw new ControllerException("Unable to determine your type. Make sure you aren't pulling any URL shenanigans.");
+		}
+		
+		return $record;
+	}
 }
 
 /* End of file dns.php */

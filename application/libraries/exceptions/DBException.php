@@ -18,7 +18,7 @@ class DBException extends Exception {
 
         // Parse the error message for only the ERROR portion, not CONTEXT as well
 		// I hate PHP regex. It wouldn't let me do (.*?)
-		$message = preg_replace('/^ERROR: ([^&]*)CONTEXT([^&]*)$/i', '\1', $message);
+		#$message = preg_replace('/^ERROR: ([^&]*)CONTEXT([^&]*)$/i', '\1', $message);
 		$this->message = $message;
 	}
 

@@ -44,6 +44,31 @@ class NsRecord extends DnsRecord {
 	
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
+	
+	public function set_hostname($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'hostname', $new);	
+		$this->hostname = $new; 
+	}
+	
+	public function set_zone($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'zone', $new);	
+		$this->zone = $new; 
+	}
+	
+	public function set_ttl($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'ttl', $new);	
+		$this->ttl = $new; 
+	}
+	
+	public function set_owner($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'owner', $new);	
+		$this->owner = $new; 
+	}
+	
+	public function set_isprimary($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'isprimary', $new);	
+		$this->owner = $new; 
+	}
 }
 
 /* End of file NsRecord.php */

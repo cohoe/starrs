@@ -417,10 +417,8 @@ class API_Systems extends ImpulseModel {
 
 			// Load DNS mailserver records
 			try {
-				$mxRecords = $this->api->dns->get_mx_records($row['address']);
-				foreach ($mxRecords as $mxRecord) {
-					$addr->add_mx_record($mxRecord);
-				}
+				$mxRecord = $this->api->dns->get_mx_records($row['address']);
+				$addr->add_mx_record($mxRecord);
 			}
 			catch (ObjectNotFoundException $onfE) {}
 		}

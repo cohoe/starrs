@@ -1,3 +1,11 @@
+<?php
+if($addr->get_dynamic() == TRUE) {
+	$address = "Dynamic";
+}
+else {
+	$address = $addr->get_address();
+}
+?>
 <div class="item_information_area">
 	<div class="interface_box">
 		<div class="interface_box_nav">
@@ -23,17 +31,22 @@
 			}?>
 		</div>
 		<table class="item_information_area_table">
-			<tr><td><em>Address:</em></td><td><?echo htmlentities($address->get_address());?></td></tr>
-			<tr><td><em>Family:</em></td><td><?echo htmlentities("IPv".$address->get_family());?></td></tr>
-			<tr><td><em>Range:</em></td><td><?echo htmlentities($address->get_range());?></td></tr>
-			<tr><td><em>Configuration:</em></td><td><?echo htmlentities($address->get_config());?></td></tr>
-			<tr><td><em>Class:</em></td><td><?echo htmlentities($address->get_class());?></td></tr>
-			<tr><td><em>Primary?:</em></td><td><?echo htmlentities(($address->get_isprimary() == 't') ? "True" : "False");?></td></tr>
-			<tr><td><em>Comment:</em></td><td><?echo htmlentities($address->get_comment());?></td></tr>
+			<tr><td><em>Address:</em></td><td><?echo htmlentities($address);?></td></tr>
+			<?
+				if($addr->get_dynamic() == TRUE) {?>
+					<tr><td><em>FQDN:</em></td><td><?echo htmlentities($addr->get_fqdn());?></td></tr>
+				<?}
+			?>
+			<tr><td><em>Family:</em></td><td><?echo htmlentities("IPv".$addr->get_family());?></td></tr>
+			<tr><td><em>Range:</em></td><td><?echo htmlentities($addr->get_range());?></td></tr>
+			<tr><td><em>Configuration:</em></td><td><?echo htmlentities($addr->get_config());?></td></tr>
+			<tr><td><em>Class:</em></td><td><?echo htmlentities($addr->get_class());?></td></tr>
+			<tr><td><em>Primary?:</em></td><td><?echo htmlentities(($addr->get_isprimary() == 't') ? "True" : "False");?></td></tr>
+			<tr><td><em>Comment:</em></td><td><?echo htmlentities($addr->get_comment());?></td></tr>
 		</table>
 		<!--<img class="system_image" src=<?#echo base_url() . $this->impulselib->get_os_img_path($system->get_os_name())?>></img>-->
 		<div class="infobar">
-			<span class="infobar_text">Created on <?echo htmlentities($address->get_date_created());?> - Modified by <?echo htmlentities($address->get_last_modifier());?> on <?echo htmlentities($address->get_date_modified());?></span>
+			<span class="infobar_text">Created on <?echo htmlentities($addr->get_date_created());?> - Modified by <?echo htmlentities($addr->get_last_modifier());?> on <?echo htmlentities($addr->get_date_modified());?></span>
 		</div>
 	</div>
 </div>

@@ -95,6 +95,18 @@ class Api_ip extends ImpulseModel {
 		// Return result
 		return $query->row()->ip_arp;
 	}
+	
+	public function ip_in_subnet($address, $subnet) {
+		// SQL Query
+		$sql = "SELECT api.ip_in_subnet({$this->db->escape($address)}, {$this->db->escape($subnet)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return result
+		return $query->row()->ip_in_subnet;
+	}
 }
 
 /* End of file api_ip.php */

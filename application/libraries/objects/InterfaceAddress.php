@@ -52,6 +52,8 @@ class InterfaceAddress extends ImpulseObject {
 	
 	// string		The name of the containing range
 	private $range;
+	
+	private $dynamic;
 
 	
 	////////////////////////////////////////////////////////////////////////
@@ -134,6 +136,14 @@ class InterfaceAddress extends ImpulseObject {
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
 		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
 		$this->range = $this->CI->api->ip->get_address_range($this->address);
+		
+		if($this->CI->api->ip->ip_in_subnet($this->get_address(), $this->CI->api->management->get_site_configuration('DYNAMIC_SUBNET')) == 't') {
+			$this->dynamic = TRUE;
+			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)) . "." . $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE');
+		}
+		else {
+			$this->dynamic = FALSE;
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -157,6 +167,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_text_records()    { return $this->dnsTextRecords; }
 	public function get_system_name()     { return $this->systemName; }
 	public function get_range()           { return $this->range; }
+	public function get_dynamic()		  { return $this->dynamic; }
 	
 	public function get_help() {
 		return "Interfaces are assigned IP addresses in multiple ways from configured resource pools. 
@@ -304,6 +315,42 @@ class InterfaceAddress extends ImpulseObject {
 			default:
 				throw new ObjectException("Unsupported DNS record given");
 		}
+	}
+	
+	public function get_pointer_record($alias, $hostname, $zone) {
+		foreach ($this->dnsPointerRecords as $record) {
+			if($record->get_alias() == $alias && $record->get_hostname() == $hostname && $record->get_zone() == $zone) {
+				return $record;
+			}
+		}
+		throw new ObjectNotFoundException("No pointer record matching your criteria was found");
+	}
+	
+	public function get_text_record($hostname, $zone, $type) {
+		foreach ($this->dnsTextRecords as $record) {
+			if($record->get_hostname() == $hostname && $record->get_zone() == $zone && $record->get_type() == $type) {
+				return $record;
+			}
+		}
+		throw new ObjectNotFoundException("No text record matching your criteria was found");
+	}
+	
+	public function get_ns_record($hostname, $zone) {
+		foreach ($this->dnsNsRecords as $record) {
+			if($record->get_hostname() == $hostname && $record->get_zone() == $zone) {
+				return $record;
+			}
+		}
+		throw new ObjectNotFoundException("No NS record matching your criteria was found");
+	}
+	
+	public function get_mx_record($hostname, $zone) {
+		foreach ($this->dnsMxRecords as $record) {
+			if($record->get_hostname() == $hostname && $record->get_zone() == $zone) {
+				return $record;
+			}
+		}
+		throw new ObjectNotFoundException("No MX record matching your criteria was found");
 	}
 }
 

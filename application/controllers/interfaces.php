@@ -314,13 +314,16 @@ class Interfaces extends ImpulseController {
 
 			// For each of the address objects, draw it's box and append it to the view
 			foreach($addrs as $addr) {
-				$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
-				$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
+				$navOptions = array();
+				if($addr->get_dynamic() != TRUE) {
+					$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
+					$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
+				}
 				$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
 				$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
-				
+								
 				$navbar = new Navbar("Address", $navModes, $navOptions);
-				$addressViewData .= $this->load->view('systems/address',array('address'=>$addr, 'navbar'=>$navbar),TRUE);
+				$addressViewData .= $this->load->view('systems/address',array('addr'=>$addr, 'navbar'=>$navbar),TRUE);
 				$int->add_address($addr);
 			}
 			
