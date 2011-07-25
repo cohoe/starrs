@@ -236,42 +236,42 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 			print CONFIG $output;
 		}
 	}
-	if ($sendEmail)
-	{
-		my $from = '<user@yourdomain>';
-		my $to = '<other.user@theirdomain>';
-		my $subject = 'Backup dhcpd.conf from IMPULSE';
-		if ($wroteToFile)
-		{
-			my $msg = MIME::Lite->new(
-				From 	=> $from,
-				To 		=> $to,
-				Subject => $subject,
-				Type 	=> 'multipart/mixed'
-			);
-			$msg->attach(
-				Type => 'TEXT',
-				Data => 'Config file for the DHCPd server'
-			);
-			$msg->attach(
-				Type 		=> 'AUTO',
-				Path 		=> "$tempConfigFile",
-				Filename 	=> 'dhcpd.conf',
-				Disposition => 'attachment'
-			);
-			$msg->send;
-		}else
-		{
-			my $msg = MIME::Lite->new(
-				From 	=> $from,
-				To 		=> $to,
-				Subject => $subject,
-				Type 	=> 'text',
-				Data 	=> $output
-			);
-			$msg->send;
-		}
-	}
+#	if ($sendEmail)
+#	{
+#		my $from = '<user@yourdomain>';
+#		my $to = '<other.user@theirdomain>';
+#		my $subject = 'Backup dhcpd.conf from IMPULSE';
+#		if ($wroteToFile)
+#		{
+#			my $msg = MIME::Lite->new(
+#				From 	=> $from,
+#				To 		=> $to,
+#				Subject => $subject,
+#				Type 	=> 'multipart/mixed'
+#			);
+#			$msg->attach(
+#				Type => 'TEXT',
+#				Data => 'Config file for the DHCPd server'
+#			);
+#			$msg->attach(
+#				Type 		=> 'AUTO',
+#				Path 		=> "$tempConfigFile",
+#				Filename 	=> 'dhcpd.conf',
+#				Disposition => 'attachment'
+#			);
+#			$msg->send;
+#		}else
+#		{
+#			my $msg = MIME::Lite->new(
+#				From 	=> $from,
+#				To 		=> $to,
+#				Subject => $subject,
+#				Type 	=> 'text',
+#				Data 	=> $output
+#			);
+#			$msg->send;
+#		}
+#	}
 	
 
 $$ LANGUAGE 'plperlu';
