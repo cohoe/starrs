@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
 	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
 
-	# Global Options are added here. I seperated them with tabs, change if stuff breaks.
+	# Global Options are added here.
 	{
 		my ($row, $option, $value);
 		my $global_options = spi_query("SELECT * FROM api.get_dhcpd_global_options()");
@@ -161,7 +161,33 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$output .= "  option host-name \"$hostname\";\n";
 			$output .= "  ddns-hostname \"$hostname\";\n";
 			$output .= "  ddns-domainname \"$zone\";\n";
-			$output .= "  option domain-name \"$zone\";\n}";
+			$output .= "  option domain-name \"$zone\";\n}\n";
+			$output .= "subclass \"$class\" 1:$mac;\n";
+			$output .= "subclass \"$class\" $mac;\n\n";
+			
+		}
+	}
+	
+	# dynamic hosts
+	{
+		my $hosts = spi_query("SELECT * FROM api.get_dhcpd_dynamic_hosts() order by owner,hostname");
+		my ($hostname, $zone, $mac, $owner, $class, $row);
+		while (defined($row = spi_fetchrow($hosts)))
+		{
+			$hostname = $row->{hostname};
+			$zone = $row->{zone};
+			$mac = $row->{mac};
+			$owner = $row->{owner};
+			$class = $row->{class};
+			
+			$output .= "#$owner\n";
+			$output .= "host $hostname {\n";
+			$output .= "  opiton dhcp-client-identifier 1:$mac;\n";
+			$output .= "  hardware ethernet $mac;\n";
+			$output .= "  option host-name \"$hostname\";\n";
+			$output .= "  ddns-hostname \"$hostname\";\n";
+			$output .= "  ddns-domainname \"$zone\";\n";
+			$output .= "  option domain-name \"$zone\";\n}\n";
 			$output .= "subclass \"$class\" 1:$mac;\n";
 			$output .= "subclass \"$class\" $mac;\n\n";
 			
@@ -183,7 +209,7 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	
 	if (! open (CONFIG, ">", "$configFile"))
 	{
-		warn("Cannot open $configFile for writing, using $tempConfigFile instead: $!");
+		warn("Cannot open $configFile for writing: [$!]. Using $tempConfigFile instead.\n");
 		open (CONFIG, ">", "$tempConfigFile") || die "Cannot open the temp config file at $tempConfigFile: $!";
 	}
 
@@ -195,5 +221,13 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 		$output = $row->{value};
 		print CONFIG $output;
 	}
+#	use Mail::Sendmail;
+#
+#	sendmail(
+#		From 	=> 'sendmail@iota.csh.rit.edu',
+#		To 		=> 'bballtheway7@gmail.com',
+#		Subject => 'foobar',
+#		Message => "$output",
+#	);
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."write_dhcpd_config"() IS 'Writes the dhcpd server config file from the database to the location of the users choice, default is to disk, as the main config for said server';
