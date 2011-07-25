@@ -520,6 +520,19 @@ CONSTRAINT "switchport_history_pkey" PRIMARY KEY ("port_name","system_name")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dns"."queue"(
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"directive" TEXT NOT NULL,
+"ttl" INTEGER NOT NULL,
+"target" TEXT NOT NULL,
+"user" TEXT NOT NULL DEFAULT api.get_current_user(),
+"hostname" VARCHAR(63) NOT NULL,
+"address" INET NOT NULL,
+"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"type" TEXT NOT NULL
+)
+WITHOUT OIDS;
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -595,3 +608,5 @@ COMMENT ON TABLE "documentation"."arguments" IS 'Argument data for documented fu
 COMMENT ON TABLE "dns"."types" IS 'All DNS record types';
 
 COMMENT ON TABLE "network"."switchport_history" IS 'Log of all switchport activity';
+
+COMMENT ON TABLE "dns"."queue" IS 'Queue all DNS zone changes that need to occur';
