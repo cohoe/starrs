@@ -108,8 +108,12 @@ COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostn
 
 /* API - nsupdate */
 CREATE OR REPLACE FUNCTION "api"."nsupdate"() RETURNS TEXT AS $$
-	my $command = "TEMP";
+	my $command = "";
+	my $sth = spi_query("SELECT * FROM dns.queue");
+	while (defined ($row = spi_fetchrow($sth))) {
+		$command .= "UPDATE $row->{directive} $row->{hostname}.$row->{zone} $row->{ttl} $row->{type} $row->{extra} $row->{target} \n";
+	}
 	my $result = `echo "$command" | nsupdate 2>&1`;
+	#my $result = $command;
 	return $result;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."nsupdate"() IS 'Process the DNS queue to update all records';
