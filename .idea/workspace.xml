@@ -2,18 +2,182 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\addresses.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\dns.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\interfaces.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\reference.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\statistics.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\systems.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\FIXME\welcome.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\libraries\core\controller.php" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\libraries\core\controller.php.old" afterPath="" />
-      <change type="DELETED" beforePath="I:\impulse-web\application\views\systems\interface.php.DELETEME" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\Thumbs.db" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\classtest.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\error.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\old\error.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\test.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\testing\classtest.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\views\getstarted.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\views\systems\address_old.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\views\systems\getstarted.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\css\stuff.txt" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\UImockup.psd" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\jquery-1.6.2.min.js" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\mockup\system.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\system_view.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\uimockup.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\uitest.php" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\sample\uitest2.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\changelog.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\active_record.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\caching.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\call_function.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\configuration.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\connecting.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\examples.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\fields.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\forge.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\helpers.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\index.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\queries.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\results.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\table_data.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\transactions.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\database\utilities.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\doc_style\index.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\doc_style\template.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\alternative_php.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\ancillary_classes.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\autoloader.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\caching.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\cli.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\common_functions.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\controllers.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\core_classes.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\creating_drivers.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\creating_libraries.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\credits.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\drivers.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\environments.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\errors.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\helpers.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\hooks.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\libraries.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\managing_apps.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\models.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\profiling.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\quick_reference.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\requirements.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\reserved_names.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\routing.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\security.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\styleguide.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\urls.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\general\views.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\array_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\captcha_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\cookie_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\date_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\directory_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\download_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\email_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\file_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\form_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\html_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\inflector_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\language_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\number_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\path_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\security_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\smiley_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\string_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\text_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\typography_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\url_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\helpers\xml_helper.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\appflowchart.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\arrow.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\ci_logo.jpg" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\ci_logo_flame.jpg" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\ci_quick_ref.png" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\codeigniter_1.7.1_helper_reference.pdf" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\codeigniter_1.7.1_helper_reference.png" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\codeigniter_1.7.1_library_reference.pdf" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\codeigniter_1.7.1_library_reference.png" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\file.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\folder.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\nav_bg_darker.jpg" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\nav_separator_darker.jpg" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\nav_toggle_darker.jpg" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\reactor-bullet.png" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\smile.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\images\transparent.gif" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\index.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\downloads.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\index.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\troubleshooting.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_120.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_130.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_131.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_132.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_133.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_140.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_141.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_150.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_152.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_153.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_154.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_160.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_161.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_162.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_163.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_170.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_171.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_172.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_200.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_201.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_202.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrade_b11.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\installation\upgrading.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\benchmark.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\caching.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\calendar.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\cart.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\config.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\email.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\encryption.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\file_uploading.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\form_validation.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\ftp.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\image_lib.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\input.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\javascript.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\language.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\loader.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\output.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\pagination.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\parser.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\security.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\sessions.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\table.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\trackback.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\typography.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\unit_testing.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\uri.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\user_agent.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\xmlrpc.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\libraries\zip.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\license.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\nav\hacks.txt" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\nav\moo.fx.js" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\nav\nav.js" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\nav\prototype.lite.js" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\nav\user_guide_menu.js" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\appflow.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\at_a_glance.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\cheatsheets.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\features.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\getting_started.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\goals.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\index.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\overview\mvc.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\toc.html" afterPath="" />
+      <change type="DELETED" beforePath="I:\impulse-web\user_guide\userguide.css" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/testing/test2.php" afterPath="$PROJECT_DIR$/application/controllers/testing/test2.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/addresses.php" afterPath="$PROJECT_DIR$/application/controllers/addresses.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/testing/test.php" afterPath="$PROJECT_DIR$/application/controllers/testing/test.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,7 +199,17 @@
     <favorites_list name="impulse-web" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="index.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/index.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -49,7 +223,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/controllers/addresses.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php" />
         <option value="$PROJECT_DIR$/application/views/interfaces/create.php" />
         <option value="$PROJECT_DIR$/application/views/interfaces/edit.php" />
@@ -65,6 +238,7 @@
         <option value="$PROJECT_DIR$/application/models/API/api_management.php" />
         <option value="$PROJECT_DIR$/application/models/API/api_systems.php" />
         <option value="$PROJECT_DIR$/application/controllers/testing/test2.php" />
+        <option value="$PROJECT_DIR$/application/controllers/addresses.php" />
       </list>
     </option>
   </component>
@@ -131,92 +305,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -301,22 +389,22 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-4" width="1928" height="1180" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995194" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.263748" sideWeight="0.6701923" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.263748" sideWeight="0.6701923" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884616" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -390,11 +478,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/libraries/Impulselib.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="103" column="5" selection-start="3270" selection-end="3270" vertical-scroll-proportion="0.5563063" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="262" column="51" selection-start="8321" selection-end="8321" vertical-scroll-proportion="0.0" />
@@ -469,6 +552,34 @@
     <entry file="file://$PROJECT_DIR$/application/controllers/testing/test2.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="0" selection-start="75" selection-end="75" vertical-scroll-proportion="0.025373135">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/systems/os_distribution.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="0" selection-start="696" selection-end="696" vertical-scroll-proportion="0.35241857">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/license.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="44" selection-start="1139" selection-end="1139" vertical-scroll-proportion="0.4195459">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>

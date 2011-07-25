@@ -1,14 +1,44 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-class Test extends CI_Controller {
+require_once(APPPATH . "libraries/core/ImpulseController.php");
+/**
+ * 
+ */
+class Test extends ImpulseController {
 	
 	public function index() {
-		$this->load->model('Api');
-		$this->api->intialize('benrr101');
-		$this->api->intialize('titsmagee');
-	}	
-
-	public function classtest() {
-		$class = new InterfaceObject(1,2,3,4,5,6);
+		echo "Hello";
+		
+		echo $this->impulselib->test();
+		echo $this->api->get_username();
+		
+		$navbar = new Navbar("Testing",null,null);
+		$this->load->view('core/navbar',array('navbar'=>$navbar));
+		
+		#$this->remove_system('bvlisofwks003');
 	}
+	
+	public function remove_system($name) {
+		// SQL Query
+		$sql = "SELECT api.get_system_interfaces('$name')";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+	}
+	
+	protected function _check_error($query) {
+		if($this->db->_error_number() > 0) {
+			throw new DBException($this->db->_error_message());
+		}
+		if($this->db->_error_message() != "") {
+			throw new DBException($this->db->_error_message());
+		}
+		if($query->num_rows() == 0) {
+			throw new ObjectNotFoundException("Object not found!");
+		}
+	}
+	
 }
+
+/* End of file test.php */
+/* Location: ./application/controllers/test.php */

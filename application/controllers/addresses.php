@@ -2,14 +2,13 @@
 require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 /**
- * Interface addreses. Create/Edit/Delete/View all information and objects that are based on the InterfaceAddresses
+ * Interface addresses. Create/Edit/Delete/View all information and objects that are based on the InterfaceAddresses
  */
 class Addresses extends ImpulseController {
 
     /**
      * View an address on an interface
-     * @param null $mac     The MAC address of the interface that the address is on
-     * @param null $address The address to view
+     * @param null $address     The IP address that we are working with
      * @param null $target  The view that we want
      * @return void
      */
@@ -182,7 +181,12 @@ class Addresses extends ImpulseController {
         // Load the main view
         $this->load->view('core/main',$info);
 	}
-	
+
+    /**
+     * Edit an interface address
+     * @param null $address     The interface address that we are editing
+     * @return void
+     */
 	public function edit($address=NULL) {
 		// If the user forgot to specify something
 		if($address == NULL) {
@@ -244,8 +248,7 @@ class Addresses extends ImpulseController {
 
     /**
      * Create a new address
-     * @param $int  The interface object to create
-     * @return void
+     * @return InterfaceAddress     The object of the new interface address
      */
 	private function _create() {
 
@@ -274,16 +277,19 @@ class Addresses extends ImpulseController {
 			return;
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 			return;
 		}
 		
 		// Get the object
 		return $addr;
 	}
-	
+
+    /**
+     * Edit the actual interface address
+     * @param $addr     The address object to edit
+     */
 	private function _edit(&$addr) {
-	
 		$err = "";
 		
 		// If no address was given, get one from the selected range
@@ -320,8 +326,7 @@ class Addresses extends ImpulseController {
 
 		// If there were/were not errors
 		if($err != "") {
-			$this->_error($err);
-			return;
+			throw new ControllerException($err);
 		}
 	}
 
@@ -331,7 +336,6 @@ class Addresses extends ImpulseController {
      * @return void
      */
 	private function _delete($addr) {
-
         // Call the query function
 		try {
 			$this->api->systems->remove_interface_address($addr);
@@ -341,7 +345,7 @@ class Addresses extends ImpulseController {
 			return;
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 			return;
 		}
 	}
