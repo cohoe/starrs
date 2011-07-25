@@ -109,7 +109,7 @@ COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostn
 /* API - nsupdate */
 CREATE OR REPLACE FUNCTION "api"."nsupdate"() RETURNS TEXT AS $$
 	my $command = "TEMP";
-	my $result = `echo -e "$command" | nsupdate 2>&1`;
+	my $result = `echo "$command" | nsupdate 2>&1`;
 	return $result;
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."nsupdate"() IS 'Process the DNS queue to update all records';
