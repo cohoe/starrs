@@ -204,13 +204,25 @@ $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."generate_dhcpd_config"() IS 'Generate the config file for the dhcpd server, and store it in the db';
 CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
+	
+	use strict;
+	use warnings;
+	use MIME::Lite;
+
 	my $configFile = "/etc/dhcpd.conf";
 	my $tempConfigFile = "/tmp/dhcpd.conf.tmp";
+	my $sendEmail = 0;
+	my $wroteToFile = 1;
 	
 	if (! open (CONFIG, ">", "$configFile"))
 	{
-		warn("Cannot open $configFile for writing: [$!]. Using $tempConfigFile instead.\n");
-		open (CONFIG, ">", "$tempConfigFile") || die "Cannot open the temp config file at $tempConfigFile: $!";
+		spi_exec_query("SELECT api.create_log_entry('API','ERROR',\$\$Cannot open $configFile for writing: [$!]. Using $tempConfigFile instead.\$\$)");
+		if (! open (CONFIG, ">", "$tempConfigFile")) 
+		{
+			spi_exec_query("SELECT api.create_log_entry('API','ERROR',\$\$Cannot open $tempConfigFile for writing: [$!]. Emailing config instead\$\$");
+			$wroteToFile = 0;
+		}
+		$sendEmail = 1;
 	}
 
 	my $row;
@@ -219,15 +231,48 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	while (defined ($row = spi_fetchrow($cursor)))
 	{
 		$output = $row->{value};
-		print CONFIG $output;
+		if ($wroteToFile)
+		{
+			print CONFIG $output;
+		}
 	}
-#	use Mail::Sendmail;
-#
-#	sendmail(
-#		From 	=> 'sendmail@iota.csh.rit.edu',
-#		To 		=> 'bballtheway7@gmail.com',
-#		Subject => 'foobar',
-#		Message => "$output",
-#	);
+	if ($sendEmail)
+	{
+		my $from = '<user@yourdomain>';
+		my $to = '<other.user@theirdomain>';
+		my $subject = 'Backup dhcpd.conf from IMPULSE';
+		if ($wroteToFile)
+		{
+			my $msg = MIME::Lite->new(
+				From 	=> $from,
+				To 		=> $to,
+				Subject => $subject,
+				Type 	=> 'multipart/mixed'
+			);
+			$msg->attach(
+				Type => 'TEXT',
+				Data => 'Config file for the DHCPd server'
+			);
+			$msg->attach(
+				Type 		=> 'AUTO',
+				Path 		=> "$tempConfigFile",
+				Filename 	=> 'dhcpd.conf',
+				Disposition => 'attachment'
+			);
+			$msg->send;
+		}else
+		{
+			my $msg = MIME::Lite->new(
+				From 	=> $from,
+				To 		=> $to,
+				Subject => $subject,
+				Type 	=> 'text',
+				Data 	=> $output
+			);
+			$msg->send;
+		}
+	}
+	
+
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."write_dhcpd_config"() IS 'Writes the dhcpd server config file from the database to the location of the users choice, default is to disk, as the main config for said server';
