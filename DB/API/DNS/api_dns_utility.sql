@@ -105,3 +105,11 @@ CREATE OR REPLACE FUNCTION "api"."dns_resolve"(input_hostname text, input_zone t
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostname/zone to its IP address';
+
+/* API - nsupdate */
+CREATE OR REPLACE FUNCTION "api"."nsupdate"() RETURNS TEXT AS $$
+	my $command = "TEMP";
+	my $result = `echo -e "$command" | nsupdate 2>&1`;
+	return $result;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."nsupdate"() IS 'Process the DNS queue to update all records';
