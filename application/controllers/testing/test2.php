@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH . "libraries/core/controller.php");
-
 class Test extends IMPULSE_Controller {
 	
 	public function index() {
