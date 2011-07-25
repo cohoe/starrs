@@ -97,7 +97,11 @@ COMMENT ON FUNCTION "api"."validate_srv"(text) IS 'Validate SRV records';
 /* API - dns_resolve */
 CREATE OR REPLACE FUNCTION "api"."dns_resolve"(input_hostname text, input_zone text, input_family integer) RETURNS INET AS $$
 	BEGIN
-		RETURN (SELECT "address" FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone AND family("address") = input_family);
+		IF input_family IS NULL THEN
+			RETURN (SELECT "address" FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone LIMIT 1);
+		ELSE
+			RETURN (SELECT "address" FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone AND family("address") = input_family);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostname/zone to its IP address';
