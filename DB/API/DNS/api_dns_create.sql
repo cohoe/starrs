@@ -83,9 +83,11 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 /* API - create_dns_address
 	1) Set owner
 	2) Set zone
-	3) Check privileges
-	4) Validate hostname
-	5) Create record
+	3) Set ttl
+	4) Check privileges
+	5) Validate hostname
+	6) Create record
+	7) Queue dns
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS VOID AS $$
 	BEGIN
@@ -99,6 +101,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		-- Set zone
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
+		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
 		-- Check privileges
@@ -119,13 +126,12 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
-			(input_hostname,input_zone,input_address,DEFAULT,input_owner);
-		ELSE
-			INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
-			(input_hostname,input_zone,input_address,input_ttl,input_owner);
-		END IF;
+		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
+		(input_hostname,input_zone,input_address,input_ttl,input_owner);
+		
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
+		('ADD',input_hostname,input_zone,input_ttl,input_type,host(input_address));
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
@@ -152,6 +158,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
 		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -165,14 +176,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','creating new mailserver (MX)');
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
-			(input_hostname,input_zone,input_preference,DEFAULT,input_owner,'MX');
-		ELSE
-			INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
-			(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
-		END IF;
+		INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
+		(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
 
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target") VALUES
+		('ADD',input_hostname,input_zone,input_ttl,'MX',input_preference,(SELECT host(api.dns_resolve(input_hostname,input_zone,NULL))));
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_mailserver');
 	END;
@@ -198,6 +208,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
 		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -211,14 +226,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','creating new NS record');
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
-			(input_hostname,input_zone,input_isprimary,DEFAULT,input_owner,'NS');
-		ELSE
-			INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
-			(input_hostname,input_zone,input_isprimary,input_ttl,input_owner,'NS');
-		END IF;
+		INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
+		(input_hostname,input_zone,input_isprimary,input_ttl,input_owner,'NS');
 
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
+		('ADD',input_hostname,input_zone,input_ttl,'NS',(SELECT host(api.dns_resolve(input_hostname,input_zone,NULL))));
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_nameserver');
 	END;
@@ -250,6 +264,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
 		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -263,15 +282,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
+		INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
+		(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,input_owner,'SRV');
 
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, DEFAULT,input_owner,'SRV');
-		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-			(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,input_owner,'SRV');
-		END IF;
-
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target") VALUES
+		('ADD',input_alias,input_zone,input_ttl,'SRV',input_priority || ' ' || input_weight || ' ' || input_port,input_target);
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
 	END;
@@ -303,6 +320,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
 		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -315,16 +337,14 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','create new SRV record');
+		PERFORM api.create_log_entry('API','INFO','create new CNAME record');
+		INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
+		(input_alias, input_target, input_zone, input_ttl,input_owner,'CNAME');
 
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
-			(input_alias, input_target, input_zone, DEFAULT,input_owner,'CNAME');
-		ELSE
-			INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
-			(input_alias, input_target, input_zone, input_ttl,input_owner,'CNAME');
-		END IF;
-
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
+		('ADD',input_alias,input_zone,input_ttl,'CNAME',input_target);
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
 	END;
@@ -350,6 +370,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
 		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -363,15 +388,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new TXT record');
+		INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
+		(input_hostname,input_zone,input_text,input_ttl,input_owner,input_type);
 
-		IF input_ttl IS NULL THEN
-			INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner","type") VALUES
-			(input_hostname,input_zone,input_text,DEFAULT,input_owner,input_type);
-		ELSE
-			INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
-			(input_hostname,input_zone,input_text,input_ttl,input_owner,input_type);	
-		END IF;
-
+		-- Update DNS
+		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
+		('ADD',input_hostname,input_zone,input_ttl,input_type,quote_ident(input_text));
+		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 	END;
