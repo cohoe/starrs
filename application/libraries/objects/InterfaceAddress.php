@@ -140,6 +140,11 @@ class InterfaceAddress extends ImpulseObject {
 		if($this->CI->api->ip->ip_in_subnet($this->get_address(), $this->CI->api->management->get_site_configuration('DYNAMIC_SUBNET')) == 't') {
 			$this->dynamic = TRUE;
 			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)) . "." . $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE');
+			
+			if($this->dnsAddressRecord == NULL) {
+				$aRec = $this->CI->api->dns->create_dns_address($this->address, $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)), $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE'), null, null);
+				$this->dnsAddressRecord = $aRec;
+			}
 		}
 		else {
 			$this->dynamic = FALSE;
