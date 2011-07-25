@@ -529,7 +529,8 @@ CREATE TABLE "dns"."queue"(
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "zone" TEXT NOT NULL DEFAULT 'localdomain',
-"type" TEXT NOT NULL
+"type" TEXT NOT NULL,
+"extra" TEXT
 )
 WITHOUT OIDS;
 
