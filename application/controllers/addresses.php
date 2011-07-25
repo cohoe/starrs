@@ -212,7 +212,13 @@ class Addresses extends ImpulseController {
 				return;
 			}
 			
-			redirect(base_url()."addresses/view/".$addr->get_address());
+			if($addr->get_dynamic() == TRUE) {
+				redirect(base_url()."interfaces/addresses/".$int->get_mac());
+			}
+			else {
+				redirect(base_url()."addresses/view/".$addr->get_address());
+			}
+			
 		}
 		
 		// Need to input the information
