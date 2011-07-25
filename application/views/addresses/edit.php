@@ -13,16 +13,30 @@
 		</select></br>
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
 		</br>
-		<label for="address">Address: </label><input type="text" name="address" value="<?echo htmlentities($addr->get_address());?>" class="input_form_input" /><br />
+		<?
+			if($addr->get_dynamic() ==  TRUE) {
+				#echo "<label for=\"hostname\">Hostname: </label><input type=\"text\" name=\"hostname\" value=\"".htmlentities($addr->get_fqdn())."\" class=\"input_form_input\" />";
+				echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"Dynamic\" class=\"input_form_input\" disabled />";
+			}
+			else {
+				echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"".htmlentities($addr->get_address())."\" class=\"input_form_input\" />";
+			}
+		?>		
+		<br />
 		<label for="config">Configuration: </label><select name="config" class="input_form_input">
-			<? foreach ($configs as $config) {
-				if($addr->get_config() == $config->get_config()) {
-					echo "<option value=\"".htmlentities($config->get_config())."\" selected=\"selected\" >".htmlentities($config->get_config())."</option>";
-				}
-				else {
-					echo "<option value=\"".htmlentities($config->get_config())."\">".htmlentities($config->get_config())."</option>";
-				}
-			} ?>
+			<? if($addr->get_dynamic() == TRUE) {
+				echo "<option value=\"".htmlentities($addr->get_config())."\" selected=\"selected\" >".htmlentities($addr->get_config())."</option>";
+			}
+			else {
+				foreach ($configs as $config) {
+					if($addr->get_config() == $config->get_config()) {
+						echo "<option value=\"".htmlentities($config->get_config())."\" selected=\"selected\" >".htmlentities($config->get_config())."</option>";
+					}
+					else {
+						echo "<option value=\"".htmlentities($config->get_config())."\">".htmlentities($config->get_config())."</option>";
+					}
+				} 
+			}?>
 		</select><br />
 		<label for="class">Class: </label><select name="class" class="input_form_input">
 			<? foreach ($classes as $class) {
