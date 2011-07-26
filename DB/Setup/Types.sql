@@ -101,3 +101,6 @@ CREATE TYPE "dhcp"."config_type_data" AS (config text, family integer, comment t
 CREATE TYPE "dhcp"."class_data" AS (class text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 
 CREATE TYPE "ip"."range_data" AS (name text, first_ip inet, last_ip inet, subnet cidr, use varchar(4), class text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+
+CREATE TYPE "firewall"."program_data" AS (name text, port integer, transport text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "firewall"."program_data" IS 'Firewall Program Data';
