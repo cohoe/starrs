@@ -31,7 +31,9 @@ class Dns extends ImpulseController {
 		// Navbar
 		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
-		$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
+		if(self::$addr->get_dynamic() == FALSE) {
+			$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
+		}
 		
 		$navModes['CREATE'] = "/dns/create/".self::$addr->get_address();
 		$navModes['EDIT'] = "/dns/edit/".self::$addr->get_address();
@@ -42,7 +44,11 @@ class Dns extends ImpulseController {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$viewData['address'] = self::$addr;
 		$info['title'] = "DNS - ".self::$addr->get_address();
-		$navbar = new Navbar("DNS for ".self::$addr->get_address(), $navModes, $navOptions);
+		$title = "DNS for ".self::$addr->get_address();
+		if(self::$addr->get_dynamic() == TRUE) {
+			$title = "DNS for Dynamic Address";
+		}
+		$navbar = new Navbar($title, $navModes, $navOptions);
 		
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
@@ -94,6 +100,12 @@ class Dns extends ImpulseController {
 		}
 		
 		if($this->input->post('typeSubmit')) {
+		
+			if(self::$addr->get_address_record() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
+				$this->_error("Need to create an address (A/AAAA) record first!");
+				return;
+			}
+		
 			// Navbar
 			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
 			$navbar = new Navbar("Create DNS Record", $navModes, null);
@@ -135,7 +147,7 @@ class Dns extends ImpulseController {
 				return;
 			}
 			catch (ControllerException $cE) {
-				$this->_error("Cont: ".$dbE->getMessage());
+				$this->_error("Cont: ".$cE->getMessage());
 				return;
 			}
 			
@@ -409,6 +421,9 @@ class Dns extends ImpulseController {
 				return $pointerRecord;
 				break;
 			case 'TXT':
+				if(self::$addr->get_dynamic() == TRUE) {
+					throw new ControllerException('Cannot add special records to a Dynamic host');
+				}
 				$textRecord = $this->api->dns->create_dns_text(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -420,6 +435,9 @@ class Dns extends ImpulseController {
 				return $textRecord;
 				break;
 			case 'SPF':
+				if(self::$addr->get_dynamic() == TRUE) {
+					throw new ControllerException('Cannot add special records to a Dynamic host');
+				}
 				$textRecord = $this->api->dns->create_dns_text(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -431,6 +449,9 @@ class Dns extends ImpulseController {
 				return $textRecord;
 				break;
 			case 'NS':
+				if(self::$addr->get_dynamic() == TRUE) {
+					throw new ControllerException('Cannot add special records to a Dynamic host');
+				}
 				$nsRecord = $this->api->dns->create_dns_nameserver(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -441,6 +462,9 @@ class Dns extends ImpulseController {
 				return $nsRecord;
 				break;
 			case 'MX':
+				if(self::$addr->get_dynamic() == TRUE) {
+					throw new ControllerException('Cannot add special records to a Dynamic host');
+				}
 				$mxRecord = $this->api->dns->create_dns_mailserver(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -452,7 +476,7 @@ class Dns extends ImpulseController {
 				break;
 			case 'A':
 				$aRecord = $this->api->dns->create_dns_address(
-					$this->input->post('address'),
+					self::$addr->get_address(),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$ttl,
@@ -462,7 +486,7 @@ class Dns extends ImpulseController {
 				break;
 			case 'AAAA':
 				$aRecord = $this->api->dns->create_dns_address(
-					$this->input->post('address'),
+					self::$addr->get_address(),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$ttl,

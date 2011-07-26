@@ -102,6 +102,97 @@ class Api_firewall extends ImpulseModel {
             throw new ObjectNotFoundException("No address action found");
         }
 	}
+	
+	public function get_transports() {
+		// SQL Query
+		$sql = "SELECT api.get_firewall_transports()";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $transport) {
+			$resultSet[] = $transport['get_firewall_transports'];
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall transports found. This is a big problem. Talk to your administrator.");
+		}
+	}
+	
+	public function get_programs() {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_program_data()";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $program) {
+			$resultSet[] = new FirewallProgram(
+				$program['name'],
+				$program['port'],
+				$program['transport'],
+				$program['date_created'],
+				$program['date_modified'],
+				$program['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall programs found. This might be an error depending on your configuration. Talk to your administrator.");
+		}
+	}
+	
+	public function create_firewall_rule($address, $port, $transport, $deny, $owner, $comment) {
+		// SQL Query
+		$sql = "SELECT api.create_firewall_rule(
+			{$this->db->escape($address)},
+			{$this->db->escape($port)},
+			{$this->db->escape($transport)},
+			{$this->db->escape($deny)},
+			{$this->db->escape($owner)},
+			{$this->db->escape($comment)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+		$rules = $this->get_address_rules($address);
+		foreach($rules as $rule) {
+			if($rule->get_port() == $port && $rule->get_transport() == $transport) {
+				return $rule;
+			}
+		}
+		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
+	}
+	
+	public function remove_firewall_rule($address, $port, $transport) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_rule(
+			{$this->db->escape($address)},
+			{$this->db->escape($port)},
+			{$this->db->escape($transport)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
 }
 
 /* End of file api_firewall.php */

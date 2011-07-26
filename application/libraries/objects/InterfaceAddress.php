@@ -141,10 +141,10 @@ class InterfaceAddress extends ImpulseObject {
 			$this->dynamic = TRUE;
 			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)) . "." . $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE');
 			
-			if($this->dnsAddressRecord == NULL) {
-				$aRec = $this->CI->api->dns->create_dns_address($this->address, $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)), $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE'), null, null);
-				$this->dnsAddressRecord = $aRec;
-			}
+			#if($this->dnsAddressRecord == NULL) {
+			#	$aRec = $this->CI->api->dns->create_dns_address($this->address, preg_replace('/:/','',$this->mac), $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE'), null, null);
+			#	$this->dnsAddressRecord = $aRec;
+			#}
 		}
 		else {
 			$this->dynamic = FALSE;
@@ -253,6 +253,10 @@ class InterfaceAddress extends ImpulseObject {
 		if(!$pointerRecord instanceof PointerRecord) {
 			throw new ObjectException("Cannot add a non-pointer-record as a pointer-record");
 		}
+		
+		if($this->dynamic == TRUE) {
+			throw new ObjectException('Cannot add special records to a Dynamic host');
+		}
 
 		// Add the record to the local array
 		$this->dnsPointerRecords[] = $pointerRecord;
@@ -266,6 +270,10 @@ class InterfaceAddress extends ImpulseObject {
 		// If it's not a proper record, blow up
 		if(!$textRecord instanceof TextRecord) {
 			throw new ObjectException("Cannot add a non-txt-record as a text-record");
+		}
+		
+		if($this->dynamic == TRUE) {
+			throw new ObjectException('Cannot add special records to a Dynamic host');
 		}
 
 		// Add the record to the local array
@@ -282,6 +290,10 @@ class InterfaceAddress extends ImpulseObject {
 			throw new ObjectException("Cannot add a non-ns-record as a ns-record");
 		}
 
+		if($this->dynamic == TRUE) {
+			throw new ObjectException('Cannot add special records to a Dynamic host');
+		}
+				
 		// Add the record to the local array
 		$this->dnsNsRecords[] = $nsRecord;
 	}
@@ -296,6 +308,10 @@ class InterfaceAddress extends ImpulseObject {
 			throw new ObjectException("Cannot add a non-mx-record as a mx-record");
 		}
 
+		if($this->dynamic == TRUE) {
+			throw new ObjectException('Cannot add special records to a Dynamic host');
+		}
+		
 		// Add the record to the local array
 		$this->dnsMxRecords[] = $mxRecord;
 	}

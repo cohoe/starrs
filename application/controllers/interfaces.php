@@ -314,9 +314,8 @@ class Interfaces extends ImpulseController {
 
 			// For each of the address objects, draw it's box and append it to the view
 			foreach($addrs as $addr) {
-				$navOptions = array();
+				$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
 				if($addr->get_dynamic() != TRUE) {
-					$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
 					$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
 				}
 				$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();

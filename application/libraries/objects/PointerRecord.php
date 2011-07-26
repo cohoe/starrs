@@ -43,7 +43,11 @@ class PointerRecord extends DnsRecord {
 		$this->alias = $alias;
 		$this->extra = $extra;
 		
-		list($this->priority, $this->weight, $this->port) = split(' ',$extra);
+		// SRV records have cool extra information
+		// @todo: apparently split() is deprecated. Find something else
+		if($type == 'SRV') {
+			list($this->priority, $this->weight, $this->port) = split(' ',$extra);
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
