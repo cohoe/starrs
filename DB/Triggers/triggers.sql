@@ -118,3 +118,63 @@ FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_insert"();
 CREATE TRIGGER "firewall_metahost_rule_program_insert"
 BEFORE INSERT ON "firewall"."metahost_program_rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_insert"();
+
+CREATE TRIGGER "dns_a_insert_queue"
+AFTER INSERT ON "dns"."a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_a_update_queue"
+AFTER UPDATE ON "dns"."a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_a_delete_queue"
+AFTER DELETE ON "dns"."a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_pointers_insert_queue"
+AFTER INSERT ON "dns"."pointers"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_pointers_update_queue"
+AFTER UPDATE ON "dns"."pointers"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_pointers_delete_queue"
+AFTER DELETE ON "dns"."pointers"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_ns_insert_queue"
+AFTER INSERT ON "dns"."ns"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_ns_update_queue"
+AFTER UPDATE ON "dns"."ns"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_ns_delete_queue"
+AFTER DELETE ON "dns"."ns"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_mx_insert_queue"
+AFTER INSERT ON "dns"."mx"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_mx_update_queue"
+AFTER UPDATE ON "dns"."mx"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_mx_delete_queue"
+AFTER DELETE ON "dns"."mx"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_txt_insert_queue"
+AFTER INSERT ON "dns"."txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_txt_update_queue"
+AFTER UPDATE ON "dns"."txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_txt_delete_queue"
+AFTER DELETE ON "dns"."txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
