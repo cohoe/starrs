@@ -30,3 +30,11 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_transports"() RETURNS SETOF TEXT 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_transports"() IS 'Get a list of all firewall transports';
+
+/* API - get_firewall_program_data */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_program_data"() RETURNS SETOF "firewall"."program_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name","port","transport","date_created","date_modified","last_modifier" FROM "firewall"."programs");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_program_data"() IS 'Get all firewall program data';
