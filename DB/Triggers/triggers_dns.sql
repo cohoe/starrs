@@ -240,10 +240,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW."type" ~* 'A|AAAA|NS' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."address");
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"));
 		ELSEIF NEW."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",NEW."address");
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",host(NEW."address"));
 		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('ADD',NEW."alias",NEW."zone",NEW."ttl",NEW."type",NEW."extra",NEW."hostname");
@@ -260,14 +260,14 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW."type" ~* 'A|AAAA|NS' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."address");
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"));
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."address");
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"));
 		ELSEIF NEW."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",OLD."address");
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",NEW."address");
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",host(NEW."address"));
 		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('DELETE',OLD."alias",OLD."zone",OLD."ttl",OLD."type",OLD."extra",OLD."hostname");
@@ -288,10 +288,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF OLD."type" ~* 'A|AAAA|NS' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."address");
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"));
 		ELSEIF OLD."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",OLD."address");
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
 		ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('DELETE',OLD."alias",OLD."zone",OLD."ttl",OLD."type",OLD."extra",OLD."hostname");
