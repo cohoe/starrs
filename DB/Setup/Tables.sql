@@ -1,8 +1,8 @@
 CREATE TABLE "firewall"."metahosts"(
 "name" TEXT NOT NULL,
 "comment" TEXT,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 CONSTRAINT "metahosts_pkey" PRIMARY KEY ("name")
@@ -11,8 +11,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."transports"(
 "transport" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT DEFAULT api.get_current_user(),
 CONSTRAINT "transports_pkey" PRIMARY KEY ("transport")
 )
@@ -21,8 +21,8 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."class_options"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "class" TEXT NOT NULL,
 CONSTRAINT "class_options_pkey" PRIMARY KEY ("option","value","class")
@@ -33,8 +33,8 @@ CREATE TABLE "firewall"."programs"(
 "port" INTEGER NOT NULL,
 "name" TEXT NOT NULL,
 "transport" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "programs_pkey" PRIMARY KEY ("port")
 )
@@ -42,8 +42,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."defaults"(
 "deny" BOOLEAN NOT NULL DEFAULT bool(api.get_site_configuration('FW_DEFAULT_ACTION')),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "address" INET NOT NULL,
 CONSTRAINT "defaults_pkey" PRIMARY KEY ("address")
@@ -56,8 +56,8 @@ CREATE TABLE "firewall"."rules"(
 "comment" TEXT,
 "transport" TEXT NOT NULL,
 "address" INET NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 "source" TEXT NOT NULL,
@@ -68,8 +68,8 @@ WITHOUT OIDS;
 CREATE TABLE "ip"."range_uses"(
 "use" VARCHAR(4) NOT NULL,
 "comment" TEXT,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "range_uses_pkey" PRIMARY KEY ("use")
 )
@@ -78,8 +78,8 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."device_types"(
 "type" TEXT NOT NULL,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 CONSTRAINT "device_types_pkey" PRIMARY KEY ("type")
 )
 WITHOUT OIDS;
@@ -88,8 +88,8 @@ CREATE TABLE "ip"."subnets"(
 "subnet" CIDR NOT NULL,
 "comment" TEXT,
 "autogen" BOOLEAN NOT NULL DEFAULT TRUE,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
@@ -104,8 +104,8 @@ CREATE TABLE "ip"."ranges"(
 "last_ip" INET NOT NULL,
 "comment" TEXT,
 "use" VARCHAR(4) NOT NULL,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "subnet" CIDR,
@@ -116,8 +116,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "dns"."ns"(
 "isprimary" BOOLEAN NOT NULL,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
@@ -131,8 +131,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "systems"."os_family"(
 "family" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "os_family_pkey" PRIMARY KEY ("family")
 )
@@ -142,8 +142,8 @@ CREATE TABLE "network"."switchports"(
 "port_name" TEXT NOT NULL,
 "description" TEXT,
 "type" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "attached_mac" MACADDR,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT NOT NULL,
@@ -152,8 +152,8 @@ CONSTRAINT "switchports_pkey" PRIMARY KEY ("port_name","system_name")
 WITHOUT OIDS;
 
 CREATE TABLE "systems"."interface_addresses"(
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "comment" TEXT,
 "address" INET NOT NULL,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
@@ -170,8 +170,8 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."classes"(
 "class" TEXT NOT NULL,
 "comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "classes_pkey" PRIMARY KEY ("class")
 )
@@ -181,8 +181,8 @@ CREATE TABLE "systems"."systems"(
 "system_name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
 "comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "type" TEXT,
 "os_name" TEXT,
 "last_modifier" TEXT NOT NULL,
@@ -194,8 +194,8 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."subnet_options"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "subnet" CIDR NOT NULL,
 CONSTRAINT "subnet_options_pkey" PRIMARY KEY ("option","value","subnet")
@@ -204,8 +204,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."metahost_members"(
 "address" INET NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT,
 CONSTRAINT "metahost_members_pkey" PRIMARY KEY ("address")
@@ -216,8 +216,8 @@ CREATE TABLE "dhcp"."config_types"(
 "config" TEXT NOT NULL,
 "comment" TEXT,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "family" INTEGER NOT NULL,
 CONSTRAINT "config_types_pkey" PRIMARY KEY ("config")
 )
@@ -226,8 +226,8 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."os"(
 "name" TEXT NOT NULL,
 "family" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "os_pkey" PRIMARY KEY ("name")
 )
@@ -236,8 +236,8 @@ WITHOUT OIDS;
 CREATE TABLE "dns"."pointers"(
 "alias" VARCHAR(63) NOT NULL,
 "extra" TEXT,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
@@ -252,8 +252,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "network"."switchport_types"(
 "type" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "switchport_types_pkey" PRIMARY KEY ("type")
 )
@@ -261,8 +261,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "dns"."mx"(
 "preference" INTEGER NOT NULL,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
@@ -278,8 +278,8 @@ CREATE TABLE "dns"."zones"(
 "zone" TEXT NOT NULL DEFAULT 'localdomain',
 "forward" BOOLEAN NOT NULL,
 "keyname" TEXT NOT NULL,
-"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
 "comment" TEXT,
@@ -291,8 +291,8 @@ WITHOUT OIDS;
 CREATE TABLE "dns"."keys"(
 "keyname" TEXT NOT NULL,
 "key" TEXT NOT NULL,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "comment" TEXT,
 "owner" TEXT NOT NULL DEFAULT api.get_current_user(),
@@ -302,8 +302,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "ip"."addresses"(
 "address" INET NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "addresses_pkey" PRIMARY KEY ("address")
@@ -312,8 +312,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "dns"."txt"(
 "text" TEXT NOT NULL,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
@@ -327,7 +327,7 @@ CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^SPF|TXT$')
 WITHOUT OIDS;
 
 CREATE TABLE "management"."log_master"(
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "user" TEXT NOT NULL,
 "message" TEXT,
 "source" TEXT NOT NULL,
@@ -337,8 +337,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "dns"."a"(
 "hostname" VARCHAR(63) NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
@@ -351,8 +351,8 @@ CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$')
 WITHOUT OIDS;
 
 CREATE TABLE "firewall"."systems"(
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT,
 "subnet" CIDR NOT NULL,
@@ -373,8 +373,8 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."interfaces"(
 "mac" MACADDR NOT NULL,
 "comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "system_name" TEXT,
 "name" TEXT NOT NULL,
@@ -385,8 +385,8 @@ WITHOUT OIDS;
 CREATE TABLE "management"."configuration"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "configuration_pkey" PRIMARY KEY ("option")
 )
@@ -394,8 +394,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."software"(
 "software_name" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "software_pkey" PRIMARY KEY ("software_name")
 )
@@ -405,8 +405,8 @@ CREATE TABLE "firewall"."metahost_rules"(
 "deny" BOOLEAN NOT NULL DEFAULT TRUE,
 "port" INTEGER NOT NULL,
 "comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "transport" TEXT NOT NULL,
 "name" TEXT NOT NULL,
@@ -424,8 +424,8 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."range_options"(
 "option" TEXT NOT NULL,
 "name" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "value" TEXT NOT NULL,
 CONSTRAINT "range_options_pkey" PRIMARY KEY ("name","option")
@@ -433,7 +433,7 @@ CONSTRAINT "range_options_pkey" PRIMARY KEY ("name","option")
 WITHOUT OIDS;
 
 CREATE TABLE "dhcp"."lease_log"(
-"time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "mac" MACADDR NOT NULL,
 "address" INET NOT NULL
 )
@@ -470,8 +470,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."program_rules"(
 "deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "port" INTEGER NOT NULL,
 "address" INET NOT NULL,
@@ -482,8 +482,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "firewall"."metahost_program_rules"(
 "deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "port" INTEGER NOT NULL,
@@ -494,8 +494,8 @@ WITHOUT OIDS;
 CREATE TABLE "dhcp"."global_options"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "global_options_pkey" PRIMARY KEY ("option")
 )
@@ -504,8 +504,8 @@ WITHOUT OIDS;
 CREATE TABLE "dns"."types"(
 "type" TEXT NOT NULL,
 "comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "types_pkey" PRIMARY KEY ("type")
 )
@@ -513,7 +513,7 @@ WITHOUT OIDS;
 
 CREATE TABLE "network"."switchport_history"(
 "mac" MACADDR,
-"time" TIME WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"time" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "port_name" TEXT NOT NULL,
 "system_name" TEXT NOT NULL,
 CONSTRAINT "switchport_history_pkey" PRIMARY KEY ("port_name","system_name")
@@ -521,7 +521,7 @@ CONSTRAINT "switchport_history_pkey" PRIMARY KEY ("port_name","system_name")
 WITHOUT OIDS;
 
 CREATE TABLE "dns"."queue"(
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "directive" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL,
 "target" TEXT NOT NULL,
