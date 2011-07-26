@@ -22,3 +22,11 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_rules"(input_address inet) RETURN
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION  "api"."get_firewall_rules"(inet) IS 'Get all firewall rule data for an address';
+
+/* API - get_firewall_transports */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_transports"() RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY (SELECT "transport" FROM "firewall"."transports");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_transports"() IS 'Get a list of all firewall transports';
