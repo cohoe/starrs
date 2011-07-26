@@ -130,9 +130,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		(input_hostname,input_zone,input_address,input_ttl,input_owner);
 		
 		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-		(SELECT 'ADD',"hostname","zone","ttl","type",host("address") FROM api.get_dns_a(input_address));
-		
+		IF NOT (input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))) THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			(SELECT 'ADD',"hostname","zone","ttl","type",host("address") FROM api.get_dns_a(input_address));
+		END IF;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
