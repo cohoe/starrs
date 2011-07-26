@@ -69,6 +69,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			RAISE EXCEPTION 'Permission to create zone % denied for user %. Not admin.',input_zone,api.get_current_user();
 		END IF;
+		
 		-- Create zone
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns zone');
 		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","owner","shared") VALUES
@@ -128,12 +129,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
 		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
 		(input_hostname,input_zone,input_address,input_ttl,input_owner);
-		
-		-- Update DNS
-		IF NOT (input_address << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))) THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			(SELECT 'ADD',"hostname","zone","ttl","type",host("address") FROM api.get_dns_a(input_address));
-		END IF;
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
@@ -180,10 +175,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		PERFORM api.create_log_entry('API','INFO','creating new mailserver (MX)');
 		INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
 		(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
-
-		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target") VALUES
-		('ADD',input_hostname,input_zone,input_ttl,'MX',input_preference,(SELECT host(api.dns_resolve(input_hostname,input_zone,NULL))));
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_mailserver');
@@ -230,10 +221,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 		PERFORM api.create_log_entry('API','INFO','creating new NS record');
 		INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
 		(input_hostname,input_zone,input_isprimary,input_ttl,input_owner,'NS');
-
-		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
-		('ADD',input_hostname,input_zone,input_ttl,'NS',(SELECT host(api.dns_resolve(input_hostname,input_zone,NULL))));
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_nameserver');
@@ -286,10 +273,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 		INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
 		(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,input_owner,'SRV');
-
-		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target") VALUES
-		('ADD',input_alias,input_zone,input_ttl,'SRV',input_priority || ' ' || input_weight || ' ' || input_port,input_target);
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
@@ -342,10 +325,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		PERFORM api.create_log_entry('API','INFO','create new CNAME record');
 		INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
 		(input_alias, input_target, input_zone, input_ttl,input_owner,'CNAME');
-
-		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
-		('ADD',input_alias,input_zone,input_ttl,'CNAME',input_target);
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
@@ -392,10 +371,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 		PERFORM api.create_log_entry('API','INFO','create new TXT record');
 		INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
 		(input_hostname,input_zone,input_text,input_ttl,input_owner,input_type);
-
-		-- Update DNS
-		INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target") VALUES
-		('ADD',input_hostname,input_zone,input_ttl,input_type,quote_ident(input_text));
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
