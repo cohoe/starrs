@@ -93,7 +93,7 @@ CREATE TABLE "ip"."subnets"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
-"zone" TEXT DEFAULT 'localdomain',
+"zone" TEXT DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "dhcp_enable" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "subnets_pkey" PRIMARY KEY ("subnet")
 )
@@ -121,9 +121,9 @@ CREATE TABLE "dns"."ns"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT 3600,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "type" TEXT NOT NULL,
 CONSTRAINT "ns_pkey" PRIMARY KEY ("isprimary","hostname","address","zone")
 )
@@ -242,9 +242,9 @@ CREATE TABLE "dns"."pointers"(
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT 300,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "pointers_pkey" PRIMARY KEY ("alias","hostname","address","zone"),
 CONSTRAINT "dns_pointers_type_check" CHECK ("type" ~ '^CNAME|SRV$')
 )
@@ -266,16 +266,16 @@ CREATE TABLE "dns"."mx"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT 3600,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "type" TEXT NOT NULL,
 CONSTRAINT "mx_pkey" PRIMARY KEY ("hostname","address","zone")
 )
 WITHOUT OIDS;
 
 CREATE TABLE "dns"."zones"(
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "forward" BOOLEAN NOT NULL,
 "keyname" TEXT NOT NULL,
 "date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
@@ -318,9 +318,9 @@ CREATE TABLE "dns"."txt"(
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT 300,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone"),
 CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^SPF|TXT$')
 )
@@ -342,9 +342,9 @@ CREATE TABLE "dns"."a"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "address" INET NOT NULL,
 "type" TEXT NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT 300,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "a_pkey" PRIMARY KEY ("hostname","address","zone"),
 CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$')
 )
@@ -528,7 +528,7 @@ CREATE TABLE "dns"."queue"(
 "user" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"zone" TEXT NOT NULL DEFAULT 'localdomain',
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "type" TEXT NOT NULL,
 "extra" TEXT
 )
