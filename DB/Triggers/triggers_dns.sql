@@ -235,3 +235,71 @@ CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text,
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF NEW."type" ~* 'A|AAAA|NS' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."address");
+		ELSEIF NEW."type" ~* 'MX' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",NEW."address");
+		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('ADD',NEW."alias",NEW."zone",NEW."ttl",NEW."type",NEW."extra",NEW."hostname");
+		ELSEIF NEW."type" ~* 'TXT|SPF' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."text");
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_insert"() IS 'Add an add directive to the queue';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF NEW."type" ~* 'A|AAAA|NS' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."address");
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."address");
+		ELSEIF NEW."type" ~* 'MX' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",OLD."address");
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",NEW."address");
+		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('DELETE',OLD."alias",OLD."zone",OLD."ttl",OLD."type",OLD."extra",OLD."hostname");
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('ADD',NEW."alias",NEW."zone",NEW."ttl",NEW."type",NEW."extra",NEW."hostname");
+		ELSEIF NEW."type" ~* 'TXT|SPF' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."text");
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."text");
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_update"() IS 'Add a delete and add directive to the queue';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF OLD."type" ~* 'A|AAAA|NS' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."address");
+		ELSEIF OLD."type" ~* 'MX' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",OLD."address");
+		ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
+			VALUES ('DELETE',OLD."alias",OLD."zone",OLD."ttl",OLD."type",OLD."extra",OLD."hostname");
+		ELSEIF OLD."type" ~* 'TXT|SPF' THEN
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."text");
+		END IF;
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_delete"() IS 'Add a delete directive to the queue';
