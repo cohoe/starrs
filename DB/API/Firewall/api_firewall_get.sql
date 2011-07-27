@@ -38,3 +38,15 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_program_data"() RETURNS SETOF "fi
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_program_data"() IS 'Get all firewall program data';
+
+/* API - get_firewall_metahosts */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_metahosts"(input_username text) RETURNS SETOF "firewall"."metahost_data" AS $$
+	BEGIN
+		IF input_username IS NULL THEN
+			RETURN QUERY (SELECT "name","comment","owner","date_created","date_modified","last_modifier" FROM "firewall"."metahosts");
+		ELSE
+			RETURN QUERY (SELECT "name","comment","owner","date_created","date_modified","last_modifier" FROM "firewall"."metahosts" WHERE "owner" = input_username);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_metahosts"(text) IS 'Get all data on firewall metahosts';
