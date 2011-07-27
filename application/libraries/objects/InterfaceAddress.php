@@ -8,54 +8,44 @@ require_once(APPPATH . "controllers/dns.php");
  * specified address.
  */
 class InterfaceAddress extends ImpulseObject {
-	
 
-	////////////////////////////////////////////////////////////////////////
-	// ENUM-LIKE SILLYNESS
-	
-	// Enumeration values for address family
-	public static $IPv4 = 4;
-	public static $IPv6 = 6;
-	
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
-	// string		The address bound to the interface 
+	// string   The address bound to the interface
 	private $address;
 	
-	// string		The class of the address (all values are default so far)
+	// string   The class of the address (all values are default so far)
 	private $class;
 	
-	// string		A comment about the address
+	// string   A comment about the address
 	private $comment;
 	
-	// string		The config type for the address
+	// string   The config type for the address
 	// @todo: make a getValidConfigTypes method
 	private $config;
 	
-	// enum(int)	The family the address belongs to (either IPv4 or v6). Can
-	// be compared against using ::$IPv4 and ::$IPv6
+	// int	    The family the address belongs to (either IPv4 or v6).
 	private $family;
 	
-	// string		The mac address that this address is bound to. Can be used
-	// to lookup the matching InterfaceObject. 
+	// string   The mac address that this address is bound to. Can be used to lookup the matching InterfaceObject.
 	private $mac;
 	
-	// long			The unix timestamp that the interface will be renewed.
+	// long     The unix timestamp that the interface will be renewed.
 	private $renewDate;
 	
-	// bool			Is this address the primary for the interface
+	// bool     Is this address the primary for the interface
 	private $isPrimary;
 	
-	// string		The name of the containing system
+	// string   The name of the containing system
 	private $systemName;
 	
-	// string		The name of the containing range
+	// string   The name of the containing range
 	private $range;
-	
+
+    // boolean  Is this address dynamically assigned
 	private $dynamic;
 
-	
 	////////////////////////////////////////////////////////////////////////
 	// DNS RELATED VARIABLES
 	
@@ -74,7 +64,7 @@ class InterfaceAddress extends ImpulseObject {
 	// array<MxRecords>		All mail server (MX) records that resolve to this address
 	private $dnsMxRecords;
 	
-	// array<TextRecord>		All TXT or SPF records that describe this address
+	// array<TextRecord>	All TXT or SPF records that describe this address
 	private $dnsTextRecords;
 	
 	////////////////////////////////////////////////////////////////////////
@@ -90,17 +80,15 @@ class InterfaceAddress extends ImpulseObject {
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new InterfaceAddress object using the given information
-	 * @param 	string 	$address		The address bound to the address 
+	 * @param 	string 	$address		The address bound to the address
 	 * @param 	string 	$class			The class of the address
 	 * @param 	string	$config			How the address is configured
-	 * @param 	string 	$mac			The mac address the interface address 
-	 * 									is bound to
+	 * @param 	string 	$mac			The mac address the interface address is bound to
 	 * @param 	long	$renewDate		Unix timestamp when the address renews
 	 * @param	bool	$isPrimary		Is this address the primary for the interface?
 	 * @param 	string	$comment		A comment about the address
 	 * @param	long	$dateCreated	Unix timestamp when the address was created
-	 * @param	long	$dateModified	Unix timestamp when the address was modifed
+	 * @param	long	$dateModified	Unix timestamp when the address was modified
 	 * @param	string	$lastModifier	The last user to modify the address
 	 */
 	public function __construct($address, $class, $config, $mac, $renewDate, $isPrimary, $comment, $dateCreated, $dateModified, $lastModifier) {
@@ -117,7 +105,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->isPrimary = $isPrimary;
 		
 		// Determine the family of the address based on whether there's a : or not
-		$this->family  = (strpos($address, ':') === false) ? self::$IPv4 : self::$IPv6;
+		$this->family  = (strpos($address, ':') === false) ? 4 : 6;
 		
 		// Initialize variables
 		$this->dnsPointerRecords = array();
@@ -125,6 +113,9 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsMxRecords = array();
 		$this->dnsTextRecords = array();
 		$this->fwRules = array();
+        $this->dynamic = FALSE;
+
+        // Try to get the address record that resolves to this address
 		try {
 			$this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
 			$this->dnsFqdn = $this->dnsAddressRecord->get_hostname().".".$this->dnsAddressRecord->get_zone();
@@ -133,21 +124,16 @@ class InterfaceAddress extends ImpulseObject {
 			$this->dnsAddressRecord = null;
 			$this->dnsFqdn = null;
 		}
+
+        // Fill in some more basic information this address
 		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
 		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
 		$this->range = $this->CI->api->ip->get_address_range($this->address);
-		
+
+        // If this is in the site configured dynamic subnet range, then fill in some more information
 		if($this->CI->api->ip->ip_in_subnet($this->get_address(), $this->CI->api->management->get_site_configuration('DYNAMIC_SUBNET')) == 't') {
 			$this->dynamic = TRUE;
 			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)) . "." . $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE');
-			
-			#if($this->dnsAddressRecord == NULL) {
-			#	$aRec = $this->CI->api->dns->create_dns_address($this->address, preg_replace('/:/','',$this->mac), $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE'), null, null);
-			#	$this->dnsAddressRecord = $aRec;
-			#}
-		}
-		else {
-			$this->dynamic = FALSE;
 		}
 	}
 	
@@ -173,18 +159,6 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_system_name()     { return $this->systemName; }
 	public function get_range()           { return $this->range; }
 	public function get_dynamic()		  { return $this->dynamic; }
-	
-	public function get_help() {
-		return "Interfaces are assigned IP addresses in multiple ways from configured resource pools. 
-		Each address is then configured with DNS records and Firewall Rules. Depending on your IP address
-		and privilege level, certain records may or may not be available to you. Firewall rules can be 
-		applied in \"standalone\" or \"metahost\" contexts. You will be warned if there are conflicts in 
-		your firewall rules.";
-	}
-	
-	public function get_start() {
-		return "To get started, click a view above, then click Create.";
-	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// SETTERS
@@ -213,15 +187,18 @@ class InterfaceAddress extends ImpulseObject {
 		$this->CI->api->systems->modify_interface_address($this->address, 'comment', $new);	
 		$this->comment = $new; 
 	}
-	
-	////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
+
+    public function set_address_record($addressRecord) {
+		if(!$addressRecord instanceof AddressRecord) {
+			throw new ObjectException("Cannot add a non-address-record as a address-record");
+		}
+
+		$this->dnsAddressRecord = $addressRecord;
+	}
 	
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
-	
-	
-	
+
 	/**
 	 * Adds a firewall rule to the address
 	 * @param FirewallRule	$rule	The rule object to add
@@ -234,14 +211,6 @@ class InterfaceAddress extends ImpulseObject {
 		
 		// Add the rule to the local array
 		$this->fwRules[] = $rule;
-	}
-	
-	public function set_address_record($addressRecord) {
-		if(!$addressRecord instanceof AddressRecord) {
-			throw new ObjectException("Cannot add a non-address-record as a address-record");
-		}
-		
-		$this->dnsAddressRecord = $addressRecord;
 	}
 
     /**
@@ -373,7 +342,9 @@ class InterfaceAddress extends ImpulseObject {
 		}
 		throw new ObjectNotFoundException("No MX record matching your criteria was found");
 	}
-}
 
+	////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+}
 /* End of file InterfaceAddress.php */
 /* Location: ./application/libraries/objects/InterfaceAddress.php */

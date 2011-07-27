@@ -15,9 +15,9 @@ class Impulselib {
 	function __construct() {
 		$this->CI =& get_instance();
 		
-		$_SERVER['WEBAUTH_USER'] = "root";
-		$_SERVER['WEBAUTH_LDAP_GIVENNAME'] = "Grant";
-		$_SERVER['WEBAUTH_LDAP_SN'] = "Cohoe";
+		#$_SERVER['WEBAUTH_USER'] = "root";
+		#$_SERVER['WEBAUTH_LDAP_GIVENNAME'] = "Grant";
+		#$_SERVER['WEBAUTH_LDAP_SN'] = "Cohoe";
        	$this->uname = $this->CI->input->server('WEBAUTH_USER');
 		$this->fname = $this->CI->input->server('WEBAUTH_LDAP_GIVENNAME');
 		$this->lname = $this->CI->input->server('WEBAUTH_LDAP_SN');
@@ -153,8 +153,6 @@ class Impulselib {
 		$string = preg_replace('/[^a-zA-Z0-9_]/','_',$string);
 		return $string;
 	}
-	
 }
-
 /* End of file Impulselib.php */
 /* Location: ./application/libraries/Impulselib.php */

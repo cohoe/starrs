@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class for all pointer (CNAME, SRV) records
  */
@@ -7,22 +7,25 @@ class PointerRecord extends DnsRecord {
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
-	// string		The pointer name
+	// string	The pointer name
 	private $alias;
 	
-	// string		Extra information required for certain records
+	// string	Extra information required for certain records
 	private $extra;
-	
+
+    // int      The priority field of a SRV record
 	private $priority;
+
+    // int      The weight field of a SRV record
 	private $weight;
+
+    // int      The port of the SRV field
 	private $port;
-	
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new PointerRecord from the given information
 	 * @param	string	$hostname		The hostname of the record
 	 * @param	string	$zone			The zone of the record
 	 * @param	string	$address		The resolving address of the record
@@ -55,17 +58,12 @@ class PointerRecord extends DnsRecord {
 	
 	public function get_alias() { return $this->alias; }
 	public function get_extra() { return $this->extra; }
-	
 	public function get_priority() { return $this->priority; }
 	public function get_weight()   { return $this->weight; }
 	public function get_port()     { return $this->port; }
-	
-	
-	////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	
-	////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
+
+    ////////////////////////////////////////////////////////////////////////
+	// SETTERS
 	
 	public function set_hostname($new) {
 		if($this->get_type() == "CNAME") {
@@ -147,7 +145,12 @@ class PointerRecord extends DnsRecord {
 		}
 		$this->set_extra(preg_replace('/\d+$/',$new,$this->get_extra()));
 	}
-}
 
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+
+    ////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+}
 /* End of file PointerRecord.php */
 /* Location: ./application/libraries/objects/PointerRecord.php */

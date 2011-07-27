@@ -1,9 +1,10 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * This class contains the definition for a the System object. A system is 
  * essentially a server/machine that is part of the network.
  */
 class System extends ImpulseObject {
+
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
@@ -11,7 +12,7 @@ class System extends ImpulseObject {
 	private $comment;
 	
 	// bool		Whether or not the system is complete (contains interfaces)
-	private $hasInterfaces = false;
+	private $hasInterfaces;
 	
 	// array<InterfaceObjects>	The interfaces associated with the system
 	private $interfaces;
@@ -35,7 +36,6 @@ class System extends ImpulseObject {
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new DnsRecord from the given information
 	 * @param	string	$systemName		The name of the system to create
 	 * @param	string	$owner			The owning username of the system
 	 * @param	string	$comment		A comment on the system
@@ -59,15 +59,9 @@ class System extends ImpulseObject {
 		$this->renewDate	= $renewDate; 
 		
 		// Initialize other vars
-		$hasInterfaces = false;
-		$interfaces = array();
-
+		$this->hasInterfaces = false;
+		$this->interfaces = array();
 	}
-	
-	////////////////////////////////////////////////////////////////////////
-	// DESTRUCTOR
-	
-	public function __destruct() {}
 
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
@@ -107,17 +101,10 @@ class System extends ImpulseObject {
 		$this->CI->api->systems->modify_system($this->systemName, 'os_name', $new);
 		$this->osName = $new; 
 	}
-	
-	////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	
+
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	
-	/**
-	 * Adds an interface to the system
-	 * @param InterfaceObject	$interface	The interface to add to the system
-	 */
 	public function add_interface($interface) {
 		// If it's not an interface, blow up
 		if($interface instanceof InterfaceObject) {
@@ -156,7 +143,9 @@ class System extends ImpulseObject {
 		}
 		return $addr;
 	}
-}
 
+	////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+}
 /* End of file System.php */
 /* Location: ./application/libraries/objects/System.php */

@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class for all text (TXT, SPF) records
  */
@@ -14,7 +14,6 @@ class TextRecord extends DnsRecord {
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new TxtRecord from the given information
 	 * @param	string	$hostname		The hostname of the record
 	 * @param	string	$zone			The zone of the record
 	 * @param	string	$address		The resolving address of the record
@@ -23,7 +22,7 @@ class TextRecord extends DnsRecord {
 	 * @param	string	$owner			The owner of the record
 	 * @param	string	$text			The text to place in the record
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
-	 * @param	long	$dateModified	Unix timestamp when the record was modifed
+	 * @param	long	$dateModified	Unix timestamp when the record was modified
 	 * @param	string	$lastModifier	The last user to modify the record
 	 */
 	public function __construct($hostname, $zone, $address, $type, $ttl, $owner, $text, $dateCreated, $dateModified, $lastModifier) {
@@ -38,38 +37,40 @@ class TextRecord extends DnsRecord {
 	// GETTERS
 	
 	public function get_text() { return $this->text; }
-	
+
+    ////////////////////////////////////////////////////////////////////////
+	// SETTERS
+
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+
+	public function set_hostname($new) {
+		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'hostname', $new);
+		$this->hostname = $new;
+	}
+
+	public function set_zone($new) {
+		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'zone', $new);
+		$this->zone = $new;
+	}
+
+	public function set_ttl($new) {
+		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'ttl', $new);
+		$this->ttl = $new;
+	}
+
+	public function set_owner($new) {
+		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'owner', $new);
+		$this->owner = $new;
+	}
+
+	public function set_text($new) {
+		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, $this->type, 'text', $new);
+		$this->owner = $new;
+	}
+    
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-	
-	////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	
-	public function set_hostname($new) {
-		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'hostname', $new);	
-		$this->hostname = $new; 
-	}
-	
-	public function set_zone($new) {
-		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'zone', $new);	
-		$this->zone = $new; 
-	}
-	
-	public function set_ttl($new) {
-		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'ttl', $new);	
-		$this->ttl = $new; 
-	}
-	
-	public function set_owner($new) {
-		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, 'owner', $new);	
-		$this->owner = $new; 
-	}
-	
-	public function set_text($new) {
-		$this->CI->api->dns->modify_dns_text($this->hostname, $this->zone, $this->type, 'text', $new);	
-		$this->owner = $new; 
-	}
 }
-
-/* End of file TxtRecord.php */
-/* Location: ./application/libraries/objects/TxtRecord.php */
+/* End of file TextRecord.php */
+/* Location: ./application/libraries/objects/TextRecord.php */

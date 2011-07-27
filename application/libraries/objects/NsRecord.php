@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class for all Nameserver (NS) records
  */
@@ -14,7 +14,6 @@ class NsRecord extends DnsRecord {
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new NsRecord from the given information
 	 * @param	string	$hostname		The hostname of the record
 	 * @param	string	$zone			The zone of the record
 	 * @param	string	$address		The resolving address of the record
@@ -38,38 +37,40 @@ class NsRecord extends DnsRecord {
 	// GETTERS
 	
 	public function get_isprimary() { return $this->isPrimary; }
-	
+
+	////////////////////////////////////////////////////////////////////////
+    // SETTERS
+
+    public function set_hostname($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'hostname', $new);
+		$this->hostname = $new;
+	}
+
+	public function set_zone($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'zone', $new);
+		$this->zone = $new;
+	}
+
+	public function set_ttl($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'ttl', $new);
+		$this->ttl = $new;
+	}
+
+	public function set_owner($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'owner', $new);
+		$this->owner = $new;
+	}
+
+	public function set_isprimary($new) {
+		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'isprimary', $new);
+		$this->owner = $new;
+	}
+
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-	
-	////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	
-	public function set_hostname($new) {
-		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'hostname', $new);	
-		$this->hostname = $new; 
-	}
-	
-	public function set_zone($new) {
-		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'zone', $new);	
-		$this->zone = $new; 
-	}
-	
-	public function set_ttl($new) {
-		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'ttl', $new);	
-		$this->ttl = $new; 
-	}
-	
-	public function set_owner($new) {
-		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'owner', $new);	
-		$this->owner = $new; 
-	}
-	
-	public function set_isprimary($new) {
-		$this->CI->api->dns->modify_dns_nameserver($this->hostname, $this->zone, 'isprimary', $new);	
-		$this->owner = $new; 
-	}
 }
-
 /* End of file NsRecord.php */
 /* Location: ./application/libraries/objects/NsRecord.php */

@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * IP address range for DHCP and address selection use
  */
@@ -6,19 +6,44 @@ class IpRange extends ImpulseObject {
 
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
-	
+
+    // string   The first IP address in the range
 	private $firstIp;
+
+    // string   The last IP address in the range
     private $lastIp;
+
+    // string   A use code for the range
     private $use;
+
+    // string   The name of the range
     private $name;
+
+    // string   The subnet that contains the range
     private $subnet;
+
+    // string   The DHCP class of the range
     private $class;
+
+    // string   A comment on the range
     private $comment;
 
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
-	
-	public function __construct($firstIp, $lastIp, $use, $name, $subnet, $class, $comment, $dateCreated, $dateModified, $lastModifier) {
+
+    /**
+     * @param   string  $firstIp        The first IP address of the range
+     * @param   string  $lastIp         The last IP address of the range
+     * @param   string  $use            The use code for the range
+     * @param   string  $name           The name of the range
+     * @param   string  $subnet         Subnet containing the range
+     * @param   string  $class          DHCP class of the range
+     * @param   string  $comment        A comment on the range
+	 * @param	long	$dateCreated	Unix timestamp when the address was created
+	 * @param	long	$dateModified	Unix timestamp when the address was modified
+	 * @param	string	$lastModifier	The last user to modify the address
+     */
+    public function __construct($firstIp, $lastIp, $use, $name, $subnet, $class, $comment, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
 		parent::__construct($dateCreated, $dateModified, $lastModifier);
 		
@@ -43,12 +68,14 @@ class IpRange extends ImpulseObject {
     public function get_class()	    { return $this->class; }
     public function get_comment()	{ return $this->comment; }
 
+    ////////////////////////////////////////////////////////////////////////
+	// SETTERS
+
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+    
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-	
-	////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
 }
-
 /* End of file IpRange.php */
 /* Location: ./application/libraries/objects/IpRange.php */

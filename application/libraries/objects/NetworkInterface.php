@@ -1,10 +1,11 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
 * This class contains the definition for a the Interface object. An Interface
 * is essentially a connection to the network that a system posesses. It would
 * totally be called 'Interface' if that wasn't a keyword in PHP...
 */
 class NetworkInterface extends ImpulseObject {
+
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
@@ -27,12 +28,9 @@ class NetworkInterface extends ImpulseObject {
 	// CONSTRUCTOR
 
 	/**
-	 * Constructs a new interface with the information proivided
-	 * 
 	 * @param	string	$mac			The mac address for the interface	
 	 * @param	string	$comment		A descriptive comment about the interface
-	 * @param	string	$systemName		The name of the system associated with the
-	 * 									interface being constructed
+	 * @param	string	$systemName		The name of the system associated with the interface being constructed
 	 * @param	string	$interfaceName	The name of the interface
 	 * @param	long	$dateCreated 	The date the interface was created, Unix TS
 	 * @param	long	$dateModified 	The date the interface was created, Unix TX
@@ -110,6 +108,5 @@ class NetworkInterface extends ImpulseObject {
 		return $this->addresses[$address];
 	}
 }
-
 /* End of file NetworkInterface.php */
 /* Location: ./application/libraries/objects/NetworkInterface.php */

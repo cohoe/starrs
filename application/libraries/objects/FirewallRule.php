@@ -1,5 +1,4 @@
-<?php
-
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Here we have our template for a firewall rule. A rule is pulled from the firewall.rules
  * table and applies to a certain address.
@@ -37,8 +36,7 @@ class FirewallRule extends ImpulseObject {
 	// CONSTRUCTOR
 	
 	/**
-	 * Construct a new FirewallRule from the given information
-	 * @param 	int 	$port		The port to apply to 
+	 * @param 	int 	$port		The port to apply to
 	 * @param	string	$transport	The transport (layer 4) of the rule
 	 * @param	bool	$deny		The action of the rule
 	 * @param	string	$comment	A comment on the rule
@@ -46,7 +44,7 @@ class FirewallRule extends ImpulseObject {
 	 * @param	string	$owner		The owner of the rule
 	 * @param	string	$source		The source of the rule
 	 * @param	long	$dateCreated	Unix timestamp when the rule was created
-	 * @param	long	$dateModified	Unix timestamp when the rule was modifed
+	 * @param	long	$dateModified	Unix timestamp when the rule was modified
 	 * @param	string	$lastModifier	The last user to modify the rule
 	 */
 	public function __construct($port, $transport, $deny, $comment, $address, $owner, $source, $dateCreated, $dateModified, $lastModifier) {
@@ -82,13 +80,15 @@ class FirewallRule extends ImpulseObject {
 	public function get_comment()       { return $this->comment; }
 	public function get_address()       { return $this->address; }
 	public function get_program_name()  { return $this->programName; }
-	
+
+    ////////////////////////////////////////////////////////////////////////
+	// SETTERS
+
+    ////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-	
-	////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
 }
-
 /* End of file FirewallRule.php */
 /* Location: ./application/libraries/objects/FirewallRule.php */
