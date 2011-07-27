@@ -60,9 +60,9 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahost"(text) IS 'Get all data on a firewall metahost';
 
 /* API - get_firewall_metahost_members */
-CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_members"(input_metahost_name text) RETURNS SETOF INET AS $$
+CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_members"(input_metahost_name text) RETURNS SETOF "firewall"."metahost_member_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "address" FROM "firewall"."metahost_members" WHERE "name" = input_metahost_name);
+		RETURN QUERY (SELECT "name","address","date_created","date_modified","last_modifier" FROM "firewall"."metahost_members" WHERE "name" = input_metahost_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahost_members"(text) IS 'Get a list of all members of a specific metahost';
