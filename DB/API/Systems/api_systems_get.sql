@@ -134,3 +134,16 @@ CREATE OR REPLACE FUNCTION "api"."get_system_interface_address"(input_address in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_address"(inet) IS 'Get all interface address data for an address';
+
+CREATE OR REPLACE FUNCTION "api"."get_owned_interface_addresses"(input_owner text) RETURNS SETOF "systems"."interface_address_data" AS $$
+	BEGIN
+		IF input_owner IS NULL THEN
+			RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."interface_addresses");
+		ELSE
+			RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."interface_addresses" WHERE api.get_interface_address_owner("address") = input_owner);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_owned_interface_addresses"(text) IS 'Get all interface address data for all addresses owned by a given user';
