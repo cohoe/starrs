@@ -426,6 +426,40 @@ class API_Systems extends ImpulseModel {
         // Return results
 		return $addr;
 	}
+	
+	public function get_owned_addresses($username=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_owned_interface_addresses({$this->db->escape($username)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $row) {
+			$resultSet[] = new InterfaceAddress(
+				$row['address'], 
+				$row['class'], 
+				$row['config'], 
+				$row['mac'], 
+				$row['renew_date'], 
+				$row['isprimary'],
+				$row['comment'], 
+				$row['date_created'], 
+				$row['date_modified'], 
+				$row['last_modifier']
+			);
+		}
+		
+		// Return results
+        if(count($resultSet) > 0) {
+            return $resultSet;
+        }
+        else {
+            throw new ObjectNotFoundException("No addresses found!");
+        }
+	}
 
     /**
      * @return array

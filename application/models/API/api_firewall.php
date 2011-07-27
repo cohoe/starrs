@@ -181,6 +181,29 @@ class Api_firewall extends ImpulseModel {
 		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
 	}
 	
+	public function create_firewall_rule_program($address, $program, $deny, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_firewall_rule_program(
+			{$this->db->escape($address)},
+			{$this->db->escape($program)},
+			{$this->db->escape($deny)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+		$rules = $this->get_address_rules($address);
+		foreach($rules as $rule) {
+			if($rule->get_program_name() == $program && $rule->get_deny() == $deny) {
+				return $rule;
+			}
+		}
+		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
+	}
+	
 	public function remove_firewall_rule($address, $port, $transport) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_rule(
@@ -193,7 +216,196 @@ class Api_firewall extends ImpulseModel {
         // Check error
         $this->_check_error($query);
 	}
-}
+	
+	public function remove_firewall_rule_program($address, $program) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_rule_program(
+			{$this->db->escape($address)},
+			{$this->db->escape($program)}
+		)";
+		$query = $this->db->query($sql);
 
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function get_metahosts($username=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahosts({$this->db->escape($username)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $metahost) {
+			$resultSet[] = new Metahost(
+				$metahost['name'],
+				$metahost['comment'],
+				$metahost['owner'],
+				$metahost['date_created'],
+				$metahost['date_modified'],
+				$metahost['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall metahosts found.");
+		}
+	}
+	
+	public function get_metahost($metahostName,$complete=FALSE) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple metahosts found. This indicates a database error. Talk to your system administrator");
+		}
+		
+		// Generate result
+		$mHost =  new Metahost(
+			$query->row()->name,
+			$query->row()->comment,
+			$query->row()->owner,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+		
+		if($complete == TRUE) {
+			try {
+				$members = $this->get_metahost_members($metahostName);
+				foreach($members as $membr) {
+					$mHost->add_member($membr);
+				}
+			}
+			catch(ObjectNotFoundException $onfE) { }
+		}
+		
+		// Return result
+		return $mHost;
+	}
+	
+	public function create_metahost($name,$owner,$comment) {
+		// SQL Query
+		$sql = "SELECT api.create_firewall_metahost(
+			{$this->db->escape($name)},
+			{$this->db->escape($owner)},
+			{$this->db->escape($comment)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		return $this->get_metahost($name);
+	}
+	
+	public function remove_metahost($mHost) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_metahost({$this->db->escape($mHost->get_name())})";
+		$query = $this->db->query($sql);
+
+		
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function modify_metahost($metahostName, $field, $newValue) {
+		// SQL Query
+		$sql = "SELECT api.modify_firewall_metahost(
+			{$this->db->escape($metahostName)},
+			{$this->db->escape($field)},
+			{$this->db->escape($newValue)}
+		)";
+		$query = $this->db->query($sql);
+		
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function get_metahost_members($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_members({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $result) {
+			$resultSet[] = new MetahostMember(
+				$result['name'],
+				$result['address'],
+				$result['date_created'],
+				$result['date_modified'],
+				$result['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall metahost members found.");
+		}
+	}
+	
+	public function remove_metahost_member($membr) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_metahost_member({$this->db->escape($membr->get_address())})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function create_metahost_member($address,$metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.create_firewall_metahost_member({$this->db->escape($address)},{$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Return result object
+		return $this->get_metahost_member($address);
+	}
+	
+	public function get_metahost_member($address) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_member({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple metahosts found. This indicates a database error. Talk to your system administrator");
+		}
+		
+		// Generate result
+		$membr =  new MetahostMember(
+			$query->row()->name,
+			$query->row()->address,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+		
+		return $membr;
+	}
+}
 /* End of file api_firewall.php */
 /* Location: ./application/models/API/api_firewall.php */

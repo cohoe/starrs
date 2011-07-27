@@ -342,6 +342,15 @@ class InterfaceAddress extends ImpulseObject {
 		}
 		throw new ObjectNotFoundException("No MX record matching your criteria was found");
 	}
+	
+	public function get_rule($port, $transport) {
+		foreach($this->fwRules as $rule) {
+			if($rule->get_port() == $port && $rule->get_transport() == $transport) {
+				return $rule;
+			}
+		}
+		throw new ObjectNotFoundException("No firewall rule matching your criteria was found");
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

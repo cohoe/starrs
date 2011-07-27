@@ -23,6 +23,8 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/ConfigClass.php");
         require_once(APPPATH . "libraries/objects/IpRange.php");
         require_once(APPPATH . "libraries/objects/FirewallProgram.php");
+		require_once(APPPATH . "libraries/objects/Metahost.php");
+		require_once(APPPATH . "libraries/objects/MetahostMember.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");

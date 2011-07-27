@@ -60,6 +60,16 @@ class Firewall extends ImpulseController {
 			// Create the record
 			try {
 				$fwRule = $this->_create();
+				// Add it to the address
+				self::$addr->add_firewall_rule($fwRule);
+				
+				// Update our information
+				self::$int->add_address(self::$addr);
+				self::$sys->add_interface(self::$int);
+				$this->impulselib->set_active_system(self::$sys);
+				
+				// Move along
+				redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error("DB: ".$dbE->getMessage());
@@ -73,17 +83,6 @@ class Firewall extends ImpulseController {
 				$this->_error("Cont: ".$cE->getMessage());
 				return;
 			}
-			
-			// Add it to the address
-			self::$addr->add_firewall_rule($fwRule);
-			
-			// Update our information
-			self::$int->add_address(self::$addr);
-			self::$sys->add_interface(self::$int);
-			$this->impulselib->set_active_system(self::$sys);
-			
-			// Move along
-			redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
 		}
 		else {
 			// Navbar
@@ -145,7 +144,12 @@ class Firewall extends ImpulseController {
 	
 	private function _create() {
 		if($this->input->post('program')) {
-		
+			$fwRule = $this->api->firewall->create_firewall_rule_program(
+				self::$addr->get_address(),
+				$this->input->post('program'),
+				$this->input->post('deny'),
+				$this->input->post('owner')
+			);
 		}
 		else {
 			$fwRule = $this->api->firewall->create_firewall_rule(
