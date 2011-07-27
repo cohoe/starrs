@@ -104,3 +104,6 @@ CREATE TYPE "ip"."range_data" AS (name text, first_ip inet, last_ip inet, subnet
 
 CREATE TYPE "firewall"."program_data" AS (name text, port integer, transport text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."program_data" IS 'Firewall Program Data';
+
+CREATE TYPE "firewall"."metahost_data" AS (name text, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "firewall"."metahost_data" IS 'Firewall metahost data';
