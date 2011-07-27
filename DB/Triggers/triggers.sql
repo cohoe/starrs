@@ -119,6 +119,15 @@ CREATE TRIGGER "firewall_metahost_rule_program_insert"
 BEFORE INSERT ON "firewall"."metahost_program_rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_insert"();
 
+/* firewall rule programs */
+CREATE TRIGGER "firewall_rule_program_delete"
+BEFORE DELETE ON "firewall"."program_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_delete"();
+
+CREATE TRIGGER "firewall_metahost_rule_program_delete"
+BEFORE DELETEON "firewall"."metahost_program_rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_delete"();
+
 CREATE TRIGGER "dns_a_insert_queue"
 AFTER INSERT ON "dns"."a"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
