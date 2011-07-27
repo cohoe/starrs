@@ -125,7 +125,7 @@ BEFORE DELETE ON "firewall"."program_rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_delete"();
 
 CREATE TRIGGER "firewall_metahost_rule_program_delete"
-BEFORE DELETEON "firewall"."metahost_program_rules"
+BEFORE DELETE ON "firewall"."metahost_program_rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_delete"();
 
 CREATE TRIGGER "dns_a_insert_queue"
