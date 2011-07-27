@@ -50,3 +50,11 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_metahosts"(input_username text) R
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahosts"(text) IS 'Get all data on firewall metahosts';
+
+/* API - get_firewall_metahost */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost"(input_metahost_name text) RETURNS SETOF "firewall"."metahost_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name","comment","owner","date_created","date_modified","last_modifier" FROM "firewall"."metahosts" WHERE "name" = input_metahost_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_metahost"(text) IS 'Get all data on a firewall metahost';
