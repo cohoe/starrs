@@ -61,6 +61,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."software" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."metahost_rules" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."processes" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."queue" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."metahost_program_rules" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both
