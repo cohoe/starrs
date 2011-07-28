@@ -74,3 +74,13 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_member"(input_address in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahost_member"(inet) IS 'Get all of the information about a single metahost member';
+
+/* API - get_firewall_standalone_rules */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_standalone_rules"(input_address inet) RETURNS SETOF "firewall"."standalone_rule_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "address","port","transport","deny","comment","owner","date_created","date_modified","last_modifier"
+		FROM "firewall"."rules" WHERE "address" = input_address AND "source" = 'standalone-standalone');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_standalone_rules"(inet) IS 'Get all standalone rules for an address';
+
