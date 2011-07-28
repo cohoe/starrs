@@ -89,7 +89,6 @@ class Rules extends ImpulseController {
 		}
 		
 		try {
-		
 			if(self::$fwRule->get_source() == 'standalone-program') {
 				$this->api->firewall->remove_firewall_rule_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
 			}

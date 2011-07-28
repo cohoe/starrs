@@ -18,7 +18,7 @@ class Api_firewall extends ImpulseModel {
      * @param $address                  IP address to search on
      * @return array<FirewallRule>      Array of rule objects
      */
-    public function get_address_rules($address) {
+    public function get_address_rules_DEPRECATINGTHISFUNCTION($address) {
         // SQL Query
 		$sql = "SELECT * FROM api.get_firewall_rules({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -50,6 +50,27 @@ class Api_firewall extends ImpulseModel {
         else {
 			throw new ObjectNotFoundException("No firewall rules found.");
 		}
+	}
+
+	// @todo: Need a function that will give all the rules that eventually apply to an address
+	public function load_address_rules($address) {
+		$resultSet = array();
+
+		try {
+			$stdRules = $this->get_standalone_rules($address);
+			foreach($stdRules as $rule) {
+				$resultSet[] = $rule;
+			}
+		}
+		catch (ObjectNotFoundException $onfE) {}
+		try {
+			$stdProgs = $this->get_standalone_program_rules($address);
+			foreach($stdProgs as $rule) {
+				$resultSet[] = $rule;
+			}
+		}
+		catch (ObjectNotFoundException $onfE) {}
+		return $resultSet;
 	}
 	
 	public function get_metahost_rules($metahostName) {
@@ -241,7 +262,8 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 		
 		// Generate results
-		$rules = $this->get_address_rules($address);
+		#$rules = $this->get_address_rules($address);
+		$rules = $this->get_standalone_rules($address);
 		foreach($rules as $rule) {
 			if($rule->get_port() == $port && $rule->get_transport() == $transport) {
 				return $rule;
@@ -474,6 +496,63 @@ class Api_firewall extends ImpulseModel {
 		);
 		
 		return $membr;
+	}
+
+	public function get_standalone_rules($address) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_standalone_rules({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate result
+		$resultSet = array();
+		foreach($query->result_array() as $rule) {
+			$resultSet[] = new StandaloneRule(
+				$rule['address'],
+				$rule['port'],
+				$rule['transport'],
+				$rule['deny'],
+				$rule['comment'],
+				$rule['owner'],
+				$rule['date_created'],
+				$rule['date_modified'],
+				$rule['last_modifier']
+			);
+		}
+
+		// Return results
+		return $resultSet;
+	}
+
+	public function get_standalone_program_rules($address) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_standalone_program_rules({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate result
+		$resultSet = array();
+		foreach($query->result_array() as $rule) {
+			$resultSet[] = new StandaloneProgram(
+				$rule['address'],
+				$rule['name'],
+				$rule['port'],
+				$rule['transport'],
+				$rule['deny'],
+				$rule['comment'],
+				$rule['owner'],
+				$rule['date_created'],
+				$rule['date_modified'],
+				$rule['last_modifier']
+			);
+		}
+
+		// Return results
+		return $resultSet;
 	}
 }
 /* End of file api_firewall.php */

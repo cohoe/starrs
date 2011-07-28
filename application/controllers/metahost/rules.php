@@ -31,16 +31,22 @@ class Rules extends ImpulseController {
 		}
 		
 		// Navbar
-		$navModes['DELETE'] = "/metahosts/rules/delete/".self::$mHost->get_name();
-		$navOptions['Members'] = '/members/view/'.self::$mHost->get_name();
+		$navModes['CREATE'] = "/metahosts/rules/create/".self::$mHost->get_name();
+		$navOptions['Members'] = '/metahosts/members/view/'.self::$mHost->get_name();
 		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
-		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
+		$navbar = new Navbar(self::$mHost->get_name()." - Rules", $navModes, $navOptions);
 		
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->_load_rules();
+		try {
+			$info['data'] = $this->_load_rules();
+		}
+		catch (DBException $dbE) {
+			$this->_error($dbE->getMessage());
+			return;
+		}
 		$info['title'] = "Metahost - ".self::$mHost->get_name();
 		
 		// Load the main view
@@ -49,17 +55,27 @@ class Rules extends ImpulseController {
 	
 	private function _load_rules() {
 		$viewData = "";
-		$stdRules = $this->api->firewall->get_metahost_rules(self::$mHost->get_name());
-		foreach($stdRules as $rule) {
-			self::$mHost->add_rule($rule);
+		try {
+			$stdRules = $this->api->firewall->get_metahost_rules(self::$mHost->get_name());
+			foreach($stdRules as $rule) {
+				self::$mHost->add_rule($rule);
+			}
 		}
-		
-		$progRules = $this->api->firewall->get_metahost_program_rules(self::$mHost->get_name());
-		foreach($progRules as $rule) {
-			self::$mHost->add_rule($rule);
+		catch (ObjectNotFoundException $onfE) { }
+		try {
+			$progRules = $this->api->firewall->get_metahost_program_rules(self::$mHost->get_name());
+			foreach($progRules as $rule) {
+				self::$mHost->add_rule($rule);
+			}
 		}
-		
-		$viewData = $this->load->view('firewall/metahosts/rule_overview',array("rules"=>self::$mHost->get_rules()),TRUE);
+		catch (ObjectNotFoundException $onfE) { }
+	
+		if(count(self::$mHost->get_rules())) {
+			$viewData = $this->load->view('firewall/metahosts/rule_overview',array("rules"=>self::$mHost->get_rules()),TRUE);
+		}
+		else {
+			$viewData = $this->_warning("No rules found!");
+		}
 		
 		return $viewData;
 	}
