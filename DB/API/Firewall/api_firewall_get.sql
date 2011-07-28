@@ -115,3 +115,25 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_rules"(input_metahost_na
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahost_rules"(text) IS 'Get all info on rules applying to a specific metahost';
+
+/* API - get_firewall_metahost_program_rules */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_program_rules"(input_metahost_name text) RETURNS SETOF "firewall"."metahost_program_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT 
+			"firewall"."metahost_program_rules"."name",
+			"firewall"."programs"."name",
+			"firewall"."programs"."port",
+			"firewall"."programs"."transport",
+			"deny",
+			"firewall"."metahost_program_rules"."comment",
+			"firewall"."metahosts"."owner",
+			"firewall"."metahost_program_rules"."date_created",
+			"firewall"."metahost_program_rules"."date_modified",
+			"firewall"."metahost_program_rules"."last_modifier"
+		FROM "firewall"."metahost_program_rules" 
+		JOIN "firewall"."metahosts" ON "firewall"."metahost_program_rules"."name" = "firewall"."metahosts"."name"
+		JOIN "firewall"."programs" ON "firewall"."metahost_program_rules"."port" = "firewall"."programs"."port"
+		WHERE "firewall"."metahost_program_rules"."name" = input_metahost_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_metahost_program_rules"(text) IS 'Get all info on rules applying to a specific metahost';
