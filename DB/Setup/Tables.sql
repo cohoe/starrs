@@ -488,6 +488,7 @@ CREATE TABLE "firewall"."metahost_program_rules"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "port" INTEGER NOT NULL,
+"comment" TEXT,
 CONSTRAINT "metahost_program_rules_pkey" PRIMARY KEY ("name","port")
 )
 WITHOUT OIDS;
