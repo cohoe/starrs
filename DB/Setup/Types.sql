@@ -117,3 +117,6 @@ COMMENT ON TYPE "firewall"."standalone_rule_data" IS 'Data for standalone firewa
 
 CREATE TYPE "firewall"."standalone_program_data" AS (address inet, name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."standalone_program_data" IS 'Data for standalone firewall program rules';
+
+CREATE TYPE "firewall"."metahost_standalone_data" AS (name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "firewall"."metahost_standalone_data"  IS 'Standalone metahost rules data';
