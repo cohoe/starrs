@@ -84,3 +84,23 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_standalone_rules"(input_address i
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_standalone_rules"(inet) IS 'Get all standalone rules for an address';
 
+/* API - get_firewall_standalone_program_rules */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_standalone_program_rules"(input_address inet) RETURNS SETOF "firewall"."standalone_program_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT 
+			"firewall"."program_rules"."address",
+			"firewall"."programs"."name",
+			"firewall"."program_rules"."port",
+			"firewall"."programs"."transport",
+			"firewall"."program_rules"."deny",
+			"firewall"."program_rules"."comment",
+			"firewall"."program_rules"."owner",
+			"firewall"."program_rules"."date_created",
+			"firewall"."program_rules"."date_modified",
+			"firewall"."program_rules"."last_modifier"
+		FROM "firewall"."program_rules" JOIN "firewall"."programs"
+		ON "firewall"."program_rules"."port" = "firewall"."programs"."port"
+		WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_standalone_program_rules"(inet) IS 'Get all standalone rules for an address';
