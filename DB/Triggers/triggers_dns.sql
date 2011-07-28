@@ -288,7 +288,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF OLD."type" ~* 'A|AAAA|NS' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target","address")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"),NEW."address");
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"),OLD."address");
 		ELSEIF OLD."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
