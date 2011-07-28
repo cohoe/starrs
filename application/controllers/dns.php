@@ -311,6 +311,7 @@ class Dns extends ImpulseController {
 			// NS		hostname	zone	x
 			// MX		hostname	zone	x
 		
+			// @todo: ADD TRY/CATCH HERE FOR DBEXCEPTIONS
 			switch($type) {
 				case 'CNAME':
 					$this->api->dns->remove_dns_cname($alias, $hostname, $zone);
