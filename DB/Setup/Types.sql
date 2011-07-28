@@ -108,6 +108,9 @@ COMMENT ON TYPE "firewall"."program_data" IS 'Firewall Program Data';
 CREATE TYPE "firewall"."metahost_data" AS (name text, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."metahost_data" IS 'Firewall metahost data';
 
-
 CREATE TYPE "firewall"."metahost_member_data" AS (name text, address inet, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."metahost_member_data" IS 'Firewall metahost data';
+
+/* FIREWALL RULES */
+CREATE TYPE "firewall"."standalone_rule_data" AS (address inet, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "firewall"."standalone_rule_data" IS 'Data for standalone firewall rules';
