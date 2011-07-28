@@ -527,7 +527,6 @@ CREATE TABLE "dns"."queue"(
 "target" TEXT NOT NULL,
 "user" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
-"address" INET NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "type" TEXT NOT NULL,
 "extra" TEXT
