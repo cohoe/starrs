@@ -476,6 +476,7 @@ CREATE TABLE "firewall"."program_rules"(
 "port" INTEGER NOT NULL,
 "address" INET NOT NULL,
 "owner" TEXT NOT NULL DEFAULT api.get_current_user(),
+"comment" TEXT,
 CONSTRAINT "program_rules_pkey" PRIMARY KEY ("port","address")
 )
 WITHOUT OIDS;
