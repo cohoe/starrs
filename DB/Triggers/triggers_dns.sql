@@ -239,8 +239,8 @@ COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the
 CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW."type" ~* 'A|AAAA|NS' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"));
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target","address")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"),NEW."address");
 		ELSEIF NEW."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",host(NEW."address"));
@@ -259,10 +259,10 @@ COMMENT ON FUNCTION "dns"."queue_insert"() IS 'Add an add directive to the queue
 CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF NEW."type" ~* 'A|AAAA|NS' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"));
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"));
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target","address")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"),NEW."address");
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target","address")
+			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"),NEW."address");
 		ELSEIF NEW."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
@@ -287,8 +287,8 @@ COMMENT ON FUNCTION "dns"."queue_update"() IS 'Add a delete and add directive to
 CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF OLD."type" ~* 'A|AAAA|NS' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"));
+			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target","address")
+			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"),NEW."address");
 		ELSEIF OLD."type" ~* 'MX' THEN
 			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
 			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
