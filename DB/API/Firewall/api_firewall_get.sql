@@ -104,3 +104,14 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_standalone_program_rules"(input_a
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_standalone_program_rules"(inet) IS 'Get all standalone rules for an address';
+
+/* API - get_firewall_metahost_rules */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_rules"(input_metahost_name text) RETURNS SETOF "firewall"."metahost_standalone_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "firewall"."metahost_rules"."name","port","transport","deny","firewall"."metahost_rules"."comment","owner","firewall"."metahost_rules"."date_created","firewall"."metahost_rules"."date_modified","firewall"."metahost_rules"."last_modifier"
+		FROM "firewall"."metahost_rules" 
+		JOIN "firewall"."metahosts" ON "firewall"."metahost_rules"."name" = "firewall"."metahosts"."name"
+		WHERE "firewall"."metahost_rules"."name" = input_metahost_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_metahost_rules"(text) IS 'Get all info on rules applying to a specific metahost';
