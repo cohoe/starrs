@@ -86,7 +86,7 @@ class Metahosts extends ImpulseController {
 		$navModes['EDIT'] = "/metahosts/edit/".self::$mHost->get_name();
 		$navModes['DELETE'] = "/metahosts/delete/".self::$mHost->get_name();
 		$navOptions['Members'] = '/members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/metahosts/rules/'.self::$mHost->get_name();
+		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
 		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
 		
 		// Load the view data

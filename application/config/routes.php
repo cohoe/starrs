@@ -41,6 +41,7 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 $route['resources'] = "welcome";
+$route['metahosts/rules/(.*?)'] = "metahost/rules/$1";
 
 
 /* End of file routes.php */

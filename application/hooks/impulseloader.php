@@ -1,7 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
-
 class ImpulseLoader {
 	public function initialize() {
 
@@ -25,6 +23,10 @@ class ImpulseLoader {
         require_once(APPPATH . "libraries/objects/FirewallProgram.php");
 		require_once(APPPATH . "libraries/objects/Metahost.php");
 		require_once(APPPATH . "libraries/objects/MetahostMember.php");
+		require_once(APPPATH . "libraries/objects/MetahostRule.php");
+		require_once(APPPATH . "libraries/objects/MetahostProgram.php");
+		require_once(APPPATH . "libraries/objects/StandaloneRule.php");
+		require_once(APPPATH . "libraries/objects/StandaloneProgram.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");

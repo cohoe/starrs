@@ -31,6 +31,7 @@ class Firewall extends ImpulseController {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$viewData['rules'] = self::$addr->get_rules();
 		$viewData['deny'] = self::$addr->get_fw_default();
+		$viewData['addr'] = self::$addr;
 		
 		// More view data
 		$info['title'] = "Firewall Rules - ".self::$addr->get_address();

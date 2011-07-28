@@ -33,7 +33,7 @@ class Members extends ImpulseController {
 		// Navbar
 		$navModes['CREATE'] = "/members/create/".self::$mHost->get_name();
 		$navOptions['Members'] = '/members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/metahosts/rules/'.self::$mHost->get_name();
+		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
 		$navbar = new Navbar(self::$mHost->get_name()." Members", $navModes, $navOptions);
 		
 		// Load the view data

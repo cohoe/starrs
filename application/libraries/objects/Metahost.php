@@ -17,6 +17,8 @@ class Metahost extends ImpulseObject {
 	// array<InterfaceAddress>	The members of this metahost
 	private $members = array();
 	
+	private $rules = array();
+	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -37,6 +39,7 @@ class Metahost extends ImpulseObject {
 	public function get_comment() { return $this->comment; }
 	public function get_owner()   { return $this->owner; }
 	public function get_members() { return $this->members; }
+	public function get_rules()   { return $this->rules; }
 	
 	////////////////////////////////////////////////////////////////////////
 	// SETTERS
@@ -71,6 +74,13 @@ class Metahost extends ImpulseObject {
 			throw new ObjectNotFoundException("Interface address is not a member of this metahost");
 		}
 		return $this->members[$address];
+	}
+	
+	public function add_rule($fwRule) {
+		if(!($fwRule instanceof FirewallRule)) {
+			throw new ObjectException("Cannot add non-rule object as a metahost firewall rule");
+		}
+		$this->rules[] = $fwRule;
 	}
 
 	////////////////////////////////////////////////////////////////////////

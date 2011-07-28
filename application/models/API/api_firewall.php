@@ -52,6 +52,75 @@ class Api_firewall extends ImpulseModel {
 		}
 	}
 	
+	public function get_metahost_rules($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_rules({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $fwRule) {
+            $resultSet[] = new MetahostRule(
+				$fwRule['name'],
+				$fwRule['port'],
+				$fwRule['transport'],
+				$fwRule['deny'],
+				$fwRule['comment'],
+				$fwRule['owner'],
+				$fwRule['date_created'],
+				$fwRule['date_modified'],
+				$fwRule['last_modifier']
+			);
+		}
+		
+		// Return results
+        if(count($resultSet > 0)) {
+            return $resultSet;
+        }
+        else {
+			throw new ObjectNotFoundException("No standalone metahost rules found.");
+		}
+	}
+	
+	public function get_metahost_program_rules($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_program_rules({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $fwRule) {
+            $resultSet[] = new MetahostProgram(
+				$fwRule['metahost_name'],
+				$fwRule['program_name'],
+				$fwRule['port'],
+				$fwRule['transport'],
+				$fwRule['deny'],
+				$fwRule['comment'],
+				$fwRule['owner'],
+				$fwRule['date_created'],
+				$fwRule['date_modified'],
+				$fwRule['last_modifier']
+			);
+		}
+		
+		// Return results
+        if(count($resultSet > 0)) {
+            return $resultSet;
+        }
+        else {
+			throw new ObjectNotFoundException("No program metahost rules found.");
+		}
+	}
+	
+	
+	
 	/**
      * Get the name of a firewall program based on its port
      * @param $port     The port of the program to search on

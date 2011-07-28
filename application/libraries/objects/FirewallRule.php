@@ -1,9 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(APPPATH . "controllers/firewall.php");
-/**
- * Here we have our template for a firewall rule. A rule is pulled from the firewall.rules
- * table and applies to a certain address.
- */
+
 class FirewallRule extends ImpulseObject {
 
 	////////////////////////////////////////////////////////////////////////
@@ -21,34 +18,16 @@ class FirewallRule extends ImpulseObject {
 	// string	A comment on the rule
 	private $comment;
 	
-	// string	The IP address to apply the rule to
-	private $address;
-	
 	// string	The owner of the rule. You can apply rules to systems you do not own if you are an admin
 	private $owner;
 	
 	// string	The source of the rule (metahost, program, standalone, etc)
 	private $source;
 	
-	// string	If this rule was applied from a program template, get the name of the program. 
-	private $programName;
-	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
-	/**
-	 * @param 	int 	$port		The port to apply to
-	 * @param	string	$transport	The transport (layer 4) of the rule
-	 * @param	bool	$deny		The action of the rule
-	 * @param	string	$comment	A comment on the rule
-	 * @param	string	$address	The address to apply the rule to
-	 * @param	string	$owner		The owner of the rule
-	 * @param	string	$source		The source of the rule
-	 * @param	long	$dateCreated	Unix timestamp when the rule was created
-	 * @param	long	$dateModified	Unix timestamp when the rule was modified
-	 * @param	string	$lastModifier	The last user to modify the rule
-	 */
-	public function __construct($port, $transport, $deny, $comment, $address, $owner, $source, $dateCreated, $dateModified, $lastModifier) {
+	public function __construct($port, $transport, $deny, $comment, $owner, $source, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
 		parent::__construct($dateCreated, $dateModified, $lastModifier);
 		
@@ -57,17 +36,8 @@ class FirewallRule extends ImpulseObject {
 		$this->transport = $transport;
 		$this->deny      = $deny;
 		$this->comment   = $comment;
-		$this->address   = $address;
 		$this->owner     = $owner;
 		$this->source    = $source;
-		
-		// If this rule came from a program, get the name and store it locally
-		if(preg_match("/program/",$this->source)) {
-			$this->programName = $this->CI->api->firewall->get_firewall_program($this->port);
-		}
-		else {
-			$this->programName = "Unknown";
-		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -79,8 +49,6 @@ class FirewallRule extends ImpulseObject {
 	public function get_owner()         { return $this->owner; }
 	public function get_source()        { return $this->source; }
 	public function get_comment()       { return $this->comment; }
-	public function get_address()       { return $this->address; }
-	public function get_program_name()  { return $this->programName; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
