@@ -9,8 +9,7 @@ class Firewall extends ImpulseController {
 	
 	public function view($address=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {
@@ -45,8 +44,7 @@ class Firewall extends ImpulseController {
 	
 	public function create($address=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {
@@ -73,16 +71,13 @@ class Firewall extends ImpulseController {
 				redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
 			}
 			catch (DBException $dbE) {
-				$this->_error("DB: ".$dbE->getMessage());
-				return;
+				exit($this->_error("DB: ".$dbE->getMessage()));
 			}
 			catch (ObjectException $oE) {
-				$this->_error("Obj: ".$dbE->getMessage());
-				return;
+				exit($this->_error("Obj: ".$dbE->getMessage()));
 			}
 			catch (ControllerException $cE) {
-				$this->_error("Cont: ".$cE->getMessage());
-				return;
+				exit($this->_error("Cont: ".$cE->getMessage()));
 			}
 		}
 		else {
@@ -113,8 +108,7 @@ class Firewall extends ImpulseController {
 	
 	public function edit($address=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {
@@ -129,8 +123,7 @@ class Firewall extends ImpulseController {
 	
 	public function delete($address=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {

@@ -22,7 +22,7 @@ class MetahostRule extends FirewallRule {
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	
-	public function get_metahost_name() { return $this->metahostName(); }
+	public function get_metahost_name() { return $this->metahostName; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS

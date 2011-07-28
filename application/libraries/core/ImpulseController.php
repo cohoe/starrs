@@ -30,7 +30,7 @@ class ImpulseController extends CI_Controller {
 		$info['title'] = "Error";
 		
 		// Load the main view
-		$this->load->view('core/main',$info);
+		return $this->load->view('core/main',$info,TRUE);
 	}
 	
 	/**
@@ -86,6 +86,7 @@ class ImpulseController extends CI_Controller {
             self::$sys = $this->impulselib->get_active_system();
         }
         catch (ObjectNotFoundException $onfE) {
+			 exit($this->_error($onfE->getMessage()));
             $this->_error($onfE->getMessage());
             return;
         }

@@ -26,8 +26,8 @@ class StandaloneProgram extends FirewallRule {
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	
-	public function get_address() { return $this->address(); }
-	public function get_program_name() { return $this->programName(); }
+	public function get_address() { return $this->address; }
+	public function get_program_name() { return $this->programName; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS

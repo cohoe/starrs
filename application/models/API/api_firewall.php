@@ -286,7 +286,7 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 		
 		// Generate results
-		$rules = $this->get_address_rules($address);
+		$rules = $this->get_standalone_program_rules($address);
 		foreach($rules as $rule) {
 			if($rule->get_program_name() == $program && $rule->get_deny() == $deny) {
 				return $rule;
