@@ -8,7 +8,7 @@ class Admin extends ImpulseController {
 	public function __construct() {
 		parent::__construct();
 		if($this->api->isadmin() == false) {
-			exit($this->_error("Permission denied. You are not an IMPULSE administrator"));
+			$this->_error("Permission denied. You are not an IMPULSE administrator");
 		}
 	}
 	

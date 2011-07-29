@@ -10,7 +10,7 @@ class Interfaces extends ImpulseController {
      * @return void
      */
 	public function index() {
-		exit($this->_error("No action or object was specified."));
+		$this->_error("No action or object was specified.");
 	}
 
     /**
@@ -22,7 +22,7 @@ class Interfaces extends ImpulseController {
 
         // If the user tried to do something silly. 
 		if($systemName == NULL) {
-			exit($this->_error("No system was specified"));
+			$this->_error("No system was specified");
 		}
 		
 		// Create the local system object from the SESSION array.
@@ -78,7 +78,7 @@ class Interfaces extends ImpulseController {
 
         // If the user tried to do something silly. 
 		if($mac == NULL) {
-			exit($this->_error("No interface was specified"));
+			$this->_error("No interface was specified");
 		}
 
         // Create the local interface object from the SESSION array.
@@ -134,7 +134,7 @@ class Interfaces extends ImpulseController {
 
         // If the user tried to do something silly. 
 		if($mac == NULL) {
-			exit($this->_error("No interface was specified"));
+			$this->_error("No interface was specified");
 		}
 
         // Establish the local interface object
@@ -185,7 +185,7 @@ class Interfaces extends ImpulseController {
 
         // If the user did something silly.
 		if($mac ==  NULL) {
-			exit($this->_error("No interface was given!"));
+			$this->_error("No interface was given!");
 		}
 
         // Define the local interface object
@@ -229,11 +229,11 @@ class Interfaces extends ImpulseController {
 			);
 		}
         catch (DBException $dbE) {
-			exit($this->_error("DB:".$dbE->getMessage()));
+			$this->_error("DB:".$dbE->getMessage());
 			return;
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj:".$dbE->getMessage()));
+			$this->_error("Obj:".$dbE->getMessage());
 		}
 		
 		return $int;
@@ -267,7 +267,7 @@ class Interfaces extends ImpulseController {
 
         // If there were/were not errors
 		if($err != "") {
-			exit($this->_error($err));
+			$this->_error($err);
 		}
 	}
 
@@ -282,10 +282,10 @@ class Interfaces extends ImpulseController {
 			$this->api->systems->remove_interface($int);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error("DB:".$dbE->getMessage()));
+			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj:".$dbE->getMessage()));
+			$this->_error("Obj:".$dbE->getMessage());
 		}
 	}
 

@@ -11,23 +11,24 @@ class Rules extends ImpulseController {
 	
 	public function view($metahostName=NULL) {
 		if($metahostName == NULL) {
-			exit($this->_error("No metahost specified"));
+			$this->_error("No metahost specified");
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
+			$this->_error($dbE->getMessage());
 		}
 		catch (AmbiguousTargetException $atE) {
-			exit($this->_error($atE->getMessage()));
+			$this->_error($atE->getMessage());
 		}
 		catch (ObjectNotFoundException $onfE) {
-			exit($this->_error($onfE->getMessage()));
+			$this->_error($onfE->getMessage());
 		}
 		
 		// Navbar
 		$navModes['CREATE'] = "/metahosts/rules/create/".self::$mHost->get_name();
+		$navOptions['Overview'] = '/metahosts/view/'.self::$mHost->get_name();
 		$navOptions['Members'] = '/metahosts/members/view/'.self::$mHost->get_name();
 		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
 		$navbar = new Navbar(self::$mHost->get_name()." - Rules", $navModes, $navOptions);
@@ -40,7 +41,7 @@ class Rules extends ImpulseController {
 			$info['data'] = $this->_load_rules();
 		}
 		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
+			$this->_error($dbE->getMessage());
 		}
 		$info['title'] = "Metahost - ".self::$mHost->get_name();
 		

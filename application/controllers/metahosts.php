@@ -63,26 +63,27 @@ class Metahosts extends ImpulseController {
 	
 	public function view($metahostName=NULL) {
 		if($metahostName == NULL) {
-			exit($this->_error("No metahost specified"));
+			$this->_error("No metahost specified");
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
+			$this->_error($dbE->getMessage());
 		}
 		catch (AmbiguousTargetException $atE) {
-			exit($this->_error($atE->getMessage()));
+			$this->_error($atE->getMessage());
 		}
 		catch (ObjectNotFoundException $onfE) {
-			exit($this->_error($onfE->getMessage()));
+			$this->_error($onfE->getMessage());
 		}
 		
 		// Navbar
 		$navModes['EDIT'] = "/metahosts/edit/".self::$mHost->get_name();
 		$navModes['DELETE'] = "/metahosts/delete/".self::$mHost->get_name();
-		$navOptions['Members'] = '/members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
+		$navOptions['Overview'] = '/metahosts/view/'.self::$mHost->get_name();
+		$navOptions['Members'] = '/metahost/members/view/'.self::$mHost->get_name();
+		$navOptions['Rules'] = '/metahost/rules/view/'.self::$mHost->get_name();
 		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
 		
 		// Load the view data
@@ -128,19 +129,19 @@ class Metahosts extends ImpulseController {
 	
 	public function delete($metahostName=NULL) {
 		if($metahostName == NULL) {
-			exit($this->_error("No metahost specified"));
+			$this->_error("No metahost specified");
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
+			$this->_error($dbE->getMessage());
 		}
 		catch (AmbiguousTargetException $atE) {
-			exit(this->_error($atE->getMessage()));
+			$this->_error($atE->getMessage());
 		}
 		catch (ObjectNotFoundException $onfE) {
-			exit($this->_error($onfE->getMessage()));
+			$this->_error($onfE->getMessage());
 		}
 		
 		// They hit yes, delete the metahost
@@ -150,10 +151,10 @@ class Metahosts extends ImpulseController {
 				redirect(base_url()."metahosts/owned","location");
 			}
 			catch (DBException $dbE) {
-				exit($this->_error("DB:".$dbE->getMessage()));
+				$this->_error("DB:".$dbE->getMessage());
 			}
 			catch (ObjectException $oE) {
-				exit($this->_error("Obj:".$dbE->getMessage()));
+				$this->_error("Obj:".$dbE->getMessage());
 			}
 		}
 		
@@ -188,19 +189,19 @@ class Metahosts extends ImpulseController {
 	
 	public function edit($metahostName=NULL) {
 		if($metahostName == NULL) {
-			exit($this->_error("No metahost specified"));
+			$this->_error("No metahost specified");
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
+			$this->_error($dbE->getMessage());
 		}
 		catch (AmbiguousTargetException $atE) {
-			exit($this->_error($atE->getMessage()));
+			$this->_error($atE->getMessage());
 		}
 		catch (ObjectNotFoundException $onfE) {
-			exit($this->_error($onfE->getMessage()));
+			$this->_error($onfE->getMessage());
 		}
 		
 		// Information is there. Execute the edit
@@ -210,7 +211,7 @@ class Metahosts extends ImpulseController {
 				redirect(base_url()."metahosts/view/".self::$mHost->get_name(),'location');
 			}
 			catch (ControllerException $cE) {
-				exit($this->_error($cE->getMessage()));
+				$this->_error($cE->getMessage());
 			}
 		}
 		else {
@@ -248,14 +249,14 @@ class Metahosts extends ImpulseController {
 			);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error("DB: ".$dbE->getMessage()));
+			$this->_error("DB: ".$dbE->getMessage());
 			return;
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj: ".$dbE->getMessage()));
+			$this->_error("Obj: ".$dbE->getMessage());
 		}	
 		catch (APIException $apiE) {
-			exit($this->_error("API: ".$apiE->getMessage()));
+			$this->_error("API: ".$apiE->getMessage());
 		}
 		
 		return $mHost;

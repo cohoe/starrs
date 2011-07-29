@@ -108,7 +108,7 @@ class Systems extends ImpulseController {
 				$sys = $this->api->systems->get_system_data($systemName,false);
 			}
 			catch (ObjectNotFoundException $oNFE) {
-				exit($this->_error("System not found!"));
+				$this->_error("System not found!");
 			}
 			$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
 			
@@ -306,10 +306,10 @@ class Systems extends ImpulseController {
 			$this->_success("Successfully renewed \"".$sys->get_system_name()."\" for another year.");
 		}
 		catch (DBException $dbE) {
-			exit($this->_error("DB:".$dbE->getMessage()));
+			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj:".$dbE->getMessage()));
+			$this->_error("Obj:".$dbE->getMessage());
 		}
 	}
 
@@ -393,13 +393,13 @@ class Systems extends ImpulseController {
 			}
 		}
 		catch (DBException $dbE) {
-			exit($this->_error("DB: ".$dbE->getMessage()));
+			$this->_error("DB: ".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj: ".$dbE->getMessage()));
+			$this->_error("Obj: ".$dbE->getMessage());
 		}	
 		catch (APIException $apiE) {
-			exit($this->_error("API: ".$apiE->getMessage()));
+			$this->_error("API: ".$apiE->getMessage());
 		}
 		
 		return $sys;
@@ -438,7 +438,7 @@ class Systems extends ImpulseController {
 		}
 		
 		if($err != "") {
-			exit($this->_error($err));
+			$this->_error($err);
 		}
 	}
 
@@ -452,10 +452,10 @@ class Systems extends ImpulseController {
 			$this->api->systems->remove_system($sys);
 		}
 		catch (DBException $dbE) {
-			exit($this->_error("DB:".$dbE->getMessage()));
+			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			exit($this->_error("Obj:".$dbE->getMessage()));
+			$this->_error("Obj:".$dbE->getMessage());
 		}
 	}
 }

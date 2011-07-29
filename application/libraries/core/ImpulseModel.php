@@ -23,6 +23,5 @@ abstract class ImpulseModel extends CI_Model {
 		}
 	}
 }
-
 /* End of file ImpulseModel.php */
 /* Location: ./application/libraries/core/ImpulseModel.php */

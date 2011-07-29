@@ -29,8 +29,8 @@ class ImpulseController extends CI_Controller {
 		$info['data'] = $this->load->view('core/error',$data,TRUE);
 		$info['title'] = "Error";
 		
-		// Load the main view
-		return $this->load->view('core/main',$info,TRUE);
+		// Exit PHP loading the view
+		exit($this->load->view('core/main',$info,TRUE));
 	}
 	
 	/**
