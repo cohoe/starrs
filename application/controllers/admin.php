@@ -7,13 +7,12 @@ class Admin extends ImpulseController {
 	
 	public function __construct() {
 		parent::__construct();
+		if($this->api->isadmin() == false) {
+			exit($this->_error("Permission denied. You are not an IMPULSE administrator"));
+		}
 	}
 	
 	public function index() {
-		if($this->api->isadmin() == false) {
-			$this->_error("Permission denied. You are not an IMPULSE administrator");
-			return;
-		}
 		$this->load->library('table');
 
 		$query = $this->db->query("SELECT option,value FROM management.configuration");

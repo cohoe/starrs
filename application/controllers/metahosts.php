@@ -63,23 +63,19 @@ class Metahosts extends ImpulseController {
 	
 	public function view($metahostName=NULL) {
 		if($metahostName == NULL) {
-			$this->_error("No metahost specified");
-			return;
+			exit($this->_error("No metahost specified"));
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
-			return;
+			exit($this->_error($dbE->getMessage()));
 		}
 		catch (AmbiguousTargetException $atE) {
-			$this->_error($atE->getMessage());
-			return;
+			exit($this->_error($atE->getMessage()));
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		// Navbar
@@ -132,23 +128,19 @@ class Metahosts extends ImpulseController {
 	
 	public function delete($metahostName=NULL) {
 		if($metahostName == NULL) {
-			$this->_error("No metahost specified");
-			return;
+			exit($this->_error("No metahost specified"));
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
-			return;
+			exit($this->_error($dbE->getMessage()));
 		}
 		catch (AmbiguousTargetException $atE) {
-			$this->_error($atE->getMessage());
-			return;
+			exit(this->_error($atE->getMessage()));
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		// They hit yes, delete the metahost
@@ -158,12 +150,10 @@ class Metahosts extends ImpulseController {
 				redirect(base_url()."metahosts/owned","location");
 			}
 			catch (DBException $dbE) {
-				$this->_error("DB:".$dbE->getMessage());
-				return;
+				exit($this->_error("DB:".$dbE->getMessage()));
 			}
 			catch (ObjectException $oE) {
-				$this->_error("Obj:".$dbE->getMessage());
-				return;
+				exit($this->_error("Obj:".$dbE->getMessage()));
 			}
 		}
 		
@@ -198,23 +188,19 @@ class Metahosts extends ImpulseController {
 	
 	public function edit($metahostName=NULL) {
 		if($metahostName == NULL) {
-			$this->_error("No metahost specified");
-			return;
+			exit($this->_error("No metahost specified"));
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
-			return;
+			exit($this->_error($dbE->getMessage()));
 		}
 		catch (AmbiguousTargetException $atE) {
-			$this->_error($atE->getMessage());
-			return;
+			exit($this->_error($atE->getMessage()));
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		// Information is there. Execute the edit
@@ -224,8 +210,7 @@ class Metahosts extends ImpulseController {
 				redirect(base_url()."metahosts/view/".self::$mHost->get_name(),'location');
 			}
 			catch (ControllerException $cE) {
-				$this->_error($cE->getMessage());
-				return;
+				exit($this->_error($cE->getMessage()));
 			}
 		}
 		else {
@@ -263,16 +248,14 @@ class Metahosts extends ImpulseController {
 			);
 		}
 		catch (DBException $dbE) {
-			$this->_error("DB: ".$dbE->getMessage());
+			exit($this->_error("DB: ".$dbE->getMessage()));
 			return;
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj: ".$dbE->getMessage());
-			return;
+			exit($this->_error("Obj: ".$dbE->getMessage()));
 		}	
 		catch (APIException $apiE) {
-			$this->_error("API: ".$apiE->getMessage());
-			return;
+			exit($this->_error("API: ".$apiE->getMessage()));
 		}
 		
 		return $mHost;

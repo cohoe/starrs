@@ -16,8 +16,7 @@ class Addresses extends ImpulseController {
 
         // If the user tried to do something silly
 		if($address==NULL) {
-			$this->_error("No IP address specified!");
-			return;	
+			exit($this->_error("No IP address specified!"));
 		}
 
         // Establish the interface
@@ -26,24 +25,20 @@ class Addresses extends ImpulseController {
 			$int = $sys->get_interface($this->api->ip->arp($address));
         }
         catch (ObjectNotFoundException $onfE) {
-            $this->_error($onfE->getMessage());
-            return;
+            exit($this->_error($onfE->getMessage()));
         }
 		catch (ObjectException $oE) {
-			$this->_error($oE->getMessage());
-            return;
+			exit($this->_error($oE->getMessage()));
 		}
 
 		if(!($int instanceof NetworkInterface)) {
-			$this->_error("No interface could be found. Click Systems on the left to try again");
-			return;
+			exit($this->_error("No interface could be found. Click Systems on the left to try again"));
 		}
         try {
 		    $addr = $int->get_address($address);
         }
         catch (APIException $apiE) {
-            $this->_error($apiE->getMessage());
-            return;
+            exit($this->_error($apiE->getMessage()));
         }
 		
 		// Navbar
@@ -79,7 +74,7 @@ class Addresses extends ImpulseController {
 
         // If the user forgot something
 		if($mac == NULL) {
-			$this->_error("No interface specified!");
+			exit($this->_error("No interface specified!"));
 		}
 
         // Get the interface object
@@ -144,7 +139,7 @@ class Addresses extends ImpulseController {
 
         // If the user forgot to specify something
 		if($mac == NULL) {
-			$this->_error("No interface specified!");
+			exit($this->_error("No interface specified!"));
 		}
 
         $sys = $this->impulselib->get_active_system();
@@ -192,8 +187,7 @@ class Addresses extends ImpulseController {
 	public function edit($address=NULL) {
 		// If the user forgot to specify something
 		if($address == NULL) {
-			$this->_error("No address specified!");
-			return;
+			exit($this->_error("No address specified!"));
 		}
 		
 		// Create the local interface object from the SESSION array.
@@ -210,8 +204,7 @@ class Addresses extends ImpulseController {
 				$this->impulselib->set_active_system($sys);
 			}
 			catch (DBException $dbE) {
-				$this->_error($dbE->getMessage());
-				return;
+				exit($this->_error($dbE->getMessage()));
 			}
 			
 			if($addr->get_dynamic() == TRUE) {
@@ -281,12 +274,10 @@ class Addresses extends ImpulseController {
 			);
 		}
 		catch (DBException $dbE) {
-			$this->_error("DB:".$dbE->getMessage());
-			return;
+			exit($this->_error("DB:".$dbE->getMessage()));
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$oE->getMessage());
-			return;
+			exit($this->_error("Obj:".$oE->getMessage()));
 		}
 		
 		// Get the object
@@ -349,12 +340,10 @@ class Addresses extends ImpulseController {
 			$this->api->systems->remove_interface_address($addr);
 		}
 		catch (DBException $dbE) {
-			$this->_error("DB:".$dbE->getMessage());
-			return;
+			exit($this->_error("DB:".$dbE->getMessage()));
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$oE->getMessage());
-			return;
+			exit($this->_error("Obj:".$oE->getMessage()));
 		}
 	}
 }

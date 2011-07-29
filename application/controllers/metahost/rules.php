@@ -11,23 +11,19 @@ class Rules extends ImpulseController {
 	
 	public function view($metahostName=NULL) {
 		if($metahostName == NULL) {
-			$this->_error("No metahost specified");
-			return;
+			exit($this->_error("No metahost specified"));
 		}
 		try {
 			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
-			return;
+			exit($this->_error($dbE->getMessage()));
 		}
 		catch (AmbiguousTargetException $atE) {
-			$this->_error($atE->getMessage());
-			return;
+			exit($this->_error($atE->getMessage()));
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		// Navbar
@@ -44,8 +40,7 @@ class Rules extends ImpulseController {
 			$info['data'] = $this->_load_rules();
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
-			return;
+			exit($this->_error($dbE->getMessage()));
 		}
 		$info['title'] = "Metahost - ".self::$mHost->get_name();
 		

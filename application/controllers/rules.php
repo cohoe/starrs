@@ -11,16 +11,13 @@ class Rules extends ImpulseController {
 	
 	public function view($address=NULL,$transport=NULL,$port=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if($transport==NULL) {
-			$this->_error("No transport specified");
-			return;
+			exit($this->_error("No transport specified"));
 		}
 		if($port==NULL) {
-			$this->_error("No port specified");
-			return;
+			exit($this->_error("No port specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {
@@ -34,8 +31,7 @@ class Rules extends ImpulseController {
 			self::$fwRule = self::$addr->get_rule($port,$transport);
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		// Navbar
@@ -61,16 +57,13 @@ class Rules extends ImpulseController {
 	
 	public function delete($address=NULL,$transport=NULL,$port=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if($transport==NULL) {
-			$this->_error("No transport specified");
-			return;
+			exit($this->_error("No transport specified"));
 		}
 		if($port==NULL) {
-			$this->_error("No port specified");
-			return;
+			exit($this->_error("No port specified"));
 		}
 		
 		if(!(self::$sys instanceof System)) {
@@ -84,8 +77,7 @@ class Rules extends ImpulseController {
 			self::$fwRule = self::$addr->get_rule($port,$transport);
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$this->_error($onfE->getMessage());
-			return;
+			exit($this->_error($onfE->getMessage()));
 		}
 		
 		try {
@@ -105,7 +97,7 @@ class Rules extends ImpulseController {
 			redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
 		}
 		catch (DBException $dbE) {
-			$this->_error($dbE->getMessage());
+			exit($this->_error($dbE->getMessage()));
 			return;
 		}
 	}

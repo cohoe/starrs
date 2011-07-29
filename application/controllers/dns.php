@@ -11,15 +11,13 @@ class Dns extends ImpulseController {
 	}
 	
 	public function index() {
-		$this->_error("No action specified");
-		return;
+		exit($this->_error("No action specified"));
 	}
 	
 	public function view($address=NULL) {
 	
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if(!(self::$sys instanceof System)) {
 			$this->_load_system();
@@ -89,8 +87,7 @@ class Dns extends ImpulseController {
 	public function create($address) {
 	
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if(!(self::$sys instanceof System)) {
 			$this->_load_system();
@@ -102,7 +99,7 @@ class Dns extends ImpulseController {
 		if($this->input->post('typeSubmit')) {
 		
 			if(self::$addr->get_address_record() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
-				$this->_error("Need to create an address (A/AAAA) record first!");
+				exit($this->_error("Need to create an address (A/AAAA) record first!"));
 				return;
 			}
 		
@@ -139,16 +136,13 @@ class Dns extends ImpulseController {
 				$record = $this->_create();
 			}
 			catch (DBException $dbE) {
-				$this->_error("DB: ".$dbE->getMessage());
-				return;
+				exit($this->_error("DB: ".$dbE->getMessage()));
 			}
 			catch (ObjectException $oE) {
-				$this->_error("Obj: ".$dbE->getMessage());
-				return;
+				exit($this->_error("Obj: ".$dbE->getMessage()));
 			}
 			catch (ControllerException $cE) {
-				$this->_error("Cont: ".$cE->getMessage());
-				return;
+				exit($this->_error("Cont: ".$cE->getMessage()));
 			}
 			
 			// Add it to the address
@@ -192,8 +186,7 @@ class Dns extends ImpulseController {
 	
 	public function edit($address=NULL,$type=NULL,$zone=NULL,$hostname=NULL,$alias=NULL) {
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if(!(self::$sys instanceof System)) {
 			$this->_load_system();
@@ -288,8 +281,7 @@ class Dns extends ImpulseController {
 	public function delete($address=NULL,$type=NULL,$zone=NULL,$hostname=NULL,$alias=NULL) {
 		// Check to make sure the user didnt forget anything
 		if($address==NULL) {
-			$this->_error("No address specified");
-			return;
+			exit($this->_error("No address specified"));
 		}
 		if(!(self::$sys instanceof System)) {
 			$this->_load_system();
@@ -338,7 +330,7 @@ class Dns extends ImpulseController {
 					$this->api->dns->remove_dns_address($address);
 					break;
 				default:
-					$this->_error("Unable to determine your type. Make sure you aren't pulling any URL shenanigans.");
+					exit($this->_error("Unable to determine your type. Make sure you aren't pulling any URL shenanigans."));
 					return;
 			}
 			
