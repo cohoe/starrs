@@ -29,19 +29,78 @@ class Api_firewall extends ImpulseModel {
         // Generate results
         $resultSet = array();
         foreach($query->result_array() as $fwRule) {
-            $resultSet[] = new FirewallRule(
-                $fwRule['port'],
-                $fwRule['transport'],
-                $fwRule['deny'],
-                $fwRule['comment'],
-                $fwRule['address'],
-                $fwRule['owner'],
-                $fwRule['source'],
-                $fwRule['date_created'],
-                $fwRule['date_modified'],
-                $fwRule['last_modifier']
-            );
+            switch($fwRule['source']) {
+                case "standalone-standalone":
+                    $resultSet[] = new StandaloneRule(
+                        $fwRule['address'],
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "standalone-program":
+                    $resultSet[] = new StandaloneProgram(
+                        $fwRule['address'],
+                        $this->get_firewall_program($fwRule['port']),
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "metahost-standalone":
+                    $resultSet[] = new MetahostRule(
+                        $this->get_metahost_member($fwRule['address'])->get_name(),
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "metahost-program":
+                    $resultSet[] = new MetahostMember(
+                        $this->get_metahost_member($fwRule['address'])->get_name(),
+                        $this->get_firewall_program($fwRule['port']),
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                default:
+                    throw new DBException("Invalid rule source found. This is a DB problem. Contact your system administrator.");
+            }
+
         }
+
+//        $resultSet[] = new FirewallRule(
+//                $fwRule['port'],
+//                $fwRule['transport'],
+//                $fwRule['deny'],
+//                $fwRule['comment'],
+//                $fwRule['address'],
+//                $fwRule['owner'],
+//                $fwRule['source'],
+//                $fwRule['date_created'],
+//                $fwRule['date_modified'],
+//                $fwRule['last_modifier']
+//            );
 
         // Return results
         if(count($resultSet > 0)) {
