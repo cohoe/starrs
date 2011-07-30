@@ -36,8 +36,8 @@ class Rule extends ImpulseController {
 
 		// Navbar
 		$navOptions['Rules'] = "/firewall/rules/view/".self::$addr->get_address();
-		$navModes['EDIT'] = "/rules/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
-		$navModes['DELETE'] = "/rules/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+		$navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+		$navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -94,7 +94,7 @@ class Rule extends ImpulseController {
 			$this->impulselib->set_active_system(self::$sys);
 
 			// Move along
-			redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
+			redirect(base_url()."/firewall/rules/view/".self::$addr->get_address(),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
