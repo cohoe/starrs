@@ -74,7 +74,7 @@ class Firewall extends ImpulseController {
 				$this->_error("DB: ".$dbE->getMessage());
 			}
 			catch (ObjectException $oE) {
-				$this->_error("Obj: ".$dbE->getMessage());
+				$this->_error("Obj: ".$oE->getMessage());
 			}
 			catch (ControllerException $cE) {
 				$this->_error("Cont: ".$cE->getMessage());
@@ -138,7 +138,7 @@ class Firewall extends ImpulseController {
 	
 	private function _create() {
 		if($this->input->post('program')) {
-			$fwRule = $this->api->firewall->create_firewall_rule_program(
+			$fwRule = $this->api->firewall->create_standalone_program(
 				self::$addr->get_address(),
 				$this->input->post('program'),
 				$this->input->post('deny'),
@@ -146,7 +146,7 @@ class Firewall extends ImpulseController {
 			);
 		}
 		else {
-			$fwRule = $this->api->firewall->create_firewall_rule(
+			$fwRule = $this->api->firewall->create_standalone_rule(
 				self::$addr->get_address(),
 				$this->input->post('port'),
 				$this->input->post('transport'),

@@ -65,7 +65,7 @@ class Rules extends ImpulseController {
 			}
 
 			// Continue loading view data
-			$info['data'] = $this->load->view('firewall/rules/create',$form,TRUE);
+			$info['data'] = $this->load->view('firewall/metahosts/rules/create',$form,TRUE);
 			$info['title'] = "Create Metahost Rule";
 
 			// Load the main view

@@ -73,7 +73,7 @@ class Api_firewall extends ImpulseModel {
 		return $resultSet;
 	}
 	
-	public function create_firewall_rule($address, $port, $transport, $deny, $owner, $comment) {
+	public function create_standalone_rule($address, $port, $transport, $deny, $owner, $comment) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_rule(
 			{$this->db->escape($address)},
@@ -106,7 +106,7 @@ class Api_firewall extends ImpulseModel {
         );
 	}
 	
-	public function create_rule_program($address, $program, $deny, $owner) {
+	public function create_standalone_program($address, $program, $deny, $owner) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_rule_program(
 			{$this->db->escape($address)},
@@ -198,7 +198,7 @@ class Api_firewall extends ImpulseModel {
 		return $this->get_metahost($name);
 	}
 	
-	public function remove_firewall_rule($address, $port, $transport) {
+	public function remove_standalone_rule($address, $port, $transport) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_rule(
 			{$this->db->escape($address)},
@@ -211,7 +211,7 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 	}
 	
-	public function remove_firewall_rule_program($address, $program) {
+	public function remove_standalone_program($address, $program) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_rule_program(
 			{$this->db->escape($address)},
