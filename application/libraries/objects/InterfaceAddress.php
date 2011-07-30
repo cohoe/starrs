@@ -205,7 +205,6 @@ class InterfaceAddress extends ImpulseObject {
 	 */
 	public function add_firewall_rule($rule) {
 		// If it's not a rule, blow up
-        echo get_class($rule);
 		if(!$rule instanceof FirewallRule) {
 			throw new ObjectException("Cannot add a non-rule as a rule");
 		}
