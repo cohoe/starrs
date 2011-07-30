@@ -45,8 +45,13 @@ class Rules extends ImpulseController {
         $this->_load_metahost($metahostName);
 
         if($this->input->post('submit')) {
-			$mHostRule = $this->_create();
-			redirect(base_url()."metahosts/rules/view/".self::$mHost->get_name(),'location');
+            try {
+                $mHostRule = $this->_create();
+                redirect(base_url()."metahosts/rules/view/".self::$mHost->get_name(),'location');
+            }
+            catch (DBException $dbE) {
+                $this->_error($dbE->getMessage());
+            }
 		}
         else {
 			// Navbar

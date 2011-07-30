@@ -18,7 +18,7 @@
 		</select><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" class="input_form_input" /><br /><br />
 		<label for="text">Deny?: </label>
-			<input type="radio" name="deny" value="t" class="input_form_radio" />Yes
+			<input type="radio" name="deny" value="t" class="input_form_radio" checked />Yes
 			<input type="radio" name="deny" value="f" class="input_form_radio" />No<br />
 		<? if(isset($admin)) {?>
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" class="input_form_input" /><br />
