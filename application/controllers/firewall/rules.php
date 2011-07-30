@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(APPPATH . "libraries/core/ImpulseController.php");
 
-class Firewall extends ImpulseController {
+class Rules extends ImpulseController {
 	
 	public function __construct() {
 		parent::__construct();
