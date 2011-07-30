@@ -82,8 +82,8 @@ class Metahosts extends ImpulseController {
 		$navModes['EDIT'] = "/metahosts/edit/".self::$mHost->get_name();
 		$navModes['DELETE'] = "/metahosts/delete/".self::$mHost->get_name();
 		$navOptions['Overview'] = '/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/metahost/members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/metahost/rules/view/'.self::$mHost->get_name();
+		$navOptions['Members'] = '/metahosts/members/view/'.self::$mHost->get_name();
+		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
 		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
 		
 		// Load the view data
@@ -253,7 +253,7 @@ class Metahosts extends ImpulseController {
 			return;
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj: ".$dbE->getMessage());
+			$this->_error("Obj: ".$oE->getMessage());
 		}	
 		catch (APIException $apiE) {
 			$this->_error("API: ".$apiE->getMessage());
