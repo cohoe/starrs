@@ -7,6 +7,8 @@ class ImpulseController extends CI_Controller {
 	protected static $sys;
 	protected static $int;
 	protected static $addr;
+    protected static $mHost;
+    
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
     
@@ -113,6 +115,21 @@ class ImpulseController extends CI_Controller {
 			return;
 		}
 	}
+
+    protected function _load_metahost($metahostName) {
+        try {
+			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
+		}
+		catch (DBException $dbE) {
+			$this->_error($dbE->getMessage());
+		}
+		catch (AmbiguousTargetException $atE) {
+			$this->_error($atE->getMessage());
+		}
+		catch (ObjectNotFoundException $onfE) {
+			$this->_error($onfE->getMessage());
+		}
+    }
 }
 
 /* End of file ImpulseController.php */
