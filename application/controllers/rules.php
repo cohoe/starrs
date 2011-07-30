@@ -82,10 +82,10 @@ class Rules extends ImpulseController {
 		
 		try {
 			if(self::$fwRule->get_source() == 'standalone-program') {
-				$this->api->firewall->remove_firewall_rule_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
+				$this->api->firewall->remove_standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
 			}
 			else {
-				$this->api->firewall->remove_firewall_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+				$this->api->firewall->remove_standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
 			}
 		
 			// Set the SESSION data
