@@ -37,8 +37,8 @@ class Rule extends ImpulseController {
 
 
         if(preg_match("/^standalone-/",self::$fwRule->get_source())) {
-            $navModes['DELETE'] = "/metahost/rules/delete/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
-            $navModes['EDIT'] = "/metahost/rule/edit/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            $navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            $navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
             $title = "Firewall Rule";
         }
         else {
