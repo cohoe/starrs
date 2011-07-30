@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/api_dns.php" afterPath="$PROJECT_DIR$/application/models/API/api_dns.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/metahost/rules.php" afterPath="$PROJECT_DIR$/application/controllers/metahost/rules.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,19 +35,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rules.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="rules.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/metahost/rules.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="33" selection-start="1941" selection-end="1941" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_dns.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="528" column="32" selection-start="16280" selection-end="16280" vertical-scroll-proportion="0.69253296">
+            <state line="53" column="22" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.4827586">
               <folding />
             </state>
           </provider>
@@ -99,8 +90,8 @@
         <option value="$PROJECT_DIR$/application/models/API/api_firewall.php" />
         <option value="$PROJECT_DIR$/application/controllers/firewall.php" />
         <option value="$PROJECT_DIR$/application/controllers/rules.php" />
-        <option value="$PROJECT_DIR$/application/controllers/metahost/rules.php" />
         <option value="$PROJECT_DIR$/application/models/API/api_dns.php" />
+        <option value="$PROJECT_DIR$/application/controllers/metahost/rules.php" />
       </list>
     </option>
   </component>
@@ -722,16 +713,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/metahost/rules.php">
+    <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="33" selection-start="1941" selection-end="1941" vertical-scroll-proportion="0.0">
+        <state line="526" column="0" selection-start="16236" selection-end="16236" vertical-scroll-proportion="0.6486091">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/metahost/rules.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="528" column="32" selection-start="16280" selection-end="16280" vertical-scroll-proportion="0.69253296">
+        <state line="53" column="22" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.4827586">
           <folding />
         </state>
       </provider>
