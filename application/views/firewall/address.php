@@ -17,7 +17,7 @@
             else {
                 $class = "firewall_rule_port_box_unknown";
             }
-			echo "<td class=\"$class\"><a href=\"/rules/view/".$addr->get_address()."/".$rule->get_transport()."/".$rule->get_port()."/\">".$rule->get_port()."</a></td>";
+			echo "<td class=\"$class\"><a href=\"/firewall/rules/view/".$addr->get_address()."/".$rule->get_transport()."/".$rule->get_port()."/\">".$rule->get_port()."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {
 				echo "</tr>";
 			}
