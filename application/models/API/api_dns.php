@@ -529,7 +529,12 @@ class Api_dns extends ImpulseModel {
 		$this->_check_error($query);
 
         // Return result
-        return $query->row()->check_dns_hostname;
+        if($query->row()->check_dns_hostname == 't') {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 
