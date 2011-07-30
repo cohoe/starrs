@@ -108,7 +108,7 @@ class Api_firewall extends ImpulseModel {
 	
 	public function create_firewall_rule_program($address, $program, $deny, $owner) {
 		// SQL Query
-		$sql = "SELECT api.create_firewall_rule_program(
+		$sql = "SELECT * FROM api.create_firewall_rule_program(
 			{$this->db->escape($address)},
 			{$this->db->escape($program)},
 			{$this->db->escape($deny)},
@@ -118,15 +118,24 @@ class Api_firewall extends ImpulseModel {
 
         // Check error
         $this->_check_error($query);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned more than one object. This is a problem. Contact your system administrator");
+        }
 		
 		// Generate results
-		$rules = $this->get_standalone_program_rules($address);
-		foreach($rules as $rule) {
-			if($rule->get_program_name() == $program && $rule->get_deny() == $deny) {
-				return $rule;
-			}
-		}
-		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
+		return new StandaloneProgram(
+            $query->row()->address,
+            $query->row()->name,
+            $query->row()->port,
+            $query->row()->transport,
+            $query->row()->deny,
+            $query->row()->comment,
+            $query->row()->owner,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 
     public function create_metahost_member($address,$metahostName) {
