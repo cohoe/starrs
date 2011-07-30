@@ -419,6 +419,14 @@ a {
 }
 
 .firewall_rule_port_box_unknown {
+    text-align: center;
+	color: white;
+	background-color: gold;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_unknown {
 	text-align: center;
 	color: black;
 	background-color: gold;
