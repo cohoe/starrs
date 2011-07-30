@@ -1,12 +1,15 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * Metahost program rules.
+ * NOTE: You cannot modify these rules since you either create or delete the program, nothing more.
+ */
 class MetahostProgram extends FirewallRule {
 
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
 	// string	The metahost to apply the rule to
-	private $metahostNmae;
+	private $metahostName;
 	
 	// string	The name of the program that defines this rule
 	private $programName;

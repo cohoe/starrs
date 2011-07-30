@@ -27,6 +27,36 @@ class StandaloneRule extends FirewallRule {
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
 
+    public function set_address($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'port', $new);
+		$this->address = $new;
+	}
+
+    public function set_port($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'port', $new);
+		$this->port = $new;
+	}
+
+    public function set_transport($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'transport', $new);
+		$this->transport = $new;
+	}
+
+    public function set_deny($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'deny', $new);
+		$this->deny = $new;
+	}
+
+    public function set_owner($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'owner', $new);
+		$this->owner = $new;
+	}
+
+    public function set_comment($new) {
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'comment', $new);
+		$this->comment = $new;
+	}
+
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 

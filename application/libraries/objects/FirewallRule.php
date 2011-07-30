@@ -7,22 +7,22 @@ class FirewallRule extends ImpulseObject {
 	// MEMBER VARIABLES
 	
 	// int		The port to apply to
-	private $port;
+	protected $port;
 	
 	// string	The transport protocol (layer 4) of the rule
-	private $transport;
+	protected $transport;
 	
 	// bool		Deny or allow the traffic on the port/transport
-	private $deny;
+	protected $deny;
 	
 	// string	A comment on the rule
-	private $comment;
+	protected $comment;
 	
 	// string	The owner of the rule. You can apply rules to systems you do not own if you are an admin
-	private $owner;
+	protected $owner;
 	
 	// string	The source of the rule (metahost, program, standalone, etc)
-	private $source;
+	protected $source;
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -52,6 +52,8 @@ class FirewallRule extends ImpulseObject {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
+
+
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
