@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/application/controllers/rules.php" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/firewall/rules.php" afterPath="$PROJECT_DIR$/application/controllers/firewall/rules.php" />
     </list>
@@ -29,7 +30,7 @@
       <file leaf-file-name="rules.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/firewall/rules.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="54" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.44323143">
+            <state line="123" column="25" selection-start="3838" selection-end="3838" vertical-scroll-proportion="0.329429">
               <folding />
             </state>
           </provider>
@@ -562,10 +563,10 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965517" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27102804" sideWeight="0.67172414" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27102804" sideWeight="0.6703448" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32827586" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32827586" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -599,7 +600,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed rule link" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed redirect" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -612,7 +613,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="completed metahost rule modifications, still working on standalone. need to get API reworked as well" />
     <MESSAGE value="finished firewall objects. changed API code to return the object we just created" />
     <MESSAGE value="debug" />
     <MESSAGE value="fixed SQL statement" />
@@ -637,6 +637,7 @@
     <MESSAGE value="fixed firewall link in interface controller" />
     <MESSAGE value="something" />
     <MESSAGE value="fixed rule link" />
+    <MESSAGE value="fixed redirect" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -740,16 +741,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/rules.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="35" selection-start="1116" selection-end="1116" vertical-scroll-proportion="0.7752809">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/firewall/rules.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="54" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.44323143">
+        <state line="123" column="25" selection-start="3838" selection-end="3838" vertical-scroll-proportion="0.329429">
           <folding />
         </state>
       </provider>

@@ -121,19 +121,51 @@ class Rules extends ImpulseController {
 		echo "EDIT!";
 	}
 	
-	public function delete($address=NULL) {
+	public function delete($address=NULL,$transport=NULL,$port=NULL) {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
-		
+		if($transport==NULL) {
+			$this->_error("No transport specified");
+		}
+		if($port==NULL) {
+			$this->_error("No port specified");
+		}
+
 		if(!(self::$sys instanceof System)) {
 			$this->_load_system();
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
 		}
-		
-		echo "DELETE!";
+
+		try {
+			self::$fwRule = self::$addr->get_rule($port,$transport);
+		}
+		catch (ObjectNotFoundException $onfE) {
+			$this->_error($onfE->getMessage());
+		}
+
+		try {
+			if(self::$fwRule->get_source() == 'standalone-program') {
+				$this->api->firewall->remove_standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
+			}
+			else {
+				$this->api->firewall->remove_standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+			}
+
+			// Set the SESSION data
+			self::$int->add_address($this->api->systems->get_system_interface_address($address,true));
+			self::$sys->add_interface(self::$int);
+			$this->impulselib->set_active_system(self::$sys);
+
+			// Move along
+			redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
+		}
+		catch (DBException $dbE) {
+			$this->_error($dbE->getMessage());
+			return;
+		}
 	}
 	
 	private function _create() {
