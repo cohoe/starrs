@@ -93,7 +93,6 @@ class Api_firewall extends ImpulseModel {
         }
 		
 		// Generate results
-        print_r($query->row());
         return new StandaloneRule(
             $query->row()->address,
             $query->row()->port,
