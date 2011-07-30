@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/firewall.php" afterPath="$PROJECT_DIR$/application/controllers/firewall.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/metahost/rules.php" afterPath="$PROJECT_DIR$/application/controllers/metahost/rules.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/api_firewall.php" afterPath="$PROJECT_DIR$/application/models/API/api_firewall.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,7 +31,16 @@
       <file leaf-file-name="api_firewall.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/models/API/api_firewall.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="213" column="38" selection-start="6404" selection-end="6404" vertical-scroll-proportion="120.0">
+            <state line="173" column="43" selection-start="5303" selection-end="5326" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetahostProgram.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/objects/MetahostProgram.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="147" selection-start="629" selection-end="744" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -38,7 +49,7 @@
       <file leaf-file-name="rules.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/metahost/rules.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="22" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.4827586">
+            <state line="102" column="28" selection-start="3349" selection-end="3356" vertical-scroll-proportion="0.7198276">
               <folding />
             </state>
           </provider>
@@ -47,16 +58,7 @@
       <file leaf-file-name="firewall.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/firewall.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="91" column="72" selection-start="2781" selection-end="2946" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="routes.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/config/routes.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="26" selection-start="681" selection-end="684" vertical-scroll-proportion="0.0">
+            <state line="140" column="43" selection-start="4202" selection-end="4202" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -87,10 +89,10 @@
         <option value="$PROJECT_DIR$/application/controllers/metahosts.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
         <option value="$PROJECT_DIR$/application/views/firewall/metahosts/rules/create.php" />
-        <option value="$PROJECT_DIR$/application/models/API/api_firewall.php" />
-        <option value="$PROJECT_DIR$/application/controllers/firewall.php" />
         <option value="$PROJECT_DIR$/application/controllers/rules.php" />
         <option value="$PROJECT_DIR$/application/models/API/api_dns.php" />
+        <option value="$PROJECT_DIR$/application/controllers/firewall.php" />
+        <option value="$PROJECT_DIR$/application/models/API/api_firewall.php" />
         <option value="$PROJECT_DIR$/application/controllers/metahost/rules.php" />
       </list>
     </option>
@@ -226,102 +228,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="metahosts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="metahosts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rules" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="models" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -363,6 +269,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="objects" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -572,7 +500,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added dns check hostname" />
+    <option name="LAST_COMMIT_MESSAGE" value="wrong form variable" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -585,7 +513,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="added session to systems" />
     <MESSAGE value="cleaned up and commented libraries" />
     <MESSAGE value="added error catching to addresses" />
     <MESSAGE value="added return" />
@@ -610,32 +537,12 @@
     <MESSAGE value="fixed wrong function" />
     <MESSAGE value="added view data for metahost rules" />
     <MESSAGE value="added dns check hostname" />
+    <MESSAGE value="wrong form variable" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/css/sphere/full/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="5" selection-start="8" selection-end="9" vertical-scroll-proportion="0.023076924">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/firewall/address.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="55" selection-start="515" selection-end="520" vertical-scroll-proportion="0.43247345">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/config/routes.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="26" selection-start="681" selection-end="684" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/FirewallRule.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="27" selection-start="1181" selection-end="1181" vertical-scroll-proportion="0.2751479">
@@ -685,13 +592,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/api_firewall.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="213" column="38" selection-start="6404" selection-end="6404" vertical-scroll-proportion="120.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/rules.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="79" column="47" selection-start="2380" selection-end="2380" vertical-scroll-proportion="1.7349926">
@@ -706,13 +606,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/firewall.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="91" column="72" selection-start="2781" selection-end="2946" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/api_dns.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="526" column="0" selection-start="16236" selection-end="16236" vertical-scroll-proportion="0.6486091">
@@ -720,9 +613,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/routes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="26" selection-start="681" selection-end="684" vertical-scroll-proportion="0.32327586">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/dns/create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="25" selection-start="965" selection-end="965" vertical-scroll-proportion="0.3414264">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/MetahostProgram.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="147" selection-start="629" selection-end="744" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/firewall.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="140" column="43" selection-start="4202" selection-end="4202" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/api_firewall.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="173" column="43" selection-start="5303" selection-end="5326" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/metahost/rules.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="22" selection-start="1775" selection-end="1775" vertical-scroll-proportion="0.4827586">
+        <state line="102" column="28" selection-start="3349" selection-end="3356" vertical-scroll-proportion="0.7198276">
           <folding />
         </state>
       </provider>

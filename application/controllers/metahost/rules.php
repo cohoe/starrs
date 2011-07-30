@@ -99,6 +99,27 @@ class Rules extends ImpulseController {
 			return $this->_warning("No rules found!");
 		}
 	}
+
+    private function _create() {
+        if($this->input->post('program')) {
+			$fwRule = $this->api->firewall->create_metahost_program(
+				self::$mHost->get_name(),
+				$this->input->post('program'),
+				$this->input->post('deny')
+			);
+		}
+		else {
+			$fwRule = $this->api->firewall->create_metahost_rule(
+				self::$mHost->get_name(),
+				$this->input->post('port'),
+				$this->input->post('transport'),
+				$this->input->post('deny'),
+				$this->input->post('comment')
+			);
+		}
+
+		return $fwRule;
+    }
 }
 /* End of file rules.php */
 /* Location: ./application/controllers/metahost/rules.php */

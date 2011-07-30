@@ -171,6 +171,38 @@ class Api_firewall extends ImpulseModel {
         );
     }
 
+    public function create_metahost_program($metahostName, $programName, $deny) {
+        // SQL Query
+        $sql = "SELECT * FROM api.create_firewall_metahost_rule_program(
+            {$this->db->escape($metahostName)},
+            {$this->db->escape($programName)},
+            {$this->db->escape($deny)}
+        )";
+
+        $query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned more than one object. This is a problem. Contact your system administrator");
+        }
+        
+        // Generate and return results
+        return new MetahostProgram(
+            $query->row()->metahost_name,
+            $query->row()->program_name,
+            $query->row()->port,
+            $query->row()->transport,
+            $query->row()->deny,
+            $query->row()->comment,
+            $query->row()->owner,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
+    }
+
     public function create_metahost_member($address,$metahostName) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_metahost_member({$this->db->escape($address)},{$this->db->escape($metahostName)})";

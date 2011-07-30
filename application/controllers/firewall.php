@@ -159,6 +159,5 @@ class Firewall extends ImpulseController {
 		return $fwRule;
 	}
 }
-
 /* End of file firewall.php */
 /* Location: ./application/controllers/firewall.php */
