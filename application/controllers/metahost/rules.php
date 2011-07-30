@@ -80,6 +80,21 @@ class Rules extends ImpulseController {
 		}
         
     }
+
+    public function delete($metahostName=NULL,$transport=NULL,$port=NULL) {
+        if($metahostName == NULL) {
+			exit($this->_error("No metahost specified"));
+		}
+        if($transport==NULL) {
+			$this->_error("No transport specified");
+		}
+		if($port==NULL) {
+			$this->_error("No port specified");
+		}
+		$this->_load_metahost($metahostName);
+
+        echo "$metahostName $transport $port";
+    }
 	
 	private function _load_rules() {
 		try {

@@ -13,18 +13,7 @@ class Members extends ImpulseController {
 		if($metahostName == NULL) {
 			exit($this->_error("No metahost specified"));
 		}
-		try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
-		}
-		catch (DBException $dbE) {
-			exit($this->_error($dbE->getMessage()));
-		}
-		catch (AmbiguousTargetException $atE) {
-			exit($this->_error($atE->getMessage()));
-		}
-		catch (ObjectNotFoundException $onfE) {
-			exit($this->_error($onfE->getMessage()));
-		}
+		$this->_load_metahost($metahostName);
 		
 		// Navbar
 		$navModes['CREATE'] = "/metahosts/members/create/".self::$mHost->get_name();
