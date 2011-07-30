@@ -113,7 +113,7 @@ class Api_firewall extends ImpulseModel {
 	}
 
 	// @todo: Need a function that will give all the rules that eventually apply to an address
-	public function load_address_rules($address) {
+	public function load_address_rules_LOL($address) {
 		$resultSet = array();
 
 		try {
