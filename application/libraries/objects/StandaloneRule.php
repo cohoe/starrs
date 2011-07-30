@@ -1,5 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * Standalone firewall rule
+ */
 class StandaloneRule extends FirewallRule {
 
 	////////////////////////////////////////////////////////////////////////
@@ -28,7 +30,7 @@ class StandaloneRule extends FirewallRule {
 	// SETTERS
 
     public function set_address($new) {
-		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'port', $new);
+		$this->CI->api->firewall->modify_standalone_rule($this->address, $this->port, $this->transport, 'address', $new);
 		$this->address = $new;
 	}
 

@@ -73,179 +73,6 @@ class Api_firewall extends ImpulseModel {
 		return $resultSet;
 	}
 	
-	public function get_metahost_rules($metahostName) {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_firewall_metahost_rules({$this->db->escape($metahostName)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Generate results
-        $resultSet = array();
-        foreach($query->result_array() as $fwRule) {
-            $resultSet[] = new MetahostRule(
-				$fwRule['name'],
-				$fwRule['port'],
-				$fwRule['transport'],
-				$fwRule['deny'],
-				$fwRule['comment'],
-				$fwRule['owner'],
-				$fwRule['date_created'],
-				$fwRule['date_modified'],
-				$fwRule['last_modifier']
-			);
-		}
-		
-		// Return results
-        if(count($resultSet > 0)) {
-            return $resultSet;
-        }
-        else {
-			throw new ObjectNotFoundException("No standalone metahost rules found.");
-		}
-	}
-	
-	public function get_metahost_program_rules($metahostName) {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_firewall_metahost_program_rules({$this->db->escape($metahostName)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Generate results
-        $resultSet = array();
-        foreach($query->result_array() as $fwRule) {
-            $resultSet[] = new MetahostProgram(
-				$fwRule['metahost_name'],
-				$fwRule['program_name'],
-				$fwRule['port'],
-				$fwRule['transport'],
-				$fwRule['deny'],
-				$fwRule['comment'],
-				$fwRule['owner'],
-				$fwRule['date_created'],
-				$fwRule['date_modified'],
-				$fwRule['last_modifier']
-			);
-		}
-		
-		// Return results
-        if(count($resultSet > 0)) {
-            return $resultSet;
-        }
-        else {
-			throw new ObjectNotFoundException("No program metahost rules found.");
-		}
-	}
-	
-	
-	
-	/**
-     * Get the name of a firewall program based on its port
-     * @param $port     The port of the program to search on
-     * @return string   The name of the program
-     */
-    public function get_firewall_program($port) {
-        // SQL Query
-		$sql = "SELECT api.get_firewall_program_name({$this->db->escape($port)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-
-        // Return result
-        if($query->num_rows() == 1) {
-            return $query->row()->get_firewall_program_name;
-        }
-        elseif($query->num_rows() > 1) {
-            throw new AmbiguousTargetException("Multiple program names found. This indicates a database error. Contact your system administrator");
-        }
-        else {
-            throw new ObjectNotFoundException("No program name found");
-        }
-
-	}
-
-    /**
-     * Get the default firewall action of an address
-     * @param $address  The address to search on
-     * @return bool     Deny (t) the traffic or allow (f)
-     */
-    public function get_firewall_default($address) {
-        // SQL Query
-		$sql = "SELECT api.get_firewall_default({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-
-        // Return Result
-		if($query->num_rows() == 1) {
-			return $query->row()->get_firewall_default;
-		}
-        elseif($query->num_rows() > 1) {
-            throw new AmbiguousTargetException("Multiple addresses found. This indicates a database error. Contact your system administrator");
-        }
-        else {
-            throw new ObjectNotFoundException("No address action found");
-        }
-	}
-	
-	public function get_transports() {
-		// SQL Query
-		$sql = "SELECT api.get_firewall_transports()";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Generate results
-        $resultSet = array();
-		foreach($query->result_array() as $transport) {
-			$resultSet[] = $transport['get_firewall_transports'];
-		}
-		
-		// Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-		else {
-			throw new ObjectNotFoundException("No firewall transports found. This is a big problem. Talk to your administrator.");
-		}
-	}
-	
-	public function get_programs() {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_firewall_program_data()";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Generate results
-        $resultSet = array();
-		foreach($query->result_array() as $program) {
-			$resultSet[] = new FirewallProgram(
-				$program['name'],
-				$program['port'],
-				$program['transport'],
-				$program['date_created'],
-				$program['date_modified'],
-				$program['last_modifier']
-			);
-		}
-		
-		// Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-		else {
-			throw new ObjectNotFoundException("No firewall programs found. This might be an error depending on your configuration. Talk to your administrator.");
-		}
-	}
-	
 	public function create_firewall_rule($address, $port, $transport, $deny, $owner, $comment) {
 		// SQL Query
 		$sql = "SELECT api.create_firewall_rule(
@@ -260,16 +87,23 @@ class Api_firewall extends ImpulseModel {
 
         // Check error
         $this->_check_error($query);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned more than one object. This is a problem. Contact your system administrator");
+        }
 		
 		// Generate results
-		#$rules = $this->get_address_rules($address);
-		$rules = $this->get_standalone_rules($address);
-		foreach($rules as $rule) {
-			if($rule->get_port() == $port && $rule->get_transport() == $transport) {
-				return $rule;
-			}
-		}
-		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
+        return new StandaloneRule(
+            $query->row()->address,
+            $query->row()->port,
+            $query->row()->transport,
+            $query->row()->deny,
+            $query->row()->comment,
+            $query->row()->owner,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 	
 	public function create_firewall_rule_program($address, $program, $deny, $owner) {
@@ -293,6 +127,33 @@ class Api_firewall extends ImpulseModel {
 			}
 		}
 		throw new ObjectNotFoundException("No new rule found. This is a problem. Contact your system administrator");
+	}
+
+    public function create_metahost_member($address,$metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.create_firewall_metahost_member({$this->db->escape($address)},{$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Return result object
+		return $this->get_metahost_member($address);
+	}
+
+    public function create_metahost($name,$owner,$comment) {
+		// SQL Query
+		$sql = "SELECT api.create_firewall_metahost(
+			{$this->db->escape($name)},
+			{$this->db->escape($owner)},
+			{$this->db->escape($comment)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		return $this->get_metahost($name);
 	}
 	
 	public function remove_firewall_rule($address, $port, $transport) {
@@ -320,6 +181,67 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 	}
 	
+	public function remove_metahost($mHost) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_metahost({$this->db->escape($mHost->get_name())})";
+		$query = $this->db->query($sql);
+
+		
+        // Check error
+        $this->_check_error($query);
+	}
+
+	public function remove_metahost_member($membr) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_metahost_member({$this->db->escape($membr->get_address())})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+
+    public function modify_metahost($metahostName, $field, $newValue) {
+        // SQL Query
+        $sql = "SELECT api.modify_firewall_metahost(
+            {$this->db->escape($metahostName)},
+            {$this->db->escape($field)},
+            {$this->db->escape($newValue)}
+        )";
+        $query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+    }
+    
+    public function get_metahost_members($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_members({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $result) {
+			$resultSet[] = new MetahostMember(
+				$result['name'],
+				$result['address'],
+				$result['date_created'],
+				$result['date_modified'],
+				$result['last_modifier']
+			);
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall metahost members found.");
+		}
+	}
+	
 	public function get_metahosts($username=NULL) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_firewall_metahosts({$this->db->escape($username)})";
@@ -327,7 +249,7 @@ class Api_firewall extends ImpulseModel {
 
         // Check error
         $this->_check_error($query);
-		
+
 		// Generate results
         $resultSet = array();
 		foreach($query->result_array() as $metahost) {
@@ -340,7 +262,7 @@ class Api_firewall extends ImpulseModel {
 				$metahost['last_modifier']
 			);
 		}
-		
+
 		// Return results
 		if(count($resultSet) > 0) {
 			return $resultSet;
@@ -349,7 +271,7 @@ class Api_firewall extends ImpulseModel {
 			throw new ObjectNotFoundException("No firewall metahosts found.");
 		}
 	}
-	
+
 	public function get_metahost($metahostName,$complete=FALSE) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_firewall_metahost({$this->db->escape($metahostName)})";
@@ -357,11 +279,11 @@ class Api_firewall extends ImpulseModel {
 
         // Check error
         $this->_check_error($query);
-		
+
 		if($query->num_rows() > 1) {
 			throw new AmbiguousTargetException("Multiple metahosts found. This indicates a database error. Talk to your system administrator");
 		}
-		
+
 		// Generate result
 		$mHost =  new Metahost(
 			$query->row()->name,
@@ -371,7 +293,7 @@ class Api_firewall extends ImpulseModel {
 			$query->row()->date_modified,
 			$query->row()->last_modifier
 		);
-		
+
 		if($complete == TRUE) {
 			try {
 				$members = $this->get_metahost_members($metahostName);
@@ -381,97 +303,9 @@ class Api_firewall extends ImpulseModel {
 			}
 			catch(ObjectNotFoundException $onfE) { }
 		}
-		
+
 		// Return result
 		return $mHost;
-	}
-	
-	public function create_metahost($name,$owner,$comment) {
-		// SQL Query
-		$sql = "SELECT api.create_firewall_metahost(
-			{$this->db->escape($name)},
-			{$this->db->escape($owner)},
-			{$this->db->escape($comment)}
-		)";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		return $this->get_metahost($name);
-	}
-	
-	public function remove_metahost($mHost) {
-		// SQL Query
-		$sql = "SELECT api.remove_firewall_metahost({$this->db->escape($mHost->get_name())})";
-		$query = $this->db->query($sql);
-
-		
-        // Check error
-        $this->_check_error($query);
-	}
-	
-	public function modify_metahost($metahostName, $field, $newValue) {
-		// SQL Query
-		$sql = "SELECT api.modify_firewall_metahost(
-			{$this->db->escape($metahostName)},
-			{$this->db->escape($field)},
-			{$this->db->escape($newValue)}
-		)";
-		$query = $this->db->query($sql);
-		
-        // Check error
-        $this->_check_error($query);
-	}
-	
-	public function get_metahost_members($metahostName) {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_firewall_metahost_members({$this->db->escape($metahostName)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Generate results
-		$resultSet = array();
-		foreach($query->result_array() as $result) {
-			$resultSet[] = new MetahostMember(
-				$result['name'],
-				$result['address'],
-				$result['date_created'],
-				$result['date_modified'],
-				$result['last_modifier']
-			);
-		}
-		
-		// Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-		else {
-			throw new ObjectNotFoundException("No firewall metahost members found.");
-		}
-	}
-	
-	public function remove_metahost_member($membr) {
-		// SQL Query
-		$sql = "SELECT api.remove_firewall_metahost_member({$this->db->escape($membr->get_address())})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-	}
-	
-	public function create_metahost_member($address,$metahostName) {
-		// SQL Query
-		$sql = "SELECT * FROM api.create_firewall_metahost_member({$this->db->escape($address)},{$this->db->escape($metahostName)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-        $this->_check_error($query);
-		
-		// Return result object
-		return $this->get_metahost_member($address);
 	}
 	
 	public function get_metahost_member($address) {
@@ -553,6 +387,167 @@ class Api_firewall extends ImpulseModel {
 
 		// Return results
 		return $resultSet;
+	}
+
+    public function get_metahost_rules($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_rules({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $fwRule) {
+            $resultSet[] = new MetahostRule(
+				$fwRule['name'],
+				$fwRule['port'],
+				$fwRule['transport'],
+				$fwRule['deny'],
+				$fwRule['comment'],
+				$fwRule['owner'],
+				$fwRule['date_created'],
+				$fwRule['date_modified'],
+				$fwRule['last_modifier']
+			);
+		}
+
+		// Return results
+        if(count($resultSet > 0)) {
+            return $resultSet;
+        }
+        else {
+			throw new ObjectNotFoundException("No standalone metahost rules found.");
+		}
+	}
+
+	public function get_metahost_program_rules($metahostName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_metahost_program_rules({$this->db->escape($metahostName)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $fwRule) {
+            $resultSet[] = new MetahostProgram(
+				$fwRule['metahost_name'],
+				$fwRule['program_name'],
+				$fwRule['port'],
+				$fwRule['transport'],
+				$fwRule['deny'],
+				$fwRule['comment'],
+				$fwRule['owner'],
+				$fwRule['date_created'],
+				$fwRule['date_modified'],
+				$fwRule['last_modifier']
+			);
+		}
+
+		// Return results
+        if(count($resultSet > 0)) {
+            return $resultSet;
+        }
+        else {
+			throw new ObjectNotFoundException("No program metahost rules found.");
+		}
+	}
+
+    public function get_firewall_program($port) {
+        // SQL Query
+		$sql = "SELECT api.get_firewall_program_name({$this->db->escape($port)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+        // Return result
+        if($query->num_rows() == 1) {
+            return $query->row()->get_firewall_program_name;
+        }
+        elseif($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple program names found. This indicates a database error. Contact your system administrator");
+        }
+        else {
+            throw new ObjectNotFoundException("No program name found");
+        }
+
+	}
+
+    public function get_firewall_default($address) {
+        // SQL Query
+		$sql = "SELECT api.get_firewall_default({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+        // Return Result
+		if($query->num_rows() == 1) {
+			return $query->row()->get_firewall_default;
+		}
+        elseif($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple addresses found. This indicates a database error. Contact your system administrator");
+        }
+        else {
+            throw new ObjectNotFoundException("No address action found");
+        }
+	}
+
+	public function get_transports() {
+		// SQL Query
+		$sql = "SELECT api.get_firewall_transports()";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $transport) {
+			$resultSet[] = $transport['get_firewall_transports'];
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall transports found. This is a big problem. Talk to your administrator.");
+		}
+	}
+
+	public function get_programs() {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_program_data()";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $program) {
+			$resultSet[] = new FirewallProgram(
+				$program['name'],
+				$program['port'],
+				$program['transport'],
+				$program['date_created'],
+				$program['date_modified'],
+				$program['last_modifier']
+			);
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No firewall programs found. This might be an error depending on your configuration. Talk to your administrator.");
+		}
 	}
 }
 /* End of file api_firewall.php */

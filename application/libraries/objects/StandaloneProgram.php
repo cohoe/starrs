@@ -1,5 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * Standalone program rules
+ * NOTE: You cannot modify a program rule.
+ */
 class StandaloneProgram extends FirewallRule {
 
 	////////////////////////////////////////////////////////////////////////
@@ -31,36 +34,6 @@ class StandaloneProgram extends FirewallRule {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
-
-    public function set_address($new) {
-		$this->CI->api->firewall->modify_standalone_rule($this->programName, $this->port, $this->transport, 'address', $new);
-		$this->address = $new;
-	}
-
-    public function set_program_name($new) {
-		$this->CI->api->firewall->modify_standalone_program_rule($this->programName, $this->port, $this->transport, 'name', $new);
-		$this->programName = $new;
-	}
-
-    public function set_transport($new) {
-		$this->CI->api->firewall->modify_standalone_program_rule($this->programName, $this->port, $this->transport, 'transport', $new);
-		$this->transport = $new;
-	}
-
-    public function set_deny($new) {
-		$this->CI->api->firewall->modify_standalone_program_rule($this->programName, $this->port, $this->transport, 'deny', $new);
-		$this->deny = $new;
-	}
-
-    public function set_owner($new) {
-		$this->CI->api->firewall->modify_standalone_program_rule($this->programName, $this->port, $this->transport, 'owner', $new);
-		$this->owner = $new;
-	}
-
-    public function set_comment($new) {
-		$this->CI->api->firewall->modify_standalone_program_rule($this->programName, $this->port, $this->transport, 'comment', $new);
-		$this->comment = $new;
-	}
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
