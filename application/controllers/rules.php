@@ -35,7 +35,7 @@ class Rules extends ImpulseController {
 		}
 		
 		// Navbar
-		$navOptions['Rules'] = "/firewall/view/".self::$addr->get_address();
+		$navOptions['Rules'] = "/firewall/rules/view/".self::$addr->get_address();
 		$navModes['EDIT'] = "/rules/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
 		$navModes['DELETE'] = "/rules/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
 		
