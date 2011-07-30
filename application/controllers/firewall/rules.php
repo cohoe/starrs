@@ -22,7 +22,7 @@ class Firewall extends ImpulseController {
 		// Navbar
 		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
-		$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
+		$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
 		$navModes['CREATE'] = "/firewall/create/".self::$addr->get_address();
 		
 		// Load view data
@@ -159,5 +159,5 @@ class Firewall extends ImpulseController {
 		return $fwRule;
 	}
 }
-/* End of file firewall.php */
-/* Location: ./application/controllers/firewall.php */
+/* End of file rules.php */
+/* Location: ./application/controllers/rules.php */

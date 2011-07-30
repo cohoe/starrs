@@ -64,22 +64,7 @@ class ImpulseController extends CI_Controller {
      * @return void
      */
 	protected function _warning($message) {
-		// Navbar
-        #$navbar = new Navbar("Warning", null, null);
-		
-		$data['message'] = $message;
-		
-		// Load view data
-		#$info['header'] = $this->load->view('core/header',"",TRUE);
-		#$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		#$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		#$info['data'] = $this->load->view('core/warning',$data,TRUE);
-		#$info['title'] = "Warning";
-		
-		// Load the main view
-		#$this->load->view('core/main',$info);
-		
-		return $this->load->view('core/warning',$data,TRUE);
+		return $this->load->view('core/warning',array("message"=>$message),TRUE);
 	}
 	
 	protected function _load_system() {
@@ -112,7 +97,6 @@ class ImpulseController extends CI_Controller {
 		}
 		catch (ObjectException $apiE) {
 			$this->_error($apiE->getMessage());
-			return;
 		}
 	}
 
