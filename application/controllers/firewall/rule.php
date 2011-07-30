@@ -35,17 +35,18 @@ class Rule extends ImpulseController {
 			$this->_error($onfE->getMessage());
 		}
 
-        if(preg_match("/metahost/",self::$fwRule->get_source())) {
+        $navModes = array();
+        if(preg_match("/standalone/",self::$fwRule->get_source())) {
             $navModes['DELETE'] = "/metahost/rules/delete/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            $navModes['EDIT'] = "/metahost/rule/edit/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
         }
         else {
-            $navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            #$navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            #$navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
         }
 
 		// Navbar
 		$navOptions['Rules'] = "/firewall/rules/view/".self::$addr->get_address();
-		$navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
-		#$navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
