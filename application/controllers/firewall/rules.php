@@ -23,7 +23,7 @@ class Rules extends ImpulseController {
 		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
 		$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
-		$navModes['CREATE'] = "/firewall/create/".self::$addr->get_address();
+		$navModes['CREATE'] = "/firewall/rules/create/".self::$addr->get_address();
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
