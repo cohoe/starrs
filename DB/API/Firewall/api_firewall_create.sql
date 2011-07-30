@@ -79,7 +79,7 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost"(text, text, text) IS 'creat
 	1) Check privileges
 	2) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text, input_port integer, input_transport varchar(4), input_deny boolean, input_comment text) RETURNS SETOF "firewall"."metahost_standalone_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule');
 
@@ -97,6 +97,9 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule');
+		RETURN QUERY (SELECT "firewall"."metahost_rules"."name","port","transport","deny","firewall"."metahost_rules"."comment","owner","firewall"."metahost_rules"."date_created","firewall"."metahost_rules"."date_modified","firewall"."metahost_rules"."last_modifier"
+		FROM "firewall"."metahost_rules" JOIN "firewall"."metahosts" ON "firewall"."metahost_rules"."name" = "firewall"."metahosts"."name"
+		WHERE "firewall"."metahost_rules"."name" = input_name AND "port" = input_port AND "transport" = input_transport);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar(4), boolean, text) IS 'Create a firewall metahost rule';
@@ -135,7 +138,7 @@ COMMENT ON FUNCTION "api"."create_firewall_system"(text, cidr, text) IS 'Firewal
 	3) Check privileges
 	4) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, input_port integer, input_transport varchar(4), input_deny boolean, input_owner text, input_comment text) RETURNS SETOF "firewall"."standalone_rule_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule');
 
@@ -166,6 +169,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule"(input_address inet, inpu
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule');
+		RETURN QUERY(SELECT "address","port","transport","deny","comment","owner","date_created","date_modified","last_modifier"
+		FROM "firewall"."rules" WHERE "address" = input_address AND "port" = input_port AND "transport" = input_transport AND "deny" = input_deny);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, varchar(4), boolean, text, text) IS 'Create a standalone firewall rule';
@@ -177,7 +182,7 @@ COMMENT ON FUNCTION "api"."create_firewall_rule"(inet, integer, varchar(4), bool
 	4) Get program information
 	5) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address inet, input_program text, input_deny boolean, input_owner text) RETURNS SETOF "firewall"."standalone_program_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_rule_program');
 
@@ -208,6 +213,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule_program');
+		RETURN QUERY (SELECT "address","name","firewall"."rules"."port","firewall"."rules"."transport","deny","comment","owner","firewall"."rules"."date_created","firewall"."rules"."date_modified","firewall"."rules"."last_modifier"
+		FROM "firewall"."rules" JOIN "firewall"."programs" ON "firewall"."rules"."port" = "firewall"."programs"."port");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean, text) IS 'Create a firewall rule based on a common program.';
@@ -217,7 +224,7 @@ COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean, te
 	2) Get program information
 	3) Create rule
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_name text, input_program text, input_deny boolean) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_name text, input_program text, input_deny boolean) RETURNS SETOF "firewall"."metahost_program_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_metahost_rule_program');
 
@@ -235,6 +242,12 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_metahost_rule_program');
+		RETURN QUERY (SELECT "firewall"."metahost_program_rules"."name","firewall"."programs"."name","firewall"."metahost_program_rules"."port","transport","deny","firewall"."metahost_program_rules"."comment","firewall"."metahosts"."owner","firewall"."metahost_program_rules"."date_created","firewall"."metahost_program_rules"."date_modified","firewall"."metahost_program_rules"."last_modifier"
+		FROM "firewall"."metahost_program_rules" 
+		JOIN "firewall"."programs" ON "firewall"."metahost_program_rules"."port" = "firewall"."programs"."port"
+		JOIN "firewall"."metahosts" ON "firewall"."metahost_program_rules"."name" = "firewall"."metahosts"."name"
+		WHERE "firewall"."metahost_program_rules"."name" = input_name AND "firewall"."programs"."name" = input_program AND "firewall"."metahost_program_rules"."deny" = input_deny);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_rule_program"(text, text, boolean) IS 'Create a firewall rule based on a common program.';
+

@@ -119,3 +119,20 @@ CREATE OR REPLACE FUNCTION "api"."nsupdate"() RETURNS TEXT AS $$
 	#my $result = $command;
 	return $result;
 $$ LANGUAGE 'plperlu';
+
+/* API - check_dns_hostname */
+CREATE OR REPLACE FUNCTION "api"."check_dns_hostname"(input_hostname text, input_zone text) RETURNS BOOLEAN AS $$
+	DECLARE
+		RowCount INTEGER := 0;
+	BEGIN
+		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone);
+		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."pointers" WHERE "alias" = input_hostname AND "zone" = input_zone);
+
+		IF RowCount = 0 THEN
+			RETURN FALSE;
+		ELSE
+			RETURN TRUE;
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."check_dns_hostname"(text, text) IS 'Check if a hostname is available in a given zone';
