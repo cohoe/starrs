@@ -45,7 +45,7 @@ class Addresses extends ImpulseController {
 		$navOptions['Overview'] = "/addresses/view/".$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
 		if($addr->get_dynamic() == FALSE) {
-			$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
+			$navOptions['Firewall Rules'] = "/firewall/rules/view/".$addr->get_address();
 		}
 		$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
 		$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();

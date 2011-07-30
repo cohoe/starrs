@@ -519,6 +519,23 @@ class Api_dns extends ImpulseModel {
 		// Check error
 		$this->_check_error($query);
 	}
+
+    public function check_hostname($hostname,$zone) {
+        // SQL Query
+        $sql = "SELECT api.check_dns_hostname({$this->db->escape($hostname)},{$this->db->escape($zone)})";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        // Return result
+        if($query->row()->check_dns_hostname == 't') {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
 
 /* End of file api_dns.php */

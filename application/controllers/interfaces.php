@@ -233,7 +233,7 @@ class Interfaces extends ImpulseController {
 			return;
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 		}
 		
 		return $int;
@@ -285,7 +285,7 @@ class Interfaces extends ImpulseController {
 			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 		}
 	}
 
@@ -307,7 +307,7 @@ class Interfaces extends ImpulseController {
 			foreach($addrs as $addr) {
 				$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
 				if($addr->get_dynamic() != TRUE) {
-					$navOptions['Firewall Rules'] = "/firewall/view/".$addr->get_address();
+					$navOptions['Firewall Rules'] = "/firewall/rules/view/".$addr->get_address();
 				}
 				$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
 				$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();

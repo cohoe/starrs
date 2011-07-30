@@ -30,7 +30,7 @@ class Dns extends ImpulseController {
 		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
 		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
 		if(self::$addr->get_dynamic() == FALSE) {
-			$navOptions['Firewall Rules'] = "/firewall/view/".self::$addr->get_address();
+			$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
 		}
 		
 		$navModes['CREATE'] = "/dns/create/".self::$addr->get_address();

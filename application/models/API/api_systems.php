@@ -295,8 +295,8 @@ class API_Systems extends ImpulseModel {
             if($complete == true) {
                 // Load firewall rules
 				try {
-					#$fwRules = $this->api->firewall->get_address_rules($row['address']);
-					$fwRules = $this->api->firewall->load_address_rules($row['address']);
+					$fwRules = $this->api->firewall->get_address_rules($row['address']);
+					#$fwRules = $this->api->firewall->load_address_rules($row['address']);
 					foreach($fwRules as $fwRule) {
 						$addr->add_firewall_rule($fwRule);
 					}
@@ -381,8 +381,8 @@ class API_Systems extends ImpulseModel {
 		if($complete == true) {
 			// Load firewall rules
 			try {
-				#$fwRules = $this->api->firewall->get_address_rules($row['address']);
-				$fwRules = $this->api->firewall->load_address_rules($row['address']);
+				$fwRules = $this->api->firewall->get_address_rules($row['address']);
+				#$fwRules = $this->api->firewall->load_address_rules($row['address']);
 				foreach($fwRules as $fwRule) {
 					$addr->add_firewall_rule($fwRule);
 				}

@@ -18,7 +18,7 @@ class Api_firewall extends ImpulseModel {
      * @param $address                  IP address to search on
      * @return array<FirewallRule>      Array of rule objects
      */
-    public function get_address_rules_DEPRECATINGTHISFUNCTIONLOLOLOL($address) {
+    public function get_address_rules($address) {
         // SQL Query
 		$sql = "SELECT * FROM api.get_firewall_rules({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -29,19 +29,79 @@ class Api_firewall extends ImpulseModel {
         // Generate results
         $resultSet = array();
         foreach($query->result_array() as $fwRule) {
-            $resultSet[] = new FirewallRule(
-                $fwRule['port'],
-                $fwRule['transport'],
-                $fwRule['deny'],
-                $fwRule['comment'],
-                $fwRule['address'],
-                $fwRule['owner'],
-                $fwRule['source'],
-                $fwRule['date_created'],
-                $fwRule['date_modified'],
-                $fwRule['last_modifier']
-            );
+            switch($fwRule['source']) {
+                case "standalone-standalone":
+                    $resultSet[] = new StandaloneRule(
+                        $fwRule['address'],
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "standalone-program":
+                    $resultSet[] = new StandaloneProgram(
+                        $fwRule['address'],
+                        $this->get_firewall_program($fwRule['port']),
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "metahost-standalone":
+                    $resultSet[] = new MetahostRule(
+                        $this->get_metahost_member($fwRule['address'])->get_name(),
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                case "metahost-program":
+                    $resultSet[] = new MetahostProgram(
+                        $this->get_metahost_member($fwRule['address'])->get_name(),
+                        $this->get_firewall_program($fwRule['port']),
+                        $fwRule['port'],
+                        $fwRule['transport'],
+                        $fwRule['deny'],
+                        $fwRule['comment'],
+                        $fwRule['owner'],
+                        $fwRule['date_created'],
+                        $fwRule['date_modified'],
+                        $fwRule['last_modifier']
+                    );
+                    break;
+                default:
+                    throw new DBException("Invalid rule source found. This is a DB problem. Contact your system administrator.");
+            }
+
         }
+
+//        $resultSet[] = new FirewallRule(
+//                $fwRule['port'],
+//                $fwRule['transport'],
+//                $fwRule['deny'],
+//                $fwRule['comment'],
+//                $fwRule['address'],
+//                $fwRule['owner'],
+//                $fwRule['source'],
+//                $fwRule['date_created'],
+//                $fwRule['date_modified'],
+//                $fwRule['last_modifier']
+//            );
 
         // Return results
         if(count($resultSet > 0)) {
@@ -53,7 +113,7 @@ class Api_firewall extends ImpulseModel {
 	}
 
 	// @todo: Need a function that will give all the rules that eventually apply to an address
-	public function load_address_rules($address) {
+	public function load_address_rules_LOL($address) {
 		$resultSet = array();
 
 		try {
@@ -73,7 +133,7 @@ class Api_firewall extends ImpulseModel {
 		return $resultSet;
 	}
 	
-	public function create_firewall_rule($address, $port, $transport, $deny, $owner, $comment) {
+	public function create_standalone_rule($address, $port, $transport, $deny, $owner, $comment) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_rule(
 			{$this->db->escape($address)},
@@ -106,7 +166,7 @@ class Api_firewall extends ImpulseModel {
         );
 	}
 	
-	public function create_rule_program($address, $program, $deny, $owner) {
+	public function create_standalone_program($address, $program, $deny, $owner) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_rule_program(
 			{$this->db->escape($address)},
@@ -171,6 +231,38 @@ class Api_firewall extends ImpulseModel {
         );
     }
 
+    public function create_metahost_program($metahostName, $programName, $deny) {
+        // SQL Query
+        $sql = "SELECT * FROM api.create_firewall_metahost_rule_program(
+            {$this->db->escape($metahostName)},
+            {$this->db->escape($programName)},
+            {$this->db->escape($deny)}
+        )";
+
+        $query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned more than one object. This is a problem. Contact your system administrator");
+        }
+        
+        // Generate and return results
+        return new MetahostProgram(
+            $query->row()->metahost_name,
+            $query->row()->program_name,
+            $query->row()->port,
+            $query->row()->transport,
+            $query->row()->deny,
+            $query->row()->comment,
+            $query->row()->owner,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
+    }
+
     public function create_metahost_member($address,$metahostName) {
 		// SQL Query
 		$sql = "SELECT * FROM api.create_firewall_metahost_member({$this->db->escape($address)},{$this->db->escape($metahostName)})";
@@ -198,7 +290,7 @@ class Api_firewall extends ImpulseModel {
 		return $this->get_metahost($name);
 	}
 	
-	public function remove_firewall_rule($address, $port, $transport) {
+	public function remove_standalone_rule($address, $port, $transport) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_rule(
 			{$this->db->escape($address)},
@@ -211,7 +303,7 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 	}
 	
-	public function remove_firewall_rule_program($address, $program) {
+	public function remove_standalone_program($address, $program) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_rule_program(
 			{$this->db->escape($address)},
