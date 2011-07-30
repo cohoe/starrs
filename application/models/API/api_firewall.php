@@ -75,7 +75,7 @@ class Api_firewall extends ImpulseModel {
 	
 	public function create_firewall_rule($address, $port, $transport, $deny, $owner, $comment) {
 		// SQL Query
-		$sql = "SELECT api.create_firewall_rule(
+		$sql = "SELECT * FROM api.create_firewall_rule(
 			{$this->db->escape($address)},
 			{$this->db->escape($port)},
 			{$this->db->escape($transport)},
