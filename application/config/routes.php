@@ -43,6 +43,7 @@ $route['404_override'] = '';
 $route['resources'] = "welcome";
 $route['metahosts/rules/(.*?)'] = "metahost/rules/$1";
 $route['metahosts/members/(.*?)'] = "metahost/members/$1";
+$route['firewall/(.*?)'] = "firewall/$1";
 
 
 /* End of file routes.php */
