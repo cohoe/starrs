@@ -68,7 +68,7 @@ class Rules extends ImpulseController {
 				$this->impulselib->set_active_system(self::$sys);
 				
 				// Move along
-				redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
+				redirect(base_url()."/firewall/rules/view/".self::$addr->get_address(),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error("DB: ".$dbE->getMessage());

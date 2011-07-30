@@ -29,7 +29,7 @@
       <file leaf-file-name="rules.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/firewall/rules.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="54" selection-start="654" selection-end="654" vertical-scroll-proportion="0.1812227">
+            <state line="66" column="54" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.44323143">
               <folding />
             </state>
           </provider>
@@ -749,7 +749,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/firewall/rules.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="54" selection-start="654" selection-end="654" vertical-scroll-proportion="0.1812227">
+        <state line="66" column="54" selection-start="2118" selection-end="2118" vertical-scroll-proportion="0.44323143">
           <folding />
         </state>
       </provider>
