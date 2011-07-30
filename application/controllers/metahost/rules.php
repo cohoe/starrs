@@ -63,6 +63,8 @@ class Rules extends ImpulseController {
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
+            $viewData['transports'] = $this->api->firewall->get_transports();
+			$viewData['fwProgs'] = $this->api->firewall->get_programs();
 
 			// Continue loading view data
 			$info['data'] = $this->load->view('firewall/metahosts/rules/create',$form,TRUE);
