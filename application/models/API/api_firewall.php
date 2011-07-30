@@ -71,9 +71,10 @@ class Api_firewall extends ImpulseModel {
                     );
                     break;
                 case "metahost-program":
-                    $resultSet[] = new MetahostMember(
+                    $resultSet[] = new MetahostProgram(
                         $this->get_metahost_member($fwRule['address'])->get_name(),
                         $this->get_firewall_program($fwRule['port']),
+                        $fwRule['port'],
                         $fwRule['transport'],
                         $fwRule['deny'],
                         $fwRule['comment'],
