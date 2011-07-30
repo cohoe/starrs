@@ -8,7 +8,6 @@
 			if($i % $cells_per_row == 0) {
 				echo "<tr>";
 			}
-            echo $rule->get_deny();
 			if($rule->get_deny() == 't') {
 				$class = "firewall_rule_port_box_deny";
 			}
