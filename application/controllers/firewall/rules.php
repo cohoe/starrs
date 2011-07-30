@@ -158,6 +158,7 @@ class Rules extends ImpulseController {
 		
 		return $fwRule;
 	}
+    
 }
 /* End of file rules.php */
 /* Location: ./application/controllers/rules.php */

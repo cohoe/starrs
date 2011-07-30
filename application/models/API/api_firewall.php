@@ -18,7 +18,7 @@ class Api_firewall extends ImpulseModel {
      * @param $address                  IP address to search on
      * @return array<FirewallRule>      Array of rule objects
      */
-    public function get_address_rules_DEPRECATINGTHISFUNCTIONLOLOLOL($address) {
+    public function get_address_rules($address) {
         // SQL Query
 		$sql = "SELECT * FROM api.get_firewall_rules({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
