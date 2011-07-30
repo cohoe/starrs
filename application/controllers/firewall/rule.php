@@ -35,14 +35,17 @@ class Rule extends ImpulseController {
 			$this->_error($onfE->getMessage());
 		}
 
-        $navModes = array();
+
         if(preg_match("/standalone/",self::$fwRule->get_source())) {
             $navModes['DELETE'] = "/metahost/rules/delete/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
             $navModes['EDIT'] = "/metahost/rule/edit/".self::$fwRule->get_metahost_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            $title = "Firewall Rule";
         }
         else {
             #$navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
             #$navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+            $navModes = array();
+            $title = "Firewall Metahost Rule";
         }
 
 		// Navbar
@@ -52,8 +55,8 @@ class Rule extends ImpulseController {
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$viewData['fwRule'] = self::$fwRule;
-		$info['title'] = "Firewall Rule - ".self::$addr->get_address();
-		$navbar = new Navbar("Firewall Rule", $navModes, $navOptions);
+		$info['title'] = "$title - ".self::$addr->get_address();
+		$navbar = new Navbar($title, $navModes, $navOptions);
 
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
