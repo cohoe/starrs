@@ -214,7 +214,8 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_rule_program"(input_address in
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_rule_program');
 		RETURN QUERY (SELECT "address","name","firewall"."rules"."port","firewall"."rules"."transport","deny","comment","owner","firewall"."rules"."date_created","firewall"."rules"."date_modified","firewall"."rules"."last_modifier"
-		FROM "firewall"."rules" JOIN "firewall"."programs" ON "firewall"."rules"."port" = "firewall"."programs"."port");
+		FROM "firewall"."rules" JOIN "firewall"."programs" ON "firewall"."rules"."port" = "firewall"."programs"."port"
+		WHERE "firewall"."rules"."address" = input_address AND "firewall"."programs"."name" = input_program AND "firewall"."rules"."deny" = input_deny);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_rule_program"(inet, text, boolean, text) IS 'Create a firewall rule based on a common program.';
