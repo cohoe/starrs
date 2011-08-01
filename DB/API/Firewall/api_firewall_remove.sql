@@ -164,7 +164,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_program"(input_address in
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
 			IF (SELECT "owner" FROM "firewall"."program_rules" WHERE "firewall"."program_rules"."address" = input_address 
-			AND "firewall"."program_rules"."port" = PortNum AND "firewall"."program_rules"."transport" = ProgramTransport) != api.get_current_user() THEN
+			AND "firewall"."program_rules"."port" = PortNum) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on rule %,%. You are not owner.',input_address,input_program;
 			END IF;
 		END IF;
