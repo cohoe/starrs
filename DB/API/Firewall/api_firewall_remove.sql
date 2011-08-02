@@ -85,33 +85,30 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule"(input_metahost_
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule"(text, integer, text) IS 'Remove a firewall metahost rule';
 
-/* API - remove_firewall_system
+/* API - remove_firewall_address
 	1) Check privileges
 	2) Remove system
 */
-CREATE OR REPLACE FUNCTION "api"."remove_firewall_system"(input_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_address"(input_subnet cidr, input_isprimary boolean) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','begin remove_firewall_address');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
 			END IF;
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_metahost_name) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system;
-			END IF;
 		END IF;
 
 		-- Remove system
-		PERFORM api.create_log_entry('API','INFO','removing firewall system');
-		DELETE FROM "firewall"."systems" WHERE "system_name" = input_name;
+		PERFORM api.create_log_entry('API','INFO','removing firewall address');
+		DELETE FROM "firewall"."addresses" WHERE "subnet" = input_subnet AND "isprimary" = input_isprimary;
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','finish remove_firewall_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_firewall_system"(text) IS 'Remove a firewall system';
+COMMENT ON FUNCTION "api"."remove_firewall_address"(cidr, boolean) IS 'Remove a firewall address';
 
 /* API - remove_firewall_rule
 	1) Check privileges
