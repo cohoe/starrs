@@ -11,24 +11,26 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
 	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
 
-	# Global Options are added here.
+	
+	# Global Options
+	sub global_opts
 	{
-		my ($row, $option, $value);
+		my ($row, $option, $value, $output);
 		my $global_options = spi_query("SELECT * FROM api.get_dhcpd_global_options()");
 		while (defined($row = spi_fetchrow($global_options)))
 		{
 			$option = $row->{option};
 			$value = $row->{value};
-			$output .= "$option    $value;\n"
+			$output = "$option    $value;\n"
 		}
-	}# end global options
-	
-	$output .= "\n";
-	
+		return $output;
+	} # end global options
+
 	# DNS keys added here
+	sub dns_keys
 	{
 		my $keys = spi_query("SELECT * FROM api.get_dhcpd_dns_keys()");
-		my ($keyname, $key, $enctype, $row);
+		my ($keyname, $key, $enctype, $row, $output);
 		while (defined ($row = spi_fetchrow($keys)))
 		{
 			$keyname = $row->{keyname};
@@ -36,46 +38,53 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$enctype = $row->{enctype};
 			$output .= "key $keyname {\n  algorithm ${enctype};\n  secret \"$key\";\n}\n";
 		}
+		return $output;
 	}# end DNS keys
 	
-	$output .= "\n";
-
 	# Zones are added here.
+	sub zones
 	{
 		my $zones = spi_query("SELECT * FROM api.get_dhcpd_reverse_zones()");
-		my ($zone, $keyname, $primary_ns, $row);
+		my ($zone, $keyname, $primary_ns, $row, $output);
 		while (defined ($row = spi_fetchrow($zones)))
 		{
 			$zone = $row->{zone};
 			$keyname = $row->{keyname};
 			$primary_ns = $row->{primary_ns};
-			$output .= "zone $zone {\n  primary ${primary_ns};\n  key ${keyname};\n}\n";
+			$output = "zone $zone {\n  primary ${primary_ns};\n  key ${keyname};\n}\n";
 		}
+		return $output;
 	}# end reverse zones
 
-	$output .= "\n";
-
-	# DHCP Classes and class options
+	# DHCP Classes
+	sub dhcp_classes
 	{
 		my $classes = spi_query("SELECT class,comment FROM api.get_dhcpd_classes()");
-		my ($class, $comment, $option, $value, $row, $row_opts);
+		my ($class, $comment, $row, $output);
 		while (defined($row = spi_fetchrow($classes)))
 		{
 			$class = $row->{class};
 			$comment = $row->{comment};
 			$output .= "class \"$class\" {\n  # ${comment}\n";
-			my $options = spi_query("SELECT option,value FROM api.get_dhcpd_class_options('$class')");
-			while (defined($row_opts = spi_fetchrow($options)))
-			{
-				$option = $row_opts->{option};
-				$value = $row_opts->{value};
-				$output .= "    " . $option . ' ' . $value . ";\n";
-			}
+			$output .= &dhcp_class_options($class);
 			$output .= "}\n\n";
-		}# end DHCP classes and class options
-	}
+		}
+		return $output;
+	}# end &dhcp_classes
 
-	$output .= "\n";
+	# DHCP Class options
+	sub dhcp_class_options
+	{
+		my $class = @_[0];
+		my ($option, $value, $row, $output);
+		while (defined($row_opts = spi_fetchrow($options)))
+		{
+			$option = $row_opts->{option};
+			$value = $row_opts->{value};
+			$output .= "    " . $option . ' ' . $value . ";\n";
+		}
+		return $output;
+	}# end &dhcp_class_options
 
 	# shared network
 	{
@@ -139,7 +148,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 	}# shared networks
 
-	$output .= "\n";
+	# Shared networks
+	sub shared_networks
+	{
+#		my $networks 
+	}
 
 	# 'static' hosts
 	{
