@@ -187,3 +187,15 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
 CREATE TRIGGER "dns_txt_delete_queue"
 AFTER DELETE ON "dns"."txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "firewall_rule_queue_insert"
+AFTER INSERT ON "firewall"."rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_queue_insert"();
+
+CREATE TRIGGER "firewall_rule_queue_update"
+AFTER UPDATE ON "firewall"."rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_queue_update"();
+
+CREATE TRIGGER "firewall_rule_queue_delete"
+AFTER DELETE ON "firewall"."rules"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_queue_delete"();
