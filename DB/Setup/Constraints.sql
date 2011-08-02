@@ -128,8 +128,6 @@ ALTER TABLE "dns"."a" ADD CONSTRAINT "fk_a_type" FOREIGN KEY ("type") REFERENCES
 
 ALTER TABLE "firewall"."addresses" ADD CONSTRAINT "fk_firewall_systems_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "firewall"."addresses" ADD CONSTRAINT "fk_firewall_systems_software" FOREIGN KEY ("software_name") REFERENCES "firewall"."software"("software_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
 ALTER TABLE "firewall"."addresses" ADD CONSTRAINT "fk_addresses_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "fk_systems_interfaces_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
