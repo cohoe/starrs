@@ -48,13 +48,12 @@ abstract class ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 
-	public function get_date_created()  { return $this->CI->impulselib->clean_timestamp($this->dateCreated); }
-	public function get_date_modified() { return $this->CI->impulselib->clean_timestamp($this->dateModified); }
+	public function get_date_created()  { return $this->dateCreated; }
+	public function get_date_modified() { return $this->dateModified; }
 	public function get_last_modifier() { return $this->lastModifier; }
 
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC FUNCTIONS
 }
-
 /* End of file ImpulseObject.php */
 /* Location: ./application/libraries/core/ImpulseObject.php */

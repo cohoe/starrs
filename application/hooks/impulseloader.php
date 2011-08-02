@@ -27,6 +27,7 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/MetahostProgram.php");
 		require_once(APPPATH . "libraries/objects/StandaloneRule.php");
 		require_once(APPPATH . "libraries/objects/StandaloneProgram.php");
+		require_once(APPPATH . "libraries/objects/Subnet.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");
@@ -38,5 +39,9 @@ class ImpulseLoader {
 		
 		# UI Stuff
 		require_once(APPPATH . "libraries/core/navbar.php");
+		
+		# Controllers
+		require_once(APPPATH . "controllers/firewall/rule.php");
+		require_once(APPPATH . "controllers/firewall/rules.php");
 	}
 }

@@ -107,6 +107,98 @@ class Api_ip extends ImpulseModel {
 		// Return result
 		return $query->row()->ip_in_subnet;
 	}
+	
+	public function get_subnets() {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_ip_subnets()";
+		
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $subnet) {
+			$sNet = new Subnet(
+				$subnet['name'],
+				$subnet['subnet'],
+				$subnet['zone'],
+				$subnet['owner'],
+				$subnet['autogen'],
+				$subnet['dhcp_enable'],
+				$subnet['comment'],
+				$subnet['date_created'],
+				$subnet['date_modified'],
+				$subnet['last_modifier']
+			);
+			
+			try {
+				$fwAddresses = $this->api->firewall->get_addresses($sNet->get_subnet());
+				if(isset($fwAddresses['primary'])) {
+					$sNet->set_firewall_primary($fwAddresses['primary']);
+				}
+				if(isset($fwAddresses['secondary'])) {
+					$sNet->set_firewall_secondary($fwAddresses['secondary']);
+				}
+			}
+			catch (DBException $dbE) {
+				$this->_error($dbE->getMessage());
+			}
+			catch (ObjectNotFoundException $onfE) { }
+			
+			$resultSet[] = $sNet;
+		}
+		
+		// Return results
+        if(count($resultSet) > 0) {
+            return $resultSet;
+        }
+        else {
+            throw new ObjectNotFoundException("No Subnets were found. This may or may not be bad. Contact your system administrator");
+        }
+	}
+	
+	public function get_subnet($subnet) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_ip_subnet({$this->db->escape($subnet)})";
+		
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results		
+		$sNet = new Subnet(
+			$query->row()->name,
+			$query->row()->subnet,
+			$query->row()->zone,
+			$query->row()->owner,
+			$query->row()->autogen,
+			$query->row()->dhcp_enable,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+		
+		try {
+			$fwAddresses = $this->api->firewall->get_addresses($sNet->get_subnet());
+			if(isset($fwAddresses['primary'])) {
+				$sNet->set_firewall_primary($fwAddresses['primary']);
+			}
+			if(isset($fwAddresses['secondary'])) {
+				$sNet->set_firewall_secondary($fwAddresses['secondary']);
+			}
+		}
+		catch (DBException $dbE) {
+			$this->_error($dbE->getMessage());
+		}
+		catch (ObjectNotFoundException $onfE) { }
+		
+		// Return result
+		return $sNet;
+	}
 }
 
 /* End of file api_ip.php */

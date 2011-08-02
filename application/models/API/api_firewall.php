@@ -90,19 +90,6 @@ class Api_firewall extends ImpulseModel {
 
         }
 
-//        $resultSet[] = new FirewallRule(
-//                $fwRule['port'],
-//                $fwRule['transport'],
-//                $fwRule['deny'],
-//                $fwRule['comment'],
-//                $fwRule['address'],
-//                $fwRule['owner'],
-//                $fwRule['source'],
-//                $fwRule['date_created'],
-//                $fwRule['date_modified'],
-//                $fwRule['last_modifier']
-//            );
-
         // Return results
         if(count($resultSet > 0)) {
             return $resultSet;
@@ -174,6 +161,7 @@ class Api_firewall extends ImpulseModel {
 			{$this->db->escape($deny)},
 			{$this->db->escape($owner)}
 		)";
+		echo $sql;
 		$query = $this->db->query($sql);
 
         // Check error
@@ -328,6 +316,18 @@ class Api_firewall extends ImpulseModel {
         $this->_check_error($query);
 	}
 	
+	public function remove_metahost_program_rule($metahostName, $programName) {
+		// SQL Query
+		$sql = "SELECT api.remove_firewall_metahost_rule_program(
+			{$this->db->escape($metahostName)},
+			{$this->db->escape($programName)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
 	public function remove_metahost($mHost) {
 		// SQL Query
 		$sql = "SELECT api.remove_firewall_metahost({$this->db->escape($mHost->get_name())})";
@@ -446,6 +446,22 @@ class Api_firewall extends ImpulseModel {
 				$members = $this->get_metahost_members($metahostName);
 				foreach($members as $membr) {
 					$mHost->add_member($membr);
+				}
+			}
+			catch(ObjectNotFoundException $onfE) { }
+			
+			try {
+				$fwRules = $this->get_metahost_program_rules($metahostName);
+				foreach($fwRules as $rule) {
+					$mHost->add_rule($rule);
+				}
+			}
+			catch(ObjectNotFoundException $onfE) { }
+			
+			try {
+				$fwRules = $this->get_metahost_rules($metahostName);
+				foreach($fwRules as $rule) {
+					$mHost->add_rule($rule);
 				}
 			}
 			catch(ObjectNotFoundException $onfE) { }
@@ -695,6 +711,71 @@ class Api_firewall extends ImpulseModel {
 		else {
 			throw new ObjectNotFoundException("No firewall programs found. This might be an error depending on your configuration. Talk to your administrator.");
 		}
+	}
+	
+	public function modify_metahost_rule($metahostName, $port, $transport, $field, $value) {
+		// SQL Query
+		$sql = "SELECT api.modify_firewall_metahost_rule(
+			{$this->db->escape($metahostName)},
+			{$this->db->escape($port)},
+			{$this->db->escape($transport)},
+			{$this->db->escape($field)},
+			{$this->db->escape($value)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function modify_standalone_rule($address, $port, $transport, $field, $value) {
+		// SQL Query
+		$sql = "SELECT api.modify_firewall_rule(
+			{$this->db->escape($address)},
+			{$this->db->escape($port)},
+			{$this->db->escape($transport)},
+			{$this->db->escape($field)},
+			{$this->db->escape($value)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function modify_default($address, $action) {
+		// SQL Query
+		$sql = "SELECT api.modify_firewall_default(
+			{$this->db->escape($address)},
+			{$this->db->escape($action)}
+		)";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function get_addresses($subnet) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_firewall_addresses({$this->db->escape($subnet)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $result) {
+			if($result['isprimary'] == 't') {
+				$resultSet['primary'] = $result['address'];
+			}
+			else {
+				$resultSet['secondary'] = $result['address'];
+			}
+		}
+		
+		// Return results
+		return $resultSet;
 	}
 }
 /* End of file api_firewall.php */

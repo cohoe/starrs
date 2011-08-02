@@ -6,7 +6,7 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
  * that you have permission to do so on. 
  */
 class Systems extends ImpulseController {
-
+	
     /**
 	 * If no additional URL paramters were specified, load this default view
      * @return void
@@ -458,6 +458,8 @@ class Systems extends ImpulseController {
 			$this->_error("Obj:".$dbE->getMessage());
 		}
 	}
+
+
 }
 
 /* End of file systems.php */

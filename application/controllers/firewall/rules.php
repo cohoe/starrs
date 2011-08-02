@@ -99,26 +99,11 @@ class Rules extends ImpulseController {
 			$info['title'] = "Create Standalone Firewall Rule - ".self::$addr->get_address();
 			$navbar = new Navbar("Create Standalone Firewall Rule", $navModes, null);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-			$info['data'] = $this->load->view('firewall/rules/create',$viewData,true);
+			$info['data'] = $this->load->view('firewall/standalone_create',$viewData,true);
 
 			// Load the main view
 			$this->load->view('core/main',$info);
 		}
-	}
-	
-	public function edit($address=NULL) {
-		if($address==NULL) {
-			$this->_error("No address specified");
-		}
-		
-		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
-		}
-		if(!(self::$addr instanceof InterfaceAddress)) {
-			$this->_load_address($address);
-		}
-		
-		echo "EDIT!";
 	}
 	
 	public function delete($address=NULL,$transport=NULL,$port=NULL) {
@@ -191,6 +176,58 @@ class Rules extends ImpulseController {
 		return $fwRule;
 	}
     
+	public function action($address=NULL) {
+		if($address==NULL) {
+			$this->_error("No address specified");
+		}
+		
+		if(!(self::$sys instanceof System)) {
+			$this->_load_system();
+		}
+		if(!(self::$addr instanceof InterfaceAddress)) {
+			$this->_load_address($address);
+		}
+		
+		if($this->input->post('submit')) {
+			try {
+				self::$addr->set_fw_default($this->input->post('deny'));
+				
+				// Update our information
+				self::$int->add_address(self::$addr);
+				self::$sys->add_interface(self::$int);
+				$this->impulselib->set_active_system(self::$sys);
+				
+				// Move along
+				redirect("/firewall/rules/view/".self::$addr->get_address(),'location');
+			}
+			catch (DBException $dbE) {
+				$this->_error($dbE->getMessage());
+			}
+		}
+		else {
+			// Navbar
+			$navModes['CANCEL'] = "";
+			
+			// Load view data
+			$info['header'] = $this->load->view('core/header',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$viewData['addr'] = self::$addr;
+			$viewData['user'] = $this->impulselib->get_username();
+			if($this->api->isadmin() == TRUE) {
+				$viewData['admin'] = TRUE;
+			}
+			
+			// More view data
+			$info['title'] = "Modify Default Firewall Action";
+			$navbar = new Navbar("Modify Default Firewall Action", $navModes, null);
+			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+			$info['data'] = $this->load->view('firewall/default',$viewData,true);
+
+			// Load the main view
+			$this->load->view('core/main',$info);
+		}
+
+	}
 }
 /* End of file rules.php */
 /* Location: ./application/controllers/rules.php */

@@ -3,13 +3,10 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 /**
  * 
  */
-class Admin extends ImpulseController {
+class Resources extends ImpulseController {
 	
 	public function __construct() {
 		parent::__construct();
-		if($this->api->isadmin() == false) {
-			$this->_error("Permission denied. You are not an IMPULSE administrator");
-		}
 	}
 	
 	public function index() {
@@ -24,11 +21,11 @@ class Admin extends ImpulseController {
 		
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->_warning("Objects in mirror may be closer than they appear!");
+		$info['data'] = '<a href="/resources/subnets/">Subnets</a>';
 
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
 }
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+/* End of file resources.php */
+/* Location: ./application/controllers/resources.php */

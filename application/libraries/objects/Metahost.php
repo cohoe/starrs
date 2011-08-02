@@ -82,6 +82,15 @@ class Metahost extends ImpulseObject {
 		}
 		$this->rules[] = $fwRule;
 	}
+	
+	public function get_rule($port, $transport) {
+		foreach($this->rules as $rule) {
+			if($rule->get_port() == $port && $rule->get_transport() == $transport) {
+				return $rule;
+			}
+		}
+		throw new ObjectNotFoundException("No firewall rule matching your criteria was found");
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

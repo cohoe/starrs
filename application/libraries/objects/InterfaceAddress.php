@@ -196,6 +196,11 @@ class InterfaceAddress extends ImpulseObject {
 		$this->dnsAddressRecord = $addressRecord;
 	}
 	
+	public function set_fw_default($action) {
+		$this->CI->api->firewall->modify_default($this->address, $action);
+		$this->fwDefault = $action;
+	}
+	
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 
