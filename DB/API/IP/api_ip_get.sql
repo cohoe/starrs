@@ -143,3 +143,12 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_ranges"() RETURNS SETOF "ip"."range_dat
 		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" FROM "ip"."ranges");
 	END;
 $$ LANGUAGE 'plpgsql';
+
+/* API - get_ip_subnets */
+CREATE OR REPLACE FUNCTION "api"."get_ip_subnets"() RETURNS SETOF "ip"."subnet_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name","subnet","zone","owner","autogen","dhcp_enable","comment","date_created","date_modified","last_modifier"
+		FROM "ip"."subnets");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_subnets"() IS 'Get all IP subnet data';
