@@ -23,6 +23,9 @@ class FirewallRule extends ImpulseObject {
 	// string	The source of the rule (metahost, program, standalone, etc)
 	protected $source;
 	
+	// string	The mode of the rule (Program vs Standalone)
+	protected $mode;
+	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -37,6 +40,13 @@ class FirewallRule extends ImpulseObject {
 		$this->comment   = $comment;
 		$this->owner     = $owner;
 		$this->source    = $source;
+		
+		if(preg_match("/program$/",$source)) {
+			$this->mode = "PROGRAM";
+		}
+		else {
+			$this->mode = "STANDALONE";
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////
@@ -48,6 +58,7 @@ class FirewallRule extends ImpulseObject {
 	public function get_owner()         { return $this->owner; }
 	public function get_source()        { return $this->source; }
 	public function get_comment()       { return $this->comment; }
+	public function get_mode()          { return $this->mode; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS

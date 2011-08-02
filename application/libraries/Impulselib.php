@@ -122,15 +122,6 @@ class Impulselib {
         // Set it up!
 		$_SESSION['activeSystem'] = serialize($sys);
 	}
-
-    /**
-     * Clean up Postgres's extreme timestamp to only have what we want
-     * @param $timestamp    The timestamp string to parse
-     * @return string
-     */
-	public function clean_timestamp($timestamp) { 
-		return preg_replace('/:(\d+).(\d+)$/','',$timestamp); 
-	}
 	
 	/**
      * Get your username

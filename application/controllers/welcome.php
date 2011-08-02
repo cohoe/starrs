@@ -3,8 +3,7 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Welcome extends ImpulseController {
 
-	public function index()
-	{
+	public function index() {
 		#$this->_load_get_started();
 		#$this->_load_demo();
 		$this->_success("Success");

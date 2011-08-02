@@ -13,47 +13,22 @@ class Admin extends ImpulseController {
 	}
 	
 	public function index() {
-		$this->load->library('table');
-
-		$query = $this->db->query("SELECT option,value FROM management.configuration");
-		$tmpl = array (
-			'table_open'          => '<table border="0" cellpadding="4" cellspacing="0">',
-
-			'heading_row_start'   => '<tr>',
-			'heading_row_end'     => '</tr>',
-			'heading_cell_start'  => '<th>',
-			'heading_cell_end'    => '</th>',
-
-			'row_start'           => '<tr bgcolor=#cccccc>',
-			'row_end'             => '</tr>',
-			'cell_start'          => '<td>',
-			'cell_end'            => '</td>',
-
-			'row_alt_start'       => '<tr bgcolor=#b9b9b9>',
-			'row_alt_end'         => '</tr>',
-			'cell_alt_start'      => '<td>',
-			'cell_alt_end'        => '</td>',
-
-			'table_close'         => '</table>'
-		);
-
-		$this->table->set_template($tmpl);
-		$data = $this->table->generate($query);
-		
+		// Navbar
+		$navOptions['Site Configuration'] = "/admin/configuration/view/site";
+	
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['title'] = "IMPULSE Site Configuration";
-		$navbar = new Navbar("Site Configuration", null, null);
+		$info['title'] = "IMPULSE Administration";
+		$navbar = new Navbar("Administration", null, $navOptions);
 		
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $data;
+		$info['data'] = $this->_warning("Objects in mirror may be closer than they appear!");
 
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
 }
-
 /* End of file admin.php */
 /* Location: ./application/controllers/admin.php */

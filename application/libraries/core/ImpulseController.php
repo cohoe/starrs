@@ -8,6 +8,33 @@ class ImpulseController extends CI_Controller {
 	protected static $int;
 	protected static $addr;
     protected static $mHost;
+	protected static $fwSys;
+	protected $tableTemplate;
+	
+	public function __construct() {
+		parent::__construct();
+		$this->viewTemplate = array (
+			'table_open'          => '<table border="0" cellpadding="4" cellspacing="0">',
+
+			'heading_row_start'   => '<tr>',
+			'heading_row_end'     => '</tr>',
+			'heading_cell_start'  => '<th>',
+			'heading_cell_end'    => '</th>',
+
+			'row_start'           => '<tr bgcolor=#cccccc>',
+			'row_end'             => '</tr>',
+			'cell_start'          => '<td>',
+			'cell_end'            => '</td>',
+
+			'row_alt_start'       => '<tr bgcolor=#b9b9b9>',
+			'row_alt_end'         => '</tr>',
+			'cell_alt_start'      => '<td>',
+			'cell_alt_end'        => '</td>',
+
+			'table_close'         => '</table>'
+		);
+		$this->table->set_template($this->viewTemplate);
+	}
     
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -102,7 +129,7 @@ class ImpulseController extends CI_Controller {
 
     protected function _load_metahost($metahostName) {
         try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
+			self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -115,6 +142,5 @@ class ImpulseController extends CI_Controller {
 		}
     }
 }
-
 /* End of file ImpulseController.php */
 /* Location: ./application/libraries/core/ImpulseController.php */

@@ -38,6 +38,6 @@
 			$class = "firewall_rule_default_box_unknown";
 		}
 		?>
-		<tr><td class="<?echo $class;?>" colspan="<?echo $cells_per_row;?>"><?echo $message;?></td></tr>
+		<tr><td class="<?echo $class;?>" colspan="<?echo $cells_per_row;?>"><a href="/firewall/rules/action/<?echo $addr->get_address();?>"><?echo $message;?></a></td></tr>
 	</table>
 </div>
