@@ -104,33 +104,33 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule"(input_name text
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_rule"(text, integer, varchar(4), boolean, text) IS 'Create a firewall metahost rule';
 
-/* API - create_firewall_system
+/* API - create_firewall_address
 	1) Check privileges
-	2) Create system
+	2) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_system"(input_name text, input_subnet cidr, input_software text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_address"(input_subnet cidr, input_address inet, input_isprimary boolean) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','begin create_firewall_address');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner.',input_subnet;
 			END IF;
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_name) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system;
+			IF api.get_interface_address_owner(input_address) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on address %. You are not owner.',input_address;
 			END IF;
 		END IF;
 
 		-- Create system
-		PERFORM api.create_log_entry('API','INFO','creating new firewall system');
-		INSERT INTO "firewall"."systems" ("system_name","subnet","software_name") VALUES (input_name, input_subnet, input_software);
+		PERFORM api.create_log_entry('API','INFO','creating new firewall address');
+		INSERT INTO "firewall"."addresses" ("subnet","address","isprimary") VALUES (input_subnet, input_address, input_isprimary);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','finish create_firewall_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_firewall_system"(text, cidr, text) IS 'Firewall systems are the devices that receive rules for a subnet';
+COMMENT ON FUNCTION "api"."create_firewall_address"(cidr, inet, boolean) IS 'The primary/secondary firewall IPs for a subnet';
 
 /* API - create_firewall_rule
 	1) Fill in owner
@@ -251,4 +251,3 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_rule_program"(input_n
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_rule_program"(text, text, boolean) IS 'Create a firewall rule based on a common program.';
-
