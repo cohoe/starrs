@@ -130,3 +130,5 @@ COMMENT ON TYPE "ip"."subnet_data" IS 'IP subnet data';
 CREATE TYPE "firewall"."address_data" AS (subnet cidr, address inet, isprimary boolean, date_created timestamp, date_modified timestamp, last_modifier text);
 
 CREATE TYPE "firewall"."default_data" AS (address inet, deny boolean);
+
+CREATE TYPE "firewall"."rule_export_data" AS (address inet, port integer, transport text, deny boolean);
