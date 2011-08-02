@@ -350,14 +350,15 @@ CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$')
 )
 WITHOUT OIDS;
 
-CREATE TABLE "firewall"."systems"(
+CREATE TABLE "firewall"."addresses"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"system_name" TEXT,
 "subnet" CIDR NOT NULL,
 "software_name" TEXT NOT NULL,
-CONSTRAINT "systems_pkey" PRIMARY KEY ("subnet")
+"address" INET,
+"isprimary" BOOLEAN NOT NULL DEFAULT TRUE,
+CONSTRAINT "systems_pkey" PRIMARY KEY ("subnet","isprimary")
 )
 WITHOUT OIDS;
 
@@ -591,7 +592,7 @@ COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
 
 COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
 
-COMMENT ON TABLE "firewall"."systems" IS 'Firewall boxes on the network';
+COMMENT ON TABLE "firewall"."addresses" IS 'Firewall device IP addresses';
 
 COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
 
