@@ -128,3 +128,5 @@ CREATE TYPE "ip"."subnet_data" AS (name text, subnet cidr, zone text, owner text
 COMMENT ON TYPE "ip"."subnet_data" IS 'IP subnet data';
 
 CREATE TYPE "firewall"."address_data" AS (subnet cidr, address inet, isprimary boolean, date_created timestamp, date_modified timestamp, last_modifier text);
+
+CREATE TYPE "firewall"."default_data" AS (address inet, deny boolean);
