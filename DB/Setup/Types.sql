@@ -126,3 +126,5 @@ COMMENT ON TYPE "firewall"."metahost_program_data"  IS 'Program based metahost r
 
 CREATE TYPE "ip"."subnet_data" AS (name text, subnet cidr, zone text, owner text, autogen boolean, dhcp_enable boolean, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "ip"."subnet_data" IS 'IP subnet data';
+
+CREATE TYPE "firewall"."address_data" AS (subnet cidr, address inet, isprimary boolean, date_created timestamp, date_modified timestamp, last_modifier text);
