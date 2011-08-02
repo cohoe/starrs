@@ -59,3 +59,15 @@
 	color: white;
 	width: 8em;
 }
+
+.hostnameInUse {
+	margin:10px;
+	color: red;
+	font-weight:bold;
+}
+	
+.hostnameAvailable {
+	margin:10px;
+	color: green;
+	font-weight:bold;	
+}
