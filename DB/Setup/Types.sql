@@ -123,3 +123,6 @@ COMMENT ON TYPE "firewall"."metahost_standalone_data"  IS 'Standalone metahost r
 
 CREATE TYPE "firewall"."metahost_program_data" AS (metahost_name text, program_name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."metahost_program_data"  IS 'Program based metahost rules data';
+
+CREATE TYPE "ip"."subnet_data" AS (name text, subnet cidr, zone text, owner text, autogen boolean, dhcp_enable boolean, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "ip"."subnet_data" IS 'IP subnet data';
