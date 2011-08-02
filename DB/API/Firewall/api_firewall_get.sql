@@ -137,3 +137,10 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_metahost_program_rules"(input_met
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_metahost_program_rules"(text) IS 'Get all info on rules applying to a specific metahost';
+
+CREATE OR REPLACE FUNCTION "api"."get_firewall_addresses"(input_subnet cidr) RETURNS SETOF "firewall"."address_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "subnet","address","isprimary","date_created","date_modified","last_modifier" FROM "firewall"."addresses" WHERE "subnet" = input_subnet);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_addresses"(cidr) IS 'Get all firewall addresses for a subnet';
