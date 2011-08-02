@@ -144,3 +144,12 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_addresses"(input_subnet cidr) RET
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_addresses"(cidr) IS 'Get all firewall addresses for a subnet';
+
+/* API - get_firewall_default_data */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_default_data"(input_subnet cidr) RETURNS SETOF "firewall"."default_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "address","deny" FROM "firewall"."defaults" WHERE "address" IN 
+		(SELECT"address" FROM "systems"."interface_addresses") AND "address" << input_subnet);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_default_data"(cidr) IS 'Get firewall default action data';
