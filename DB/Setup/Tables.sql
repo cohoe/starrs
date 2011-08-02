@@ -393,15 +393,6 @@ CONSTRAINT "configuration_pkey" PRIMARY KEY ("option")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "firewall"."software"(
-"software_name" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "software_pkey" PRIMARY KEY ("software_name")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "firewall"."metahost_rules"(
 "deny" BOOLEAN NOT NULL DEFAULT TRUE,
 "port" INTEGER NOT NULL,
