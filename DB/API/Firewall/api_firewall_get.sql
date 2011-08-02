@@ -154,10 +154,10 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_default_data"(input_subnet cidr) 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_default_data"(cidr) IS 'Get firewall default action data';
 
-/* API - get_firewall_database_complete */
-CREATE OR REPLACE FUNCTION "api"."get_firewall_database_complete"(input_subnet cidr) RETURNS SETOF "firewall"."rule_export_data" AS $$
+/* API - get_firewall_database */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_database"(input_subnet cidr) RETURNS SETOF "firewall"."rule_export_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "address","port","transport","deny" FROM "firewall"."rules" WHERE "address" << input_subnet ORDER BY "address","port","transport" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_firewall_database_complete"(cidr) IS 'Get the complete firewall database for a subnet';
+COMMENT ON FUNCTION "api"."get_firewall_database"(cidr) IS 'Get the complete firewall database for a subnet';
