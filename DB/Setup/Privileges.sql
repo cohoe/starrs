@@ -54,7 +54,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."keys" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."addresses" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."txt" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."a" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."systems" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."addresses" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interfaces" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."configuration" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."software" TO "impulse_client";
