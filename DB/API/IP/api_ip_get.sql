@@ -152,3 +152,12 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_subnets"() RETURNS SETOF "ip"."subnet_d
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_ip_subnets"() IS 'Get all IP subnet data';
+
+/* API - get_ip_subnet */
+CREATE OR REPLACE FUNCTION "api"."get_ip_subnet"(input_subnet cidr) RETURNS SETOF "ip"."subnet_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name","subnet","zone","owner","autogen","dhcp_enable","comment","date_created","date_modified","last_modifier"
+		FROM "ip"."subnets" WHERE "subnet" = input_subnet);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_subnet"(cidr) IS 'Get all IP subnet data for a specific subnet';
