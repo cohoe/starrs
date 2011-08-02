@@ -173,44 +173,49 @@ CREATE OR REPLACE FUNCTION "api"."modify_firewall_metahost_rule"(input_old_metah
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_firewall_metahost_rule"(text, integer, varchar(4), text, text) IS 'Modify an existing firewall metahost rule';
 
-/* API - modify_firewall_system
+/* API - modify_firewall_address
 	1) Check privileges
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_firewall_system"(input_old_subnet cidr, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_firewall_address"(input_old_subnet cidr, input_old_isprimary boolean, input_field text, input_new_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_firewall_address');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = (SELECT "system_name" FROM "firewall"."systems" WHERE "subnet" = input_old_subnet)) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit firewall system on subnet (%) denied. You are not owner',input_old_subnet;
+			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_old_subnet) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit firewall address on subnet (%) denied. You are not owner',input_old_subnet;
 			END IF;
 		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'subnet|software_name|system_name' THEN
+		IF input_field !~* 'subnet|address|isprimary' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
 		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update metahost');
+		PERFORM api.create_log_entry('API','INFO','update address');
 
 		IF input_field ~* 'subnet' THEN
-			EXECUTE 'UPDATE "firewall"."systems" SET ' || quote_ident($2) || ' = $3,
+			EXECUTE 'UPDATE "firewall"."addresses" SET ' || quote_ident($3) || ' = $4,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "subnet" = $1'
-			USING input_old_subnet, input_field, cidr(input_new_value);
+			WHERE "subnet" = $1 AND "isprimary" = $2'
+			USING input_old_subnet, input_old_isprimary, input_field, cidr(input_new_value);
+		ELSEIF input_field ~* 'address' THEN
+			EXECUTE 'UPDATE "firewall"."addresses" SET ' || quote_ident($3) || ' = $4,
+			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			WHERE "subnet" = $1 AND "isprimary" = $2'
+			USING input_old_subnet, input_old_isprimary, input_field, inet(input_new_value);
 		ELSE
-			EXECUTE 'UPDATE "firewall"."systems" SET ' || quote_ident($2) || ' = $3,
+			EXECUTE 'UPDATE "firewall"."systems" SET ' || quote_ident($3) || ' = $4,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "subnet" = $1'
-			USING input_old_subnet, input_field, input_new_value;
+			WHERE "subnet" = $1 AND "isprimary" = $2'
+			USING input_old_subnet, input_old_isprimary, input_field, input_new_value;
 		END IF;
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_firewall_system');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_firewall_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_firewall_system"(cidr, text, text) IS 'modify an existing firewall system';
+COMMENT ON FUNCTION "api"."modify_firewall_address"(cidr, boolean, text, text) IS 'modify an existing firewall system';
