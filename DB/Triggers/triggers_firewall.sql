@@ -227,3 +227,29 @@ CREATE OR REPLACE FUNCTION "firewall"."metahost_rule_program_delete"() RETURNS T
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "firewall"."rule_program_delete"() IS 'Remove a metahost program rule';
+
+CREATE OR REPLACE FUNCTION "firewall"."rule_queue_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		INSERT INTO "firewall"."queue"("action","address","port","transport","deny") VALUES
+		('INSERT',NEW."address",NEW."port",NEW."transport",NEW."deny");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION "firewall"."rule_queue_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		INSERT INTO "firewall"."queue"("action","address","port","transport","deny") VALUES
+		('DELETE',OLD."address",OLD."port",OLD."transport",OLD."deny");
+		INSERT INTO "firewall"."queue"("action","address","port","transport","deny") VALUES
+		('INSERT',NEW."address",NEW."port",NEW."transport",NEW."deny");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION "firewall"."rule_queue_delete"() RETURNS TRIGGER AS $$
+	BEGIN
+		INSERT INTO "firewall"."queue"("action","address","port","transport","deny") VALUES
+		('DELETE',OLD."address",OLD."port",OLD."transport",OLD."deny");
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
