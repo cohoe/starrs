@@ -1,6 +1,6 @@
 <div class="item_container">
 	<form method="POST" class="input_form">
-		<label for="name">Name: </label><input type="text" name="name" class="input_form_input" /><br />
+		<label for="keyname">Name: </label><input type="text" name="keyname" class="input_form_input" /><br />
 		<label for="key">Key: </label><input type="text" name="key" class="input_form_input" /><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" class="input_form_input" /><br /><br />
 		<? if(isset($admin)) {?>

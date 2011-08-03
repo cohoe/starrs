@@ -70,7 +70,7 @@ class Keys extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$dnsKey = $this->api->dns->create->key(
-					$this->input->post('name'),
+					$this->input->post('keyname'),
 					$this->input->post('key'),
 					$this->input->post('owner'),
 					$this->input->post('comment')
