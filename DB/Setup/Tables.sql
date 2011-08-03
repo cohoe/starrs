@@ -533,7 +533,7 @@ CREATE TABLE "firewall"."rule_queue"(
 "transport" TEXT NOT NULL,
 "deny" BOOLEAN NOT NULL,
 "timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"action" VARCHAR NOT NULL
+"action" TEXT NOT NULL
 )
 WITHOUT OIDS;
 
