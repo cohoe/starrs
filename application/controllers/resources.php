@@ -16,12 +16,12 @@ class Resources extends ImpulseController {
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['title'] = "IMPULSE Administration";
-		$navbar = new Navbar("Administration", null, $navOptions);
+		$info['title'] = "Resources";
+		$navbar = new Navbar("Resources", null, $navOptions);
 		
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = '<a href="/resources/subnets/">Subnets</a>';
+		$info['data'] = $this->load->view('resources/list',null,TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);

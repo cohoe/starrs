@@ -28,6 +28,8 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/StandaloneRule.php");
 		require_once(APPPATH . "libraries/objects/StandaloneProgram.php");
 		require_once(APPPATH . "libraries/objects/Subnet.php");
+		require_once(APPPATH . "libraries/objects/DnsZone.php");
+		require_once(APPPATH . "libraries/objects/DnsKey.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");

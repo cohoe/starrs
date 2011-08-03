@@ -1,16 +1,30 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(APPPATH . "libraries/core/ImpulseModel.php");
 
+// TESTING FOR NOW
+require_once(APPPATH . "models/API/DNS/api_dns_create.php");
+require_once(APPPATH . "models/API/DNS/api_dns_modify.php");
+require_once(APPPATH . "models/API/DNS/api_dns_remove.php");
+
+
 /**
  *	DNS
  */
 class Api_dns extends ImpulseModel {
 
+	public $get;
+	public $create;
+	public $modify;
+	public $remove;
+	public $utility;
     /**
      * Constructor
      */
 	public function __construct() {
 		parent::__construct();
+		$this->create = new Api_dns_create();
+		$this->modify = new Api_dns_modify();
+		$this->remove = new Api_dns_remove();
 	}
 
     /**
@@ -377,6 +391,7 @@ class Api_dns extends ImpulseModel {
      * @return array<string>    A list of all DNS zones
      */
     public function get_dns_zones($username=NULL) {
+		exit("get_dns_zones needs deprecation");
 		// SQL Query
 		$sql = "SELECT api.get_dns_zones({$this->db->escape($username)})";
 		$query = $this->db->query($sql);
@@ -397,6 +412,68 @@ class Api_dns extends ImpulseModel {
 		else {
 			throw new ObjectNotFoundException("You do not have access to any DNS zones. This could be a problem. Talk to your administrator.");
 		}
+	}
+	
+	public function get_zones($username=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_zones({$this->db->escape($username)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+        $resultSet = array();
+		foreach($query->result_array() as $zone) {
+			$resultSet[] = new DnsZone(
+				$zone['zone'],
+				$zone['keyname'],
+				$zone['forward'],
+				$zone['shared'],
+				$zone['owner'],
+				$zone['comment'],
+				$zone['date_created'],
+				$zone['date_modified'],
+				$zone['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("You do not have access to any DNS zones. This could be a problem. Talk to your administrator.");
+		}
+	}
+	
+	public function get_zone($zone) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_zone({$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple zones found? This is a database error. Contact your system administrator");
+		}
+		
+		// Generate results
+		$dnsZone = new DnsZone(
+			$query->row()->zone,
+			$query->row()->keyname,
+			$query->row()->forward,
+			$query->row()->shared,
+			$query->row()->owner,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+		
+		// Return results
+		return $dnsZone;
 	}
 	
 	public function remove_dns_address($address) {
@@ -536,6 +613,64 @@ class Api_dns extends ImpulseModel {
             return false;
         }
     }
+	
+	public function get_keys($username=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_keys({$this->db->escape($username)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $key) {
+			$resultSet[] = new DnsKey(
+				$key['keyname'],
+				$key['key'],
+				$key['owner'],
+				$key['comment'],
+				$key['date_created'],
+				$key['date_modified'],
+				$key['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("You do not have access to any DNS keys. This could be a problem. Talk to your administrator.");
+		}
+	}
+	
+	public function get_key($keyname) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_key({$this->db->escape($keyname)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple keys found? This is a database error. Contact your system administrator");
+		}
+		
+		// Generate results
+		$dnsKey = new DnsKey(
+			$query->row()->keyname,
+			$query->row()->key,
+			$query->row()->owner,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+		
+		// Return results
+		return $dnsKey;
+	}
 }
 
 /* End of file api_dns.php */
