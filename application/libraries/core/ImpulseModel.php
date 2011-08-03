@@ -4,10 +4,10 @@
  */
 abstract class ImpulseModel extends CI_Model {
 
-    protected $create;
-    protected $modify;
-    protected $remove;
-    protected $get;
+    public $create;
+    public $modify;
+    public $remove;
+    public $get;
 
 	/**
      * Constructor

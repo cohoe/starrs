@@ -12,6 +12,7 @@ class Keys extends ImpulseController {
 	public function index() {
 		try {
 			$dnsKeys = $this->api->dns->get->keys(null);
+            $viewData = $this->load->view("resources/keys/list",array("dnsKeys"=>$dnsKeys),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
 			$viewData = $this->_warning("No DNS keys configured");
@@ -29,7 +30,6 @@ class Keys extends ImpulseController {
 		$info['title'] = "DNS Keys";
 		$navbar = new Navbar("DNS Keys", $navModes, null);
 
-		$viewData = $this->load->view("resources/keys/list",array("dnsKeys"=>$dnsKeys),TRUE);
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $viewData;

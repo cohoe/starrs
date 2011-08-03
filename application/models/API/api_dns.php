@@ -17,7 +17,7 @@ class Api_dns extends ImpulseModel {
 		$this->create = new Api_dns_create();
 		$this->modify = new Api_dns_modify();
 		$this->remove = new Api_dns_remove();
-        $this->get = new Api_dns_get();
+        $this->get    = new Api_dns_get();
 	}
 
 	public function resolve($hostname, $zone, $family) {
