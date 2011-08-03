@@ -253,3 +253,19 @@ CREATE OR REPLACE FUNCTION "firewall"."rule_queue_delete"() RETURNS TRIGGER AS $
 		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION "firewall"."defaults_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		INSERT INTO "firewall"."default_queue" ("address","deny") VALUES (NEW."address",NEW."deny");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."defaults_insert"() IS 'Queue the change to be pushed to the firewall';
+
+CREATE OR REPLACE FUNCTION "firewall"."defaults_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		INSERT INTO "firewall"."default_queue" ("address","deny") VALUES (NEW."address",NEW."deny");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "firewall"."defaults_update"() IS 'Queue the change to be pushed to the firewall';
