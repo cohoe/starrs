@@ -24,9 +24,9 @@ class Subnets extends ImpulseController {
 		$info['title'] = "Subnets";
 		$navbar = new Navbar("Subnets", null, null);
 
-
+		$viewData = $this->load->view("subnets/list",array("sNets"=>$sNets),TRUE);
 		foreach ($sNets as $sNet) {
-			$viewData .= "<a href=\"/resources/subnets/view/".urlencode($sNet->get_subnet())."\">".$sNet->get_subnet()."</a>"."<br>";
+			#$viewData .= "<a href=\"/resources/subnets/view/".urlencode($sNet->get_subnet())."\">".$sNet->get_subnet()."</a>"."<br>";
 		}
 		
 		// More view data
