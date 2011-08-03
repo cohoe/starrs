@@ -131,4 +131,4 @@ CREATE TYPE "firewall"."address_data" AS (subnet cidr, address inet, isprimary b
 
 CREATE TYPE "firewall"."default_data" AS (address inet, deny boolean);
 
-CREATE TYPE "firewall"."rule_export_data" AS (address inet, port integer, transport text, deny boolean);
+CREATE TYPE "firewall"."rule_export_data" AS (action text, address inet, port integer, transport text, deny boolean);
