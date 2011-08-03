@@ -59,3 +59,13 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zones"(input_username text) RETURNS SE
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zones"(text) IS 'Get the available zones to a user';
+
+
+/* API - get_dns_zone*/
+CREATE OR REPLACE FUNCTION "api"."get_dns_zone"(input_zone text) RETURNS SETOF "dns"."zone_data" AS $$
+	BEGIN
+		RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+		FROM "dns"."zones" WHERE "zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_zone"(text) IS 'Get detailed dns zone information';
