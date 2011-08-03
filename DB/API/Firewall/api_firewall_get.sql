@@ -177,3 +177,11 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_default_queue"(input_subnet cidr)
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_default_queue"(cidr) IS 'Get firewall default action change queue';
+
+/* API - remove_firewall_default_queue */
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_default_queue"(input_subnet cidr) RETURNS VOID AS $$
+	BEGIN
+		DELETE FROM "firewall"."default_queue" WHERE "address" << input_subnet;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_firewall_default_queue"(cidr) IS 'Flush the default change queue for a subnet';
