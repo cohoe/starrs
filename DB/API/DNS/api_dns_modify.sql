@@ -15,7 +15,7 @@
 	3) Validate input
 	4) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_field text, input_new_value text) RETURNS SETOF "dns"."key_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_key');
 
@@ -50,6 +50,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_key');
+
+		IF input_field ~* 'keyname' THEN
+			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."keys" WHERE "keyname" = input_value);
+		ELSE
+			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."keys" WHERE "keyname" = input_old_keyname);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_dns_key"(text,text,text) IS 'Modify an existing DNS key';
