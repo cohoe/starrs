@@ -157,15 +157,15 @@ COMMENT ON FUNCTION "api"."get_firewall_default_data"(cidr) IS 'Get firewall def
 /* API - get_firewall_database */
 CREATE OR REPLACE FUNCTION "api"."get_firewall_database"(input_subnet cidr) RETURNS SETOF "firewall"."rule_export_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "address","port","transport","deny" FROM "firewall"."rules" WHERE "address" << input_subnet ORDER BY "address","port","transport" ASC);
+		RETURN QUERY (SELECT 'INSERT',"address","port","transport","deny" FROM "firewall"."rules" WHERE "address" << input_subnet ORDER BY "address","port","transport" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_database"(cidr) IS 'Get the complete firewall database for a subnet';
 
-/* API - get_firewall_queue */
-CREATE OR REPLACE FUNCTION "api"."get_firewall_queue"(input_subnet cidr) RETURNS SETOF "firewall"."rule_export_data" AS $$
+/* API - get_firewall_rule_queue */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_rule_queue"(input_subnet cidr) RETURNS SETOF "firewall"."rule_export_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "address","port","transport","deny" FROM "firewall"."queue" WHERE "address" << input_subnet ORDER BY "address","port","transport" ASC);
+		RETURN QUERY (SELECT "action","address","port","transport","deny" FROM "firewall"."rule_queue" WHERE "address" << input_subnet ORDER BY "timestamp","action","address","port","transport" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_firewall_queue"(cidr) IS 'Get the current firewall queue for a subnet';
+COMMENT ON FUNCTION "api"."get_firewall_rule_queue"(cidr) IS 'Get the current firewall queue for a subnet';
