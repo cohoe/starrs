@@ -182,8 +182,8 @@ class Keys extends ImpulseController {
 			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		
-		if($e != "") {
-			$this->_error($e);
+		if($err != "") {
+			$this->_error($err);
 		}
 	}
 	
