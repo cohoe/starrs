@@ -15,7 +15,7 @@
 	3) Check privileges
 	3) Create new key
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_owner text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_owner text, input_comment text) RETURNS SETOF "dns"."key_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_key');
 
@@ -42,6 +42,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
+		RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+		FROM "dns"."keys" WHERE "keyname" = input_keyname AND "key" = input_key);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text, text) IS 'Create new DNS key';
