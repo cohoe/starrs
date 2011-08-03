@@ -47,9 +47,6 @@ class ImpulseLoader {
 		require_once(APPPATH . "controllers/firewall/rules.php");
         
         # API
-        require_once(APPPATH . "models/API/DNS/api_dns_create.php");
-        require_once(APPPATH . "models/API/DNS/api_dns_modify.php");
-        require_once(APPPATH . "models/API/DNS/api_dns_remove.php");
-        require_once(APPPATH . "models/API/DNS/api_dns_get.php");
+        
 	}
 }

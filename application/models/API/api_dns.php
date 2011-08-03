@@ -1,6 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(APPPATH . "libraries/core/ImpulseModel.php");
-
+require_once(APPPATH . "models/API/DNS/api_dns_create.php");
+require_once(APPPATH . "models/API/DNS/api_dns_modify.php");
+require_once(APPPATH . "models/API/DNS/api_dns_remove.php");
+require_once(APPPATH . "models/API/DNS/api_dns_get.php");
 /**
  *	DNS
  */
