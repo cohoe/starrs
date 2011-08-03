@@ -257,7 +257,7 @@ class Api_dns_get extends ImpulseModel {
 		return $dnsZone;
 	}
 
-    public function get_keys($username=NULL) {
+    public function keys($username=NULL) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_keys({$this->db->escape($username)})";
 		$query = $this->db->query($sql);
@@ -288,7 +288,7 @@ class Api_dns_get extends ImpulseModel {
 		}
 	}
 
-	public function get_key($keyname) {
+	public function key($keyname) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_key({$this->db->escape($keyname)})";
 		$query = $this->db->query($sql);
