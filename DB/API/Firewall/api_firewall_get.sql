@@ -169,3 +169,11 @@ CREATE OR REPLACE FUNCTION "api"."get_firewall_rule_queue"(input_subnet cidr) RE
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_firewall_rule_queue"(cidr) IS 'Get the current firewall queue for a subnet';
+
+/* API - get_firewall_default_queue */
+CREATE OR REPLACE FUNCTION "api"."get_firewall_default_queue"(input_subnet cidr) RETURNS SETOF "firewall"."default_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "address","deny" FROM "firewall"."default_queue" WHERE "address" << input_subnet ORDER BY "timestamp","address" ASC);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_firewall_default_queue"(cidr) IS 'Get firewall default action change queue';
