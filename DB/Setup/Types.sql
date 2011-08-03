@@ -134,3 +134,5 @@ CREATE TYPE "firewall"."default_data" AS (address inet, deny boolean);
 CREATE TYPE "firewall"."rule_export_data" AS (action text, address inet, port integer, transport text, deny boolean);
 
 CREATE TYPE "dns"."zone_data" AS (zone text, keyname text, forward boolean, shared boolean, owner text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
+
+CREATE TYPE "dns"."key_data" AS (keyname text, key text, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
