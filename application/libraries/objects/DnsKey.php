@@ -35,6 +35,26 @@ class DnsKey extends ImpulseObject {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
+	
+	public function set_keyname($new) {
+		$this->CI->api->dns->modify->key($this->keyname, 'keyname', $new);
+		$this->keyname = $new;
+	}
+	
+	public function set_key($new) {
+		$this->CI->api->dns->modify->key($this->keyname, 'key', $new);
+		$this->key = $new;
+	}
+	
+	public function set_owner($new) {
+		$this->CI->api->dns->modify->key($this->keyname, 'owner', $new);
+		$this->owner = $new;
+	}
+	
+	public function set_comment($new) {
+		$this->CI->api->dns->modify->key($this->keyname, 'comment', $new);
+		$this->comment = $new;
+	}
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

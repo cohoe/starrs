@@ -133,16 +133,8 @@ class Keys extends ImpulseController {
 		
 		if($this->input->post('submit')) {
 			try {
-				$dnsKey = $this->api->dns->create->key(
-					$this->input->post('name'),
-					$this->input->post('key'),
-					$this->input->post('owner'),
-					$this->input->post('comment')
-				);
-				if(!($dnsKey instanceof DnsKey)) {
-					$this->_error("Unable to instantiate DNS key object");
-				}
-				redirect("/resources/keys/view/".$dnsKey->get_keyname(),'location');
+				$this->_edit();
+				redirect("/resources/keys/view/".self::$dnsKey->get_keyname(),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -168,6 +160,30 @@ class Keys extends ImpulseController {
 
 			// Load the main view
 			$this->load->view('core/main',$info);
+		}
+	}
+	
+	private function _edit() {
+		$err = "";
+		if(self::$dnsKey->get_keyname() != $this->input->post('keyname')) {
+			try { self::$dnsKey->set_keyname($this->input->post('keyname')); }
+			catch (Exception $e) { $err .= $e->getMessage() }
+		}
+		if(self::$dnsKey->get_key() != $this->input->post('key')) {
+			try { self::$dnsKey->set_key($this->input->post('key')); }
+			catch (Exception $e) { $err .= $e->getMessage() }
+		}
+		if(self::$dnsKey->get_comment() != $this->input->post('comment')) {
+			try { self::$dnsKey->set_comment($this->input->post('comment')); }
+			catch (Exception $e) { $err .= $e->getMessage() }
+		}
+		if(self::$dnsKey->get_owner() != $this->input->post('owner')) {
+			try { self::$dnsKey->set_owner($this->input->post('owner')); }
+			catch (Exception $e) { $err .= $e->getMessage() }
+		}
+		
+		if($e != "") {
+			$this->_error($e);
 		}
 	}
 	
