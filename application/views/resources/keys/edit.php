@@ -8,6 +8,6 @@
 		<?} else {?>
 			<input type="text" name="owner" value="<?echo $dnsKey->get_owner();?>" class="input_form_input" hidden /><br />
 		<?}?>
-		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create" class="input_form_submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Save" class="input_form_submit"/>
 	</form>
 </div>
