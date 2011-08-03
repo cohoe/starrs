@@ -212,3 +212,11 @@ CREATE OR REPLACE FUNCTION "api"."remove_firewall_metahost_rule_program"(input_m
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_firewall_metahost_rule_program"(text, text) IS 'Remove a firewall rule based on a common program.';
+
+/* API - remove_firewall_rule_queue */
+CREATE OR REPLACE FUNCTION "api"."remove_firewall_rule_queue"(input_subnet cidr) RETURNS VOID AS $$
+	BEGIN
+		DELETE FROM "firewall"."rule_queue" WHERE "address" << input_subnet;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_firewall_rule_queue"(cidr) IS 'Flush the rule queue for a subnet';
