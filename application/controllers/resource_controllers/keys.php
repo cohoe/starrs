@@ -11,7 +11,7 @@ class Keys extends ImpulseController {
 	
 	public function index() {
 		try {
-			$dnsKeys = $this->api->dns->get_keys(null);
+			$dnsKeys = $this->api->dns->get->keys(null);
 		}
 		catch (ObjectNotFoundException $onfE) {
 			$viewData = $this->_warning("No DNS keys configured");
@@ -189,7 +189,7 @@ class Keys extends ImpulseController {
 	
 	private function _load_key($keyname) {
 		try {
-			self::$dnsKey = $this->api->dns->get_key($keyname);
+			self::$dnsKey = $this->api->dns->get->key($keyname);
 		}
 		catch (Exception $e) {
 			$this->_error($e->getMessage());
