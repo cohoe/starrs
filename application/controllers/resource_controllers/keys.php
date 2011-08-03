@@ -167,19 +167,19 @@ class Keys extends ImpulseController {
 		$err = "";
 		if(self::$dnsKey->get_keyname() != $this->input->post('keyname')) {
 			try { self::$dnsKey->set_keyname($this->input->post('keyname')); }
-			catch (Exception $e) { $err .= $e->getMessage() }
+			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		if(self::$dnsKey->get_key() != $this->input->post('key')) {
 			try { self::$dnsKey->set_key($this->input->post('key')); }
-			catch (Exception $e) { $err .= $e->getMessage() }
+			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		if(self::$dnsKey->get_comment() != $this->input->post('comment')) {
 			try { self::$dnsKey->set_comment($this->input->post('comment')); }
-			catch (Exception $e) { $err .= $e->getMessage() }
+			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		if(self::$dnsKey->get_owner() != $this->input->post('owner')) {
 			try { self::$dnsKey->set_owner($this->input->post('owner')); }
-			catch (Exception $e) { $err .= $e->getMessage() }
+			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		
 		if($e != "") {
