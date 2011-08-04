@@ -26,8 +26,8 @@ class Options extends ImpulseController {
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['title'] = "DHCP ucfirst($target) Options";
-		$navbar = new Navbar("DHCP ucfirst($target) Options", $navModes, $navOptions);
+		$info['title'] = "DHCP ".ucfirst($target)." Options";
+		$navbar = new Navbar("DHCP ".ucfirst($target)." Options", $navModes, $navOptions);
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 		// More view data
@@ -55,7 +55,16 @@ class Options extends ImpulseController {
     }
 
     private function _view_global() {
-        $viewData = "Global";
+        $viewData = "";
+        try {
+            $options = $this->api->dhcp->get->global_options();
+            foreach ($options as $option) {
+                $viewData .= $option->get_option()."<br>";
+            }
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("No global options configured!");
+        }
         return $viewData;
     }
 
