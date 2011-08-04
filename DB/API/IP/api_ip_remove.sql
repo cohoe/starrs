@@ -3,12 +3,12 @@
 	2) remove_ip_range
 */
 
-/* API - remove_subnet
+/* API - remove_ip_subnet
 	1) Check privileges
 	2) Delete RDNS zone
 	3) Delete subnet record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_ip_subnet"(input_subnet cidr) RETURNS VOID AS $$
 	DECLARE
 		RowCount INTEGER;
 		WasAuto BOOLEAN;
@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_subnet"(input_subnet cidr) RETURNS VOID
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_subnet');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_subnet"(cidr) IS 'Delete/deactivate an existing subnet';
+COMMENT ON FUNCTION "api"."remove_ip_subnet"(cidr) IS 'Delete/deactivate an existing subnet';
 
 /* API - remove_ip_range
 	1) Check privileges
