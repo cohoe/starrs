@@ -85,11 +85,14 @@ class Keys extends ImpulseController {
 			}
 		}
 		else {
+            // Navbar
+            $navModes['CANCEL'] = "/resources/keys/view";
+            
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
 			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 			$info['title'] = "Create DNS Key";
-			$navbar = new Navbar("Create DNS Key", null, null);
+			$navbar = new Navbar("Create DNS Key", $navModes, null);
 			
 			// Form data
 			$form['user'] = $this->impulselib->get_username();
