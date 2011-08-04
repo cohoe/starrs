@@ -54,8 +54,13 @@ COMMENT ON FUNCTION "api"."get_record_types"() IS 'Get all of the valid DNS type
 /* API - get_dns_zones*/
 CREATE OR REPLACE FUNCTION "api"."get_dns_zones"(input_username text) RETURNS SETOF "dns"."zone_data" AS $$
 	BEGIN
-		RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
-		FROM "dns"."zones" WHERE "forward" = TRUE AND ("shared" = TRUE OR "owner" = input_username) ORDER BY "zone" ASC);
+		IF input_username IS NULL THEN
+			RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+			FROM "dns"."zones" WHERE "forward" = TRUE ORDER BY "zone" ASC);
+		ELSE
+			RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+			FROM "dns"."zones" WHERE "forward" = TRUE AND ("shared" = TRUE OR "owner" = input_username) ORDER BY "zone" ASC);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zones"(text) IS 'Get the available zones to a user';
