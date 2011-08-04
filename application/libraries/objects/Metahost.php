@@ -45,17 +45,17 @@ class Metahost extends ImpulseObject {
 	// SETTERS
 	
 	public function set_name($new) {
-		$this->CI->api->firewall->modify_metahost($this->name, 'name', $new);
+		$this->CI->api->firewall->modify->metahost($this->name, 'name', $new);
 		$this->name = $new;
 	}
 	
 	public function set_comment($new) {
-		$this->CI->api->firewall->modify_metahost($this->name, 'comment', $new);
+		$this->CI->api->firewall->modify->metahost($this->name, 'comment', $new);
 		$this->comment = $new;
 	}
 	
 	public function set_owner($new) {
-		$this->CI->api->firewall->modify_metahost($this->name, 'owner', $new);
+		$this->CI->api->firewall->modify->metahost($this->name, 'owner', $new);
 		$this->owner = $new;
 	}
 

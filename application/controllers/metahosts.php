@@ -17,7 +17,7 @@ class Metahosts extends ImpulseController {
 		$navbar = new Navbar("Owned Metahosts", $navModes, $navOptions);
 		
 		try {
-			$mhostList = $this->api->firewall->get_metahosts($this->impulselib->get_username());
+			$mhostList = $this->api->firewall->get->metahosts($this->impulselib->get_username());
 			$viewData = $this->load->view('firewall/metahostlist',array('mhosts'=>$mhostList),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
@@ -43,7 +43,7 @@ class Metahosts extends ImpulseController {
 		$navbar = new Navbar("Owned Metahosts", $navModes, $navOptions);
 		
 		try {
-			$mhostList = $this->api->firewall->get_metahosts(null);
+			$mhostList = $this->api->firewall->get->metahosts(null);
 			$viewData = $this->load->view('firewall/metahostlist',array('mhosts'=>$mhostList),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
@@ -66,7 +66,7 @@ class Metahosts extends ImpulseController {
 			$this->_error("No metahost specified");
 		}
 		try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -132,7 +132,7 @@ class Metahosts extends ImpulseController {
 			$this->_error("No metahost specified");
 		}
 		try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -192,7 +192,7 @@ class Metahosts extends ImpulseController {
 			$this->_error("No metahost specified");
 		}
 		try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,false);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -242,7 +242,7 @@ class Metahosts extends ImpulseController {
 	
 	private function _create() {
 		try {
-			$mHost = $this->api->firewall->create_metahost(
+			$mHost = $this->api->firewall->create->metahost(
 				$this->input->post('name'),
 				$this->input->post('owner'),
 				$this->input->post('comment')
@@ -263,7 +263,7 @@ class Metahosts extends ImpulseController {
 	}
 	
 	private function _delete($mHost) {
-		$this->api->firewall->remove_metahost($mHost);
+		$this->api->firewall->remove->metahost($mHost);
 	}
 	
 	private function _edit() {

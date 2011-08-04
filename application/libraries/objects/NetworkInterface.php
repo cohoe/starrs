@@ -64,22 +64,22 @@ class NetworkInterface extends ImpulseObject {
 	// SETTERS
 	
 	public function set_system_name($new) {
-		$this->CI->api->systems->modify_interface($this->mac, 'system_name', $new);	
+		$this->CI->api->systems->modify->_interface($this->mac, 'system_name', $new);	
 		$this->systemName = $new; 
 	}
 	
 	public function set_mac($new) {
-		$this->CI->api->systems->modify_interface($this->mac, 'mac', $new);	
+		$this->CI->api->systems->modify->_interface($this->mac, 'mac', $new);	
 		$this->mac = $new; 
 	}
 	
 	public function set_interface_name($new) {
-		$this->CI->api->systems->modify_interface($this->mac, 'name', $new);	
+		$this->CI->api->systems->modify->_interface($this->mac, 'name', $new);	
 		$this->interfaceName = $new; 
 	}
 	
 	public function set_comment($new) { 
-		$this->CI->api->systems->modify_interface($this->mac, 'comment', $new);
+		$this->CI->api->systems->modify->_interface($this->mac, 'comment', $new);
 		$this->comment = $new; 
 	}
 	

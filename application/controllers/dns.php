@@ -116,7 +116,7 @@ class Dns extends ImpulseController {
 			$form['addr'] = self::$addr;
 			$form['type'] = $this->input->post('type');
 			$form['user'] = $this->impulselib->get_username();
-			$form['zones'] = $this->api->dns->get_dns_zones($form['user']);
+			$form['zones'] = $this->api->dns->get->zones($form['user']);
 
 			// Are you an admin?
 			if($this->api->isadmin() == TRUE) {
@@ -168,7 +168,7 @@ class Dns extends ImpulseController {
 
 			// Get the preset form data for drop down lists and things
 			$form['address'] = self::$addr;
-			$form['types'] = $this->api->dns->get_record_types();
+			$form['types'] = $this->api->dns->get->record_types();
 
 			// Are you an admin?
 			if($this->api->isadmin() == TRUE) {
@@ -214,7 +214,7 @@ class Dns extends ImpulseController {
 				$form['addr'] = self::$addr;
 				$form['type'] = $type;
 				$form['user'] = $this->impulselib->get_username();
-				$form['zones'] = $this->api->dns->get_dns_zones($form['user']);
+				$form['zones'] = $this->api->dns->get->dns_zones($form['user']);
 				$form['record'] = $record;
 
 				// Are you an admin?
@@ -236,7 +236,7 @@ class Dns extends ImpulseController {
 				
 				// Add it to the address
 				#self::$addr->add_record($record);
-				self::$addr = $this->api->systems->get_system_interface_address($record->get_address(),true);
+				self::$addr = $this->api->systems->get->system_interface_address($record->get_address(),true);
 				
 				// Update our information
 				self::$int->add_address(self::$addr);
@@ -306,28 +306,28 @@ class Dns extends ImpulseController {
 			// @todo: ADD TRY/CATCH HERE FOR DBEXCEPTIONS
 			switch($type) {
 				case 'CNAME':
-					$this->api->dns->remove_dns_cname($alias, $hostname, $zone);
+					$this->api->dns->remove->cname($alias, $hostname, $zone);
 					break;
 				case 'SRV':
-					$this->api->dns->remove_dns_srv($alias, $hostname, $zone);
+					$this->api->dns->remove->srv($alias, $hostname, $zone);
 					break;
 				case 'TXT':
-					$this->api->dns->remove_dns_text($hostname, $zone, $type);
+					$this->api->dns->remove->text($hostname, $zone, $type);
 					break;
 				case 'SPF':
-					$this->api->dns->remove_dns_text($hostname, $zone, $type);
+					$this->api->dns->remove->text($hostname, $zone, $type);
 					break;
 				case 'NS':
-					$this->api->dns->remove_dns_nameserver($hostname, $zone);
+					$this->api->dns->remove->nameserver($hostname, $zone);
 					break;
 				case 'MX':
-					$this->api->dns->remove_dns_mailserver($hostname, $zone);
+					$this->api->dns->remove->mailserver($hostname, $zone);
 					break;
 				case 'A':
-					$this->api->dns->remove_dns_address($address);
+					$this->api->dns->remove->address($address);
 					break;
 				case 'AAAA':
-					$this->api->dns->remove_dns_address($address);
+					$this->api->dns->remove->address($address);
 					break;
 				default:
 					$this->_error("Unable to determine your type. Make sure you aren't pulling any URL shenanigans.");
@@ -335,7 +335,7 @@ class Dns extends ImpulseController {
 			}
 			
 			// Set the SESSION data
-			self::$int->add_address($this->api->systems->get_system_interface_address($address,true));
+			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
 			
@@ -391,7 +391,7 @@ class Dns extends ImpulseController {
 		// Call the create function
 		switch($type) {
 			case 'CNAME':
-				$pointerRecord = $this->api->dns->create_dns_cname(
+				$pointerRecord = $this->api->dns->create->cname(
 					$this->input->post('alias'),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -401,7 +401,7 @@ class Dns extends ImpulseController {
 				return $pointerRecord;
 				break;
 			case 'SRV':
-				$pointerRecord = $this->api->dns->create_dns_srv(
+				$pointerRecord = $this->api->dns->create->srv(
 					$this->input->post('alias'),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -417,7 +417,7 @@ class Dns extends ImpulseController {
 				if(self::$addr->get_dynamic() == TRUE) {
 					throw new ControllerException('Cannot add special records to a Dynamic host');
 				}
-				$textRecord = $this->api->dns->create_dns_text(
+				$textRecord = $this->api->dns->create->text(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$this->input->post('text'),
@@ -431,7 +431,7 @@ class Dns extends ImpulseController {
 				if(self::$addr->get_dynamic() == TRUE) {
 					throw new ControllerException('Cannot add special records to a Dynamic host');
 				}
-				$textRecord = $this->api->dns->create_dns_text(
+				$textRecord = $this->api->dns->create->text(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$this->input->post('text'),
@@ -445,7 +445,7 @@ class Dns extends ImpulseController {
 				if(self::$addr->get_dynamic() == TRUE) {
 					throw new ControllerException('Cannot add special records to a Dynamic host');
 				}
-				$nsRecord = $this->api->dns->create_dns_nameserver(
+				$nsRecord = $this->api->dns->create->nameserver(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$this->input->post('isprimary'),
@@ -458,7 +458,7 @@ class Dns extends ImpulseController {
 				if(self::$addr->get_dynamic() == TRUE) {
 					throw new ControllerException('Cannot add special records to a Dynamic host');
 				}
-				$mxRecord = $this->api->dns->create_dns_mailserver(
+				$mxRecord = $this->api->dns->create->mailserver(
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
 					$this->input->post('preference'),
@@ -468,7 +468,7 @@ class Dns extends ImpulseController {
 				return $mxRecord;
 				break;
 			case 'A':
-				$aRecord = $this->api->dns->create_dns_address(
+				$aRecord = $this->api->dns->create->address(
 					self::$addr->get_address(),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),
@@ -478,7 +478,7 @@ class Dns extends ImpulseController {
 				return $aRecord;
 				break;
 			case 'AAAA':
-				$aRecord = $this->api->dns->create_dns_address(
+				$aRecord = $this->api->dns->create->address(
 					self::$addr->get_address(),
 					$this->input->post('hostname'),
 					$this->input->post('zone'),

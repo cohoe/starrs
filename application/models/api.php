@@ -1,9 +1,14 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseModel.php");
+require_once(APPPATH . "models/API/Management/api_management_create.php");
+require_once(APPPATH . "models/API/Management/api_management_modify.php");
+require_once(APPPATH . "models/API/Management/api_management_remove.php");
+require_once(APPPATH . "models/API/Management/api_management_get.php");
 
 /**
  * The IMPULSE API - the only supported way to interact with the IMPULSE database. 
  */
-class Api extends CI_Model {
+class Api extends ImpulseModel {
 
 	public $dhcp;
 	public $dns;
@@ -13,8 +18,6 @@ class Api extends CI_Model {
 	public $management;
 	public $network;
 	public $systems;
-
-    
 
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -34,8 +37,15 @@ class Api extends CI_Model {
 		$this->management = new API_Management();
 		$this->network = new API_Network();
 		$this->systems = new API_Systems();
+		
+		$this->create = new Api_management_create();
+		$this->modify = new Api_management_modify();
+		$this->remove = new Api_management_remove();
+		$this->get = new Api_management_get();
+		
+		
 
-		$this->management->initialize($this->impulselib->get_username());
+		$this->initialize($this->impulselib->get_username());
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -47,12 +57,30 @@ class Api extends CI_Model {
      */
 	public function isadmin() {
 		
-		if($this->api->management->get_current_user_level() == "ADMIN") {
+		if($this->api->get->current_user_level() == "ADMIN") {
 			return true;
 		}
 		else {
 			return false;
 		}
+	}
+	
+	public function initialize($user) {
+		// SQL Query
+		$sql = "SELECT api.initialize({$this->db->escape($user)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+	}
+	
+	public function deinitialize() {
+		// SQL Query
+		$sql = "SELECT api.deinitialize()";
+		$query = $this->db->query($sql);
+		
+		// Check error
+        $this->_check_error($query);
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -74,6 +102,6 @@ class Api extends CI_Model {
 
 		$this->load->library('impulselib');
 	}
-
-    
 }
+/* End of file api.php */
+/* Location: ./application/models/api.php */

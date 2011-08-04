@@ -104,8 +104,8 @@ class Metahost_rule extends ImpulseController {
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
-			$form['transports'] = $this->api->firewall->get_transports();
-			$form['mHosts'] = $this->api->firewall->get_metahosts($form['user']);
+			$form['transports'] = $this->api->firewall->get->transports();
+			$form['mHosts'] = $this->api->firewall->get->metahosts($form['user']);
 			$form['mHostName'] = self::$mHost->get_name();
 			
 			// Continue loading view data
@@ -141,10 +141,10 @@ class Metahost_rule extends ImpulseController {
 
 		try {
 			if(self::$fwRule->get_source() == 'metahost-program') {
-				$this->api->firewall->remove_metahost_program_rule(self::$mHost->get_name(),self::$fwRule->get_program_name());
+				$this->api->firewall->remove->metahost_program_rule(self::$mHost->get_name(),self::$fwRule->get_program_name());
 			}
 			else {
-				$this->api->firewall->remove_metahost_rule(self::$mHost->get_name(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+				$this->api->firewall->remove->metahost_rule(self::$mHost->get_name(),self::$fwRule->get_port(),self::$fwRule->get_transport());
 			}
 
 			// Move along

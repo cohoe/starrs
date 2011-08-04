@@ -4,39 +4,108 @@
  *	DNS
  */
 class Api_dns_get extends ImpulseModel {
-    
-    public function address_record($address) {
+
+	public function mx_records($address) {
 		// SQL Query
-		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
+		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+		$this->_check_error($query);
+
+		// Generate and return results
+        $mxRecord = $query->row_array();
+        if($query->num_rows() == 1) {
+            return new MxRecord(
+                $mxRecord['hostname'],
+                $mxRecord['zone'],
+                $mxRecord['address'],
+                $mxRecord['type'],
+                $mxRecord['ttl'],
+                $mxRecord['owner'],
+                $mxRecord['preference'],
+                $mxRecord['date_created'],
+                $mxRecord['date_modified'],
+                $mxRecord['last_modifier']
+            );
+        }
+		elseif($query->num_rows() > 0) {
+            throw new AmbiguousTargetException("Multiple MX records detected. This indicates a database error. Contact your administrator.");
+        }
+        else {
+            throw new ObjectNotFoundException("Could not locate a DNS MX record for address $address");
+        }
+	}
+	
+	public function ns_records($address) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
 		// Check error
 		$this->_check_error($query);
 
-		// Generate & return result
-        $aRecord = $query->row_array();
-        if($query->num_rows() == 1) {
-            return new AddressRecord(
-                $aRecord['hostname'],
-                $aRecord['zone'],
-                $aRecord['address'],
-                $aRecord['type'],
-                $aRecord['ttl'],
-                $aRecord['owner'],
-                $aRecord['date_created'],
-                $aRecord['date_modified'],
-                $aRecord['last_modifier']
+		// Generate results
+        $resultSet = array();
+        foreach ($query->result_array() as $nsRecord) {
+            $resultSet[] = new NsRecord(
+                $nsRecord['hostname'],
+                $nsRecord['zone'],
+                $nsRecord['address'],
+                $nsRecord['type'],
+                $nsRecord['ttl'],
+                $nsRecord['owner'],
+                $nsRecord['isprimary'],
+                $nsRecord['date_created'],
+                $nsRecord['date_modified'],
+                $nsRecord['last_modifier']
             );
         }
-        elseif($query->num_rows() > 1) {
-            throw new AmbiguousTargetException("Multiple address records detected. This indicates a database error. Contact your system administrator.");
+
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No NS records found for address $address");
+		}
+	}
+	
+	public function text_records($address) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_text({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        // Generate results
+        $resultSet = array();
+        foreach ($query->result_array() as $textRecord) {
+            $resultSet[] = new TextRecord(
+                $textRecord['hostname'],
+                $textRecord['zone'],
+                $textRecord['address'],
+                $textRecord['type'],
+                $textRecord['ttl'],
+                $textRecord['owner'],
+                $textRecord['text'],
+                $textRecord['date_created'],
+                $textRecord['date_modified'],
+                $textRecord['last_modifier']
+            );
         }
+
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
         else {
-            throw new ObjectNotFoundException("Could not locate DNS address record for address $address");
+            throw new ObjectNotFoundException("No text records found for address $address");
         }
 	}
-
-    public function pointer_records($address) {
+	
+	public function pointer_records($address) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_pointers({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -71,104 +140,35 @@ class Api_dns_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No pointer records found for address $address");
 		}
 	}
-
-    public function text_records($address) {
+    
+    public function address_record($address) {
 		// SQL Query
-		$sql = "SELECT * FROM api.get_dns_text({$this->db->escape($address)})";
+		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
 
 		// Check error
 		$this->_check_error($query);
 
-        // Generate results
-        $resultSet = array();
-        foreach ($query->result_array() as $textRecord) {
-            $resultSet[] = new TextRecord(
-                $textRecord['hostname'],
-                $textRecord['zone'],
-                $textRecord['address'],
-                $textRecord['type'],
-                $textRecord['ttl'],
-                $textRecord['owner'],
-                $textRecord['text'],
-                $textRecord['date_created'],
-                $textRecord['date_modified'],
-                $textRecord['last_modifier']
-            );
-        }
-
-        // Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-        else {
-            throw new ObjectNotFoundException("No text records found for address $address");
-        }
-	}
-
-    public function ns_records($address) {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_dns_ns({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-		// Check error
-		$this->_check_error($query);
-
-		// Generate results
-        $resultSet = array();
-        foreach ($query->result_array() as $nsRecord) {
-            $resultSet[] = new NsRecord(
-                $nsRecord['hostname'],
-                $nsRecord['zone'],
-                $nsRecord['address'],
-                $nsRecord['type'],
-                $nsRecord['ttl'],
-                $nsRecord['owner'],
-                $nsRecord['isprimary'],
-                $nsRecord['date_created'],
-                $nsRecord['date_modified'],
-                $nsRecord['last_modifier']
-            );
-        }
-
-        // Return results
-		if(count($resultSet) > 0) {
-			return $resultSet;
-		}
-		else {
-			throw new ObjectNotFoundException("No NS records found for address $address");
-		}
-	}
-
-    public function mx_records($address) {
-		// SQL Query
-		$sql = "SELECT * FROM api.get_dns_mx({$this->db->escape($address)})";
-		$query = $this->db->query($sql);
-
-        // Check error
-		$this->_check_error($query);
-
-		// Generate and return results
-        $mxRecord = $query->row_array();
+		// Generate & return result
+        $aRecord = $query->row_array();
         if($query->num_rows() == 1) {
-            return new MxRecord(
-                $mxRecord['hostname'],
-                $mxRecord['zone'],
-                $mxRecord['address'],
-                $mxRecord['type'],
-                $mxRecord['ttl'],
-                $mxRecord['owner'],
-                $mxRecord['preference'],
-                $mxRecord['date_created'],
-                $mxRecord['date_modified'],
-                $mxRecord['last_modifier']
+            return new AddressRecord(
+                $aRecord['hostname'],
+                $aRecord['zone'],
+                $aRecord['address'],
+                $aRecord['type'],
+                $aRecord['ttl'],
+                $aRecord['owner'],
+                $aRecord['date_created'],
+                $aRecord['date_modified'],
+                $aRecord['last_modifier']
             );
         }
-		elseif($query->num_rows() > 0) {
-            throw new AmbiguousTargetException("Multiple MX records detected. This indicates a database error. Contact your administrator.");
+        elseif($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple address records detected. This indicates a database error. Contact your system administrator.");
         }
         else {
-            throw new ObjectNotFoundException("Could not locate a DNS MX record for address $address");
+            throw new ObjectNotFoundException("Could not locate DNS address record for address $address");
         }
 	}
 

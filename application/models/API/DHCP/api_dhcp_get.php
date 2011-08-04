@@ -1,0 +1,69 @@
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(APPPATH . "libraries/core/ImpulseModel.php");
+
+/**
+ *	DHCP Get
+ */
+class Api_dhcp_get extends ImpulseModel {
+
+	public function config_types($family=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_config_types({$this->db->escape($family)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $configType) {
+			$resultSet[] = new ConfigType(
+				$configType['config'],
+				$configType['comment'],
+				$configType['family'],
+				$configType['date_created'],
+				$configType['date_modified'],
+				$configType['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP config types found. This is a big problem. Talk to your administrator.");
+		}
+	}
+	
+	public function classes() {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_classes()";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $class) {
+			$resultSet[] = new ConfigClass(
+				$class['class'],
+				$class['comment'],
+				$class['date_created'],
+				$class['date_modified'],
+				$class['last_modifier']
+			);
+		}
+		
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP classes found. This is a big problem. Talk to your administrator.");
+		}
+	}
+}
+/* End of file api_dhcp_get.php */
+/* Location: ./application/models/API/DHCP/api_dhcp_get.php */

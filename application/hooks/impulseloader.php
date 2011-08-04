@@ -30,6 +30,14 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/objects/Subnet.php");
 		require_once(APPPATH . "libraries/objects/DnsZone.php");
 		require_once(APPPATH . "libraries/objects/DnsKey.php");
+		require_once(APPPATH . "libraries/objects/IpAddress.php");
+		require_once(APPPATH . "libraries/objects/DhcpOption.php");
+		require_once(APPPATH . "libraries/objects/GlobalOption.php");
+		require_once(APPPATH . "libraries/objects/ClassOption.php");
+		require_once(APPPATH . "libraries/objects/RangeOption.php");
+		require_once(APPPATH . "libraries/objects/SubnetOption.php");
+		require_once(APPPATH . "libraries/objects/DhcpClass.php");
+		require_once(APPPATH . "libraries/objects/Switchport.php");
 		
 		# Exceptions
 		require_once(APPPATH . "libraries/exceptions/ControllerException.php");
@@ -43,10 +51,8 @@ class ImpulseLoader {
 		require_once(APPPATH . "libraries/core/navbar.php");
 		
 		# Controllers
-		require_once(APPPATH . "controllers/firewall/rule.php");
-		require_once(APPPATH . "controllers/firewall/rules.php");
-        
-        # API
+		#require_once(APPPATH . "controllers/firewall/rule.php");
+		#require_once(APPPATH . "controllers/firewall/rules.php");
         
 	}
 }

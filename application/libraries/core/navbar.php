@@ -113,7 +113,7 @@ class Navbar {
 
         // Load your user information
 		$this->user = $this->CI->impulselib->get_name();
-		$this->priv = $this->CI->api->management->get_current_user_level();
+		$this->priv = $this->CI->api->get->current_user_level();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -132,13 +132,13 @@ class Navbar {
 
 	public function get_navOptions()	{ return $this->navOptions; }
 	public function get_title()			{ return $this->title; }
-	public function get_edit()		{ return $this->edit; }
+	public function get_edit()          { return $this->edit; }
 	public function get_active_page()	{ return $this->activePage; }
 	public function get_context()		{ return $this->context; }
 	public function get_delete()		{ return $this->delete; }
 	public function get_user()			{ return $this->user; }
 	public function get_priv()			{ return $this->priv; }
-	public function get_cancel()	{ return $this->cancel; }
+	public function get_cancel()        { return $this->cancel; }
 	public function get_create_link()	{ return $this->createLink; }
 	public function get_edit_link()		{ return $this->editLink; }
 	public function get_delete_link()	{ return $this->deleteLink; }

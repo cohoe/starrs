@@ -68,8 +68,8 @@ class Rules extends ImpulseController {
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
-            $form['transports'] = $this->api->firewall->get_transports();
-			$form['fwProgs'] = $this->api->firewall->get_programs();
+            $form['transports'] = $this->api->firewall->get->transports();
+			$form['fwProgs'] = $this->api->firewall->get->programs();
 
 			// Continue loading view data
 			$info['data'] = $this->load->view('firewall/metahosts/rules/create',$form,TRUE);
@@ -103,10 +103,10 @@ class Rules extends ImpulseController {
 
 		try {
 			if(self::$fwRule->get_source() == 'standalone-program') {
-				$this->api->firewall->remove_standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
+				$this->api->firewall->remove->standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
 			}
 			else {
-				$this->api->firewall->remove_standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+				$this->api->firewall->remove->standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
 			}
 
 			// Set the SESSION data
@@ -125,14 +125,14 @@ class Rules extends ImpulseController {
 	
 	private function _load_rules() {
 		try {
-			$stdRules = $this->api->firewall->get_metahost_rules(self::$mHost->get_name());
+			$stdRules = $this->api->firewall->get->metahost_rules(self::$mHost->get_name());
 			foreach($stdRules as $rule) {
 				self::$mHost->add_rule($rule);
 			}
 		}
 		catch (ObjectNotFoundException $onfE) { }
 		try {
-			$progRules = $this->api->firewall->get_metahost_program_rules(self::$mHost->get_name());
+			$progRules = $this->api->firewall->get->metahost_program_rules(self::$mHost->get_name());
 			foreach($progRules as $rule) {
 				self::$mHost->add_rule($rule);
 			}
@@ -149,14 +149,14 @@ class Rules extends ImpulseController {
 
     private function _create() {
         if($this->input->post('program')) {
-			$fwRule = $this->api->firewall->create_metahost_program(
+			$fwRule = $this->api->firewall->create->metahost_program(
 				self::$mHost->get_name(),
 				$this->input->post('program'),
 				$this->input->post('deny')
 			);
 		}
 		else {
-			$fwRule = $this->api->firewall->create_metahost_rule(
+			$fwRule = $this->api->firewall->create->metahost_rule(
 				self::$mHost->get_name(),
 				$this->input->post('port'),
 				$this->input->post('transport'),

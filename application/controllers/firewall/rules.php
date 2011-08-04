@@ -87,9 +87,9 @@ class Rules extends ImpulseController {
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
 			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-			$viewData['transports'] = $this->api->firewall->get_transports();
+			$viewData['transports'] = $this->api->firewall->get->transports();
 			$viewData['addr'] = self::$addr;
-			$viewData['fwProgs'] = $this->api->firewall->get_programs();
+			$viewData['fwProgs'] = $this->api->firewall->get->programs();
 			$viewData['user'] = $this->impulselib->get_username();
 			if($this->api->isadmin() == TRUE) {
 				$viewData['admin'] = TRUE;
@@ -133,14 +133,14 @@ class Rules extends ImpulseController {
 
 		try {
 			if(self::$fwRule->get_source() == 'standalone-program') {
-				$this->api->firewall->remove_standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
+				$this->api->firewall->remove->standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
 			}
 			else {
-				$this->api->firewall->remove_standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+				$this->api->firewall->remove->standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
 			}
 
 			// Set the SESSION data
-			self::$int->add_address($this->api->systems->get_system_interface_address($address,true));
+			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
 
@@ -155,7 +155,7 @@ class Rules extends ImpulseController {
 	
 	private function _create() {
 		if($this->input->post('program')) {
-			$fwRule = $this->api->firewall->create_standalone_program(
+			$fwRule = $this->api->firewall->create->standalone_program(
 				self::$addr->get_address(),
 				$this->input->post('program'),
 				$this->input->post('deny'),
@@ -163,7 +163,7 @@ class Rules extends ImpulseController {
 			);
 		}
 		else {
-			$fwRule = $this->api->firewall->create_standalone_rule(
+			$fwRule = $this->api->firewall->create->standalone_rule(
 				self::$addr->get_address(),
 				$this->input->post('port'),
 				$this->input->post('transport'),

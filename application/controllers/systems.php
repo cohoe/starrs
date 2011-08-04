@@ -29,7 +29,7 @@ class Systems extends ImpulseController {
 		
 		// List of systems
 		try {
-			$systemList = $this->api->systems->get_systems(NULL);
+			$systemList = $this->api->systems->get->systems(NULL);
 			$viewData = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
@@ -60,7 +60,7 @@ class Systems extends ImpulseController {
 		
 		// List of systems
 		try {
-			$systemList = $this->api->systems->get_systems($this->impulselib->get_username());
+			$systemList = $this->api->systems->get->systems($this->impulselib->get_username());
 			$viewData = $this->load->view('systems/systemlist',array('systems'=>$systemList),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
@@ -105,7 +105,7 @@ class Systems extends ImpulseController {
 			
 			// System Object
 			try {
-				$sys = $this->api->systems->get_system_data($systemName,false);
+				$sys = $this->api->systems->get->system_data($systemName,false);
 			}
 			catch (ObjectNotFoundException $oNFE) {
 				$this->_error("System not found!");
@@ -187,8 +187,8 @@ class Systems extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for dropdown lists and things
-			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
-			$form['systemTypes'] = $this->api->systems->get_system_types();
+			$form['operatingSystems'] = $this->api->systems->get->operating_systems();
+			$form['systemTypes'] = $this->api->systems->get->system_types();
 			$form['system'] = $sys;
 			$form['user'] = $this->impulselib->get_username();
 			if($this->api->isadmin() == TRUE) {
@@ -232,8 +232,8 @@ class Systems extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for dropdown lists and things
-			$form['operatingSystems'] = $this->api->systems->get_operating_systems();
-			$form['systemTypes'] = $this->api->systems->get_system_types();
+			$form['operatingSystems'] = $this->api->systems->get->operating_systems();
+			$form['systemTypes'] = $this->api->systems->get->system_types();
 			$form['user'] = $this->impulselib->get_username();
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
@@ -345,7 +345,7 @@ class Systems extends ImpulseController {
 		
 		// Get the interface objects for the system
 		try {
-			$ints = $this->api->systems->get_system_interfaces($sys->get_system_name(),false);
+			$ints = $this->api->systems->get->system_interfaces($sys->get_system_name(),false);
 			
 			// Concatenate all view data into one string
 			foreach ($ints as $int) {
@@ -380,7 +380,7 @@ class Systems extends ImpulseController {
      */
 	private function _create() {
 		try {
-			$sys = $this->api->systems->create_system(
+			$sys = $this->api->systems->create->system(
 				$this->input->post('systemName'),
 				$this->impulselib->get_username(),
 				$this->input->post('type'),
@@ -449,7 +449,7 @@ class Systems extends ImpulseController {
      */
 	private function _delete($sys) {
 		try {
-			$this->api->systems->remove_system($sys);
+			$this->api->systems->remove->system($sys);
 		}
 		catch (DBException $dbE) {
 			$this->_error("DB:".$dbE->getMessage());

@@ -30,27 +30,27 @@ class MetahostRule extends FirewallRule {
 	// SETTERS
 
     public function set_metahost_name($new) {
-		$this->CI->api->firewall->modify_metahost_rule($this->metahostName, $this->port, $this->transport, 'name', $new);
+		$this->CI->api->firewall->modify->metahost_rule($this->metahostName, $this->port, $this->transport, 'name', $new);
 		$this->address = $new;
 	}
 
     public function set_deny($new) {
-        $this->CI->api->firewall->modify_metahost_rule($this->metahostName, $this->port, $this->transport, 'deny', $new);
+        $this->CI->api->firewall->modify->metahost_rule($this->metahostName, $this->port, $this->transport, 'deny', $new);
 		$this->deny = $new;
     }
 
     public function set_transport($new) {
-        $this->CI->api->firewall->modify_metahost_rule($this->metahostName, $this->port, $this->transport, 'transport', $new);
+        $this->CI->api->firewall->modify->metahost_rule($this->metahostName, $this->port, $this->transport, 'transport', $new);
 		$this->transport = $new;
     }
 
     public function set_port($new) {
-        $this->CI->api->firewall->modify_metahost_rule($this->metahostName, $this->port, $this->transport, 'port', $new);
+        $this->CI->api->firewall->modify->metahost_rule($this->metahostName, $this->port, $this->transport, 'port', $new);
 		$this->port = $new;
     }
 
     public function set_comment($new) {
-        $this->CI->api->firewall->modify_metahost_rule($this->metahostName, $this->port, $this->transport, 'comment', $new);
+        $this->CI->api->firewall->modify->metahost_rule($this->metahostName, $this->port, $this->transport, 'comment', $new);
 		$this->comment = $new;
     }
 

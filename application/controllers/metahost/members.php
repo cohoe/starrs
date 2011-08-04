@@ -41,12 +41,12 @@ class Members extends ImpulseController {
 			exit($this->_error("No address specified"));
 		}
 		try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 
 			$membr = self::$mHost->get_member($address);
 				
-			$this->api->firewall->remove_metahost_member($membr);
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
+			$this->api->firewall->remove->metahost_member($membr);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 			redirect(base_url()."/metahosts/members/view/".self::$mHost->get_name(),'location');
 		}
 		catch (DBException $dbE) {
@@ -63,9 +63,9 @@ class Members extends ImpulseController {
 	public function create($metahostName=NULL) {
 		if($this->input->post('submit')) {
 			try {
-				self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
+				self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 				$membr = $this->_create();
-				self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
+				self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 				redirect(base_url()."members/view/".$membr->get_name(),'location');
 			}
 			catch (DBException $dbE) {
@@ -90,7 +90,7 @@ class Members extends ImpulseController {
 			
 			// Get the preset form data for dropdown lists and things
 			$form['user'] = $this->impulselib->get_username();
-			$form['addrs'] = $this->api->systems->get_owned_addresses($this->impulselib->get_username());
+			$form['addrs'] = $this->api->systems->get->owned_addresses($this->impulselib->get_username());
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
@@ -117,7 +117,7 @@ class Members extends ImpulseController {
 	}
 	
 	private function _create() {
-		$membr = $this->api->firewall->create_metahost_member($this->input->post('address'),self::$mHost->get_name());
+		$membr = $this->api->firewall->create->metahost_member($this->input->post('address'),self::$mHost->get_name());
 		self::$mHost->add_member($membr);
 		return $membr;
 	}

@@ -33,22 +33,22 @@ class AddressRecord extends DnsRecord {
 	// SETTERS
 
     public function set_hostname($new) {
-		$this->CI->api->dns->modify_dns_address($this->address, 'hostname', $new);
+		$this->CI->api->dns->modify->address($this->address, 'hostname', $new);
 		$this->hostname = $new;
 	}
 
 	public function set_zone($new) {
-		$this->CI->api->dns->modify_dns_address($this->address, 'zone', $new);
+		$this->CI->api->dns->modify->address($this->address, 'zone', $new);
 		$this->zone = $new;
 	}
 
 	public function set_ttl($new) {
-		$this->CI->api->dns->modify_dns_address($this->address, 'ttl', $new);
+		$this->CI->api->dns->modify->address($this->address, 'ttl', $new);
 		$this->ttl = $new;
 	}
 
 	public function set_owner($new) {
-		$this->CI->api->dns->modify_dns_address($this->address, 'owner', $new);
+		$this->CI->api->dns->modify->address($this->address, 'owner', $new);
 		$this->owner = $new;
 	}
 

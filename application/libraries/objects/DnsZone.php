@@ -41,6 +41,37 @@ class DnsZone extends ImpulseObject {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
+	
+	public function set_zone($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'zone', $new);
+		$this->zone = $new;
+	}
+	
+	public function set_keyname($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'keyname', $new);
+		$this->keyname = $new;
+	}
+	
+	public function set_forward($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'forward', $new);
+		$this->forward = $new;
+	}
+	
+	public function set_shared($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'shared', $new);
+		$this->shared = $new;
+	}
+	
+	public function set_owner($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'owner', $new);
+		$this->owner = $new;
+	}
+	
+	public function set_comment($new) {
+		$this->CI->api->dns->modify->zone($this->zone, 'comment', $new);
+		$this->comment = $new;
+	}
+	
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

@@ -129,7 +129,7 @@ class ImpulseController extends CI_Controller {
 
     protected function _load_metahost($metahostName) {
         try {
-			self::$mHost = $this->api->firewall->get_metahost($metahostName,true);
+			self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());

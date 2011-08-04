@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/DNS/api_dns_create.php");
 require_once(APPPATH . "models/API/DNS/api_dns_modify.php");
 require_once(APPPATH . "models/API/DNS/api_dns_remove.php");
 require_once(APPPATH . "models/API/DNS/api_dns_get.php");
+
 /**
  *	DNS
  */
@@ -48,6 +49,5 @@ class Api_dns extends ImpulseModel {
         }
     }
 }
-
 /* End of file api_dns.php */
 /* Location: ./application/models/API/api_dns.php */

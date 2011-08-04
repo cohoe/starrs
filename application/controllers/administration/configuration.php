@@ -10,7 +10,7 @@ class Configuration extends ImpulseController {
 		if($this->api->isadmin() == false) {
 			$this->_error("Permission denied. You are not an IMPULSE administrator");
 		}
-	}
+	}	
 	
 	public function view($mode=NULL) {
 		switch($mode) {

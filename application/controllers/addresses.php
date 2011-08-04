@@ -112,9 +112,9 @@ class Addresses extends ImpulseController {
 
         // Get the preset form data for drop down lists and things
         $form['interface'] = $int;
-        $form['ranges'] = $this->api->ip->get_ranges();
-        $form['configs'] = $this->api->dhcp->get_dhcp_config_types();
-        $form['classes'] = $this->api->dhcp->get_dhcp_classes();
+        $form['ranges'] = $this->api->ip->get->ranges();
+        $form['configs'] = $this->api->dhcp->get->config_types();
+        $form['classes'] = $this->api->dhcp->get->classes();
 
         // Are you an admin?
         if($this->api->isadmin() == TRUE) {
@@ -228,9 +228,9 @@ class Addresses extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for drop down lists and things
-			$form['ranges'] = $this->api->ip->get_ranges();
-			$form['configs'] = $this->api->dhcp->get_dhcp_config_types();
-			$form['classes'] = $this->api->dhcp->get_dhcp_classes();
+			$form['ranges'] = $this->api->ip->get->ranges();
+			$form['configs'] = $this->api->dhcp->get->config_types();
+			$form['classes'] = $this->api->dhcp->get->classes();
 			$form['addr'] = $addr;
 
 			// Are you an admin?
@@ -259,12 +259,12 @@ class Addresses extends ImpulseController {
         // If no address was given, get one from the selected range
 		$address = $this->input->post('address');
 		if($address == "") {
-			$address = $this->api->ip->get_address_from_range($this->input->post('range'));
+			$address = $this->api->ip->get->address_from_range($this->input->post('range'));
 		}
 
         // Call the create function
 		try {
-			$addr = $this->api->systems->create_interface_address(
+			$addr = $this->api->systems->create->interface_address(
 				$this->input->post('mac'),
 				$address,
 				$this->input->post('config'),
@@ -298,7 +298,7 @@ class Addresses extends ImpulseController {
 			if($range == "") {
 				$range = $addr->get_range();
 			}
-			$address = $this->api->ip->get_address_from_range($range);
+			$address = $this->api->ip->get->address_from_range($range);
 			try { $addr->set_address($address); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
@@ -337,7 +337,7 @@ class Addresses extends ImpulseController {
 	private function _delete($addr) {
         // Call the query function
 		try {
-			$this->api->systems->remove_interface_address($addr);
+			$this->api->systems->remove->interface_address($addr);
 		}
 		catch (DBException $dbE) {
 			$this->_error("DB:".$dbE->getMessage());

@@ -96,7 +96,7 @@ class Rule extends ImpulseController {
 				$this->_edit();
 				
 				// Update our information
-				self::$addr = $this->api->systems->get_system_interface_address($address,TRUE);
+				self::$addr = $this->api->systems->get->system_interface_address($address,TRUE);
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
@@ -122,8 +122,8 @@ class Rule extends ImpulseController {
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
-			$form['transports'] = $this->api->firewall->get_transports();
-			$form['addrs'] = $this->api->systems->get_owned_addresses($form['user']);
+			$form['transports'] = $this->api->firewall->get->transports();
+			$form['addrs'] = $this->api->systems->get->owned_addresses($form['user']);
 			
 			// Continue loading view data
 			$info['data'] = $this->load->view('firewall/standalone_edit',$form,TRUE);
@@ -161,14 +161,14 @@ class Rule extends ImpulseController {
 
 		try {
 			if(self::$fwRule->get_source() == 'standalone-program') {
-				$this->api->firewall->remove_standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
+				$this->api->firewall->remove->standalone_program(self::$fwRule->get_address(),self::$fwRule->get_program_name());
 			}
 			else {
-				$this->api->firewall->remove_standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
+				$this->api->firewall->remove->standalone_rule(self::$fwRule->get_address(),self::$fwRule->get_port(),self::$fwRule->get_transport());
 			}
 
 			// Set the SESSION data
-			self::$int->add_address($this->api->systems->get_system_interface_address($address,true));
+			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
 

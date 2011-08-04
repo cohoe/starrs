@@ -117,7 +117,7 @@ class InterfaceAddress extends ImpulseObject {
 
         // Try to get the address record that resolves to this address
 		try {
-			$this->dnsAddressRecord = $this->CI->api->dns->get_address_record($this->address);
+			$this->dnsAddressRecord = $this->CI->api->dns->get->address_record($this->address);
 			$this->dnsFqdn = $this->dnsAddressRecord->get_hostname().".".$this->dnsAddressRecord->get_zone();
 		}
 		catch (ObjectNotFoundException $onfE) {
@@ -126,14 +126,14 @@ class InterfaceAddress extends ImpulseObject {
 		}
 
         // Fill in some more basic information this address
-		$this->fwDefault = $this->CI->api->firewall->get_firewall_default($this->address);
-		$this->systemName = $this->CI->api->systems->get_interface_address_system($this->address);
-		$this->range = $this->CI->api->ip->get_address_range($this->address);
+		$this->fwDefault = $this->CI->api->firewall->get->_default($this->address);
+		$this->systemName = $this->CI->api->systems->get->interface_address_system($this->address);
+		$this->range = $this->CI->api->ip->get->address_range($this->address);
 
         // If this is in the site configured dynamic subnet range, then fill in some more information
-		if($this->CI->api->ip->ip_in_subnet($this->get_address(), $this->CI->api->management->get_site_configuration('DYNAMIC_SUBNET')) == 't') {
+		if($this->CI->api->ip->ip_in_subnet($this->get_address(), $this->CI->api->get->site_configuration('DYNAMIC_SUBNET')) == 't') {
 			$this->dynamic = TRUE;
-			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get_interface_address_system($this->address)) . "." . $this->CI->api->management->get_site_configuration('DNS_DEFAULT_ZONE');
+			$this->dnsFqdn = $this->CI->impulselib->hostname($this->CI->api->systems->get->interface_address_system($this->address)) . "." . $this->CI->api->get->site_configuration('DNS_DEFAULT_ZONE');
 		}
 	}
 	
@@ -164,27 +164,27 @@ class InterfaceAddress extends ImpulseObject {
 	// SETTERS
 	
 	public function set_address($new) {
-		$this->CI->api->systems->modify_interface_address($this->address, 'address', $new);	
+		$this->CI->api->systems->modify->interface_address($this->address, 'address', $new);	
 		$this->address = $new; 
 	}
 	
 	public function set_config($new) {
-		$this->CI->api->systems->modify_interface_address($this->address, 'config', $new);	
+		$this->CI->api->systems->modify->interface_address($this->address, 'config', $new);	
 		$this->config = $new; 
 	}
 	
 	public function set_class($new) {
-		$this->CI->api->systems->modify_interface_address($this->address, 'class', $new);	
+		$this->CI->api->systems->modify->interface_address($this->address, 'class', $new);	
 		$this->class = $new; 
 	}
 	
 	public function set_isprimary($new) {
-		$this->CI->api->systems->modify_interface_address($this->address, 'isprimary', $new);	
+		$this->CI->api->systems->modify->interface_address($this->address, 'isprimary', $new);	
 		$this->isPrimary = $new; 
 	}
 	
 	public function set_comment($new) {
-		$this->CI->api->systems->modify_interface_address($this->address, 'comment', $new);	
+		$this->CI->api->systems->modify->interface_address($this->address, 'comment', $new);	
 		$this->comment = $new; 
 	}
 
@@ -197,7 +197,7 @@ class InterfaceAddress extends ImpulseObject {
 	}
 	
 	public function set_fw_default($action) {
-		$this->CI->api->firewall->modify_default($this->address, $action);
+		$this->CI->api->firewall->modify->_default($this->address, $action);
 		$this->fwDefault = $action;
 	}
 	

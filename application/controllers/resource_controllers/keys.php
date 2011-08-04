@@ -144,11 +144,13 @@ class Keys extends ImpulseController {
 			}
 		}
 		else {
+			// Navbar
+			$navModes['CANCEL'] = "/resources/keys/view/".urlencode(self::$dnsKey->get_keyname());
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
 			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 			$info['title'] = "Edit ".self::$dnsKey->get_keyname();
-			$navbar = new Navbar("Edit ".self::$dnsKey->get_keyname(), null, null);
+			$navbar = new Navbar("Edit ".self::$dnsKey->get_keyname(), $navModes, null);
 			
 			// Form data
 			$form['user'] = $this->impulselib->get_username();

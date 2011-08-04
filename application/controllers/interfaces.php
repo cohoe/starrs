@@ -51,12 +51,12 @@ class Interfaces extends ImpulseController {
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
             // Get the preset form data for dropdown lists and things
-            $form['systems'] = $this->api->systems->get_systems($this->impulselib->get_username());
+            $form['systems'] = $this->api->systems->get->systems($this->impulselib->get_username());
             $form['systemName'] = $systemName;
 
             // If you are an administrator
             if($this->api->isadmin() == true) {
-                $form['systems'] = $this->api->systems->get_systems(NULL);
+                $form['systems'] = $this->api->systems->get->systems(NULL);
                 $form['admin'] = TRUE;
             }
 
@@ -109,9 +109,9 @@ class Interfaces extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for drop down lists and things
-			$form['systems'] = $this->api->systems->get_systems($this->impulselib->get_username());
+			$form['systems'] = $this->api->systems->get->systems($this->impulselib->get_username());
 			if($this->api->isadmin() == true) {
-				$form['systems'] = $this->api->systems->get_systems(NULL);
+				$form['systems'] = $this->api->systems->get->systems(NULL);
                 $form['admin'] = TRUE;
 			}
 			$form['interface'] = $int;
@@ -138,7 +138,7 @@ class Interfaces extends ImpulseController {
 		}
 
         // Establish the local interface object
-		$int = $this->api->systems->get_system_interface_data($mac);
+		$int = $this->api->systems->get->system_interface_data($mac);
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
@@ -221,7 +221,7 @@ class Interfaces extends ImpulseController {
 	private function _create() {
         // Call the function
 		try {
-			$int = $this->api->systems->create_interface(
+			$int = $this->api->systems->create->_interface(
 				$this->input->post('systemName'),
 				$this->input->post('mac'),
 				$this->input->post('name'),
@@ -279,7 +279,7 @@ class Interfaces extends ImpulseController {
 	private function _delete($int) {
         // Run the query
 		try {
-			$this->api->systems->remove_interface($int);
+			$this->api->systems->remove->_interface($int);
 		}
 		catch (DBException $dbE) {
 			$this->_error("DB:".$dbE->getMessage());
@@ -301,7 +301,7 @@ class Interfaces extends ImpulseController {
 
         // Array of address objects
 		try {
-			$addrs = $this->api->systems->get_system_interface_addresses($int->get_mac(), true);
+			$addrs = $this->api->systems->get->system_interface_addresses($int->get_mac(), true);
 
 			// For each of the address objects, draw it's box and append it to the view
 			foreach($addrs as $addr) {

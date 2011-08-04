@@ -67,60 +67,60 @@ class PointerRecord extends DnsRecord {
 	
 	public function set_hostname($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'hostname', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'hostname', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'hostname', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'hostname', $new);	
 		}
 		$this->hostname = $new; 
 	}
 	
 	public function set_zone($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'zone', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'zone', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'zone', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'zone', $new);	
 		}
 		$this->zone = $new; 
 	}
 	
 	public function set_ttl($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'ttl', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'ttl', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'ttl', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'ttl', $new);	
 		}
 		$this->ttl = $new; 
 	}
 	
 	public function set_owner($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'owner', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'owner', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'owner', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'owner', $new);	
 		}
 		$this->owner = $new; 
 	}
 	
 	public function set_alias($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'alias', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'alias', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'alias', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'alias', $new);	
 		}
 		$this->alias = $new; 
 	}
 	
 	public function set_extra($new) {
 		if($this->get_type() == "CNAME") {
-			$this->CI->api->dns->modify_dns_cname($this->alias, $this->zone, 'extra', $new);	
+			$this->CI->api->dns->modify->cname($this->alias, $this->zone, 'extra', $new);	
 		}
 		else {
-			$this->CI->api->dns->modify_dns_srv($this->alias, $this->zone, 'extra', $new);	
+			$this->CI->api->dns->modify->srv($this->alias, $this->zone, 'extra', $new);	
 		}
 		$this->extra = $new; 
 	}

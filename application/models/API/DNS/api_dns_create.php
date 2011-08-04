@@ -34,6 +34,39 @@ class Api_dns_create extends ImpulseModel {
 			$query->row()->last_modifier
 		);
 	}
+	
+	public function zone($zone, $keyname, $forward, $shared, $owner, $comment) {
+		// SQL Query
+		$sql = "SELECT * FROM api.create_dns_zone(
+			{$this->db->escape($zone)},
+			{$this->db->escape($keyname)},
+			{$this->db->escape($forward)},
+			{$this->db->escape($shared)},
+			{$this->db->escape($owner)},
+			{$this->db->escape($comment)}
+		)";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new APIException("The database returned more than one zone. Contact your system administrator");
+		}
+		
+		// Return object
+		return new DnsZone(
+			$query->row()->zone,
+			$query->row()->keyname,
+			$query->row()->forward,
+			$query->row()->shared,
+			$query->row()->owner,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+	}
 
      public function address($address, $hostname, $zone, $ttl, $owner) {
 		// SQL Query
@@ -51,6 +84,25 @@ class Api_dns_create extends ImpulseModel {
 
 		// Return object
 		return $this->get_address_record($address);
+	}
+	
+	public function mailserver($hostname, $zone, $preference, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_mailserver(
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($preference)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Return object
+		$record = $this->get_mx_records($this->resolve($hostname, $zone, 4));
+		return $record;
 	}
 
     public function nameserver($hostname, $zone, $isprimary, $ttl, $owner) {
@@ -74,48 +126,7 @@ class Api_dns_create extends ImpulseModel {
 			}
 		}
 	}
-
-	public function mailserver($hostname, $zone, $preference, $ttl, $owner) {
-		// SQL Query
-		$sql = "SELECT api.create_dns_mailserver(
-			{$this->db->escape($hostname)},
-			{$this->db->escape($zone)},
-			{$this->db->escape($preference)},
-			{$this->db->escape($ttl)},
-			{$this->db->escape($owner)}
-		)";
-		$query = $this->db->query($sql);
-
-		// Check error
-		$this->_check_error($query);
-
-		// Return object
-		$record = $this->get_mx_records($this->resolve($hostname, $zone, 4));
-		return $record;
-	}
-
-	public function cname($alias, $hostname, $zone, $ttl, $owner) {
-		// SQL Query
-		$sql = "SELECT api.create_dns_cname(
-			{$this->db->escape($alias)},
-			{$this->db->escape($hostname)},
-			{$this->db->escape($zone)},
-			{$this->db->escape($ttl)},
-			{$this->db->escape($owner)}
-		)";
-		$query = $this->db->query($sql);
-
-		// Check error
-		$this->_check_error($query);
-
-		// Return object
-		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
-			if($record->get_alias() == $alias && $record->get_type() == "CNAME") {
-				return $record;
-			}
-		}
-	}
-
+	
 	public function srv($alias, $hostname, $zone, $priority, $weight, $port, $ttl, $owner) {
 		// SQL Query
 		$sql = "SELECT api.create_dns_srv(
@@ -138,6 +149,28 @@ class Api_dns_create extends ImpulseModel {
 		// Return object
 		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
 			if($record->get_alias() == $alias && $record->get_type() == "SRV") {
+				return $record;
+			}
+		}
+	}
+
+	public function cname($alias, $hostname, $zone, $ttl, $owner) {
+		// SQL Query
+		$sql = "SELECT api.create_dns_cname(
+			{$this->db->escape($alias)},
+			{$this->db->escape($hostname)},
+			{$this->db->escape($zone)},
+			{$this->db->escape($ttl)},
+			{$this->db->escape($owner)}
+		)";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Return object
+		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
+			if($record->get_alias() == $alias && $record->get_type() == "CNAME") {
 				return $record;
 			}
 		}
