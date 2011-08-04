@@ -65,6 +65,9 @@ class Options extends ImpulseController {
         catch (ObjectNotFoundException $onfE) {
             $viewData = $this->_warning("No global options configured!");
         }
+        catch (DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
         return $viewData;
     }
 
