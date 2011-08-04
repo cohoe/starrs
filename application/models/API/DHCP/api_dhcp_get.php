@@ -76,7 +76,7 @@ class Api_dhcp_get extends ImpulseModel {
 		// Generate results
 		$resultSet = array();
 		foreach($query->result_array() as $config) {
-			$resultSet[] = new ConfigClass(
+			$resultSet[] = new GlobalOption(
 				$config['option'],
 				$config['value'],
 				$config['date_created'],
