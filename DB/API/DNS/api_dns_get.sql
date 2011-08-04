@@ -46,15 +46,54 @@ COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for 
 /* API - get_record_types */
 CREATE OR REPLACE FUNCTION "api"."get_record_types"() RETURNS SETOF TEXT AS $$
 	BEGIN
-		RETURN QUERY (SELECT "type" FROM "dns"."types");
+		RETURN QUERY (SELECT "type" FROM "dns"."types" ORDER BY "type" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_record_types"() IS 'Get all of the valid DNS types for this application';
 
 /* API - get_dns_zones*/
-CREATE OR REPLACE FUNCTION "api"."get_dns_zones"(input_username text) RETURNS SETOF TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dns_zones"(input_username text) RETURNS SETOF "dns"."zone_data" AS $$
 	BEGIN
-		RETURN QUERY(SELECT "zone" FROM "dns"."zones" WHERE "forward" = TRUE AND ("shared" = TRUE OR "owner" = input_username));
+		IF input_username IS NULL THEN
+			RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+			FROM "dns"."zones" WHERE "forward" = TRUE ORDER BY "zone" ASC);
+		ELSE
+			RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+			FROM "dns"."zones" WHERE "forward" = TRUE AND ("shared" = TRUE OR "owner" = input_username) ORDER BY "zone" ASC);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zones"(text) IS 'Get the available zones to a user';
+
+
+/* API - get_dns_zone*/
+CREATE OR REPLACE FUNCTION "api"."get_dns_zone"(input_zone text) RETURNS SETOF "dns"."zone_data" AS $$
+	BEGIN
+		RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
+		FROM "dns"."zones" WHERE "zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_zone"(text) IS 'Get detailed dns zone information';
+
+/* API - get_dns_keys */
+CREATE OR REPLACE FUNCTION "api"."get_dns_keys"(input_username text) RETURNS SETOF "dns"."key_data" AS $$
+	BEGIN
+		IF input_username IS NULL THEN
+			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."keys");
+		ELSE
+			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."keys" WHERE "owner" = input_username ORDER BY "keyname" ASC);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_keys"(text) IS 'Get DNS key data';
+
+/* API - get_dns_key */
+CREATE OR REPLACE FUNCTION "api"."get_dns_key"(input_keyname text) RETURNS SETOF "dns"."key_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
+		FROM "dns"."keys" WHERE "keyname" = input_keyname);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_key"(text) IS 'Get DNS key data';

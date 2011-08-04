@@ -278,7 +278,7 @@ CREATE TABLE "dns"."zones"(
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "forward" BOOLEAN NOT NULL,
 "keyname" TEXT NOT NULL,
-"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "owner" TEXT NOT NULL,
@@ -527,6 +527,23 @@ CREATE TABLE "dns"."queue"(
 )
 WITHOUT OIDS;
 
+CREATE TABLE "firewall"."rule_queue"(
+"address" INET NOT NULL,
+"port" INTEGER NOT NULL,
+"transport" TEXT NOT NULL,
+"deny" BOOLEAN NOT NULL,
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"action" TEXT NOT NULL
+)
+WITHOUT OIDS;
+
+CREATE TABLE "firewall"."default_queue"(
+"address" INET NOT NULL,
+"deny" BOOLEAN NOT NULL,
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp
+)
+WITHOUT OIDS;
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -604,3 +621,7 @@ COMMENT ON TABLE "dns"."types" IS 'All DNS record types';
 COMMENT ON TABLE "network"."switchport_history" IS 'Log of all switchport activity';
 
 COMMENT ON TABLE "dns"."queue" IS 'Queue all DNS zone changes that need to occur';
+
+COMMENT ON TABLE "firewall"."rule_queue" IS 'Queue all firewall rule changes';
+
+COMMENT ON TABLE "firewall"."default_queue" IS 'Queue all default firewall action changes';

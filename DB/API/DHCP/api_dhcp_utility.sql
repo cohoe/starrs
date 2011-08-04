@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	my $username = 'root';
 	spi_exec_query("SELECT api.initialize('$username')");
 
-	#let's start with the DHCPd.conf header from the DB
+	#lets start with the DHCPd.conf header from the DB
 	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
 	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
 

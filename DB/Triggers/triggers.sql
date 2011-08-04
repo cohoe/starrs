@@ -199,3 +199,11 @@ FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_queue_update"();
 CREATE TRIGGER "firewall_rule_queue_delete"
 AFTER DELETE ON "firewall"."rules"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_queue_delete"();
+
+CREATE TRIGGER "firewall_defaults_insert"
+AFTER INSERT ON "firewall"."defaults"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_insert"();
+
+CREATE TRIGGER "firewall_defaults_update"
+AFTER UPDATE ON "firewall"."defaults"
+FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_update"();
