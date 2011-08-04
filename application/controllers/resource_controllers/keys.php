@@ -86,7 +86,7 @@ class Keys extends ImpulseController {
 		}
 		else {
             // Navbar
-            $navModes['CANCEL'] = "/resources/keys/view";
+            $navModes['CANCEL'] = "/resources/keys/";
             
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -198,7 +198,6 @@ class Keys extends ImpulseController {
 			$this->_error($e->getMessage());
 		}
 	}
-	
 }
 /* End of file keys.php */
 /* Location: ./application/controllers/keys.php */
