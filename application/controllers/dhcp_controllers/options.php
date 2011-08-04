@@ -10,7 +10,7 @@ class Options extends ImpulseController {
 	}
 
     public function view($target=NULL) {
-        if($target=NULL) {
+        if($target==NULL) {
             $this->_error("No option type specified for view");
         }
 
