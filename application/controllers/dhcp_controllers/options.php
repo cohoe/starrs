@@ -55,12 +55,9 @@ class Options extends ImpulseController {
     }
 
     private function _view_global() {
-        $viewData = "";
         try {
             $options = $this->api->dhcp->get->global_options();
-            foreach ($options as $option) {
-                $viewData .= $option->get_option()."<br>";
-            }
+            $viewData = $this->load->view('dhcp/options/view_global',array("options"=>$options),TRUE);
         }
         catch (ObjectNotFoundException $onfE) {
             $viewData = $this->_warning("No global options configured!");
