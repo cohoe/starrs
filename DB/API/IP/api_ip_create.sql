@@ -4,13 +4,13 @@
 	3) create_address_range
 */
 
-/* API - create_subnet
+/* API - create_ip_subnet
 	1) Check privileges
 	2) Validate input
 	3) Create RDNS zone (since for this purpose you are authoritative for that zone)
 	4) Create new subnet
 */
-CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text) RETURNS SETOF "ip"."subnet_data" AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
@@ -51,9 +51,12 @@ CREATE OR REPLACE FUNCTION "api"."create_subnet"(input_subnet cidr, input_name t
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
+		RETURN QUERY (SELECT "name","subnet","zone","owner","autogen","dhcp_enable","comment","date_created","date_modified","last_modifier"
+		FROM "ip"."subnets" WHERE "subnet" = input_subnet);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_subnet"(cidr, text, text, boolean, boolean, text, text) IS 'Create/activate a new subnet';
+COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean, text, text) IS 'Create/activate a new subnet';
+
 
 /* API - create_ip_range
 	1) Check privileges
