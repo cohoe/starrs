@@ -63,7 +63,7 @@ COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean,
 	2) Validate input
 	3) Create new range (triggers checking to make sure the range is valid
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text) RETURNS SETOF "ip"."range_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
@@ -84,6 +84,8 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
+		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" 
+		FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), text, text) IS 'Create a new range of IP addresses';
