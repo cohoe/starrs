@@ -70,6 +70,9 @@ class Options extends ImpulseController {
     }
 
     private function _view_class($class) {
+        if($class=="") {
+            $this->_error("No class specified for viewing.");
+        }
         try {
             $options = $this->api->dhcp->get->class_options($class);
             $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
@@ -84,6 +87,9 @@ class Options extends ImpulseController {
     }
 
     private function _view_subnet($subnet) {
+        if($subnet=="") {
+            $this->_error("No subnet specified for viewing.");
+        }
         try {
             $options = $this->api->dhcp->get->subnet_options($subnet);
             $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
@@ -98,6 +104,9 @@ class Options extends ImpulseController {
     }
 
     private function _view_range($range) {
+        if($range=="") {
+            $this->_error("No range specified for viewing.");
+        }
         try {
             $options = $this->api->dhcp->get->range_options($range);
             $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
