@@ -75,6 +75,7 @@ class Subnets extends ImpulseController {
 	
 		// Navbar
 		$navOptions['Subnets'] = "/resources/subnets/";
+        $navOptions['DHCP Options'] = "/dhcp/options/view/subnet/".urlencode(self::$sNet->get_subnet());
 		$navModes['EDIT'] = "/resources/subnets/edit/".urlencode(self::$sNet->get_subnet());
 		$navModes['DELETE'] = "/resources/subnets/delete/".urlencode(self::$sNet->get_subnet());
 		
