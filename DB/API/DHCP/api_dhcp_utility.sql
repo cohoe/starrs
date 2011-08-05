@@ -154,7 +154,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$owner = $row->{owner};
 			$class = $row->{class};
 
-			$output .= "#$owner\n";
+			$output .= "# $owner\n";
 			$output .= "host $hostname {\n";
 			$output .= "  option dhcp-client-identifier 1:$mac;\n";
 			$output .= "  hardware ethernet $mac;\n";
@@ -181,7 +181,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$owner = $row->{owner};
 			$class = $row->{class};
 
-			$output .= "#$owner\n";
+			$output .= "# $owner\n";
 			$output .= "host $hostname {\n";
 			$output .= "  opiton dhcp-client-identifier 1:$mac;\n";
 			$output .= "  hardware ethernet $mac;\n";
