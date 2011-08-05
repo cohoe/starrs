@@ -144,6 +144,14 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."clas
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_classes"() IS 'Get all DHCP class information';
 
+/* API - get_dhcp_class */
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_class"(input_class text) RETURNS SETOF "dhcp"."class_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" FROM "dhcp"."classes" WHERE "class" = input_class);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_class"(text) IS 'Get all DHCP class information for a specific class';
+
 /* API - get_dhcp_config_types */
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_type_data" AS $$
 	BEGIN
