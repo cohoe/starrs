@@ -155,3 +155,38 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) R
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_config_types"(integer) IS 'Get all DHCP config information';
+
+/* API - get_dhcp_global_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_global_options"() RETURNS SETOF "dhcp"."option_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."global_options");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_global_options"() IS 'Get all DHCP global option data';
+
+/* API - get_dhcp_class_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_class_options"(input_class text) RETURNS SETOF "dhcp"."option_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
+		FROM "dhcp"."class_options" WHERE "class" = input_class);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_class_options"(text) IS 'Get all DHCP class option data';
+
+/* API - get_dhcp_range_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_range_options"(input_range text) RETURNS SETOF "dhcp"."option_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
+		FROM "dhcp"."range_options" WHERE "range" = input_range);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_range_options"(text) IS 'Get all DHCP range option data';
+
+/* API - get_dhcp_subnet_options */
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_subnet_options"(input_subnet cidr) RETURNS SETOF "dhcp"."option_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
+		FROM "dhcp"."subnet_options" WHERE "subnet" = input_subnet);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcp_subnet_options"(cidr) IS 'Get all DHCP subnet option data';
