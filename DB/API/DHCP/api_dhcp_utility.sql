@@ -183,7 +183,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 
 			$output .= "# $owner\n";
 			$output .= "host $hostname {\n";
-			$output .= "  opiton dhcp-client-identifier 1:$mac;\n";
+			$output .= "  option dhcp-client-identifier 1:$mac;\n";
 			$output .= "  hardware ethernet $mac;\n";
 			$output .= "  option host-name \"$hostname\";\n";
 			$output .= "  ddns-hostname \"$hostname\";\n";
