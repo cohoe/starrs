@@ -3,13 +3,13 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
 	use strict;
 	use warnings;
-	
-	my $username = 'root';
-	spi_exec_query("SELECT api.initialize('$username')");
 
 	#lets start with the DHCPd.conf header from the DB
 	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
 	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
+
+	my $date = spi_exec_query("SELECT current_timestamp")->{rows}[0]->{now};
+	$output .= "\# Generated at $date\n\n";
 
 	# Global Options are added here.
 	{
@@ -22,9 +22,9 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$output .= "$option    $value;\n"
 		}
 	}# end global options
-	
+
 	$output .= "\n";
-	
+
 	# DNS keys added here
 	{
 		my $keys = spi_query("SELECT * FROM api.get_dhcpd_dns_keys()");
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$output .= "key $keyname {\n  algorithm ${enctype};\n  secret \"$key\";\n}\n";
 		}
 	}# end DNS keys
-	
+
 	$output .= "\n";
 
 	# Zones are added here.
@@ -139,7 +139,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 	}# shared networks
 
-	$output .= "\n";
+	$output .= "\n}\n";
 
 	# 'static' hosts
 	{
@@ -153,10 +153,10 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$address = $row->{address};
 			$owner = $row->{owner};
 			$class = $row->{class};
-			
+
 			$output .= "#$owner\n";
 			$output .= "host $hostname {\n";
-			$output .= "  opiton dhcp-client-identifier 1:$mac;\n";
+			$output .= "  option dhcp-client-identifier 1:$mac;\n";
 			$output .= "  hardware ethernet $mac;\n";
 			$output .= "  fixed-address $address;\n";
 			$output .= "  option host-name \"$hostname\";\n";
@@ -165,10 +165,10 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$output .= "  option domain-name \"$zone\";\n}\n";
 			$output .= "subclass \"$class\" 1:$mac;\n";
 			$output .= "subclass \"$class\" $mac;\n\n";
-			
+
 		}
 	}
-	
+
 	# dynamic hosts
 	{
 		my $hosts = spi_query("SELECT * FROM api.get_dhcpd_dynamic_hosts() order by owner,hostname");
@@ -180,7 +180,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$mac = $row->{mac};
 			$owner = $row->{owner};
 			$class = $row->{class};
-			
+
 			$output .= "#$owner\n";
 			$output .= "host $hostname {\n";
 			$output .= "  opiton dhcp-client-identifier 1:$mac;\n";
@@ -191,16 +191,17 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$output .= "  option domain-name \"$zone\";\n}\n";
 			$output .= "subclass \"$class\" 1:$mac;\n";
 			$output .= "subclass \"$class\" $mac;\n\n";
-			
+
 		}
 	}
+
+	$output .= "\# End dhcpd configuration file";
 
 	# finally, store the config in the db, so we can get it back later.
 	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf',now())");
 
 	#log our success with the api logging tool.
 	spi_exec_query("SELECT api.create_log_entry('API','INFO','Successfully generated dhcpd.conf')");
-	spi_exec_query("SELECT api.deinitialize()");
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."generate_dhcpd_config"() IS 'Generate the config file for the dhcpd server, and store it in the db';
 
