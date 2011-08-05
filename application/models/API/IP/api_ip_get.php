@@ -68,6 +68,31 @@ class Api_ip_get extends ImpulseModel {
         }
 	}
 	
+	public function range($name) {
+        // SQL Query
+		$sql = "SELECT * FROM api.get_ip_range({$this->db->escape($name)})";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple results returned by API. Contact your system administrator");
+		}
+		return new IpRange(
+			$query->row()->first_ip,
+			$query->row()->last_ip,
+			$query->row()->use,
+			$query->row()->name,
+			$query->row()->subnet,
+			$query->row()->class,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+	}
+	
 	public function subnets($username) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_ip_subnets({$this->db->escape($username)})";
@@ -160,6 +185,28 @@ class Api_ip_get extends ImpulseModel {
 		return $sNet;
 	}
 	
+	public function uses() {
+		// SQL Query
+		$sql = "SELECT api.get_ip_range_uses()";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $use) {
+			$resultSet[] = $use['get_ip_range_uses'];
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No IP range uses found.");
+		}
+	}
 }
 /* End of file api_ip_get.php */
 /* Location: ./application/models/API/IP/api_ip_get.php */

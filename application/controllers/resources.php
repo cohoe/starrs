@@ -11,7 +11,10 @@ class Resources extends ImpulseController {
 	
 	public function index() {
 		// Navbar
-		$navOptions['Site Configuration'] = "/admin/configuration/view/site";
+		$navOptions['Keys'] = "/resources/keys";
+		$navOptions['Zones'] = "/resources/zones";
+		$navOptions['Subnets'] = "/resources/subnets";
+		$navOptions['Ranges'] = "/resources/ranges";
 	
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);

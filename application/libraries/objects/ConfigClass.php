@@ -40,6 +40,16 @@ class ConfigClass extends ImpulseObject {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
+	
+	public function set_class($new) {
+		$this->CI->api->dhcp->modify->_class($this->class, 'class', $new);
+		$this->class = $new;
+	}
+	
+	public function set_comment($new) {
+		$this->CI->api->dhcp->modify->_class($this->class, 'comment', $new);
+		$this->comment = $new;
+	}
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH . "controllers/systems.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Subnets extends ImpulseController {
 	
@@ -23,6 +23,7 @@ class Subnets extends ImpulseController {
 		}
 		
 		// Navbar
+		$navOptions['Resources'] = "/resources";
 		$navOptions['Owned'] = "/resources/subnets/owned";
 		$navOptions['All'] = "/resources/subnets/all";
 		$navModes['CREATE'] = "/resources/subnets/create";
@@ -51,6 +52,7 @@ class Subnets extends ImpulseController {
 		}
 		
 		// Navbar
+		$navOptions['Resources'] = "/resources";
 		$navOptions['Owned'] = "/resources/subnets/owned";
 		$navOptions['All'] = "/resources/subnets/all";
 		$navModes['CREATE'] = "/resources/subnets/create";
@@ -267,4 +269,4 @@ class Subnets extends ImpulseController {
 	}
 }
 /* End of file subnets.php */
-/* Location: ./application/controllers/subnets.php */
+/* Location: ./application/controllers/resource_controllers/subnets.php */

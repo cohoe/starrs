@@ -46,6 +46,7 @@ $route['admin/(.*?)'] = 'administration/$1';
 $route['resources'] = 'resources';
 $route['resources/(.*?)'] = 'resource_controllers/$1';
 $route['dhcp/(.*?)'] = 'dhcp_controllers/$1';
+$route['dhcp/reload'] = 'dhcp/reload';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

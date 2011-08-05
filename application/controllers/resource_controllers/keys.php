@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH . "controllers/systems.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Keys extends ImpulseController {
 	
@@ -23,12 +23,13 @@ class Keys extends ImpulseController {
 		
 		// Navbar
 		$navModes['CREATE'] = "/resources/keys/create/";
+		$navOptions['Resources'] = "/resources";
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['title'] = "DNS Keys";
-		$navbar = new Navbar("DNS Keys", $navModes, null);
+		$navbar = new Navbar("DNS Keys", $navModes, $navOptions);
 
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
@@ -202,4 +203,4 @@ class Keys extends ImpulseController {
 	}
 }
 /* End of file keys.php */
-/* Location: ./application/controllers/keys.php */
+/* Location: ./application/controllers/resource_controllers/keys.php */

@@ -230,7 +230,8 @@ class CI_URI {
 			// compatibility as many are unaware of how characters in the permitted_uri_chars will be parsed as a regex pattern
 			if ( ! preg_match("|^[".str_replace(array('\\-', '\-'), '-', preg_quote($this->config->item('permitted_uri_chars'), '-'))."]+$|i", $str))
 			{
-				show_error('The URI you submitted has disallowed characters.', 400);
+				#show_error('The URI you submitted has disallowed characters.', 400);
+				show_error('The URI you submitted has disallowed characters - "'.$str.'"', 400);
 			}
 		}
 

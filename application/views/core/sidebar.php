@@ -4,5 +4,7 @@
 	<a href="/statistics">Statistics</a><br />
 	<a href="/resources">Resources</a><br />
 	<a href="/admin">Administration</a><br />
-	<a href="/reference">Reference</a>
+	<a href="/dhcp">DHCP</a><br />
+	<a href="/reference">Reference</a><br />
+	<a href="/output">Output</a>
 </div>

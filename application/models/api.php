@@ -61,7 +61,7 @@ class Api extends ImpulseModel {
 			return true;
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
 	

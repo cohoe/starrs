@@ -20,6 +20,16 @@ class Api_dhcp extends ImpulseModel {
 		$this->remove = new Api_dhcp_remove();
         $this->get    = new Api_dhcp_get();
 	}
+	
+	
+	public function reload() {
+		// SQL Query
+		$sql = "SELECT api.generate_dhcpd_config()";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+	}
 }
 
 /* End of file api_dhcp.php */

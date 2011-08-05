@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once(APPPATH . "controllers/systems.php");
+require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Zones extends ImpulseController {
 	
@@ -27,12 +27,13 @@ class Zones extends ImpulseController {
 		
 		// Navbar
 		$navModes['CREATE'] = "/resources/zones/create";
+		$navOptions['Resources'] = "/resources";
+		$navbar = new Navbar("DNS Zones", $navModes, $navOptions);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['title'] = "DNS Zones";
-		$navbar = new Navbar("DNS Zones", $navModes, null);
 
 		$viewData = $this->load->view("resources/zones/list",array("dnsZones"=>$dnsZones),TRUE);
 		// More view data
@@ -223,4 +224,4 @@ class Zones extends ImpulseController {
 	}
 }
 /* End of file zones.php */
-/* Location: ./application/controllers/zones.php */
+/* Location: ./application/controllers/resource_controllers/zones.php */

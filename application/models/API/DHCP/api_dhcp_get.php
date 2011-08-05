@@ -64,6 +64,30 @@ class Api_dhcp_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No DHCP classes found. This is a big problem. Talk to your administrator.");
 		}
 	}
+	
+	public function _class($class) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_class({$this->db->escape($class)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple classes found. This indicates a database error. Contact your system administrator");
+        }
+		
+		// Generate results
+		return new ConfigClass(
+			$query->row()->class,
+			$query->row()->comment,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+
+		throw new ObjectNotFoundException("No DHCP classes found. This is a big problem. Talk to your administrator.");
+	}
 
     public function global_options() {
         // SQL Query

@@ -70,6 +70,41 @@ class IpRange extends ImpulseObject {
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
+	
+	public function set_first_ip($new) {
+		$this->CI->api->ip->modify->range($this->name, 'first_ip', $new);
+		$this->firstIp = $new;
+	}
+	
+	public function set_last_ip($new) {
+		$this->CI->api->ip->modify->range($this->name, 'last_ip', $new);
+		$this->lastIp = $new;
+	}
+	
+	public function set_use($new) {
+		$this->CI->api->ip->modify->range($this->name, 'use', $new);
+		$this->use = $new;
+	}
+	
+	public function set_name($new) {
+		$this->CI->api->ip->modify->range($this->name, 'name', $new);
+		$this->name = $new;
+	}
+	
+	public function set_subnet($new) {
+		$this->CI->api->ip->modify->range($this->name, 'subnet', $new);
+		$this->subnet = $new;
+	}
+	
+	public function set_class($new) {
+		$this->CI->api->ip->modify->range($this->name, 'class', $new);
+		$this->class = $new;
+	}
+	
+	public function set_comment($new) {
+		$this->CI->api->ip->modify->range($this->name, 'comment', $new);
+		$this->comment = $new;
+	}
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
