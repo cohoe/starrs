@@ -185,7 +185,7 @@ COMMENT ON FUNCTION "api"."get_dhcp_class_options"(text) IS 'Get all DHCP class 
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_range_options"(input_range text) RETURNS SETOF "dhcp"."option_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
-		FROM "dhcp"."range_options" WHERE "range" = input_range);
+		FROM "dhcp"."range_options" WHERE "name" = input_range);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_range_options"(text) IS 'Get all DHCP range option data';
