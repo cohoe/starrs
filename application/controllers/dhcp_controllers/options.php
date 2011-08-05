@@ -9,10 +9,11 @@ class Options extends ImpulseController {
 		parent::__construct();
 	}
 
-    public function view($target=NULL) {
-        if($target==NULL) {
+    public function view($mode=NULL,$target=NULL) {
+        if($mode==NULL) {
             $this->_error("No option type specified for view");
         }
+        $target = urldecode($target);
 
         // Navbar
 		$navOptions['Global'] = "/dhcp/options/view/global/";
@@ -20,29 +21,29 @@ class Options extends ImpulseController {
         $navOptions['Subnet'] = "/dhcp/options/view/subnet/";
         $navOptions['Range'] = "/dhcp/options/view/range/";
 
-		$navModes['EDIT'] = "/dhcp/options/edit/$target";
-		$navModes['DELETE'] = "/dhcp/options/delete/$target";
+		$navModes['EDIT'] = "/dhcp/options/edit/$mode";
+		$navModes['DELETE'] = "/dhcp/options/delete/$mode";
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['title'] = "DHCP ".ucfirst($target)." Options";
-		$navbar = new Navbar("DHCP ".ucfirst($target)." Options", $navModes, $navOptions);
+		$info['title'] = "DHCP ".ucfirst($mode)." Options";
+		$navbar = new Navbar("DHCP ".ucfirst($mode)." Options", $navModes, $navOptions);
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 		// More view data
-		switch($target) {
+		switch($mode) {
             case "global":
                 $viewData = $this->_view_global();
                 break;
             case "class":
-                $viewData = $this->_view_class();
+                $viewData = $this->_view_class($target);
                 break;
             case "subnet":
-                $viewData = $this->_view_subnet();
+                $viewData = $this->_view_subnet($target);
                 break;
             case "range":
-                $viewData = $this->_view_range();
+                $viewData = $this->_view_range($target);
                 break;
             default:
                 $this->_error("Invalid view target given");
@@ -57,7 +58,7 @@ class Options extends ImpulseController {
     private function _view_global() {
         try {
             $options = $this->api->dhcp->get->global_options();
-            $viewData = $this->load->view('dhcp/options/view_global',array("options"=>$options),TRUE);
+            $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
         }
         catch (ObjectNotFoundException $onfE) {
             $viewData = $this->_warning("No global options configured!");
@@ -68,18 +69,45 @@ class Options extends ImpulseController {
         return $viewData;
     }
 
-    private function _view_class() {
-        $viewData = "Class";
+    private function _view_class($class) {
+        try {
+            $options = $this->api->dhcp->get->class_options($class);
+            $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("No class options configured!");
+        }
+        catch (DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
         return $viewData;
     }
 
-    private function _view_subnet() {
-        $viewData = "Subnet";
+    private function _view_subnet($subnet) {
+        try {
+            $options = $this->api->dhcp->get->subnet_options($subnet);
+            $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("No global options configured!");
+        }
+        catch (DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
         return $viewData;
     }
 
-    private function _view_range() {
-        $viewData = "Range";
+    private function _view_range($range) {
+        try {
+            $options = $this->api->dhcp->get->range_options($range);
+            $viewData = $this->load->view('dhcp/options/view',array("options"=>$options),TRUE);
+        }
+        catch (ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("No global options configured!");
+        }
+        catch (DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
         return $viewData;
     }
 }

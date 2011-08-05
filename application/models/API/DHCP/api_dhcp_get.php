@@ -90,7 +90,97 @@ class Api_dhcp_get extends ImpulseModel {
 			return $resultSet;
 		}
 		else {
-			throw new ObjectNotFoundException("No DHCP classes found. This is a big problem. Talk to your administrator.");
+			throw new ObjectNotFoundException("No DHCP global options found.");
+		}
+    }
+
+    public function class_options($class) {
+        // SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_class_options({$this->db->escape($class)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $config) {
+			$resultSet[] = new ClassOption(
+                $class,
+				$config['option'],
+				$config['value'],
+				$config['date_created'],
+				$config['date_modified'],
+				$config['last_modifier']
+			);
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP class options found.");
+		}
+    }
+
+     public function subnet_options($subnet) {
+        // SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_subnet_options({$this->db->escape($subnet)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $config) {
+			$resultSet[] = new SubnetOption(
+                $subnet,
+				$config['option'],
+				$config['value'],
+				$config['date_created'],
+				$config['date_modified'],
+				$config['last_modifier']
+			);
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP subnet options found.");
+		}
+    }
+
+     public function range_options($range) {
+        // SQL Query
+		$sql = "SELECT * FROM api.get_dhcp_range_options({$this->db->escape($range)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $config) {
+			$resultSet[] = new RangeOption(
+                $range,
+				$config['option'],
+				$config['value'],
+				$config['date_created'],
+				$config['date_modified'],
+				$config['last_modifier']
+			);
+		}
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No DHCP range options found.");
 		}
     }
 }

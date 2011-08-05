@@ -9,6 +9,7 @@
 	<link href="/css/sphere/full/interfaces.css" rel="stylesheet" type="text/css" />
 	<link href="/css/sphere/full/addresses.css" rel="stylesheet" type="text/css" />
 	<link href="/css/sphere/full/systems.css" rel="stylesheet" type="text/css" />
+    <link href="/css/sphere/full/tabledata.css" rel="stylesheet" type="text/css" />
 	<style>#helpDiv { display:none; background-color:green;}</style><!-- @todo: not sure if this should be it's own css file -->
 	<!-- Also ^ needs to have the padding the same color as the background -->
 	
