@@ -177,3 +177,10 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_subnet"(input_subnet cidr) RETURNS SETO
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_ip_subnet"(cidr) IS 'Get all IP subnet data for a specific subnet';
 
+/* API - get_ip_range_uses */
+CREATE OR REPLACE FUNCTION "api"."get_ip_range_uses"() RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY (SELECT text("use") FROM "ip"."range_uses");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_range_uses"() IS 'Get a list of all use codes';
