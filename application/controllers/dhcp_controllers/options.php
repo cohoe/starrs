@@ -225,6 +225,7 @@ class Options extends ImpulseController {
 				}
 			}
 			if($this->input->post('value') != $value) {
+                echo "here";
 				switch($mode) {
 					case "global":
 						$this->api->dhcp->modify->global_option($option,$value,'value',$this->input->post('value'));
