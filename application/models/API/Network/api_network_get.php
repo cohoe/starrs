@@ -35,6 +35,29 @@ class Api_network_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No DHCP config types found. This is a big problem. Talk to your administrator.");
 		}
 	}
+
+    public function types() {
+        // SQL Query
+        $sql = "SELECT api.get_network_switchport_types()";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+		// Generate results
+		$resultSet = array();
+		foreach($query->result_array() as $type) {
+			$resultSet[] = $type['get_network_switchport_types'];
+		}
+
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No switchport types found. This is a big problem. Talk to your administrator.");
+		}
+    }
 }
 /* End of file api_network_get.php */
 /* Location: ./application/models/API/Network/api_network_get.php */

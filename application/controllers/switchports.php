@@ -29,7 +29,9 @@ class Switchports extends ImpulseController {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['title'] = "Switchports on ".self::$sys->get_system_name();
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = "Switchports!";
+        $form['sys'] = self::$sys;
+        $form['types'] = $this->api->network->get->types();
+		$info['data'] = $this->input->post('switchports/create',$form,TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
