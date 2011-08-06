@@ -198,9 +198,9 @@ class Options extends ImpulseController {
 			$this->_error("No target object specified for edit");
 		}
 		
-		$option = rawurldecode($option);
-		$value = rawurldecode($value);
-		$target = rawurldecode($target);
+		$option = html_entity_decode(rawurldecode($option));
+		$value = html_entity_decode(rawurldecode($value));
+		$target = html_entity_decode(rawurldecode($target));
 			
 		if($this->input->post('submit')) {
 			if($this->input->post('option') != $option) {
