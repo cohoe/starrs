@@ -87,9 +87,8 @@ class Systems extends ImpulseController {
      */
 	public function view($systemName=NULL,$target=NULL) {
 
-		// Clean up the URL data since it will have %20's rather than spaces
-		$systemName = $this->impulselib->remove_url_space($systemName);
-		$target = $this->impulselib->remove_url_space($target);
+		$systemName = urldecode($systemName);
+		$target = urldecode($target);
 		
 		// If no system was specified, then go to the get started page. 
 		if($systemName == NULL) {

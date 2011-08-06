@@ -7,7 +7,7 @@
 		<?
 			foreach ($systems as $system) {
 				if($systemName == $system) {
-					echo "<option value=\"$system\" selected=\"selected\">$system</option>";
+					echo "<option value=\"$system\" selected>$system</option>";
 				}
 				else {
 					echo "<option value=\"$system\">$system</option>";
