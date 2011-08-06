@@ -227,7 +227,7 @@ class Options extends ImpulseController {
                 echo "Value - $mode - $target - ".$this->input->post('value');
                 echo "<br>";
                 echo "<br>";
-                echo "\"$value\"<br>\"".$this->input->post('value')."\"";
+                echo "\"$value\"<br>\"".$this->input->post('value')."\"<br>";
                 $test = $this->input->post('value');
                 if($value != $test) {
                     echo "Not Equal";
