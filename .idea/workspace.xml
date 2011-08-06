@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="added more view data">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/switchports/create.php" afterPath="$PROJECT_DIR$/application/views/switchports/create.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchports.php" afterPath="$PROJECT_DIR$/application/controllers/switchports.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" afterPath="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/System.php" afterPath="$PROJECT_DIR$/application/libraries/objects/System.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,37 +28,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="switchports.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="9" selection-start="1283" selection-end="1283" vertical-scroll-proportion="0.0">
+            <state line="29" column="34" selection-start="1247" selection-end="1247" vertical-scroll-proportion="0.48667324">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_systems_get.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php">
+      <file leaf-file-name="System.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/objects/System.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="234" column="45" selection-start="6396" selection-end="6396" vertical-scroll-proportion="0.0">
+            <state line="78" column="69" selection-start="2846" selection-end="2846" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_network_get.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
+      <file leaf-file-name="NetworkSwitchport.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="25" selection-start="949" selection-end="954" vertical-scroll-proportion="0.0">
+            <state line="31" column="33" selection-start="962" selection-end="975" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/views/switchports/create.php">
+      <file leaf-file-name="systems.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="84" selection-start="601" selection-end="601" vertical-scroll-proportion="0.102">
+            <state line="156" column="12" selection-start="5282" selection-end="5353" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImpulseController.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/core/ImpulseController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="104" column="13" selection-start="3253" selection-end="3253" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_network_create.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_create.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="37" column="105" selection-start="1149" selection-end="1217" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -76,8 +96,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/views/core/main.php" />
-        <option value="$PROJECT_DIR$/application/models/API/DHCP/api_dhcp_get.php" />
         <option value="$PROJECT_DIR$/application/controllers/resource_controllers/subnets.php" />
         <option value="$PROJECT_DIR$/application/views/dhcp/options/edit_single.php" />
         <option value="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
@@ -90,8 +108,10 @@
         <option value="$PROJECT_DIR$/application/controllers/systems.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
-        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/views/switchports/create.php" />
+        <option value="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
+        <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
+        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
       </list>
     </option>
   </component>
@@ -656,7 +676,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="major derp" />
+    <option name="LAST_COMMIT_MESSAGE" value="added more view data" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -669,7 +689,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="added cancel to create key" />
     <MESSAGE value="== is a thing" />
     <MESSAGE value="added global option testing" />
     <MESSAGE value="added function to api" />
@@ -694,25 +713,12 @@
     <MESSAGE value="fixed a few typos" />
     <MESSAGE value="added type functions, view" />
     <MESSAGE value="major derp" />
+    <MESSAGE value="added more view data" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/subnets.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-2.265548">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/ranges.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="48" selection-start="532" selection-end="532" vertical-scroll-proportion="-2.987167">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/keys.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="24" column="56" selection-start="695" selection-end="695" vertical-scroll-proportion="0.0">
@@ -748,51 +754,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="36" selection-start="517" selection-end="517" vertical-scroll-proportion="0.30207306">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="43" selection-start="1573" selection-end="1573" vertical-scroll-proportion="0.6140178">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/core/ImpulseController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="19" selection-start="3091" selection-end="3091" vertical-scroll-proportion="0.36229023">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="33" selection-start="3600" selection-end="3600" vertical-scroll-proportion="0.37955466">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/firewall/standalone_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="11" selection-start="30" selection-end="1666" vertical-scroll-proportion="0.4822695">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="234" column="45" selection-start="6396" selection-end="6396" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="9" selection-start="1283" selection-end="1283" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -804,9 +768,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="234" column="45" selection-start="6396" selection-end="6396" vertical-scroll-proportion="0.7018756">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="105" selection-start="1149" selection-end="1217" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/switchports/create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="84" selection-start="601" selection-end="601" vertical-scroll-proportion="0.102">
+        <state line="6" column="84" selection-start="601" selection-end="601" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/core/ImpulseController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="13" selection-start="3253" selection-end="3253" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="156" column="12" selection-start="5282" selection-end="5353" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="33" selection-start="962" selection-end="975" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/System.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="69" selection-start="2846" selection-end="2846" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="34" selection-start="1247" selection-end="1247" vertical-scroll-proportion="0.48667324">
           <folding />
         </state>
       </provider>

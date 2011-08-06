@@ -94,18 +94,26 @@ class ImpulseController extends CI_Controller {
 		return $this->load->view('core/warning',array("message"=>$message),TRUE);
 	}
 	
-	protected function _load_system() {
-		// Establish the system and address objects
-        try {
-            self::$sys = $this->impulselib->get_active_system();
+	protected function _load_system($systemName=NULL) {
+        if($systemName) {
+            // Establish the system and address objects
+            try {
+                self::$sys = $this->impulselib->get_active_system();
+            }
+            catch (ObjectNotFoundException $onfE) {
+                $this->_error($onfE->getMessage());
+            }
         }
-        catch (ObjectNotFoundException $onfE) {
-			 exit($this->_error($onfE->getMessage()));
-            $this->_error($onfE->getMessage());
-            return;
+        else {
+            try {
+                self::$sys = $this->api->systems->get->system($systemName);
+            }
+            catch (ObjectNotFoundException $onfE) {
+                $this->_error($onfE->getMessage());
+            }
         }
-	}
-	
+    }
+
 	protected function _load_address($address) {
 		try {
 			$ints = self::$sys->get_interfaces();
