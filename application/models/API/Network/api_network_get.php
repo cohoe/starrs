@@ -7,7 +7,6 @@ class Api_network_get extends ImpulseModel {
 
     public function switchports($systemName) {
 		// SQL Query
-        exit("Not ready");
 		$sql = "SELECT * FROM api.get_network_switchports({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
