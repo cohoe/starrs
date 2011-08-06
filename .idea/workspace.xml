@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="DELETED" beforePath="I:\impulse-web\application\views\dns\.create.php.swp" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" afterPath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
     </list>
@@ -30,7 +29,7 @@
       <file leaf-file-name="edit_single.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/edit_single.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="6" selection-start="453" selection-end="453" vertical-scroll-proportion="-3.9230769">
+            <state line="2" column="26" selection-start="84" selection-end="90" vertical-scroll-proportion="-1.3076923">
               <folding />
             </state>
           </provider>
@@ -39,7 +38,7 @@
       <file leaf-file-name="create.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="-2.6153846">
+            <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -48,7 +47,7 @@
       <file leaf-file-name="options.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="205" column="23" selection-start="6489" selection-end="6489" vertical-scroll-proportion="0.25765055">
+            <state line="211" column="33" selection-start="6703" selection-end="6703" vertical-scroll-proportion="0.4698914">
               <folding />
             </state>
           </provider>
@@ -135,6 +134,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -479,18 +480,16 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Favorites" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="Errors" />
+    <property name="recentsLimit" value="5" />
     <property name="DefaultHtmlFileTemplate" value="Html" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RunManager" selected="PHP Script.index.php">
     <configuration default="false" name="index.php" type="PhpLocalRunConfigurationType" factoryName="PHP Console" temporary="true" path="$PROJECT_DIR$/index.php">
@@ -566,7 +565,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29311267" sideWeight="0.6703448" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29684997" sideWeight="0.6703448" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32827586" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -604,7 +603,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed htmlentities from" />
+    <option name="LAST_COMMIT_MESSAGE" value="debug" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -617,7 +616,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="updated rule delete" />
     <MESSAGE value="added more metahost delete things" />
     <MESSAGE value="removed load function in api_firewall" />
     <MESSAGE value="removed reference to load_" />
@@ -642,6 +640,7 @@
     <MESSAGE value="added other ranges" />
     <MESSAGE value="added link from subnet controller" />
     <MESSAGE value="removed htmlentities from" />
+    <MESSAGE value="debug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -681,16 +680,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/core/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="53" selection-start="262" selection-end="262" vertical-scroll-proportion="0.103343464">
-          <folding />
-        </state>
+        <state line="6" column="53" selection-start="262" selection-end="262" vertical-scroll-proportion="0.103343464" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/css/sphere/full/tabledata.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="21" selection-start="131" selection-end="131" vertical-scroll-proportion="0.11747285">
-          <folding />
-        </state>
+        <state line="7" column="21" selection-start="131" selection-end="131" vertical-scroll-proportion="0.11747285" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/subnets.php">
@@ -702,23 +697,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/DhcpOption.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="31" selection-start="564" selection-end="564" vertical-scroll-proportion="0.28529122">
-          <folding />
-        </state>
+        <state line="17" column="31" selection-start="564" selection-end="564" vertical-scroll-proportion="0.28529122" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/ConfigClass.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="16" selection-start="323" selection-end="323" vertical-scroll-proportion="0.093780845">
-          <folding />
-        </state>
+        <state line="12" column="16" selection-start="323" selection-end="323" vertical-scroll-proportion="0.093780845" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/GlobalOption.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="32" selection-start="453" selection-end="453" vertical-scroll-proportion="0.20138204">
-          <folding />
-        </state>
+        <state line="12" column="32" selection-start="453" selection-end="453" vertical-scroll-proportion="0.20138204" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/DHCP/api_dhcp_get.php">
@@ -728,23 +717,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/edit_single.php">
+    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="6" selection-start="453" selection-end="453" vertical-scroll-proportion="-3.9230769">
+        <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
+    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/edit_single.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="-2.6153846">
+        <state line="2" column="26" selection-start="84" selection-end="90" vertical-scroll-proportion="-1.3076923">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="205" column="23" selection-start="6489" selection-end="6489" vertical-scroll-proportion="0.25765055">
+        <state line="211" column="33" selection-start="6703" selection-end="6703" vertical-scroll-proportion="0.4698914">
           <folding />
         </state>
       </provider>
