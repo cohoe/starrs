@@ -203,6 +203,8 @@ class Options extends ImpulseController {
 		$target = html_entity_decode(rawurldecode($target));
 			
 		if($this->input->post('submit')) {
+            print_r($_POST);
+            echo "$option - $value";
 			if($this->input->post('option') != $option) {
 				switch($mode) {
 					case "global":
@@ -241,7 +243,7 @@ class Options extends ImpulseController {
 						break;
 				}
 			}
-			redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
+			#redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
 		}
 		elseif ($option && $value) {
 			$option = urldecode($option);
