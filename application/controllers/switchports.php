@@ -16,6 +16,7 @@ class Switchports extends ImpulseController {
             $this->_error("No system specified for create");
         }
 
+        $systemName = urldecode($systemName);
         $this->_get_system($systemName);
 
         // Navbar
