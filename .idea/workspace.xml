@@ -37,7 +37,7 @@
       <file leaf-file-name="create.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
+            <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="-2.6153846">
               <folding />
             </state>
           </provider>
@@ -46,7 +46,7 @@
       <file leaf-file-name="options.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="229" column="75" selection-start="7518" selection-end="7518" vertical-scroll-proportion="0.7147088">
+            <state line="209" column="55" selection-start="6682" selection-end="6682" vertical-scroll-proportion="0.37907207">
               <folding />
             </state>
           </provider>
@@ -716,13 +716,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/edit_single.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="26" selection-start="84" selection-end="90" vertical-scroll-proportion="-1.3076923">
@@ -730,9 +723,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="42" selection-start="313" selection-end="313" vertical-scroll-proportion="-2.6153846">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="229" column="75" selection-start="7518" selection-end="7518" vertical-scroll-proportion="0.7147088">
+        <state line="209" column="55" selection-start="6682" selection-end="6682" vertical-scroll-proportion="0.37907207">
           <folding />
         </state>
       </provider>
