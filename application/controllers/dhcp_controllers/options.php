@@ -223,6 +223,7 @@ class Options extends ImpulseController {
 						$this->_error("Invalid edit mode given");
 						break;
 				}
+                $option = $this->input->post('option');
 			}
 			if($this->input->post('value') != $value) {
 				switch($mode) {
@@ -242,6 +243,7 @@ class Options extends ImpulseController {
 						$this->_error("Invalid edit mode given");
 						break;
 				}
+                $value = $this->input->post('value');
 			}
 			redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
 		}
