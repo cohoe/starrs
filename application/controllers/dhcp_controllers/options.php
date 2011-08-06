@@ -203,7 +203,8 @@ class Options extends ImpulseController {
 		$target = urldecode($target);
 			
 		if($this->input->post('submit')) {
-            exit("Hi");
+            print_r($_POST);
+            exit();
 			if($this->input->post('option') != $option) {
 				switch($mode) {
 					case "global":
