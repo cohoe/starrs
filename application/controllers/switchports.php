@@ -16,7 +16,7 @@ class Switchports extends ImpulseController {
             $this->_error("No system specified for create");
         }
 
-        $this->_load_system($systemName);
+        $this->_get_system($systemName);
 
         // Navbar
 		$navOptions['Something'] = "Something";
@@ -34,7 +34,7 @@ class Switchports extends ImpulseController {
 		$this->load->view('core/main',$info);
     }
 
-    private function _load_system($systemName) {
+    private function _get_system($systemName) {
         try {
             self::$sys = $this->api->systems->get->system($systemName);
         }
