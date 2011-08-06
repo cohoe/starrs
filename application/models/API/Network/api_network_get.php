@@ -26,7 +26,6 @@ class Api_network_get extends ImpulseModel {
 				$port['date_modified'],
 				$port['last_modifier']
 			);
-            echo $port['port_name'];
 		}
 
 		// Return results

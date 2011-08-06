@@ -27,19 +27,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="switchports.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="49" selection-start="4020" selection-end="4031" vertical-scroll-proportion="-17.76">
+            <state line="106" column="51" selection-start="4166" selection-end="4166" vertical-scroll-proportion="0.48380566">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_network_get.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="api_network_get.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="36" selection-start="782" selection-end="782" vertical-scroll-proportion="0.4698914">
+            <state line="18" column="22" selection-start="474" selection-end="484" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -118,8 +118,8 @@
         <option value="$PROJECT_DIR$/application/views/switchports/create.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
-        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
+        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
       </list>
     </option>
   </component>
@@ -684,7 +684,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="you tard" />
+    <option name="LAST_COMMIT_MESSAGE" value="debug" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -706,7 +706,6 @@
     <MESSAGE value="added other ranges" />
     <MESSAGE value="added link from subnet controller" />
     <MESSAGE value="removed htmlentities from" />
-    <MESSAGE value="debug" />
     <MESSAGE value="fixed some system things" />
     <MESSAGE value="more bug fixes" />
     <MESSAGE value="added switchports" />
@@ -722,6 +721,7 @@
     <MESSAGE value="added view information" />
     <MESSAGE value="wtf" />
     <MESSAGE value="you tard" />
+    <MESSAGE value="debug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -825,16 +825,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
+    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="49" selection-start="4020" selection-end="4031" vertical-scroll-proportion="-17.76">
+        <state line="18" column="22" selection-start="474" selection-end="484" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="36" selection-start="782" selection-end="782" vertical-scroll-proportion="0.4698914">
+        <state line="106" column="51" selection-start="4166" selection-end="4166" vertical-scroll-proportion="0.48380566">
           <folding />
         </state>
       </provider>

@@ -102,7 +102,10 @@ class Switchports extends ImpulseController {
 
     private function _get_switchport_view_data() {
         try {
-            $this->api->network->get->switchports(self::$sys->get_system_name());
+            $sPorts = $this->api->network->get->switchports(self::$sys->get_system_name());
+            foreach($sPorts as $sPort) {
+                self::$sys->add_switchport($sPort);
+            }
         }
         catch (ObjectNotFoundException $onfE) {
             return $this->_warning("No switchports configured!");
