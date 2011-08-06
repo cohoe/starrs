@@ -224,21 +224,6 @@ class Options extends ImpulseController {
 				}
 			}
 			if($this->input->post('value') != $value) {
-                echo "Value - $mode - $target - ".$this->input->post('value');
-                echo "<br>";
-                echo "<br>";
-                echo "\"$value\"<br>\"".$this->input->post('value')."\"<br>";
-                $test = $this->input->post('value');
-                if($value != $test) {
-                    echo "Not Equal";
-                }
-                else {
-                    echo "Equal";
-                }
-
-                echo "<br>";
-                echo htmlspecialchars_decode($value);
-
 				switch($mode) {
 					case "global":
 						$this->api->dhcp->modify->global_option($option,$value,'value',$this->input->post('value'));
@@ -257,7 +242,7 @@ class Options extends ImpulseController {
 						break;
 				}
 			}
-			#redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
+			redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
 		}
 		elseif ($option && $value) {
 			$option = urldecode($option);
