@@ -84,9 +84,9 @@ class Impulselib {
      * @param $url  The URL to parse
      * @return string
      */
-	public function remove_url_space($url) {
-		return preg_replace("/%20/"," ",$url);
-	}
+	//public function remove_url_space($url) {
+	//	return preg_replace("/%20/"," ",$url);
+	//}
 
 
 

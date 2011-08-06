@@ -38,7 +38,7 @@ class Api_systems_create extends ImpulseModel {
 	
 	public function _interface($systemName, $mac, $interfaceName, $comment) {
         // SQL Query
-		$sql = "SELECT api.create_interface(
+		$sql = "SELECT * FROM api.create_interface(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($mac)},
 			{$this->db->escape($interfaceName)},
