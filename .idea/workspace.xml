@@ -47,7 +47,7 @@
       <file leaf-file-name="options.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="227" column="28" selection-start="7388" selection-end="7388" vertical-scroll-proportion="0.5301086">
+            <state line="220" column="24" selection-start="7142" selection-end="7142" vertical-scroll-proportion="0.41263574">
               <folding />
             </state>
           </provider>
@@ -733,7 +733,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="227" column="28" selection-start="7388" selection-end="7388" vertical-scroll-proportion="0.5301086">
+        <state line="220" column="24" selection-start="7142" selection-end="7142" vertical-scroll-proportion="0.41263574">
           <folding />
         </state>
       </provider>

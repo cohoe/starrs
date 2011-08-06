@@ -203,9 +203,10 @@ class Options extends ImpulseController {
 		$target = html_entity_decode(rawurldecode($target));
 			
 		if($this->input->post('submit')) {
-            print_r($_POST);
-            echo "$option - $value";
+            #print_r($_POST);
+            #echo "$option - $value";
 			if($this->input->post('option') != $option) {
+                echo "here";
 				switch($mode) {
 					case "global":
 						$this->api->dhcp->modify->global_option($option,$value,'option',$this->input->post('option'));
