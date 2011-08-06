@@ -417,7 +417,7 @@ CREATE TABLE "dhcp"."range_options"(
 "option" TEXT NOT NULL,
 "name" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "value" TEXT NOT NULL,
 CONSTRAINT "range_options_pkey" PRIMARY KEY ("name","option")

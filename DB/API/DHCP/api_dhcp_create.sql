@@ -11,7 +11,7 @@
 	2) Validate input
 	3) Create new class
 */
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_comment text) RETURNS SETOF "dhcp"."class_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class');
 
@@ -29,9 +29,12 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class');
+		RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" 
+		FROM "dhcp"."classes" WHERE "class" = input_class);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP class';
+
 
 /* API - create_dhcp_class_option
 	1) Check privileges

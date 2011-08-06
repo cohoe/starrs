@@ -143,6 +143,16 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_ranges"() RETURNS SETOF "ip"."range_dat
 		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" FROM "ip"."ranges");
 	END;
 $$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_ranges"() IS 'Get all configured IP ranges';
+
+/* API - get_ip_range */
+CREATE OR REPLACE FUNCTION "api"."get_ip_range"(input_name text) RETURNS SETOF "ip"."range_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" 
+		FROM "ip"."ranges" WHERE "name" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_range"(text) IS 'Get all data on a configured IP ranges';
 
 /* API - get_ip_subnets */
 CREATE OR REPLACE FUNCTION "api"."get_ip_subnets"(input_username text) RETURNS SETOF "ip"."subnet_data" AS $$
@@ -167,3 +177,10 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_subnet"(input_subnet cidr) RETURNS SETO
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_ip_subnet"(cidr) IS 'Get all IP subnet data for a specific subnet';
 
+/* API - get_ip_range_uses */
+CREATE OR REPLACE FUNCTION "api"."get_ip_range_uses"() RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY (SELECT text("use") FROM "ip"."range_uses");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_range_uses"() IS 'Get a list of all use codes';

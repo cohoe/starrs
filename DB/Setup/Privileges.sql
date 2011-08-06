@@ -64,6 +64,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."metahost_program_rules" TO "imp
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."program_rules" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."rule_queue" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."default_queue" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both
