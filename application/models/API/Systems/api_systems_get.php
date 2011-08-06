@@ -28,7 +28,7 @@ class Api_systems_get extends ImpulseModel {
         }
     }
 	
-	public function system_data($systemName, $complete=false) {
+	public function system($systemName, $complete=false) {
         // SQL Query
 		$sql = "SELECT * FROM api.get_system_data({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
