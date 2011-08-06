@@ -232,7 +232,7 @@ class Api_systems_get extends ImpulseModel {
 		// Check error
 		$this->_check_error($query);
 		if($query->num_rows() > 1) {
-			throw new AmbiguousTargetException("More than one interface matches '{$mac}'. This indicates a database error. Contact your system administrator.");
+			throw new AmbiguousTargetException("More than one interface matches '{$address}'. This indicates a database error. Contact your system administrator.");
 		}
 		
 		// Generate results

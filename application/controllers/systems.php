@@ -97,14 +97,14 @@ class Systems extends ImpulseController {
 		
 		// We got a system, deal with it
 		else {
-			// If no target was specififed, go to the overview page
+			// If no target was specified, go to the overview page
 			if($target == NULL) {
 				$target = "overview";
 			}
 			
 			// System Object
 			try {
-				$sys = $this->api->systems->get->system_data($systemName,false);
+				$sys = $this->api->systems->get->system($systemName,false);
 			}
 			catch (ObjectNotFoundException $oNFE) {
 				$this->_error("System not found!");
