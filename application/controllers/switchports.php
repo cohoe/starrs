@@ -30,8 +30,13 @@ class Switchports extends ImpulseController {
 		$info['title'] = "Switchports on ".self::$sys->get_system_name();
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $form['sys'] = self::$sys;
-        $form['types'] = $this->api->network->get->types();
-		$info['data'] = $this->input->post('switchports/create',$form,TRUE);
+        try {
+            $form['types'] = $this->api->network->get->types();
+        }
+        catch (DBException $dbE) {
+            $this->_error("No switchport types configured?");
+        }
+		$info['data'] = $this->load->view('switchports/create',$form,TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
