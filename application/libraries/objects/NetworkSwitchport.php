@@ -1,6 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Switchport extends ImpulseObject {
+class NetworkSwitchport extends ImpulseObject {
 
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
@@ -59,5 +59,5 @@ class Switchport extends ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 }
-/* End of file Switchport.php */
-/* Location: ./application/libraries/objects/Switchport.php */
+/* End of file NetworkSwitchport.php */
+/* Location: ./application/libraries/objects/NetworkSwitchport.php */

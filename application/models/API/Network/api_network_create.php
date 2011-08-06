@@ -23,7 +23,7 @@ class Api_network_create extends ImpulseModel {
         }
 		
 		// Generate and return results
-        return new Switchport(
+        return new NetworkSwitchport(
             $query->row()->port_name,
             $query->row()->description,
             $query->row()->type,
@@ -53,7 +53,7 @@ class Api_network_create extends ImpulseModel {
 		// Generate and return results
 		$resultSet = array();
 		foreach ($query->result_array() as $switchport) {
-			$resultSet[] = new Switchport(
+			$resultSet[] = new NetworkSwitchport(
 				$switchport['port_name'],
 				$switchport['description'],
 				$switchport['type'],
