@@ -22,12 +22,8 @@ class Switchports extends ImpulseController {
         $info['title'] = "Switchports on ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $sPorts = self::$sys->get_switchports();
-        $viewData = "";
-        foreach($sPorts as $sPort) {
-            $viewData .= $sPort->get_port_name()."<br>";
-        }
-        #$info['data'] = $this->load->view('switchports/view',array($s),TRUE);
-        $info['data'] = $viewData;
+
+        $info['data'] = $this->_get_switchport_view_data();
 
         // Load the main view
         $this->load->view('core/main',$info);
@@ -105,6 +101,21 @@ class Switchports extends ImpulseController {
         }
     }
 
+    private function _get_switchport_view_data() {
+        try {
+            $this->api->network->get->switchports(self::$sys->get_system_name());
+        }
+        catch (ObjectNotFoundException $onfE) {
+            return $this->_warning("No switchports configured!");
+        }
+
+        $viewData = "";
+        foreach(self::$sys->get_switchports() as $sPort) {
+            $viewData .= $sPort->get_port_name()."<br>";
+        }
+
+        return $viewData;
+    }
     private function _get_system($systemName) {
         try {
             self::$sys = $this->api->systems->get->system($systemName);

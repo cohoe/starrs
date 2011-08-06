@@ -8,7 +8,7 @@ class Api_network_get extends ImpulseModel {
     public function switchports($systemName) {
 		// SQL Query
         exit("Not ready");
-		$sql = "SELECT * FROM api.get_network_({$this->db->escape($family)})";
+		$sql = "SELECT * FROM api.get_network_switchports({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
 		// Check error
@@ -16,14 +16,16 @@ class Api_network_get extends ImpulseModel {
 
 		// Generate results
 		$resultSet = array();
-		foreach($query->result_array() as $configType) {
-			$resultSet[] = new ConfigType(
-				$configType['config'],
-				$configType['comment'],
-				$configType['family'],
-				$configType['date_created'],
-				$configType['date_modified'],
-				$configType['last_modifier']
+		foreach($query->result_array() as $port) {
+			$resultSet[] = new NetworkSwitchport(
+				$port['port_name'],
+				$port['description'],
+				$port['type'],
+                $port['attached_mac'],
+                $port['system_name'],
+				$port['date_created'],
+				$port['date_modified'],
+				$port['last_modifier']
 			);
 		}
 
@@ -32,7 +34,7 @@ class Api_network_get extends ImpulseModel {
 			return $resultSet;
 		}
 		else {
-			throw new ObjectNotFoundException("No DHCP config types found. This is a big problem. Talk to your administrator.");
+			throw new ObjectNotFoundException("No switchports found!");
 		}
 	}
 
