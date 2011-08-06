@@ -29,7 +29,7 @@ class Switchports extends ImpulseController {
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['title'] = "Switchports on ".self::$sys->get_system_name();
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('resources/zones/view',array("dnsZone"=>self::$dnsZone),TRUE);
+		$info['data'] = "Switchports!";
 
 		// Load the main view
 		$this->load->view('core/main',$info);
