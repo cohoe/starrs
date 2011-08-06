@@ -126,7 +126,7 @@ class Systems extends ImpulseController {
 			// Check for network system
 			// @todo: Make this legit and not half-assed
 			if($sys->get_type() == 'Switch') {
-				$navbar->add_option('Switchports','switchports');
+				$navbar->add_option('Switchports','/switchports/view/'.$sys->get_system_name());
 			}
 			
 			// Figure out what page we are on and print accordingly
