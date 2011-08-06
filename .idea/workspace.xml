@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" afterPath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,7 +47,7 @@
       <file leaf-file-name="options.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="209" column="55" selection-start="6682" selection-end="6682" vertical-scroll-proportion="0.37907207">
+            <state line="239" column="53" selection-start="7895" selection-end="7895" vertical-scroll-proportion="0.8825272">
               <folding />
             </state>
           </provider>
@@ -732,7 +733,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="209" column="55" selection-start="6682" selection-end="6682" vertical-scroll-proportion="0.37907207">
+        <state line="239" column="53" selection-start="7895" selection-end="7895" vertical-scroll-proportion="0.8825272">
           <folding />
         </state>
       </provider>
