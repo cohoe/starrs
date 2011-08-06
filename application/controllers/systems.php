@@ -234,7 +234,7 @@ class Systems extends ImpulseController {
 			// Get the preset form data for dropdown lists and things
 			$form['operatingSystems'] = $this->api->systems->get->operating_systems();
 			$form['systemTypes'] = $this->api->systems->get->system_types();
-			$form['user'] = $this->impulselib->get_username();
+			$form['user'] = $this->api->get->current_user();
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}
@@ -309,7 +309,7 @@ class Systems extends ImpulseController {
 			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 		}
 	}
 
@@ -317,7 +317,7 @@ class Systems extends ImpulseController {
 	 * This will open the getting started view to point users in the right direction
      * @return void
      */
-	private function _load_get_started() {
+/*	private function _load_get_started() {
 
 		// Navbar
         $navOptions = array('Create System'=>'/systems/create');
@@ -332,7 +332,7 @@ class Systems extends ImpulseController {
 		
 		// Load the main view
 		$this->load->view('core/main',$info);
-	}
+	}*/
 
     /**
 	 * Prepare a list of all interfaces attached to a system.
@@ -396,7 +396,7 @@ class Systems extends ImpulseController {
 			$this->_error("DB: ".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj: ".$dbE->getMessage());
+			$this->_error("Obj: ".$oE->getMessage());
 		}	
 		catch (APIException $apiE) {
 			$this->_error("API: ".$apiE->getMessage());
@@ -455,7 +455,7 @@ class Systems extends ImpulseController {
 			$this->_error("DB:".$dbE->getMessage());
 		}
 		catch (ObjectException $oE) {
-			$this->_error("Obj:".$dbE->getMessage());
+			$this->_error("Obj:".$oE->getMessage());
 		}
 	}
 

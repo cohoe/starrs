@@ -7,7 +7,7 @@ class Api_systems_create extends ImpulseModel {
 	
 	public function system($systemName,$owner=NULL,$type,$osName,$comment) {
         // SQL Query
-		$sql = "SELECT api.create_system(
+		$sql = "SELECT * FROM api.create_system(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($owner)},
 			{$this->db->escape($type)},
@@ -17,9 +17,23 @@ class Api_systems_create extends ImpulseModel {
 
         // Check errors
 		$this->_check_error($query);
-		
-		// Return object
-		return $this->get_system_data($systemName,false);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned multiple results?");
+        }
+
+		// Generate and return result
+        return new System(
+            $query->row()->system_name,
+            $query->row()->owner,
+            $query->row()->comment,
+            $query->row()->type,
+            $query->row()->os_name,
+            $query->row()->renew_date,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 	
 	public function _interface($systemName, $mac, $interfaceName, $comment) {
@@ -33,14 +47,26 @@ class Api_systems_create extends ImpulseModel {
 		
 		// Check error
         $this->_check_error($query);
-		
-		// Return object
-		return $this->get_system_interface_data($mac, false);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned multiple results?");
+        }
+        
+		// Generate and return result
+        return new NetworkInterface(
+            $query->row()->mac,
+            $query->row()->comment,
+            $query->row()->system_name,
+            $query->row()->name,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 	
 	public function interface_address($mac, $address, $config, $class, $isprimary, $comment) {
 	    // SQL Query
-		$sql = "SELECT api.create_interface_address(
+		$sql = "SELECT * FROM api.create_interface_address(
 			{$this->db->escape($mac)},
 			{$this->db->escape($address)},
 			{$this->db->escape($config)},
@@ -52,9 +78,25 @@ class Api_systems_create extends ImpulseModel {
 		
 		// Check error
         $this->_check_error($query);
-		
-		// Return object
-		return $this->api->systems->get->system_interface_address($address, false);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("The API returned multiple results?");
+        }
+        
+		// Generate and return result
+        //$address, $class, $config, $mac, $renewDate, $isPrimary, $comment, $dateCreated, $dateModified, $lastModifier
+        return new InterfaceAddress(
+            $query->row()->address,
+            $query->row()->class,
+            $query->row()->config,
+            $query->row()->mac,
+            $query->row()->renew_date,
+            $query->row()->isprimary,
+            $query->row()->comment,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 }
 /* End of file api_systems_create.php */

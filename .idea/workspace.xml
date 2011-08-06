@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" afterPath="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/systems.php" afterPath="$PROJECT_DIR$/application/controllers/systems.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" afterPath="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,10 +45,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="options.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="options.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="238" column="33" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.6140178">
+            <state line="238" column="33" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="systems.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="78" column="45" selection-start="2631" selection-end="2631" vertical-scroll-proportion="0.2479757">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_systems_create.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="62" column="40" selection-start="1945" selection-end="1945" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InterfaceAddress.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="93" column="141" selection-start="3171" selection-end="3280" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -67,8 +95,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/models/API/DNS/api_dns_create.php" />
-        <option value="$PROJECT_DIR$/application/hooks/impulseloader.php" />
         <option value="$PROJECT_DIR$/application/models/API/DNS/api_dns_get.php" />
         <option value="$PROJECT_DIR$/application/models/API/api_dns.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/ImpulseModel.php" />
@@ -83,6 +109,8 @@
         <option value="$PROJECT_DIR$/application/controllers/resource_controllers/subnets.php" />
         <option value="$PROJECT_DIR$/application/views/dhcp/options/edit_single.php" />
         <option value="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
+        <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
+        <option value="$PROJECT_DIR$/application/controllers/systems.php" />
       </list>
     </option>
   </component>
@@ -376,6 +404,32 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Systems" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="models" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="API" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="DHCP" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -412,7 +466,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="objects" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -431,10 +489,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resource_controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -646,31 +700,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/models/API/DNS/api_dns_create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="4" selection-start="196" selection-end="196" vertical-scroll-proportion="0.016781837" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/ajaxCalls.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="7" selection-start="750" selection-end="750" vertical-scroll-proportion="0.35241857" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/config/routes.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="45" selection-start="1718" selection-end="1718" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/dhcp/options/view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="6" selection-start="320" selection-end="320" vertical-scroll-proportion="0.11747285" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/keys.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="46" selection-start="2413" selection-end="2413" vertical-scroll-proportion="0.15103653" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/DHCP/api_dhcp_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="27" column="40" selection-start="741" selection-end="741" vertical-scroll-proportion="0.016781837">
@@ -733,7 +762,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="238" column="33" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.6140178">
+        <state line="238" column="33" selection-start="7866" selection-end="7866" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/System.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="20" selection-start="679" selection-end="680" vertical-scroll-proportion="0.033563673">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="119" selection-start="1428" selection-end="1897" vertical-scroll-proportion="0.43632773">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/InterfaceAddress.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="141" selection-start="3171" selection-end="3280" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="40" selection-start="1945" selection-end="1945" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="45" selection-start="2631" selection-end="2631" vertical-scroll-proportion="0.2479757">
           <folding />
         </state>
       </provider>
