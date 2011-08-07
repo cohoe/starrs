@@ -13,6 +13,7 @@ class Api_network_modify extends ImpulseModel {
 			{$this->db->escape($field)},
 			{$this->db->escape($value)}
 		)";
+        $query = $this->db->query($sql);
 		
 		// Check errors
         $this->_check_error($query);

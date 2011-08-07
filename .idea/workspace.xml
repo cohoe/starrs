@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/switchport/edit.php" afterPath="$PROJECT_DIR$/application/views/switchport/edit.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Network/api_network_modify.php" afterPath="$PROJECT_DIR$/application/models/API/Network/api_network_modify.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,10 +35,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="switchport.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="105" column="49" selection-start="4335" selection-end="4335" vertical-scroll-proportion="0.48380566">
+            <state line="105" column="49" selection-start="4335" selection-end="4335" vertical-scroll-proportion="-19.12">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_network_modify.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_modify.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="40" selection-start="463" selection-end="463" vertical-scroll-proportion="0.25172755">
               <folding />
             </state>
           </provider>
@@ -122,7 +130,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
         <option value="$PROJECT_DIR$/application/hooks/impulseloader.php" />
@@ -138,6 +145,7 @@
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/views/switchport/edit.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
+        <option value="$PROJECT_DIR$/application/models/API/Network/api_network_modify.php" />
       </list>
     </option>
   </component>
@@ -621,13 +629,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/System.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="45" selection-start="4061" selection-end="4061" vertical-scroll-proportion="2.0306022">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="4" selection-start="148" selection-end="148" vertical-scroll-proportion="0.0">
@@ -728,7 +729,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="49" selection-start="4335" selection-end="4335" vertical-scroll-proportion="0.48380566">
+        <state line="105" column="49" selection-start="4335" selection-end="4335" vertical-scroll-proportion="-19.12">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_modify.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="40" selection-start="463" selection-end="463" vertical-scroll-proportion="0.25172755">
           <folding />
         </state>
       </provider>
