@@ -11,7 +11,7 @@ $macaddrs = $sPort->get_mac_addresses();
             <?if($sys->get_switchview_enable()=='t') {?>
 			    <tr><td><em>Current State:</em></td><td><?echo ($sPort->get_port_state()=='t')?"Active":"Inactive";?></td></tr>
 			    <tr><td><em>Administrative State:</em></td><td><?echo ($sPort->get_admin_state()=='t')?"Enabled":"Disabled";?></td></tr>
-                <tr><td><em>Attached MAC Addresses:</em></td><td><?echo array_shift($macaddrs);?></td></tr>
+                <tr><td><em>Attached MAC Addresses:</em></td><td><?echo ($macaddrs)?array_shift($macaddrs):"";?></td></tr>
             <?  foreach($macaddrs as $mac) {
                     echo "<tr><td></td><td>$mac</td></tr>";
                 }
