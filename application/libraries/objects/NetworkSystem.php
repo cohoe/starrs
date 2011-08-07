@@ -39,17 +39,17 @@ class NetworkSystem extends System {
 	// SETTERS
 
     public function set_ro_community($new) {
-        $this->api->network->modify->switchview_settings($this->get_system_name(), 'snmp_ro_community', $new);
+        $this->CI->api->network->modify->switchview_settings($this->get_system_name(), 'snmp_ro_community', $new);
         $this->snmpROCommunity = $new;
     }
     
     public function set_rw_community($new) {
-        $this->api->network->modify->switchview_settings($this->get_system_name(), 'snmp_rw_community', $new);
+        $this->CI->api->network->modify->switchview_settings($this->get_system_name(), 'snmp_rw_community', $new);
         $this->snmpRWCommunity = $new;
     }
 
     public function set_switchview_enable($new) {
-        $this->api->network->modify->switchview_settings($this->get_system_name(), 'enable', $new);
+        $this->CI->api->network->modify->switchview_settings($this->get_system_name(), 'enable', $new);
         $this->enable = $new;
     }
 
