@@ -27,7 +27,7 @@ class Switchport extends ImpulseController {
         $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
         $info['title'] = "Switchport Details";
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-        $info['data'] = "View!";
+        $info['data'] = $sPort->get_port_name();
 
         // Load the main view
         $this->load->view('core/main',$info);

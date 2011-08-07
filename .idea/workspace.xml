@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchports.php" afterPath="$PROJECT_DIR$/application/controllers/switchports.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,19 +26,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="switchports.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="9" selection-start="534" selection-end="534" vertical-scroll-proportion="0.2685094">
+            <state line="16" column="9" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="switchport.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="68" selection-start="976" selection-end="976" vertical-scroll-proportion="0.0">
+            <state line="29" column="47" selection-start="1328" selection-end="1328" vertical-scroll-proportion="0.48667324">
               <folding />
             </state>
           </provider>
@@ -108,8 +108,8 @@
         <option value="$PROJECT_DIR$/application/views/switchports/grid.php" />
         <option value="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
-        <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
+        <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
       </list>
     </option>
   </component>
@@ -753,16 +753,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="68" selection-start="976" selection-end="976" vertical-scroll-proportion="0.0">
+        <state line="16" column="9" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="9" selection-start="534" selection-end="534" vertical-scroll-proportion="0.2685094">
+        <state line="29" column="47" selection-start="1328" selection-end="1328" vertical-scroll-proportion="0.48667324">
           <folding />
         </state>
       </provider>
