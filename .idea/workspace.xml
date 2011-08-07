@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,7 +37,7 @@
       <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="60" selection-start="1107" selection-end="1107" vertical-scroll-proportion="0.38598225">
+            <state line="12" column="42" selection-start="456" selection-end="456" vertical-scroll-proportion="0.20138204">
               <folding />
             </state>
           </provider>
@@ -745,7 +744,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="60" selection-start="1107" selection-end="1107" vertical-scroll-proportion="0.38598225">
+        <state line="12" column="42" selection-start="456" selection-end="456" vertical-scroll-proportion="0.20138204">
           <folding />
         </state>
       </provider>
