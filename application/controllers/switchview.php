@@ -112,6 +112,7 @@ class Switchview extends ImpulseController {
         if($this->input->post('submit')) {
             try {
                 $this->_edit();
+                $this->impulselib->set_active_system(self::$sys);
                 redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
             }
             catch(Exception $e) {
