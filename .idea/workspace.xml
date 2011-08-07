@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" afterPath="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php" afterPath="$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/hooks/impulseloader.php" afterPath="$PROJECT_DIR$/application/hooks/impulseloader.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,10 +44,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_systems_create.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="api_systems_create.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="14" selection-start="1243" selection-end="1243" vertical-scroll-proportion="0.4874372">
+            <state line="18" column="36" selection-start="546" selection-end="546" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="impulseloader.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/hooks/impulseloader.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="40" column="63" selection-start="2249" selection-end="2249" vertical-scroll-proportion="0.6834171">
               <folding />
             </state>
           </provider>
@@ -122,7 +130,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" />
         <option value="$PROJECT_DIR$/application/views/switchport/view.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
@@ -138,6 +145,7 @@
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSystem.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
+        <option value="$PROJECT_DIR$/application/hooks/impulseloader.php" />
       </list>
     </option>
   </component>
@@ -457,6 +465,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="hooks" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -586,7 +612,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added network system" />
+    <option name="LAST_COMMIT_MESSAGE" value="derp" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -621,21 +647,14 @@
     <MESSAGE value="added create settings" />
     <MESSAGE value="forgot to load view" />
     <MESSAGE value="added remove" />
-    <MESSAGE value="derp" />
     <MESSAGE value="done for the night" />
     <MESSAGE value="added network system" />
+    <MESSAGE value="derp" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="13" selection-start="4470" selection-end="4470" vertical-scroll-proportion="2.1816387">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="0" selection-start="212" selection-end="212" vertical-scroll-proportion="0.10069102">
@@ -736,7 +755,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="14" selection-start="1243" selection-end="1243" vertical-scroll-proportion="0.4874372">
+        <state line="18" column="36" selection-start="546" selection-end="546" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/hooks/impulseloader.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="63" selection-start="2249" selection-end="2249" vertical-scroll-proportion="0.6834171">
           <folding />
         </state>
       </provider>
