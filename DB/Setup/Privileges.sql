@@ -65,6 +65,9 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."program_rules" TO "impulse_clie
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."rule_queue" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."default_queue" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_states" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_macs" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchview" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both

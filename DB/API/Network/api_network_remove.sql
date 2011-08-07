@@ -54,3 +54,27 @@ CREATE OR REPLACE FUNCTION "api"."remove_switchport_range"(input_prefix text, fi
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_switchport_range"(text, integer, integer, text) IS 'Remove a range of switchports from a system';
+
+/* API - remove_system_switchview
+	1) Check privileges
+	2) remove settings
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_system_switchview"(input_system_name text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_system_switchview');
+
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
+			END IF;
+		END IF;
+
+		-- Create settings
+		DELETE FROM "network"."switchview" WHERE "system_name" = input_system_name;
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_system_switchview');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_system_switchview"(text) IS 'Remove switchview on a system';
