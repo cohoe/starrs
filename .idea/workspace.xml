@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/switchport/edit.php" afterPath="$PROJECT_DIR$/application/views/switchport/edit.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,10 +35,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="switchport.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="128" column="33" selection-start="5442" selection-end="5442" vertical-scroll-proportion="0.8795546">
+            <state line="127" column="37" selection-start="5368" selection-end="5368" vertical-scroll-proportion="-42.24">
               <folding />
             </state>
           </provider>
@@ -71,10 +71,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="edit.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="edit.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/views/switchport/edit.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="72" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0">
+            <state line="22" column="24" selection-start="1443" selection-end="1443" vertical-scroll-proportion="0.374">
               <folding />
             </state>
           </provider>
@@ -142,10 +142,10 @@
         <option value="$PROJECT_DIR$/application/views/switchport/view.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSystem.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
-        <option value="$PROJECT_DIR$/application/views/switchport/edit.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_modify.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
+        <option value="$PROJECT_DIR$/application/views/switchport/edit.php" />
       </list>
     </option>
   </component>
@@ -713,9 +713,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/switchport/edit.php">
+    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_modify.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="72" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0">
+        <state line="15" column="40" selection-start="463" selection-end="463" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="127" column="37" selection-start="5368" selection-end="5368" vertical-scroll-proportion="-42.24">
           <folding />
         </state>
       </provider>
@@ -727,16 +734,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_modify.php">
+    <entry file="file://$PROJECT_DIR$/application/views/switchport/edit.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="40" selection-start="463" selection-end="463" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="128" column="33" selection-start="5442" selection-end="5442" vertical-scroll-proportion="0.8795546">
+        <state line="22" column="24" selection-start="1443" selection-end="1443" vertical-scroll-proportion="0.374">
           <folding />
         </state>
       </provider>
