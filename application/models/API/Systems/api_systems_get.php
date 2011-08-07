@@ -41,7 +41,7 @@ class Api_systems_get extends ImpulseModel {
 		
 		// Generate results
 		$systemData = $query->row_array();
-        if(preg_match("Router|Firewall|Switch|Hub|Wireless Access Point",$systemData['type'])) {
+        if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$systemData['type'])) {
             $sys = new NetworkSystem(
                 $systemData['system_name'],
                 $systemData['owner'],

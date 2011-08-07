@@ -23,17 +23,32 @@ class Api_systems_create extends ImpulseModel {
         }
 
 		// Generate and return result
-        return new System(
-            $query->row()->system_name,
-            $query->row()->owner,
-            $query->row()->comment,
-            $query->row()->type,
-            $query->row()->os_name,
-            $query->row()->renew_date,
-            $query->row()->date_created,
-            $query->row()->date_modified,
-            $query->row()->last_modifier
-        );
+        if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$systemData['type'])) {
+            return new NetworkSystem(
+                $query->row()->system_name,
+                $query->row()->owner,
+                $query->row()->comment,
+                $query->row()->type,
+                $query->row()->os_name,
+                $query->row()->renew_date,
+                $query->row()->date_created,
+                $query->row()->date_modified,
+                $query->row()->last_modifier
+            );
+        }
+        else {
+           return new System(
+                $query->row()->system_name,
+                $query->row()->owner,
+                $query->row()->comment,
+                $query->row()->type,
+                $query->row()->os_name,
+                $query->row()->renew_date,
+                $query->row()->date_created,
+                $query->row()->date_modified,
+                $query->row()->last_modifier
+            );
+        }
 	}
 	
 	public function _interface($systemName, $mac, $interfaceName, $comment) {
