@@ -33,7 +33,7 @@ class Api_network_remove extends ImpulseModel {
 
     public function switchview_settings($systemName) {
         // SQL Query
-		$sql = "SELECT api.create_system_switchview({$this->db->escape($systemName)})";
+		$sql = "SELECT api.remove_system_switchview({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
 		// Check errors
