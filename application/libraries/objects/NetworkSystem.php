@@ -18,7 +18,7 @@ class NetworkSystem extends System {
 		parent::__construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier);
 
         try {
-            $settings = $this->api->network->get->switchview_settings($systemName);
+            $settings = $this->CI->api->network->get->switchview_settings($systemName);
             $this->enable = $settings['enable'];
             $this->snmpROCommunity = $settings['snmp_ro_community'];
             $this->snmpRWCommunity = $settings['snmp_rw_community'];
