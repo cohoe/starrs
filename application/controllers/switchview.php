@@ -28,6 +28,7 @@ class Switchview extends ImpulseController {
 
         // Navbar
         $navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
+        $navOptions['Switchports'] = '/switchports/view/'.rawurlencode(self::$sys->get_system_name());
         $navbar = new Navbar("Switchview Settings - ".self::$sys->get_system_name(), $navModes, $navOptions);
 
         // Load view data
