@@ -9,15 +9,17 @@
 			if($i % $cells_per_row == 0) {
 				echo "<tr>";
 			}
-            if($sPort->get_state() == 't') {
-               $class = "firewall_rule_port_box_allow";
-            }
-            elseif($sPort->get_state() == 'f') {
-                $class = "firewall_rule_port_box_deny";
+            if($sPort->get_admin_state() == 't') {
+               $class = "switchport_enabled";
             }
             else {
-                $class = "firewall_rule_port_box_unknown";
+                $class = "switchport_disabled";
             }
+
+            if($sPort->get_port_state() == 't') {
+                $class = "switchport_active";
+            }
+
 
 			echo "<td class=\"$class\"><a href=\"/switchport/view/".rawurlencode($sPort->get_system_name())."/".rawurlencode($sPort->get_port_name())."\">".htmlentities($sPort->get_port_name())."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {

@@ -465,3 +465,33 @@ a {
 	border: 1px solid black;
 	min-width: 120px;
 }
+
+/****************************************
+	Switchport Status
+	Change color depending on the state
+	of the port
+****************************************/
+
+.switchport_enabled {
+	text-align: center;
+	color: white;
+	background-color: gray;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.switchport_disabled {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.switchport_active {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 30px;
+}
