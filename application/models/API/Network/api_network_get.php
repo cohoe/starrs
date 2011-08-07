@@ -63,7 +63,7 @@ class Api_network_get extends ImpulseModel {
 
     public function switchview_settings($systemName) {
         // SQL Query
-        $sql = "SELECT * FROM api.get_network_switchport_settings({$this->db->escape($systemName)})";
+        $sql = "SELECT * FROM api.get_network_switchview_settings({$this->db->escape($systemName)})";
         $query = $this->db->query($sql);
 
 		// Check error
