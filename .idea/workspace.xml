@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/views/switchport/view.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
     </list>
@@ -38,7 +39,25 @@
       <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="47" selection-start="1328" selection-end="1328" vertical-scroll-proportion="0.48667324">
+            <state line="29" column="89" selection-start="1370" selection-end="1370" vertical-scroll-proportion="0.48667324">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/views/firewall/rules/view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="6" selection-start="817" selection-end="817" vertical-scroll-proportion="-9.153846">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="view.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/views/switchport/view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="68" selection-start="693" selection-end="693" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -94,7 +113,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
         <option value="$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php" />
         <option value="$PROJECT_DIR$/application/views/interfaces/create.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/Switchport.php" />
@@ -109,6 +127,7 @@
         <option value="$PROJECT_DIR$/application/libraries/core/ImpulseController.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
+        <option value="$PROJECT_DIR$/application/views/switchport/view.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
       </list>
     </option>
@@ -289,33 +308,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rules" />
+              <option name="myItemId" value="switchport" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -655,13 +648,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/models/API/DHCP/api_dhcp_get.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="20" selection-start="259" selection-end="259" vertical-scroll-proportion="0.15103653">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/firewall/standalone_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="11" selection-start="30" selection-end="1666" vertical-scroll-proportion="0.4822695">
@@ -693,13 +679,6 @@
     <entry file="file://$PROJECT_DIR$/application/views/switchports/create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="84" selection-start="601" selection-end="601" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/firewall/rules/view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -760,9 +739,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/firewall/rules/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="6" selection-start="817" selection-end="817" vertical-scroll-proportion="-9.153846">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/switchport/view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="68" selection-start="693" selection-end="693" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="47" selection-start="1328" selection-end="1328" vertical-scroll-proportion="0.48667324">
+        <state line="29" column="89" selection-start="1370" selection-end="1370" vertical-scroll-proportion="0.48667324">
           <folding />
         </state>
       </provider>
