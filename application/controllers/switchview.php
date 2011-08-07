@@ -3,7 +3,7 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Switchview extends ImpulseController {
 
-    public function view($systemName=NULL) {
+    public function settings($systemName=NULL) {
         $systemName = rawurldecode($systemName);
         try {
             $this->_load_system($systemName);
@@ -13,7 +13,21 @@ class Switchview extends ImpulseController {
         }
 
         $settings = $this->api->network->get->switchview_settings($systemName);
-        print_r($settings);
+
+        // Navbar
+        $navModes['EDIT'] = "/switchview/edit/".rawurlencode(self::$sys->get_system_name());
+        $navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
+        $navbar = new Navbar("Switchview Settings - ".self::$sys->get_system_name(), $navModes, $navOptions);
+
+        // Load view data
+        $info['header'] = $this->load->view('core/header',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['title'] = "Switchview Settings - ".self::$sys->get_system_name();
+        $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+        $info['data'] = $this->load->view('network/switchview/view',array("settings"=>$settings),TRUE);
+
+        // Load the main view
+        $this->load->view('core/main',$info);
     }
 
 }
