@@ -78,7 +78,18 @@ class Switchview extends ImpulseController {
     }
 
     public function delete($systemName=NULL) {
-
+         $systemName = rawurldecode($systemName);
+        try {
+            $this->_load_system($systemName);
+            $this->api->network->remove->switchview_settings($systemName);
+            redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $this->_error("Unable to find system \"$systemName\"");
+        }
+        catch(Exception $e) {
+            $this->_error($e->getMessage());
+        }
     }
 
     public function edit($systemName=NULL) {

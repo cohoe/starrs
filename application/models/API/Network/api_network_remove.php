@@ -30,6 +30,15 @@ class Api_network_remove extends ImpulseModel {
 		// Check errors
         $this->_check_error($query);
 	}
+
+    public function switchview_settings($systemName) {
+        // SQL Query
+		$sql = "SELECT api.create_system_switchview({$this->db->escape($systemName)})";
+		$query = $this->db->query($sql);
+
+		// Check errors
+        $this->_check_error($query);
+    }
 	
 }
 /* End of file api_network_remove.php */
