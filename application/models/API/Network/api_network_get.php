@@ -74,7 +74,7 @@ class Api_network_get extends ImpulseModel {
         }
 
 		// Generate results
-        return $query->row();
+        return $query->row_array();
     }
 }
 /* End of file api_network_get.php */
