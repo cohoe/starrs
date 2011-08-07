@@ -16,9 +16,6 @@ class System extends ImpulseObject {
 	
 	// array<InterfaceObjects>	The interfaces associated with the system
 	private $interfaces;
-
-    // array<NetworkSwitchport> A switchports on this system
-    private $switchports;
 	
 	// string	The OS that the system is running
 	private $osName;
@@ -76,8 +73,7 @@ class System extends ImpulseObject {
 	public function get_type()          { return $this->type; }
 	public function get_os_name()       { return $this->osName; }
 	public function get_interfaces()    { return $this->interfaces; }
-    public function get_switchports()   { return $this->switchports; }
-	
+    
 	////////////////////////////////////////////////////////////////////////
 	// SETTERS
 	
@@ -120,13 +116,7 @@ class System extends ImpulseObject {
 		$this->hasInterfaces = true;
 	}
 
-    public function add_switchport($sPort) {
-        if(!($sPort instanceof NetworkSwitchport)) {
-            throw new ObjectException("Cannot add non-switchport as switchport");
-        }
 
-        $this->switchports[$sPort->get_port_name()] = $sPort;
-    }
 
     public function get_interface($mac) {
         // Return the interface object that corresponds to the given MAC address
@@ -154,16 +144,8 @@ class System extends ImpulseObject {
 			throw new ObjectException("Unable to locate address $address on system ".$this->get_system_name());
 		}
 		return $addr;
-	}
-
-    public function get_switchport($portName) {
-        if($this->switchports[$portName]) {
-            return $this->switchports[$portName];
-        }
-        else {
-            throw new ObjectException("No switchport found!");
-        }
     }
+
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

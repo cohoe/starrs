@@ -41,16 +41,32 @@ class Api_systems_get extends ImpulseModel {
 		
 		// Generate results
 		$systemData = $query->row_array();
-		$sys = new System(
-			$systemData['system_name'],
-			$systemData['owner'],
-			$systemData['comment'],
-			$systemData['type'],
-			$systemData['os_name'],
-			$systemData['renew_date'],
-			$systemData['date_created'],
-			$systemData['date_modified'],
-			$systemData['last_modifier']);
+        if(preg_match("Router|Firewall|Switch|Hub|Wireless Access Point",$systemData['type'])) {
+            $sys = new NetworkSystem(
+                $systemData['system_name'],
+                $systemData['owner'],
+                $systemData['comment'],
+                $systemData['type'],
+                $systemData['os_name'],
+                $systemData['renew_date'],
+                $systemData['date_created'],
+                $systemData['date_modified'],
+                $systemData['last_modifier']
+            );
+        }
+        else {
+            $sys = new System(
+                $systemData['system_name'],
+                $systemData['owner'],
+                $systemData['comment'],
+                $systemData['type'],
+                $systemData['os_name'],
+                $systemData['renew_date'],
+                $systemData['date_created'],
+                $systemData['date_modified'],
+                $systemData['last_modifier']
+            );
+        }
 		
 		// Generate a complete object
 		if($complete == true) {
