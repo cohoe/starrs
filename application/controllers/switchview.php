@@ -111,7 +111,7 @@ class Switchview extends ImpulseController {
 
         if($this->input->post('submit')) {
             try {
-                // CODE HERE
+                $this->_edit();
                 redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
             }
             catch(Exception $e) {
@@ -132,6 +132,26 @@ class Switchview extends ImpulseController {
 
             // Load the main view
             $this->load->view('core/main',$info);
+        }
+    }
+
+    public function _edit() {
+        $err = "";
+        if(self::$sys->get_ro_community() != $this->input->post('ro_community')) {
+            try { self::$sys->set_ro_community($this->input->post('ro_community')); }
+            catch(Exception $e) { $err .= $e->getMessage(); }
+        }
+        if(self::$sys->get_rw_community() != $this->input->post('rw_community')) {
+            try { self::$sys->set_rw_community($this->input->post('rw_community')); }
+            catch(Exception $e) { $err .= $e->getMessage(); }
+        }
+        if(self::$sys->get_switchview_enable() != $this->input->post('enable')) {
+            try { self::$sys->set_switchview_enable($this->input->post('enable')); }
+            catch(Exception $e) { $err .= $e->getMessage(); }
+        }
+
+        if($err != "") {
+            $this->_error($err);
         }
     }
 
