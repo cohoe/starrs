@@ -101,7 +101,38 @@ class Switchview extends ImpulseController {
     }
 
     public function edit($systemName=NULL) {
-        // @todo: waiting until I figure out NetworkSystem object and shit
+         $systemName = rawurldecode($systemName);
+        try {
+            $this->_load_system($systemName);
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $this->_error("Unable to find system \"$systemName\"");
+        }
+
+        if($this->input->post('submit')) {
+            try {
+                // CODE HERE
+                redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
+            }
+            catch(Exception $e) {
+                $this->_error($e->getMessage());
+            }
+        }
+        else {
+            // Navbar
+            $navModes['CANCEL'] = "/switchview/settings/".rawurlencode(self::$sys->get_system_name());
+            $navbar = new Navbar("Edit Switchview Settings", $navModes, null);
+
+            // Load view data
+            $info['header'] = $this->load->view('core/header',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['title'] = "Edit Switchview Settings";
+            $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+            $info['data'] = $this->load->view('network/switchview/edit',array("sys"=>self::$sys),TRUE);
+
+            // Load the main view
+            $this->load->view('core/main',$info);
+        }
     }
 
 }
