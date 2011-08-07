@@ -36,10 +36,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="grid.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="grid.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/views/switchports/grid.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="29" selection-start="520" selection-end="520" vertical-scroll-proportion="0.33162218">
+            <state line="20" column="13" selection-start="550" selection-end="550" vertical-scroll-proportion="-13.076923">
               <folding />
             </state>
           </provider>
@@ -54,10 +54,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="impulse.css" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="impulse.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/css/sphere/full/impulse.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="490" column="18" selection-start="8892" selection-end="8909" vertical-scroll-proportion="0.0">
+            <state line="500" column="17" selection-start="9032" selection-end="9032" vertical-scroll-proportion="0.7650543">
               <folding />
             </state>
           </provider>
@@ -118,8 +118,8 @@
         <option value="$PROJECT_DIR$/application/controllers/switchview.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/views/switchport/view.php" />
-        <option value="$PROJECT_DIR$/css/sphere/full/impulse.css" />
         <option value="$PROJECT_DIR$/application/views/switchports/grid.php" />
+        <option value="$PROJECT_DIR$/css/sphere/full/impulse.css" />
       </list>
     </option>
   </component>
@@ -504,7 +504,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed view" />
+    <option name="LAST_COMMIT_MESSAGE" value="added grid css" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -517,7 +517,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="added remove" />
     <MESSAGE value="done for the night" />
     <MESSAGE value="added network system" />
     <MESSAGE value="added hook" />
@@ -542,6 +541,7 @@
     <MESSAGE value="forgot to save" />
     <MESSAGE value="added port link" />
     <MESSAGE value="fixed view" />
+    <MESSAGE value="added grid css" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -645,16 +645,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/sphere/full/impulse.css">
+    <entry file="file://$PROJECT_DIR$/application/views/switchports/grid.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="490" column="18" selection-start="8892" selection-end="8909" vertical-scroll-proportion="0.0">
+        <state line="20" column="13" selection-start="550" selection-end="550" vertical-scroll-proportion="-13.076923">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/switchports/grid.php">
+    <entry file="file://$PROJECT_DIR$/css/sphere/full/impulse.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="29" selection-start="520" selection-end="520" vertical-scroll-proportion="0.33162218">
+        <state line="500" column="17" selection-start="9032" selection-end="9032" vertical-scroll-proportion="0.7650543">
           <folding />
         </state>
       </provider>

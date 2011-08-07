@@ -480,6 +480,10 @@ a {
 	width: 30px;
 }
 
+.switchport_enabled a {
+	color: white;
+}
+
 .switchport_disabled {
 	text-align: center;
 	color: white;
@@ -488,10 +492,18 @@ a {
 	width: 30px;
 }
 
+.switchport_disabled a {
+	color: white;
+}
+
 .switchport_active {
 	text-align: center;
 	color: white;
 	background-color: forestgreen;
 	border: 1px solid black;
 	width: 30px;
+}
+
+.switchport_active a {
+	color: white;
 }

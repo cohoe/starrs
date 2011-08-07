@@ -20,7 +20,6 @@
                 $class = "switchport_active";
             }
 
-
 			echo "<td class=\"$class\"><a href=\"/switchport/view/".rawurlencode($sPort->get_system_name())."/".rawurlencode($sPort->get_port_name())."\">".htmlentities($sPort->get_port_name())."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {
 				echo "</tr>";
