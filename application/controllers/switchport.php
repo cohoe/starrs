@@ -67,7 +67,7 @@ class Switchport extends ImpulseController {
         $this->_load_system(rawurldecode($systemName));
         $this->_load_switchports(rawurldecode($systemName));
         try {
-            exit("$portName");
+            exit(rawurldecode($portName));
             self::$sPort = self::$sys->get_switchport(rawurldecode($portName));
         }
         catch(ObjectException $oE) {
