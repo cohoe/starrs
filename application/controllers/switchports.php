@@ -13,7 +13,8 @@ class Switchports extends ImpulseController {
         $this->_load_system(urldecode($systemName));
 
         // Navbar
-        $navModes['CREATE'] = "/switchports/create/".urlencode(self::$sys->get_system_name());
+        $navModes['CREATE'] = "/switchports/create/".rawurlencode(self::$sys->get_system_name());
+        $navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
         $navbar = new Navbar("Switchports on ".self::$sys->get_system_name(), $navModes, null);
 
         // Load view data
@@ -77,9 +78,8 @@ class Switchports extends ImpulseController {
         }
         else {
             // Navbar
-            $navOptions['Something'] = "Something";
-            $navModes['CREATE'] = "/switchports/create/".urlencode(self::$sys->get_system_name());
-            $navbar = new Navbar("Create Switchport", $navModes, $navOptions);
+            $navModes['CANCEL'] = "/switchports/view/".urlencode(self::$sys->get_system_name());
+            $navbar = new Navbar("Create Switchport", $navModes, null);
 
             // Load view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
