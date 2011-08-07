@@ -38,7 +38,7 @@
       <file leaf-file-name="view.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/views/switchport/view.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="117" selection-start="720" selection-end="720" vertical-scroll-proportion="0.15708418">
+            <state line="8" column="113" selection-start="602" selection-end="602" vertical-scroll-proportion="0.13963039">
               <folding />
             </state>
           </provider>
@@ -409,7 +409,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added port link" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed view" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -422,7 +422,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="forgot to load view" />
     <MESSAGE value="added remove" />
     <MESSAGE value="done for the night" />
     <MESSAGE value="added network system" />
@@ -447,6 +446,7 @@
     <MESSAGE value="added api call" />
     <MESSAGE value="forgot to save" />
     <MESSAGE value="added port link" />
+    <MESSAGE value="fixed view" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -559,7 +559,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/switchport/view.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="117" selection-start="720" selection-end="720" vertical-scroll-proportion="0.15708418">
+        <state line="8" column="113" selection-start="602" selection-end="602" vertical-scroll-proportion="0.13963039">
           <folding />
         </state>
       </provider>
