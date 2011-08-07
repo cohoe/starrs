@@ -60,6 +60,22 @@ class Api_network_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No switchport types found. This is a big problem. Talk to your administrator.");
 		}
     }
+
+    public function switchview_settings($systemName) {
+        // SQL Query
+        $sql = "SELECT * FROM api.get_network_switchport_settings({$this->db->escape($systemName)})";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multple settings returned?");
+        }
+
+		// Generate results
+        return $query->row();
+    }
 }
 /* End of file api_network_get.php */
 /* Location: ./application/models/API/Network/api_network_get.php */
