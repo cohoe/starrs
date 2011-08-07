@@ -10,8 +10,14 @@ class Switchports extends ImpulseController {
             $this->_error("No system specified for viewing");
         }
 
-        $this->_load_system(urldecode($systemName));
-        $this->_load_switchports($systemName);
+        $systemName = rawurldecode($systemName);
+        try {
+            $this->_load_system($systemName);
+            $this->_load_switchports($systemName);
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $this->_error("Unable to find system \"$systemName\"");
+        }
 
         // Navbar
         $navModes['CREATE'] = "/switchports/create/".rawurlencode(self::$sys->get_system_name());
