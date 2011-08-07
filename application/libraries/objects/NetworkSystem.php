@@ -16,6 +16,15 @@ class NetworkSystem extends System {
     public function __construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
 		parent::__construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier);
+
+        try {
+            $settings = $this->api->network->get->switchview_settings($systemName);
+            $this->enable = $settings['enable'];
+            $this->snmpROCommunity = $settings['snmp_ro_community'];
+            $this->snmpRWCommunity = $settings['snmp_rw_community'];
+        }
+        catch(ObjectNotFoundException $onfE) {}
+
 	}
 
     ////////////////////////////////////////////////////////////////////////
