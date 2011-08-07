@@ -74,7 +74,7 @@
       <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="51" selection-start="721" selection-end="721" vertical-scroll-proportion="0.3097166">
+            <state line="17" column="20" selection-start="608" selection-end="614" vertical-scroll-proportion="0.29251012">
               <folding />
             </state>
           </provider>
@@ -503,7 +503,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added support for no switchports haha" />
+    <option name="LAST_COMMIT_MESSAGE" value="debug" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -531,7 +531,6 @@
     <MESSAGE value="moved redirect" />
     <MESSAGE value="added edit" />
     <MESSAGE value="added edit data" />
-    <MESSAGE value="debug" />
     <MESSAGE value="added switchview edit" />
     <MESSAGE value="added edit calls" />
     <MESSAGE value="derp" />
@@ -541,6 +540,7 @@
     <MESSAGE value="fixed view" />
     <MESSAGE value="added grid css" />
     <MESSAGE value="added support for no switchports haha" />
+    <MESSAGE value="debug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -653,7 +653,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="51" selection-start="721" selection-end="721" vertical-scroll-proportion="0.3097166">
+        <state line="17" column="20" selection-start="608" selection-end="614" vertical-scroll-proportion="0.29251012">
           <folding />
         </state>
       </provider>
