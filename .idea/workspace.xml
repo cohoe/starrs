@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/views/switchports/grid.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchports.php" afterPath="$PROJECT_DIR$/application/controllers/switchports.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" afterPath="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,10 +27,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="switchports.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="51" selection-start="4166" selection-end="4166" vertical-scroll-proportion="0.48380566">
+            <state line="113" column="88" selection-start="4404" selection-end="4404" vertical-scroll-proportion="-23.88">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="grid.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/views/switchports/grid.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="8" selection-start="110" selection-end="110" vertical-scroll-proportion="0.05034551">
               <folding />
             </state>
           </provider>
@@ -104,7 +113,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/application/controllers/resource_controllers/subnets.php" />
         <option value="$PROJECT_DIR$/application/views/dhcp/options/edit_single.php" />
         <option value="$PROJECT_DIR$/application/controllers/dhcp_controllers/options.php" />
         <option value="$PROJECT_DIR$/application/libraries/Impulselib.php" />
@@ -120,6 +128,7 @@
         <option value="$PROJECT_DIR$/application/libraries/objects/System.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
+        <option value="$PROJECT_DIR$/application/views/switchports/grid.php" />
       </list>
     </option>
   </component>
@@ -278,50 +287,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="switchports" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="interfaces" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="impulse-web" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="firewall" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -727,13 +692,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/keys.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="56" selection-start="695" selection-end="695" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/DHCP/api_dhcp_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="31" selection-start="461" selection-end="461" vertical-scroll-proportion="0.28529122">
@@ -834,7 +792,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="51" selection-start="4166" selection-end="4166" vertical-scroll-proportion="0.48380566">
+        <state line="113" column="88" selection-start="4404" selection-end="4404" vertical-scroll-proportion="-23.88">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/views/switchports/grid.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="8" selection-start="110" selection-end="110" vertical-scroll-proportion="0.05034551">
           <folding />
         </state>
       </provider>

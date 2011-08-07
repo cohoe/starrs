@@ -111,10 +111,7 @@ class Switchports extends ImpulseController {
             return $this->_warning("No switchports configured!");
         }
 
-        $viewData = "";
-        foreach(self::$sys->get_switchports() as $sPort) {
-            $viewData .= $sPort->get_port_name()."<br>";
-        }
+        $viewData = $this->load->view('switchports/grid',array("sPorts"=>$sPorts),TRUE);
 
         return $viewData;
     }
