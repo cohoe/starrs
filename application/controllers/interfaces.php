@@ -220,11 +220,31 @@ class Interfaces extends ImpulseController {
         }
         $mac = rawurldecode($mac);
 
-        echo $mac;
+        try {
+            self::$int = $this->api->systems->get->system_interface_data($mac, false);
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $this->_error("No interface with MAC address \"$mac\" was found.");
+        }
+        catch(Exception $e) {
+            $this->_error($e->getMessage());
+        }
 
-        self::$int = $this->api->systems->get->system_interface_data($mac, false);
+        // Navbar
+        $navModes['EDIT'] = "/interfaces/edit/".rawurlencode(self::$int->get_mac());
+        $navModes['DELETE'] = "/interfaces/delete/".rawurlencode(self::$int->get_mac());
+        $navOptions['Addresses'] = "/interfaces/addresses/".rawurlencode(self::$int->get_mac());
+        $navbar = new Navbar("Interface ".self::$int->get_mac(), $navModes, $navOptions);
 
-        echo self::$int->get_mac();
+        // Load view data
+        $info['header'] = $this->load->view('core/header',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['title'] = "Interface ".self::$int->get_mac();
+        $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+        $info['data'] = $this->load->view('interfaces/view',array('int'=>self::$int),TRUE);
+
+        // Load the main view
+        $this->load->view('core/main',$info);
     }
 
     /**
