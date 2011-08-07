@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/views/interfaces/view.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/interfaces.php" afterPath="$PROJECT_DIR$/application/controllers/interfaces.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/interfaces/view.php" afterPath="$PROJECT_DIR$/application/views/interfaces/view.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -84,7 +83,7 @@
       <file leaf-file-name="view.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/views/interfaces/view.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="6" selection-start="588" selection-end="588" vertical-scroll-proportion="0.153">
+            <state line="7" column="145" selection-start="503" selection-end="503" vertical-scroll-proportion="0.119">
               <folding />
             </state>
           </provider>
@@ -535,7 +534,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="added view" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -571,8 +570,8 @@
     <MESSAGE value="view" />
     <MESSAGE value="added reload" />
     <MESSAGE value="added link" />
-    <MESSAGE value="added view" />
     <MESSAGE value="debug" />
+    <MESSAGE value="added view" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -685,7 +684,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/interfaces/view.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="6" selection-start="588" selection-end="588" vertical-scroll-proportion="0.153">
+        <state line="7" column="145" selection-start="503" selection-end="503" vertical-scroll-proportion="0.119">
           <folding />
         </state>
       </provider>
