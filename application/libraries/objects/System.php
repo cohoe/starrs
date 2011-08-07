@@ -158,7 +158,7 @@ class System extends ImpulseObject {
 
     public function get_switchport($portName) {
         if($this->switchports[$portName]) {
-            return $this->switchport[$portName];
+            return $this->switchports[$portName];
         }
         else {
             throw new ObjectException("No switchport found!");
