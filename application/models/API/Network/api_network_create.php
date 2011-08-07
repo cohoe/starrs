@@ -7,7 +7,7 @@ class Api_network_create extends ImpulseModel {
 	
 	public function switchport($portName, $systemName, $type, $description) {
 		// SQL Query
-		$sql = "SELECT api.create_switchport(
+		$sql = "SELECT * FROM api.create_switchport(
 			{$this->db->escape($portName)},
 			{$this->db->escape($systemName)},
 			{$this->db->escape($type)},
@@ -39,7 +39,7 @@ class Api_network_create extends ImpulseModel {
 	
 	public function switchport_range($prefix, $firstNumber, $lastNumber, $systemName, $type, $description) {
 		// SQL Query
-		$sql = "SELECT api.create_switchport_range(
+		$sql = "SELECT * FROM api.create_switchport_range(
 			{$this->db->escape($prefix)},
 			{$this->db->escape($firstNumber)},
 			{$this->db->escape($lastNumber)},

@@ -57,6 +57,9 @@ class Switchports extends ImpulseController {
                 catch (DBException $dbE) {
                     $this->_error($dbE->getMessage());
                 }
+                catch(AmbiguousTargetException $atE) {
+                    $this->_error($atE->getMessage());
+                }
             }
             else {
                 //$prefix, $firstNumber, $lastNumber, $systemName, $type, $description
