@@ -12,7 +12,13 @@ class Switchview extends ImpulseController {
             $this->_error("Unable to find system \"$systemName\"");
         }
 
-        $settings = $this->api->network->get->switchview_settings($systemName);
+        try {
+            $settings = $this->api->network->get->switchview_settings($systemName);
+            $viewData = $this->load->view('network/switchview/view',array("settings"=>$settings),TRUE);
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("Switchview not enabled on this device");
+        }
 
         // Navbar
         $navModes['EDIT'] = "/switchview/edit/".rawurlencode(self::$sys->get_system_name());
@@ -24,7 +30,7 @@ class Switchview extends ImpulseController {
         $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
         $info['title'] = "Switchview Settings - ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-        $info['data'] = $this->load->view('network/switchview/view',array("settings"=>$settings),TRUE);
+        $info['data'] = $viewData;
 
         // Load the main view
         $this->load->view('core/main',$info);
