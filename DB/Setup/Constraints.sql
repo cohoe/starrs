@@ -153,3 +153,9 @@ ALTER TABLE "firewall"."metahost_program_rules" ADD CONSTRAINT "fk_metahost_prog
 ALTER TABLE "network"."switchport_history" ADD CONSTRAINT "fk_switchport_history_system_name_port_name" FOREIGN KEY ("port_name","system_name") REFERENCES "network"."switchports"("port_name","system_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."queue" ADD CONSTRAINT "fk_queue_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+ALTER TABLE "network"."switchport_macs" ADD CONSTRAINT "fk_switchport_macs_switchport" FOREIGN KEY ("port_name","system_name") REFERENCES "network"."switchports"("port_name","system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "network"."switchport_states" ADD CONSTRAINT "fk_switchport_states_port_system" FOREIGN KEY ("port_name","system_name") REFERENCES "network"."switchports"("port_name","system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "network"."switchview" ADD CONSTRAINT "fk_switchview_system" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;

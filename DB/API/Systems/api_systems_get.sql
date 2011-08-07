@@ -120,8 +120,8 @@ COMMENT ON FUNCTION "api"."get_interface_owner"(macaddr) IS 'Get the owner of th
 CREATE OR REPLACE FUNCTION "api"."get_interface_address_system"(input_address inet) RETURNS TEXT AS $$
 	BEGIN
 		RETURN (SELECT "system_name" FROM "systems"."interface_addresses"
-			JOIN "systems"."interfaces" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
-			WHERE "address" = input_address);
+		JOIN "systems"."interfaces" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
+		WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_system"(inet) IS 'Get the name of the system to which the given address is assigned';
@@ -135,6 +135,7 @@ CREATE OR REPLACE FUNCTION "api"."get_system_interface_address"(input_address in
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_address"(inet) IS 'Get all interface address data for an address';
 
+/* API - get_owned_interface_addresses */
 CREATE OR REPLACE FUNCTION "api"."get_owned_interface_addresses"(input_owner text) RETURNS SETOF "systems"."interface_address_data" AS $$
 	BEGIN
 		IF input_owner IS NULL THEN
@@ -147,3 +148,14 @@ CREATE OR REPLACE FUNCTION "api"."get_owned_interface_addresses"(input_owner tex
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_owned_interface_addresses"(text) IS 'Get all interface address data for all addresses owned by a given user';
+
+/* API - get_system_primary_address */
+CREATE OR REPLACE FUNCTION "api"."get_system_primary_address"(input_system_name text) RETURNS INET AS $$
+	BEGIN
+		RETURN (SELECT "address" FROM "systems"."systems" 
+		JOIN "systems"."interfaces" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
+		JOIN "systems"."interface_addresses" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
+		WHERE "isprimary" = TRUE AND "systems"."systems"."system_name" = input_system_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION  "api"."get_system_primary_address"(text) IS 'Get the primary address of a system';

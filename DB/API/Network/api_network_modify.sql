@@ -32,3 +32,41 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_switchport"(input_old_system te
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_network_switchport"(text, text, text, text) IS 'Modify an existing network switchport';
+
+/* API - modify_system_switchview
+	1) Check privileges
+	2) Check allowed fields
+	3) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_system_switchview"(input_system_name text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_system_switchview');
+
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
+			END IF;
+		END IF;
+		
+		-- Check allowed fields
+		IF input_field !~* 'enable|snmp_community' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Create settings
+		IF input_field  ~* 'snmp_community' THEN
+			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3,
+			WHERE "system_name" = $1'
+			USING input_system_name, input_field, bool(input_new_value);
+		ELSE
+			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3,
+			WHERE "system_name" = $1'
+			USING input_system_name, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_system_switchview');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_system_switchview"(text, text, text) IS 'Modify switchview on a system';

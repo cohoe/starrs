@@ -506,7 +506,7 @@ CONSTRAINT "types_pkey" PRIMARY KEY ("type")
 WITHOUT OIDS;
 
 CREATE TABLE "network"."switchport_history"(
-"mac" MACADDR,
+"mac" MACADDR NOT NULL,
 "time" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "port_name" TEXT NOT NULL,
 "system_name" TEXT NOT NULL,
@@ -541,6 +541,30 @@ CREATE TABLE "firewall"."default_queue"(
 "address" INET NOT NULL,
 "deny" BOOLEAN NOT NULL,
 "timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp
+)
+WITHOUT OIDS;
+
+CREATE TABLE "network"."switchport_states"(
+"port_name" TEXT NOT NULL,
+"system_name" TEXT NOT NULL,
+"port_state" BOOLEAN NOT NULL DEFAULT FALSE,
+"admin_state" BOOLEAN NOT NULL DEFAULT TRUE,
+CONSTRAINT "switchport_states_pkey" PRIMARY KEY ("port_name","system_name")
+)
+WITHOUT OIDS;
+
+CREATE TABLE "network"."switchport_macs"(
+"port_name" TEXT,
+"system_name" TEXT,
+"mac" MACADDR NOT NULL
+)
+WITHOUT OIDS;
+
+CREATE TABLE "network"."switchview"(
+"system_name" TEXT NOT NULL,
+"snmp_community" TEXT NOT NULL,
+"enable" BOOLEAN NOT NULL DEFAULT FALSE,
+CONSTRAINT "switchview_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 
@@ -625,3 +649,9 @@ COMMENT ON TABLE "dns"."queue" IS 'Queue all DNS zone changes that need to occur
 COMMENT ON TABLE "firewall"."rule_queue" IS 'Queue all firewall rule changes';
 
 COMMENT ON TABLE "firewall"."default_queue" IS 'Queue all default firewall action changes';
+
+COMMENT ON TABLE "network"."switchport_states" IS 'Switchport control and current state';
+
+COMMENT ON TABLE "network"."switchport_macs" IS 'MAC addresses currently on a switchport';
+
+COMMENT ON TABLE "network"."switchview" IS 'Connection data for switch enabling';

@@ -11,7 +11,7 @@
 	4) Check privileges
 	5) Insert new system
 */
-CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system');
 
@@ -38,6 +38,8 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system');
+		RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
+		FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Create a new system';
@@ -46,7 +48,7 @@ COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Crea
 	1) Check privileges
 	2) Create interface
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_name text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_name text, input_comment text) RETURNS SETOF "systems"."interface_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
 
@@ -68,6 +70,8 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_interface');
+		RETURN QUERY (SELECT "system_name","mac","name","comment","date_created","date_modified","last_modifier"
+		FROM "systems"."interfaces" WHERE "mac" = input_mac);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text, text) IS 'Create a new interface on a system';
@@ -77,7 +81,7 @@ COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text, text) IS 'Crea
 	2) Fill in class
 	3) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS SETOF "systems"."interface_address_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address');
 
@@ -106,6 +110,8 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address');
+		RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
+		FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
