@@ -19,6 +19,7 @@ class Switchport extends ImpulseController {
 
         // Navbar
         #$navModes['EDIT'] = "/switchport/edit/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($portName);
+        $navModes['DELETE'] = "/switchport/delete/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($sPort->get_port_name());
         $navOptions['Switchports'] = "/switchports/view/".rawurlencode(self::$sys->get_system_name());
         $navbar = new Navbar("Switchport Details", null, $navOptions);
 
@@ -31,6 +32,26 @@ class Switchport extends ImpulseController {
 
         // Load the main view
         $this->load->view('core/main',$info);
+    }
+
+    public function delete($systemName=NULL,$portName=NULL) {
+        if($systemName==NULL) {
+            $this->_error("No system name specified for port delete");
+        }
+        if($portName==NULL) {
+            $this->_error("No port name specified delete");
+        }
+
+        $systemName = rawurldecode($systemName);
+        $portName = rawurldecode($portName);
+
+        try {
+            $this->api->network->remove->switchport($portName, $systemName);
+            redirect(base_url()."switchports/view/".rawurlencode($systemName));
+        }
+        catch(DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
     }
 }
 /* End of file switchport.php */
