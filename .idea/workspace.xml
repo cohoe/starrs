@@ -29,7 +29,7 @@
       <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="93" selection-start="628" selection-end="628" vertical-scroll-proportion="0.27530363">
+            <state line="77" column="9" selection-start="2992" selection-end="2992" vertical-scroll-proportion="0.49898785">
               <folding />
             </state>
           </provider>
@@ -846,7 +846,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="93" selection-start="628" selection-end="628" vertical-scroll-proportion="0.27530363">
+        <state line="77" column="9" selection-start="2992" selection-end="2992" vertical-scroll-proportion="0.49898785">
           <folding />
         </state>
       </provider>

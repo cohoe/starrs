@@ -78,7 +78,7 @@ class Switchports extends ImpulseController {
         }
         else {
             // Navbar
-            $navModes['CANCEL'] = "/switchports/view/".urlencode(self::$sys->get_system_name());
+            $navModes['CANCEL'] = "/switchports/view/".rawurlencode(self::$sys->get_system_name());
             $navbar = new Navbar("Create Switchport", $navModes, null);
 
             // Load view data
