@@ -41,6 +41,7 @@ class NetworkSwitchport extends ImpulseObject {
 	public function get_port_state()    { return $this->portState; }
     public function get_admin_state()   { return $this->adminState; }
     public function get_state()         { return $this->state; }
+    public function get_mac_addresses() { return $this->macAddresses; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
