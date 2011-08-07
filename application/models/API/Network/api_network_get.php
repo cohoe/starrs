@@ -17,11 +17,12 @@ class Api_network_get extends ImpulseModel {
 		$resultSet = array();
 		foreach($query->result_array() as $port) {
 			$resultSet[] = new NetworkSwitchport(
-				$port['port_name'],
-				$port['description'],
-				$port['type'],
-                $port['attached_mac'],
                 $port['system_name'],
+				$port['port_name'],
+                $port['type'],
+				$port['description'],
+                $port['port_state'],
+                $port['admin_state'],
 				$port['date_created'],
 				$port['date_modified'],
 				$port['last_modifier']

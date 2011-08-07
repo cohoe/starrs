@@ -4,37 +4,42 @@ class NetworkSwitchport extends ImpulseObject {
 
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
-	
+
+    private $systemName;
 	private $portName;
 	private $description;
 	private $type;
-	private $attachedMac;
-	private $systemName;
+    private $portState;
+    private $adminState;
+	private $macAddresses;
     private $state;
 
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 
-    public function __construct($portName, $description, $type, $attachedMac, $systemName, $dateCreated, $dateModified, $lastModifier) {
+    public function __construct($systemName, $portName, $type, $description, $portState, $adminState, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
 		parent::__construct($dateCreated, $dateModified, $lastModifier);
 		
 		// Object specific data
+        $this->systemName  = $systemName;
 		$this->portName    = $portName;
+        $this->type        = $type;
 		$this->description = $description;
-		$this->type        = $type;
-		$this->attachedMac = $attachedMac;
+		$this->portState   = $portState;
+        $this->adminState  = $adminState;
 		$this->systemName  = $systemName;
 	}
 
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
-	
+
+    public function get_system_name()   { return $this->systemName; }
 	public function get_port_name()     { return $this->portName; }
+    public function get_type()          { return $this->type; }
 	public function get_description()   { return $this->description; }
-	public function get_type()          { return $this->type; }
-	public function get_attached_mac()  { return $this->attachedMac; }
-	public function get_system_name()   { return $this->systemName; }
+	public function get_port_state()    { return $this->portState; }
+    public function get_admin_state()   { return $this->adminState; }
     public function get_state()         { return $this->state; }
 
     ////////////////////////////////////////////////////////////////////////
@@ -54,8 +59,6 @@ class NetworkSwitchport extends ImpulseObject {
 		$this->CI->api->network->modify->switchport($this->systemName, $this->portName, 'type', $new);
 		$this->type = $new;
 	}
-
-
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
