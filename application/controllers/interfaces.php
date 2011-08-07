@@ -218,7 +218,7 @@ class Interfaces extends ImpulseController {
         if($mac=NULL) {
             $this->_error("No MAC address specified for view");
         }
-        $mac = urldecode($mac);
+        $mac = rawurldecode($mac);
 
         self::$int = $this->api->systems->get->system_interface_data($mac, false);
 
