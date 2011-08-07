@@ -64,9 +64,14 @@ class Switchport extends ImpulseController {
             $this->_error("No port name specified view");
         }
 
-        $this->_load_system(urldecode($systemName));
-        $this->_load_switchports(urldecode($systemName));
-        $sPort = self::$sys->get_switchport(rawurldecode($portName));
+        $this->_load_system(rawurldecode($systemName));
+        $this->_load_switchports(rawurldecode($systemName));
+        try {
+            $sPort = self::$sys->get_switchport(rawurldecode($portName));
+        }
+        catch(ObjectException $oE) {
+            $this->_error($oE->getMessage());
+        }
 
         // Navbar
         $navModes['CANCEL'] = "/switchport/view/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($portName);
