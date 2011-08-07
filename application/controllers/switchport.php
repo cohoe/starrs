@@ -19,8 +19,8 @@ class Switchport extends ImpulseController {
 
         // Navbar
         #$navModes['EDIT'] = "/switchport/edit/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($portName);
-        #$navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
-        $navbar = new Navbar("Switchport Details", null, null);
+        $navOptions['Switchports'] = "/switchports/view/".rawurlencode(self::$sys->get_system_name());
+        $navbar = new Navbar("Switchport Details", null, $navOptions);
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
