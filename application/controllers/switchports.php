@@ -13,10 +13,16 @@ class Switchports extends ImpulseController {
         $systemName = rawurldecode($systemName);
         try {
             $this->_load_system($systemName);
-            $this->_load_switchports($systemName);
         }
         catch(ObjectNotFoundException $onfE) {
             $this->_error("Unable to find system \"$systemName\"");
+        }
+        try {
+            $this->_load_switchports($systemName);
+            $viewData = $this->_get_switchport_view_data();
+        }
+        catch(ObjectNotFoundException $onfE) {
+            $viewData = $this->_warning("No switchports configured!");
         }
 
         // Navbar
@@ -30,7 +36,7 @@ class Switchports extends ImpulseController {
         $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
         $info['title'] = "Switchports on ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-        $info['data'] = $this->_get_switchport_view_data();
+        $info['data'] = $viewData;
 
         // Load the main view
         $this->load->view('core/main',$info);
