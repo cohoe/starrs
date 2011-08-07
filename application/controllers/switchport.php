@@ -16,7 +16,6 @@ class Switchport extends ImpulseController {
         $this->_load_system(urldecode($systemName));
         $this->_load_switchports(urldecode($systemName));
         self::$sPort = self::$sys->get_switchport(rawurldecode($portName));
-        print_r(self::$sPort->get_mac_addresses());
 
         // Navbar
         $navModes['EDIT'] = "/switchport/edit/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($portName);
