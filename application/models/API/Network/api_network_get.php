@@ -16,7 +16,7 @@ class Api_network_get extends ImpulseModel {
 		// Generate results
 		$resultSet = array();
 		foreach($query->result_array() as $port) {
-			$resultSet[] = new NetworkSwitchport(
+			$sPort = new NetworkSwitchport(
                 $port['system_name'],
 				$port['port_name'],
                 $port['type'],
@@ -27,6 +27,16 @@ class Api_network_get extends ImpulseModel {
 				$port['date_modified'],
 				$port['last_modifier']
 			);
+
+            try {
+                $macaddrs = $this->switchport_macs($sPort->get_system_name(),$sPort->get_port_name());
+                foreach($macaddrs as $macaddr) {
+                    $sPort->add_mac_address($macaddr);
+                }
+            }
+            catch(ObjectNotFoundException $onfE) {};
+
+            $resultSet[] = $sPort;
 		}
 
 		// Return results
@@ -75,6 +85,29 @@ class Api_network_get extends ImpulseModel {
 
 		// Generate results
         return $query->row_array();
+    }
+
+    public function switchport_macs($systemName, $portName) {
+        // SQL Query
+        $sql = "SELECT * FROM api.get_network_switchport_macs({$this->db->escape($systemName)},{$this->db->escape($portName)})";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        // Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $result) {
+            $resultSet[] = $result['get_network_switchport_macs'];
+        }
+
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No MACs found.");
+		}
     }
 }
 /* End of file api_network_get.php */

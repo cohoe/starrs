@@ -61,6 +61,10 @@ class NetworkSwitchport extends ImpulseObject {
 		$this->type = $new;
 	}
 
+    public function add_mac_address($macaddr) {
+        $this->macAddresses[] = $macaddr;
+    }
+
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
     

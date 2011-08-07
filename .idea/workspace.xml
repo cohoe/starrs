@@ -4,6 +4,8 @@
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchport.php" afterPath="$PROJECT_DIR$/application/controllers/switchport.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" afterPath="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" afterPath="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,10 +46,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NetworkSwitchport.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="NetworkSwitchport.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="37" selection-start="1603" selection-end="1620" vertical-scroll-proportion="0.0">
+            <state line="64" column="41" selection-start="2344" selection-end="2344" vertical-scroll-proportion="0.79861796">
               <folding />
             </state>
           </provider>
@@ -71,10 +73,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="switchport.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="switchport.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="20" selection-start="608" selection-end="614" vertical-scroll-proportion="0.29251012">
+            <state line="16" column="32" selection-start="551" selection-end="568" vertical-scroll-proportion="-10.88">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImpulseController.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/libraries/core/ImpulseController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="154" column="59" selection-start="4470" selection-end="4481" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_network_get.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="43" selection-start="987" selection-end="1002" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -104,11 +124,9 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/application/controllers/systems.php" />
-        <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_create.php" />
         <option value="$PROJECT_DIR$/application/views/network/switchview/view.php" />
         <option value="$PROJECT_DIR$/application/views/network/switchview/create.php" />
-        <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" />
         <option value="$PROJECT_DIR$/application/views/switchport/edit.php" />
         <option value="$PROJECT_DIR$/application/views/network/switchview/edit.php" />
         <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSystem.php" />
@@ -119,6 +137,8 @@
         <option value="$PROJECT_DIR$/css/sphere/full/impulse.css" />
         <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchport.php" />
+        <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
+        <option value="$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php" />
       </list>
     </option>
   </component>
@@ -316,6 +336,72 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="models" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="models" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="API" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="models" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="API" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Network" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="libraries" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -339,6 +425,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="objects" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="impulse-web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -503,7 +611,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="debig" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -516,7 +624,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="added network system" />
     <MESSAGE value="added hook" />
     <MESSAGE value="added proper network system check" />
     <MESSAGE value="fixed switchport creation" />
@@ -541,25 +648,12 @@
     <MESSAGE value="added grid css" />
     <MESSAGE value="added support for no switchports haha" />
     <MESSAGE value="debug" />
+    <MESSAGE value="debig" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/views/network/switchview/edit.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="79" selection-start="310" selection-end="310" vertical-scroll-proportion="0.051671732">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_remove.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="4" selection-start="830" selection-end="1080" vertical-scroll-proportion="0.5538006">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_modify.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="27" column="11" selection-start="785" selection-end="785" vertical-scroll-proportion="0.45310956">
@@ -644,16 +738,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="37" selection-start="1603" selection-end="1620" vertical-scroll-proportion="0.0">
+        <state line="16" column="32" selection-start="551" selection-end="568" vertical-scroll-proportion="-10.88">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+    <entry file="file://$PROJECT_DIR$/application/libraries/core/ImpulseController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="20" selection-start="608" selection-end="614" vertical-scroll-proportion="0.29251012">
+        <state line="154" column="59" selection-start="4470" selection-end="4481" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="43" selection-start="987" selection-end="1002" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSwitchport.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="41" selection-start="2344" selection-end="2344" vertical-scroll-proportion="0.79861796">
           <folding />
         </state>
       </provider>
