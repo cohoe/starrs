@@ -4,7 +4,6 @@
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchports.php" afterPath="$PROJECT_DIR$/application/controllers/switchports.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/views/switchports/grid.php" afterPath="$PROJECT_DIR$/application/views/switchports/grid.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,7 +29,7 @@
       <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="17" selection-start="436" selection-end="436" vertical-scroll-proportion="0.24089068">
+            <state line="16" column="93" selection-start="628" selection-end="628" vertical-scroll-proportion="0.27530363">
               <folding />
             </state>
           </provider>
@@ -847,7 +846,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="17" selection-start="436" selection-end="436" vertical-scroll-proportion="0.24089068">
+        <state line="16" column="93" selection-start="628" selection-end="628" vertical-scroll-proportion="0.27530363">
           <folding />
         </state>
       </provider>
