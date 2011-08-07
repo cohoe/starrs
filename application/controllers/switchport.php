@@ -125,8 +125,8 @@ class Switchport extends ImpulseController {
             try { self::$sPort->set_description($this->input->post('description')); }
             catch(Exception $e) { $err .= $e->getMessage(); }
         }
-        if(self::$sPort->get_enable() != $this->input->post('enable')) {
-            try { self::$sPort->set_enable($this->input->post('enable')); }
+        if(self::$sPort->get_admin_state() != $this->input->post('enable')) {
+            try { self::$sPort->set_admin_state($this->input->post('enable')); }
             catch(Exception $e) { $err .= $e->getMessage(); }
         }
 
