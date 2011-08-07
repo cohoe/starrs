@@ -22,6 +22,9 @@ class Switchview extends ImpulseController {
             $viewData = $this->_warning("Switchview not enabled on this device");
             $navModes['CREATE'] = "/switchview/create/".rawurlencode(self::$sys->get_system_name());
         }
+        catch(DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
 
         // Navbar
         $navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
