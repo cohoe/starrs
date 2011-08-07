@@ -156,6 +156,15 @@ class System extends ImpulseObject {
 		return $addr;
 	}
 
+    public function get_switchport($portName) {
+        if($this->switchports[$portName]) {
+            return $this->switchport[$portName];
+        }
+        else {
+            throw new ObjectException("No switchport found!");
+        }
+    }
+
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 }

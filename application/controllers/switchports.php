@@ -11,6 +11,7 @@ class Switchports extends ImpulseController {
         }
 
         $this->_load_system(urldecode($systemName));
+        $this->_load_switchports($systemName);
 
         // Navbar
         $navModes['CREATE'] = "/switchports/create/".rawurlencode(self::$sys->get_system_name());
@@ -22,7 +23,6 @@ class Switchports extends ImpulseController {
         $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
         $info['title'] = "Switchports on ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-
         $info['data'] = $this->_get_switchport_view_data();
 
         // Load the main view
@@ -101,18 +101,14 @@ class Switchports extends ImpulseController {
     }
 
     private function _get_switchport_view_data() {
-        try {
-            $sPorts = $this->api->network->get->switchports(self::$sys->get_system_name());
-            foreach($sPorts as $sPort) {
-                self::$sys->add_switchport($sPort);
-            }
+        $sPorts = self::$sys->get_switchports();
+        if(count($sPorts) != 0) {
+            $viewData = $this->load->view('switchports/grid',array("sPorts"=>$sPorts),TRUE);
         }
-        catch (ObjectNotFoundException $onfE) {
-            return $this->_warning("No switchports configured!");
+        else {
+            $viewData = $this->_warning("No switchports configured!");
         }
-
-        $viewData = $this->load->view('switchports/grid',array("sPorts"=>$sPorts),TRUE);
-
+        
         return $viewData;
     }
     private function _get_system($systemName) {

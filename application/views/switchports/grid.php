@@ -2,7 +2,7 @@
     <table class="item_information_area_table">
 		<?
 		$i = 0;
-		$cells_per_row = 10;
+		$cells_per_row = 6;
 		$class = "firewall_rule_port_box_unknown";
 
 		foreach ($sPorts as $sPort) {

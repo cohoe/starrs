@@ -149,6 +149,18 @@ class ImpulseController extends CI_Controller {
 			$this->_error($onfE->getMessage());
 		}
     }
+
+    protected function _load_switchports($systemName) {
+        try {
+            $sPorts = $this->api->network->get->switchports($systemName);
+            foreach($sPorts as $sPort) {
+                self::$sys->add_switchport($sPort);
+            }
+        }
+        catch (DBException $dbE) {
+            $this->_error($dbE->getMessage());
+        }
+    }
 }
 /* End of file ImpulseController.php */
 /* Location: ./application/libraries/core/ImpulseController.php */
