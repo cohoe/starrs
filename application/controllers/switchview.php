@@ -71,6 +71,9 @@ class Switchview extends ImpulseController {
             $info['title'] = "Create Switchview Settings";
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
             $info['data'] = $this->load->view('network/switchview/create',null,TRUE);
+
+            // Load the main view
+            $this->load->view('core/main',$info);
         }
     }
 
