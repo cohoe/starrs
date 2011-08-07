@@ -70,7 +70,7 @@ class Api_network_get extends ImpulseModel {
 		$this->_check_error($query);
 
         if($query->num_rows() > 1) {
-            throw new AmbiguousTargetException("Multple settings returned?");
+            throw new AmbiguousTargetException("Multiple settings returned?");
         }
 
 		// Generate results

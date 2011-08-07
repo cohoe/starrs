@@ -23,12 +23,14 @@ class Api_network_create extends ImpulseModel {
         }
 		
 		// Generate and return results
+        // $systemName, $portName, $type, $description, $portState, $adminState, $dateCreated, $dateModified, $lastModifier
         return new NetworkSwitchport(
-            $query->row()->port_name,
-            $query->row()->description,
-            $query->row()->type,
-            $query->row()->attached_mac,
             $query->row()->system_name,
+            $query->row()->port_name,
+            $query->row()->type,
+            $query->row()->description,
+            $query->row()->port_state,
+            $query->row()->admin_state,
             $query->row()->date_created,
             $query->row()->date_modified,
             $query->row()->last_modifier
@@ -54,11 +56,12 @@ class Api_network_create extends ImpulseModel {
 		$resultSet = array();
 		foreach ($query->result_array() as $switchport) {
 			$resultSet[] = new NetworkSwitchport(
+                $switchport['system_name'],
 				$switchport['port_name'],
+                $switchport['type'],
 				$switchport['description'],
-				$switchport['type'],
-				$switchport['attached_mac'],
-				$switchport['system_name'],
+				$switchport['port_state'],
+				$switchport['admin_state'],
 				$switchport['date_created'],
 				$switchport['date_modified'],
 				$switchport['last_modifier']
@@ -74,19 +77,18 @@ class Api_network_create extends ImpulseModel {
 		}
 	}
 
-    public function switchview_settings($systemName, $enable, $community) {
+    public function switchview_settings($systemName, $enable, $roCommunity, $rwCommunity) {
         // SQL Query
 		$sql = "SELECT api.create_system_switchview(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($enable)},
-			{$this->db->escape($community)}
+			{$this->db->escape($roCommunity)},
+			{$this->db->escape($rwCommunity)}
 		)";
 		$query = $this->db->query($sql);
 
 		// Check errors
         $this->_check_error($query);
-
-        //@todo: do some fancy system object things here
     }
 }
 /* End of file api_network_create.php */

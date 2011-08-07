@@ -49,10 +49,15 @@ class Switchview extends ImpulseController {
 
         if($this->input->post('submit')) {
             try {
+                $rwCommunity = NULL;
+                if($this->input->post('rw_community')) {
+                    $rwCommunity = $this->input->post('rw_community');
+                }
                 $this->api->network->create->switchview_settings(
                     $systemName,
                     $this->input->post('enable'),
-                    $this->input->post('community')
+                    $this->input->post('ro_community'),
+                    $rwCommunity
                 );
                 redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
             }
@@ -78,7 +83,7 @@ class Switchview extends ImpulseController {
     }
 
     public function delete($systemName=NULL) {
-         $systemName = rawurldecode($systemName);
+        $systemName = rawurldecode($systemName);
         try {
             $this->_load_system($systemName);
             $this->api->network->remove->switchview_settings($systemName);
