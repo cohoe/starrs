@@ -220,6 +220,8 @@ class Interfaces extends ImpulseController {
         }
         $mac = rawurldecode($mac);
 
+        echo $mac;
+
         self::$int = $this->api->systems->get->system_interface_data($mac, false);
 
         echo self::$int->get_mac();
