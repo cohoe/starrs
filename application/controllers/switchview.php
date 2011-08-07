@@ -29,6 +29,7 @@ class Switchview extends ImpulseController {
         // Navbar
         $navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
         $navOptions['Switchports'] = '/switchports/view/'.rawurlencode(self::$sys->get_system_name());
+        $navOptions['Reload'] = '/switchview/reload/'.rawurlencode(self::$sys->get_system_name());
         $navbar = new Navbar("Switchview Settings - ".self::$sys->get_system_name(), $navModes, $navOptions);
 
         // Load view data
@@ -154,6 +155,18 @@ class Switchview extends ImpulseController {
 
         if($err != "") {
             $this->_error($err);
+        }
+    }
+
+    public function reload($systemName) {
+        $systemName = rawurldecode($systemName);
+        try {
+            $this->api->network->switchview_scan_port_state($systemName);
+            $this->api->network->switchview_scan_mac($systemName);
+            $this->_success("Reloaded switchview data!");
+        }
+        catch(Exception $e) {
+            $this->_error($e->getMessage());
         }
     }
 

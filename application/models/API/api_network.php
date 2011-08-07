@@ -20,4 +20,23 @@ class Api_network extends ImpulseModel {
 		$this->remove = new Api_network_remove();
         $this->get    = new Api_network_get();
 	}
+
+    public function switchview_scan_port_state($systemName) {
+        // SQL Query
+		$sql = "SELECT api.switchview_scan_port_state({$this->db->escape($systemName)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+    }
+
+    public function switchview_scan_mac($systemName) {
+        // SQL Query
+		$sql = "SELECT api.switchview_scan_mac({$this->db->escape($systemName)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+    }
+
 }
