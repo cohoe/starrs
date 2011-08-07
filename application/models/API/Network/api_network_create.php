@@ -73,6 +73,21 @@ class Api_network_create extends ImpulseModel {
 			throw new ObjectNotFoundException("No switchports returned. This is a big problem. Talk to your administrator.");
 		}
 	}
+
+    public function switchview_settings($systemName, $enable, $community) {
+        // SQL Query
+		$sql = "SELECT api.create_system_switchview(
+			{$this->db->escape($systemName)},
+			{$this->db->escape($enable)},
+			{$this->db->escape($community)}
+		)";
+		$query = $this->db->query($sql);
+
+		// Check errors
+        $this->_check_error($query);
+
+        //@todo: do some fancy system object things here
+    }
 }
 /* End of file api_network_create.php */
 /* Location: ./application/models/API/Network/api_network_create.php */
