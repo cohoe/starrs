@@ -10,6 +10,7 @@ class NetworkSwitchport extends ImpulseObject {
 	private $type;
 	private $attachedMac;
 	private $systemName;
+    private $state;
 
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -29,11 +30,12 @@ class NetworkSwitchport extends ImpulseObject {
 	////////////////////////////////////////////////////////////////////////
 	// GETTERS
 	
-	public function get_port_name()    { return $this->portName; }
-	public function get_description()  { return $this->description; }
-	public function get_type()         { return $this->type; }
-	public function get_attached_mac() { return $this->attachedMac; }
-	public function get_system_name()  { return $this->systemName; }
+	public function get_port_name()     { return $this->portName; }
+	public function get_description()   { return $this->description; }
+	public function get_type()          { return $this->type; }
+	public function get_attached_mac()  { return $this->attachedMac; }
+	public function get_system_name()   { return $this->systemName; }
+    public function get_state()         { return $this->state; }
 
     ////////////////////////////////////////////////////////////////////////
 	// SETTERS
@@ -52,6 +54,8 @@ class NetworkSwitchport extends ImpulseObject {
 		$this->CI->api->network->modify->switchport($this->systemName, $this->portName, 'type', $new);
 		$this->type = $new;
 	}
+
+
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS

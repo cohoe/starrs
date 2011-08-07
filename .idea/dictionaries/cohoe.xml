@@ -2,7 +2,10 @@
   <dictionary name="cohoe">
     <words>
       <w>basepath</w>
+      <w>htmlentities</w>
       <w>nameserver</w>
+      <w>rawurlencode</w>
+      <w>switchport</w>
       <w>webauth</w>
     </words>
   </dictionary>
