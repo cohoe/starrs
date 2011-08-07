@@ -4,7 +4,6 @@
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controllers/switchports.php" afterPath="$PROJECT_DIR$/application/controllers/switchports.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/models/API/Network/api_network_create.php" afterPath="$PROJECT_DIR$/application/models/API/Network/api_network_create.php" />
     </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,10 +26,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="switchports.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="switchports.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="45" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
+            <state line="55" column="116" selection-start="2257" selection-end="2257" vertical-scroll-proportion="0.3188549">
               <folding />
             </state>
           </provider>
@@ -90,10 +89,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_network_create.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="api_network_create.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_create.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="23" selection-start="2582" selection-end="2582" vertical-scroll-proportion="0.68114513">
+            <state line="62" column="33" selection-start="2087" selection-end="2087" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -127,8 +126,8 @@
         <option value="$PROJECT_DIR$/application/controllers/systems.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_get.php" />
         <option value="$PROJECT_DIR$/application/controllers/switchview.php" />
-        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
         <option value="$PROJECT_DIR$/application/models/API/Network/api_network_create.php" />
+        <option value="$PROJECT_DIR$/application/controllers/switchports.php" />
       </list>
     </option>
   </component>
@@ -595,7 +594,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed switchport creation" />
+    <option name="LAST_COMMIT_MESSAGE" value="derp" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -629,10 +628,10 @@
     <MESSAGE value="added remove" />
     <MESSAGE value="done for the night" />
     <MESSAGE value="added network system" />
-    <MESSAGE value="derp" />
     <MESSAGE value="added hook" />
     <MESSAGE value="added proper network system check" />
     <MESSAGE value="fixed switchport creation" />
+    <MESSAGE value="derp" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -715,20 +714,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchview.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="38" selection-start="2236" selection-end="2236" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="45" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="4" selection-start="148" selection-end="148" vertical-scroll-proportion="0.0">
@@ -745,7 +730,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="23" selection-start="2582" selection-end="2582" vertical-scroll-proportion="0.68114513">
+        <state line="62" column="33" selection-start="2087" selection-end="2087" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchview.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="38" selection-start="2236" selection-end="2236" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="116" selection-start="2257" selection-end="2257" vertical-scroll-proportion="0.3188549">
           <folding />
         </state>
       </provider>

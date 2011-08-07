@@ -53,6 +53,7 @@ class Switchports extends ImpulseController {
                     );
 
                     self::$sys->add_switchport($sPort);
+                    redirect(base_url()."switchports/view/".rawurlencode(self::$sys->get_system_name()),'location');
                 }
                 catch (DBException $dbE) {
                     $this->_error($dbE->getMessage());
