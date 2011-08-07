@@ -93,7 +93,7 @@ class Switchview extends ImpulseController {
     }
 
     public function edit($systemName=NULL) {
-        
+        // @todo: waiting until I figure out NetworkSystem object and shit
     }
 
 }
