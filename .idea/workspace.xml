@@ -65,7 +65,7 @@
       <file leaf-file-name="edit.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/views/switchport/edit.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="89" selection-start="934" selection-end="934" vertical-scroll-proportion="0.21816386">
+            <state line="12" column="17" selection-start="799" selection-end="799" vertical-scroll-proportion="0.204">
               <folding />
             </state>
           </provider>
@@ -727,7 +727,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/switchport/edit.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="89" selection-start="934" selection-end="934" vertical-scroll-proportion="0.21816386">
+        <state line="12" column="17" selection-start="799" selection-end="799" vertical-scroll-proportion="0.204">
           <folding />
         </state>
       </provider>
