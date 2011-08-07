@@ -214,6 +214,17 @@ class Interfaces extends ImpulseController {
 		$this->impulselib->set_active_system($sys);
 	}
 
+    public function view($mac=NULL) {
+        if($mac=NULL) {
+            $this->_error("No MAC address specified for view");
+        }
+        $mac = urldecode($mac);
+
+        self::$int = $this->api->systems->get->system_interface_data($mac, false);
+
+        echo self::$int->get_mac();
+    }
+
     /**
      * Create an interface
      * @return void
