@@ -130,7 +130,7 @@ COMMENT ON FUNCTION "api"."get_interface_address_system"(inet) IS 'Get the name 
 CREATE OR REPLACE FUNCTION "api"."get_system_interface_address"(input_address inet) RETURNS SETOF "systems"."interface_address_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."interface_addresses" WHERE "address" = input_address);
+		FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_address"(inet) IS 'Get all interface address data for an address';
@@ -159,3 +159,11 @@ CREATE OR REPLACE FUNCTION "api"."get_system_primary_address"(input_system_name 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION  "api"."get_system_primary_address"(text) IS 'Get the primary address of a system';
+
+/* API - get_interface_system*/
+CREATE OR REPLACE FUNCTION "api"."get_interface_system"(input_mac macaddr) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "system_name" FROM "systems"."interfaces" WHERE "mac" = input_mac);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_interface_system"(macaddr) IS 'Get the system name that a mac address is on';
