@@ -74,12 +74,13 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# DHCP Class options
 	sub dhcp_class_options
 	{
-		my $class = @_[0];
+		my $class = $_[0];
+		my $options = spi_query("SELECT * FROM api.get_dhcpd_class_options('$class')");
 		my ($option, $value, $row, $output);
-		while (defined($row_opts = spi_fetchrow($options)))
+		while (defined($row = spi_fetchrow($options)))
 		{
-			$option = $row_opts->{option};
-			$value = $row_opts->{value};
+			$option = $row->{option};
+			$value = $row->{value};
 			$output .= "    " . $option . ' ' . $value . ";\n";
 		}
 		return $output;
@@ -153,11 +154,13 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 #		my $networks 
 	}
 
-	# 'static' hosts
+	# hosts
+	sub hosts
 	{
-		my $hosts = spi_query("SELECT * FROM api.get_dhcpd_static_hosts() order by owner,hostname");
-		my ($hostname, $zone, $mac, $address, $owner, $class, $row);
-		while (defined($row = spi_fetchrow($hosts)))
+		my $static_hosts = spi_query("SELECT * FROM api.get_dhcpd_static_hosts() order by owner,hostname");
+		my $dynamic_hosts = spi_query("SELECT * FROM api.get_dhcpd_dynamic_hosts() order by owner,hostname");
+		my ($hostname, $zone, $mac, $address, $owner, $class, $row, $output);
+		while (defined($row = spi_fetchrow($static_hosts)))
 		{
 			$hostname = $row->{hostname};
 			$zone = $row->{zone};
@@ -165,46 +168,39 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$address = $row->{address};
 			$owner = $row->{owner};
 			$class = $row->{class};
-
-			$output .= "# $owner\n";
-			$output .= "host $hostname {\n";
-			$output .= "  option dhcp-client-identifier 1:$mac;\n";
-			$output .= "  hardware ethernet $mac;\n";
-			$output .= "  fixed-address $address;\n";
-			$output .= "  option host-name \"$hostname\";\n";
-			$output .= "  ddns-hostname \"$hostname\";\n";
-			$output .= "  ddns-domainname \"$zone\";\n";
-			$output .= "  option domain-name \"$zone\";\n}\n";
-			$output .= "subclass \"$class\" 1:$mac;\n";
-			$output .= "subclass \"$class\" $mac;\n\n";
-
+			
+			$output .= &host_config($hostname, $zone, $mac, $address, $owner, $class);
 		}
-	}
-
-	# dynamic hosts
-	{
-		my $hosts = spi_query("SELECT * FROM api.get_dhcpd_dynamic_hosts() order by owner,hostname");
-		my ($hostname, $zone, $mac, $owner, $class, $row);
-		while (defined($row = spi_fetchrow($hosts)))
+		while (defined($row = spi_fetchrow($dynamic_hosts)))
 		{
 			$hostname = $row->{hostname};
 			$zone = $row->{zone};
 			$mac = $row->{mac};
 			$owner = $row->{owner};
 			$class = $row->{class};
-
-			$output .= "# $owner\n";
-			$output .= "host $hostname {\n";
-			$output .= "  option dhcp-client-identifier 1:$mac;\n";
-			$output .= "  hardware ethernet $mac;\n";
-			$output .= "  option host-name \"$hostname\";\n";
-			$output .= "  ddns-hostname \"$hostname\";\n";
-			$output .= "  ddns-domainname \"$zone\";\n";
-			$output .= "  option domain-name \"$zone\";\n}\n";
-			$output .= "subclass \"$class\" 1:$mac;\n";
-			$output .= "subclass \"$class\" $mac;\n\n";
-
+			
+			$output .= &host_config($hostname, $zone, $mac, undef, $owner, $class);
 		}
+		return $output;
+	}
+
+	# hosts config generation
+	sub host_config
+	{
+		my ($hostname, $zone, $mac, $address, $owner, $class) = @_;
+		
+		my $output .= "# $owner\n";
+		$output .= "host $hostname {\n";
+		$output .= "  option dhcp-client-identifier 1:$mac;\n";
+		$output .= "  hardware ethernet $mac;\n";
+		$output .= "  fixed-address $address;\n" if (defined($address));
+		$output .= "  option host-name \"$hostname\";\n";
+		$output .= "  ddns-hostname \"$hostname\";\n";
+		$output .= "  ddns-domainname \"$zone\";\n";
+		$output .= "  option domain-name \"$zone\";\n}\n";
+		$output .= "subclass \"$class\" 1:$mac;\n";
+		$output .= "subclass \"$class\" $mac;\n\n";
+		return $output;
 	}
 
 	$output .= "\# End dhcpd configuration file";
