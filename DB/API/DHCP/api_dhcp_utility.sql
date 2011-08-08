@@ -223,11 +223,9 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	
 	use strict;
 	use warnings;
-	# use MIME::Lite;
 
 	my $configFile = "/etc/dhcpd.conf";
 	my $tempConfigFile = "/tmp/dhcpd.conf.tmp";
-	# my $sendEmail = 0;
 	my $wroteToFile = 1;
 	
 	if (! open (CONFIG, ">", "$configFile"))
@@ -235,10 +233,9 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 		spi_exec_query("SELECT api.create_log_entry('API','ERROR',\$\$Cannot open $configFile for writing: [$!]. Using $tempConfigFile instead.\$\$)");
 		if (! open (CONFIG, ">", "$tempConfigFile")) 
 		{
-			spi_exec_query("SELECT api.create_log_entry('API','ERROR',\$\$Cannot open $tempConfigFile for writing: [$!]. Emailing config instead\$\$");
+			spi_exec_query("SELECT api.create_log_entry('API','ERROR',\$\$Cannot open $tempConfigFile for writing: [$!].\$\$");
 			$wroteToFile = 0;
 		}
-	#	$sendEmail = 1;
 	}
 
 	my $row;
@@ -252,42 +249,6 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 			print CONFIG $output;
 		}
 	}
-	# if ($sendEmail)
-	# {
-	# 	my $from = '<user@yourdomain>';
-	# 	my $to = '<other.user@theirdomain>';
-	# 	my $subject = 'Backup dhcpd.conf from IMPULSE';
-	# 	if ($wroteToFile)
-	# 	{
-	# 		my $msg = MIME::Lite->new(
-	# 			From 	=> $from,
-	# 			To 		=> $to,
-	# 			Subject => $subject,
-	# 			Type 	=> 'multipart/mixed'
-	# 		);
-	# 		$msg->attach(
-	# 			Type => 'TEXT',
-	# 			Data => 'Config file for the DHCPd server'
-	# 		);
-	# 		$msg->attach(
-	# 			Type 		=> 'AUTO',
-	# 			Path 		=> "$tempConfigFile",
-	# 			Filename 	=> 'dhcpd.conf',
-	# 			Disposition => 'attachment'
-	# 		);
-	# 		$msg->send;
-	# 	}else
-	# 	{
-	# 		my $msg = MIME::Lite->new(
-	# 			From 	=> $from,
-	# 			To 		=> $to,
-	# 			Subject => $subject,
-	# 			Type 	=> 'text',
-	# 			Data 	=> $output
-	# 		);
-	# 		$msg->send;
-	# 	}
-	# }
 	
 
 $$ LANGUAGE 'plperlu';
