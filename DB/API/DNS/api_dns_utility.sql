@@ -136,3 +136,11 @@ CREATE OR REPLACE FUNCTION "api"."check_dns_hostname"(input_hostname text, input
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."check_dns_hostname"(text, text) IS 'Check if a hostname is available in a given zone';
+
+/* API - nslookup*/
+CREATE OR REPLACE FUNCTION "api"."nslookup"(input_address inet) RETURNS TABLE(fqdn TEXT) AS $$
+	BEGIN
+		RETURN QUERY (SELECT "hostname"||'.'||"zone" FROM "dns"."a" WHERE "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."nslookup"(inet) IS 'Get the DNS name of an IP address in the database';
