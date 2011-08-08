@@ -3,13 +3,9 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
 	use strict;
 	use warnings;
+	no warnings 'redefine';
 
-	#lets start with the DHCPd.conf header from the DB
-	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
-	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
-
-	my $date = spi_exec_query("SELECT current_timestamp")->{rows}[0]->{now};
-	$output .= "\# Generated at $date\n\n";
+	# first things first. defining the subroutines that make up this script.
 
 	# Global Options
 	sub global_opts
@@ -86,10 +82,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		return $output;
 	}# end &dhcp_class_options
 
+	my $output2;
 	# shared network
 	{
 		my $subnets = spi_query("SELECT get_dhcpd_subnets, netmask(get_dhcpd_subnets) FROM api.get_dhcpd_subnets()");
-
+		my $output;
 		# $subnet = ip + netmask in / notation; i.e. 10.21.49.0/24
 		# $net = only the network address; i.e. 10.21.49.0
 		# $mask = netmask in dotted decimal notation; i.e. 255.255.255.0
@@ -146,6 +143,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			}
 			$output .= "\n  }\n\n  ";
 		}
+	$output2 = $output;
 	}# shared networks
 
 	# Shared networks
@@ -202,6 +200,25 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		$output .= "subclass \"$class\" $mac;\n\n";
 		return $output;
 	}
+
+
+	# lets start with the DHCPd.conf header from the DB
+	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD_HEADER')");
+	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
+
+	# add the date to the file
+	my $date = spi_exec_query("SELECT current_timestamp")->{rows}[0]->{now};
+	$output .= "\# Generated at $date\n\n";
+
+	# now for the rest of the config file
+	$output .= &global_opts() . "\n";
+	$output .= &dns_keys() . "\n";
+	$output .= &zones() . "\n";
+	$output .= &dhcp_classes() . "\n";
+#temp debugging only
+	$output .= $output2;
+	#$output .= &shared_networks() . "\n";
+	$output .= &hosts() . "\n";
 
 	$output .= "\# End dhcpd configuration file";
 
