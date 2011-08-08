@@ -1,112 +1,110 @@
 CREATE OR REPLACE FUNCTION "api"."get_network_switchport_view"(inet,text) RETURNS SETOF "network"."switchview_data" AS $$
 	use strict;
 	use warnings;
+	use Data::Dumper;
 	use Net::SNMP;
 	no warnings 'redefine';
 
-	#my $host = $ARGV[0] or die "IP address must be the first argument";
-	#my $community = $ARGV[1] or die "Community must be the second argument";
+	# Connection information
+	#our $host = $ARGV[0];
+	#our $community = $ARGV[1];
 	our $host = $_[0];
 	our $community = $_[1];
 
+	# OID List
 	our $vlanList_OID = '.1.3.6.1.4.1.9.9.46.1.3.1.1.2';
-	our $macTable_OID = '.1.3.6.1.2.1.17.4.3.1.1';
-	our $bridgeNum_OID = '.1.3.6.1.2.1.17.4.3.1.2';
-	our $ifIndex_OID = '.1.3.6.1.2.1.17.1.4.1.2';
-	our $ifName_OID = '.1.3.6.1.2.1.31.1.1.1.1';
+	our $macBridge_OID = '.1.3.6.1.2.1.17.4.3.1.1';
+	our $bridgeList_OID = '1.3.6.1.2.1.17.4.3.1.2';
+	our $ifIndexList_OID = '.1.3.6.1.2.1.17.1.4.1.2';
+	our $ifNameList_OID = '.1.3.6.1.2.1.31.1.1.1.1';
+	our $ifAdminStatus_OID = '.1.3.6.1.2.1.2.2.1.7';
+
+	our %ifNameData;
+	our %ifIndexData;
+	our %bridgeNumData;
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		 -hostname => $host,
+		 -community => $community,
+	);
+
+	# Get a list of all VLANs
+	my $vlanList = $session->get_table(-baseoid => $vlanList_OID);
+
+	while (my($vlanID,$opCode) = each(%$vlanList)) {
+		$vlanID =~ s/$vlanList_OID\.1\.//;
+		my ($vlanSession,$vlanError) = Net::SNMP->session (
+			-hostname => $host,
+			-community => "$community\@$vlanID",
+		);
+		&get_names($vlanSession);
+		&get_indexes($vlanSession);
+		&get_bridge_nums($vlanSession);
+		&get_macs($vlanSession);
+		$vlanSession->close();
+	}
+
+	sub get_macs() {
+		my $vlanSession = $_[0];
+
+		my $macBridgeList = $vlanSession->get_table(-baseoid => $macBridge_OID);
+		while (my($bridgeID,$mac) = each(%$macBridgeList)) {
+			$bridgeID =~ s/$macBridge_OID\.//;
+			$mac =~ s/^0x//;
+			if($mac =~ m/[0-9a-fA-F]{12}/) {
+				#print "$bridgeNumData{$bridgeID} - $mac\n";
+				$mac = &format_mac($mac);
+				my %row;
+				$row{port} = $bridgeNumData{$bridgeID};
+				$row{mac} = $mac;
+				return_next(\%row);
+			}
+		}
+	}
+
+	sub get_bridge_nums() {
+		my $vlanSession = $_[0];
+
+		my $bridgeList = $vlanSession->get_table(-baseoid => $bridgeList_OID);
+		while (my($bridgeID,$bridgeNum) = each(%$bridgeList)) {
+			$bridgeID =~ s/$bridgeList_OID\.//;
+			$bridgeNumData{$bridgeID} = $ifIndexData{$bridgeNum};
+		}
+	}
+
+	sub get_indexes() {
+		my $vlanSession = $_[0];
+
+		my $ifIndexList = $vlanSession->get_table(-baseoid => $ifIndexList_OID);
+		while (my($ifID,$ifIndex) = each(%$ifIndexList)) {
+			$ifID =~ s/$ifIndexList_OID\.//;
+			$ifIndexData{$ifID} = $ifNameData{$ifIndex};
+		}
+	}
+
+	sub get_names() {
+		my $vlanSession = $_[0];
+
+		my $ifNameList = $vlanSession->get_table(-baseoid => $ifNameList_OID);
+		while (my($ifIndex,$ifName) = each(%$ifNameList)) {
+			$ifIndex =~ s/$ifNameList_OID\.//;
+			if($ifIndex =~ m/\d{5}/) {
+				$ifNameData{$ifIndex} = $ifName;
+			}
+		}
+	}
 
 	sub format_mac() {
-		my $mac = $_[0];
+			my $mac = $_[0];
 
-		$mac =~ s/(\w{2})(\w{2})(\w{2})(\w{2})(\w{2})(\w{2})/$1:$2:$3:$4:$5:$6/;
+			$mac =~ s/(\w{2})(\w{2})(\w{2})(\w{2})(\w{2})(\w{2})/$1:$2:$3:$4:$5:$6/;
 
-		return $mac;
-	}
-
-	sub vlans() {
-		my ($session,$error) = Net::SNMP->session (
-			-hostname => shift || $host,
-			-community => shift || "$community",
-		);
-
-		my $vlans = $session->get_table(-baseoid => $vlanList_OID);
-		
-		my @returns;
-		while (my ($key,$value) = each(%$vlans)) {
-			$key =~ s/$vlanList_OID\.1\.//;
-			push(@returns,$key);
+			return $mac;
 		}
 
-		return @returns;
-		#my @actuals = (49,50);
-		#return @actuals;
-	}
-
-	my @vlans = &vlans();
-	foreach my $vlan (@vlans) {
-		my ($session,$error) = Net::SNMP->session (
-			-hostname => shift || $host,
-			-community => shift || "$community\@$vlan",
-		);
-		
-		my %results;
-		my $mac_addresses = $session->get_table(-baseoid => $macTable_OID);
-		while (my ($key,$value) = each(%$mac_addresses) ) {
-			#print "$key - $value\n";
-			$key =~ s/$macTable_OID//;
-			#print "$key\n";
-			$value =~ s/^0x//;
-			$results{$key} = $value;
-		}
-		
-		my %mac_index;
-		my $mac_bridge_numbers = $session->get_table(-baseoid => $bridgeNum_OID);
-		while (my ($key,$value) = each(%$mac_bridge_numbers) ) {
-			$key =~ s/$bridgeNum_OID//;
-			$mac_index{$value} = $results{$key};
-		}
-		
-		my %bridge_mac;
-		my $interface_indexes = $session->get_table(-baseoid => $ifIndex_OID);
-		while (my ($key,$value) = each(%$interface_indexes)) {
-			$key =~ s/$ifIndex_OID\.//;
-			my $mac = $mac_index{$key};
-			if($mac) {
-				$bridge_mac{$value} = $mac;
-			}
-		}
-		
-		my %final;
-		my $interface_names = $session->get_table(-baseoid => $ifName_OID);
-		while (my ($key,$value) = each(%$interface_names)) {
-			$key =~ s/$ifName_OID\.//;
-			my $mac = $bridge_mac{$key};
-			if($mac) {
-				$final{$mac} = $value;
-			}
-		}
-		
-		my %output;
-		while (my ($key,$value) = each(%final)) {
-			if($key =~ m/[a-fA-F0-9]{12}/) {
-				$output{$value} = &format_mac($key);
-				my %row;
-				$row{port} = $value;
-				$row{mac} = &format_mac($key);
-				return_next(\%row);
-				#print &format_mac($key)." - $value\n";
-			}
-		}
-
-		#while (my ($port,$mac) = each(%output)) {
-		#	#print "$port - VLAN $vlan - $mac\n";
-		#	my %row;
-		#	$row{port} = $port;
-		#	$row{mac} = $mac;
-		#	return_next(\%row);
-		#}
-		$session->close();
-	}
+	# Close initial session
+	$session->close();
 
 	return;
 $$ LANGUAGE 'plperlu';
