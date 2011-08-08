@@ -88,7 +88,8 @@ CREATE OR REPLACE FUNCTION "api"."modify_switchport_admin_state"(input_system_na
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update switchport');
-
+		UPDATE "network"."switchports" SET "date_modified"=localtimestamp(0), "last_modifier"=api.get_current_user()
+		WHERE "system_name" = input_system_name AND "port_name" = input_port_name;
 		UPDATE "network"."switchport_states" SET "admin_state" = input_state WHERE "system_name" = input_system_name AND "port_name" = input_port_name;
 
 		-- Done
