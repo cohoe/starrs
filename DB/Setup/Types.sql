@@ -139,6 +139,10 @@ CREATE TYPE "dns"."key_data" AS (keyname text, key text, comment text, owner tex
 
 CREATE TYPE "dhcp"."option_data" AS (option text, value text, date_created timestamp, date_modified timestamp, last_modifier text);
 
-CREATE TYPE "network"."switchview_data" AS (vlan integer, port text, mac macaddr);
+CREATE TYPE "network"."switchview_data" AS (port text, mac macaddr);
 
 CREATE TYPE "network"."switchport_data" AS (system_name text, port_name text, type text, description text, port_state boolean, admin_state boolean, date_created timestamp, date_modified timestamp, last_modifier text);
+
+CREATE TYPE "network"."switchview_setting_data" AS (snmp_ro_community text, snmp_rw_community text, enable boolean);
+
+CREATE TYPE "network"."switchview_state_data" AS (port text, state boolean);

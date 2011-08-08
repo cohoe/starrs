@@ -44,7 +44,8 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport"(input_port_name text, input
 		FROM "network"."switchports"
 		LEFT JOIN "network"."switchport_states" 
 		ON "network"."switchports"."port_name" = "network"."switchport_states"."port_name" 
-		WHERE "network"."switchports"."system_name" = input_system_name);
+		WHERE "network"."switchports"."system_name" = input_system_name
+		AND "network"."switchports"."port_name" = input_port_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_switchport"(text, text, text, text) IS 'Create a new network switchport';
@@ -92,7 +93,7 @@ COMMENT ON FUNCTION "api"."create_switchport_range"(text, integer, integer, text
 	1) Check privileges
 	2) Create settings
 */
-CREATE OR REPLACE FUNCTION "api"."create_system_switchview"(input_system_name text, input_enable boolean, input_community text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system_switchview"(input_system_name text, input_enable boolean, input_ro_community text, input_rw_community text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system_switchview');
 
@@ -104,10 +105,10 @@ CREATE OR REPLACE FUNCTION "api"."create_system_switchview"(input_system_name te
 		END IF;
 
 		-- Create settings
-		INSERT INTO "network"."switchview" ("system_name","snmp_community","enable") VALUES (input_system_name, input_community, input_enable);
+		INSERT INTO "network"."switchview" ("system_name","snmp_ro_community","snmp_rw_community","enable") VALUES (input_system_name, input_ro_community, input_rw_community, input_enable);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system_switchview');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system_switchview"(text, boolean, text) IS 'Activate switchview on a system';
+COMMENT ON FUNCTION "api"."create_system_switchview"(text, boolean, text, text) IS 'Activate switchview on a system';

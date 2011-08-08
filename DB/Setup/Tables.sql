@@ -509,8 +509,7 @@ CREATE TABLE "network"."switchport_history"(
 "mac" MACADDR NOT NULL,
 "time" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "port_name" TEXT NOT NULL,
-"system_name" TEXT NOT NULL,
-CONSTRAINT "switchport_history_pkey" PRIMARY KEY ("port_name","system_name")
+"system_name" TEXT NOT NULL
 )
 WITHOUT OIDS;
 
@@ -562,7 +561,8 @@ WITHOUT OIDS;
 
 CREATE TABLE "network"."switchview"(
 "system_name" TEXT NOT NULL,
-"snmp_community" TEXT NOT NULL,
+"snmp_ro_community" TEXT NOT NULL,
+"snmp_rw_community" TEXT,
 "enable" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "switchview_pkey" PRIMARY KEY ("system_name")
 )

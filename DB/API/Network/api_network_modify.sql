@@ -50,19 +50,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_system_switchview"(input_system_name te
 		END IF;
 		
 		-- Check allowed fields
-		IF input_field !~* 'enable|snmp_community' THEN
+		IF input_field !~* 'enable|snmp_ro_community|snmp_rw_community' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
 		-- Create settings
-		IF input_field  ~* 'snmp_community' THEN
-			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3,
-			WHERE "system_name" = $1'
-			USING input_system_name, input_field, bool(input_new_value);
-		ELSE
-			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3,
+		IF input_field  ~* 'community' THEN
+			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3
 			WHERE "system_name" = $1'
 			USING input_system_name, input_field, input_new_value;
+		ELSE
+			EXECUTE 'UPDATE "network"."switchview" SET ' || quote_ident($2) || ' = $3
+			WHERE "system_name" = $1'
+			USING input_system_name, input_field, bool(input_new_value);
 		END IF;
 
 		-- Done
