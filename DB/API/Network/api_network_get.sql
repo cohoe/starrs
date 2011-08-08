@@ -253,7 +253,7 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchports"(input_system_name tex
 		LEFT JOIN "network"."switchport_states" 
 		ON "network"."switchports"."port_name" = "network"."switchport_states"."port_name" 
 		WHERE "network"."switchports"."system_name" = input_system_name
-		ORDER BY "network"."switchports"."port_name" ASC);
+		ORDER BY substring("network"."switchports"."port_name" from E'[0-9]+$')::integer ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_network_switchports"(text) IS 'Get all switchport data for a system';
