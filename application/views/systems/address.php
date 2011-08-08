@@ -32,6 +32,7 @@ else {
 		</div>
 		<table class="item_information_area_table">
 			<tr><td><em>Address:</em></td><td><?echo htmlentities($address);?></td></tr>
+			<tr><td><em>DNS Name:</em></td><td><?echo htmlentities($addr->get_fqdn());?></td></tr>
 			<tr><td><em>Family:</em></td><td><?echo htmlentities("IPv".$addr->get_family());?></td></tr>
 			<tr><td><em>Range:</em></td><td><?echo htmlentities($addr->get_range());?></td></tr>
 			<tr><td><em>Configuration:</em></td><td><?echo htmlentities($addr->get_config());?></td></tr>

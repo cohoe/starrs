@@ -12,11 +12,14 @@ $macaddrs = $sPort->get_mac_addresses();
 			    <tr><td><em>Current State:</em></td><td><?echo ($sPort->get_port_state()=='t')?"Active":"Inactive";?></td></tr>
 			    <tr><td><em>Administrative State:</em></td><td><?echo ($sPort->get_admin_state()=='t')?"Enabled":"Disabled";?></td></tr>
                 <tr><td><em>Attached MAC Addresses:</em></td><td>
-                    <?echo ($macaddrs)?"<a href=\"/interfaces/view/".rawurlencode(array_shift($macaddrs))."\">".array_shift($macaddrs)."</a>":"";?>
+				<?  if($macaddrs) { 
+						$firstMac = array_shift($macaddrs);
+						echo ($firstMac)?"<a href=\"/interfaces/view/".rawurlencode($firstMac)."\">".$firstMac."</a>":"";
+					}?>
                 </td></tr>
             <?  if($macaddrs) {
                     foreach($macaddrs as $mac) {
-                        echo "<tr><td></td><td>$mac</td></tr>";
+                        echo "<tr><td></td><td><a href=\"/interfaces/view/".rawurlencode($mac)."\">$mac</a></td></tr>";
                     }
                 }
             }?>

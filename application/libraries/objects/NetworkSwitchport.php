@@ -61,12 +61,17 @@ class NetworkSwitchport extends ImpulseObject {
 		$this->type = $new;
 	}
 
-    public function add_mac_address($macaddr) {
-        $this->macAddresses[] = $macaddr;
-    }
+    public function set_admin_state($new) {
+		$this->CI->api->network->modify->switchport_admin_state($this->systemName, $this->portName, $new);
+		$this->adminState = $new;
+	}
 
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
+	
+	public function add_mac_address($macaddr) {
+        $this->macAddresses[] = $macaddr;
+    }
     
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

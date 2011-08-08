@@ -31,6 +31,19 @@ class Api_network_modify extends ImpulseModel {
 		// Check errors
         $this->_check_error($query);
     }
+	
+	public function switchport_admin_state($systemName, $portName, $state) {
+        // SQL Query
+		$sql = "SELECT api.modify_switchport_admin_state(
+		    {$this->db->escape($systemName)},
+		    {$this->db->escape($portName)},
+		    {$this->db->escape($state)}
+		)";
+		$query = $this->db->query($sql);
+
+		// Check errors
+        $this->_check_error($query);
+    }
 }
 /* End of file api_network_modify.php */
 /* Location: ./application/models/API/Network/api_network_modify.php */

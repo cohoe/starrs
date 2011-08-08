@@ -7,11 +7,11 @@
 		<label for="zone">Domain: </label>
 		<select name="zone" class="input_form_input">
 			<? foreach ($zones as $zone) {
-				if($zone ==  $record->get_zone()) {
-					echo "<option value=\"$zone\" selected>$zone</option>";
+				if($zone->get_zone() ==  $record->get_zone()) {
+					echo '<option value="'.$zone->get_zone().'" selected>'.$zone->get_zone().'</option>';
 				}
 				else {
-					echo "<option value=\"$zone\">$zone</option>";
+					echo '<option value="'.$zone->get_zone().'">'.$zone->get_zone().'</option>';
 				}
 			} ?>
 		</select>

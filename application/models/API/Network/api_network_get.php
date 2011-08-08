@@ -47,6 +47,49 @@ class Api_network_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No switchports found!");
 		}
 	}
+	
+	public function switchport($systemName, $portName) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_network_switchport({$this->db->escape($systemName)},{$this->db->escape($portName)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple ports returned?");
+        }
+
+		// Generate results
+		$sPort = new NetworkSwitchport(
+			$query->row()->system_name,
+			$query->row()->port_name,
+			$query->row()->type,
+			$query->row()->description,
+			$query->row()->port_state,
+			$query->row()->admin_state,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+
+		try {
+			$macaddrs = $this->switchport_macs($sPort->get_system_name(),$sPort->get_port_name());
+			foreach($macaddrs as $macaddr) {
+				$sPort->add_mac_address($macaddr);
+			}
+		}
+		catch(ObjectNotFoundException $onfE) {};
+
+
+		// Return results
+		if($sPort instanceof NetworkSwitchport) {
+			return $sPort;
+		}
+		else {
+			throw new ObjectNotFoundException("No switchport found!");
+		}
+	}
 
     public function types() {
         // SQL Query

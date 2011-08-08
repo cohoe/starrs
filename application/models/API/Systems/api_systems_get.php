@@ -71,7 +71,7 @@ class Api_systems_get extends ImpulseModel {
 		// Generate a complete object
 		if($complete == true) {
 			// Grab the interfaces that the system has
-			foreach($this->get_system_interfaces($systemName, $complete) as $interface) {
+			foreach($this->system_interfaces($systemName, $complete) as $interface) {
 				$sys->add_interface($interface);
 			} 
 		}
@@ -104,7 +104,7 @@ class Api_systems_get extends ImpulseModel {
 
             // Generate a complete object
 			if($complete == true) {
-				$addrs = $this->get_interface_addresses($row['mac'],$complete);
+				$addrs = $this->system_interface_addresses($row['mac'],$complete);
 				foreach($addrs as $addr) {
 					$int->add_address($addr);
 				}
@@ -147,7 +147,7 @@ class Api_systems_get extends ImpulseModel {
 		);
 		
 		if($complete == true) {
-			$addrs = $this->get_system_interface_addresses($result['mac'],$complete);
+			$addrs = $this->system_interface_addresses($result['mac'],$complete);
 			foreach($addrs as $addr) {
 				$int->add_address($addr);
 			}
@@ -270,7 +270,7 @@ class Api_systems_get extends ImpulseModel {
 		if($complete == true) {
 			// Load firewall rules
 			try {
-				$fwRules = $this->api->firewall->get_address_rules($row['address']);
+				$fwRules = $this->api->firewall->get->address_rules($row['address']);
 				#$fwRules = $this->api->firewall->load_address_rules($row['address']);
 				foreach($fwRules as $fwRule) {
 					$addr->add_firewall_rule($fwRule);
@@ -427,6 +427,66 @@ class Api_systems_get extends ImpulseModel {
 		}
 		if($query->num_rows() > 1) {
 			throw new AmbiguousTargetException("More than one match for '{$address}'. This indicates a database error. Contact your system administrator.");
+		}
+	}
+	
+	public function interface_system($mac) {
+		// SQL Query
+		$sql = "SELECT api.get_interface_system({$this->db->escape($mac)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return results
+		if($query->num_rows() == 1) {
+			return $query->row()->get_interface_system;
+		}
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("More than one match for '{$mac}'. This indicates a database error. Contact your system administrator.");
+		}
+	}
+	
+	public function interface_switchport($mac) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_system_interface_switchport({$this->db->escape($mac)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+            throw new AmbiguousTargetException("Multiple ports returned?");
+        }
+
+		// Generate results
+		$sPort = new NetworkSwitchport(
+			$query->row()->system_name,
+			$query->row()->port_name,
+			$query->row()->type,
+			$query->row()->description,
+			$query->row()->port_state,
+			$query->row()->admin_state,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+
+		try {
+			$macaddrs = $this->api->network->get->switchport_macs($sPort->get_system_name(),$sPort->get_port_name());
+			foreach($macaddrs as $macaddr) {
+				$sPort->add_mac_address($macaddr);
+			}
+		}
+		catch(ObjectNotFoundException $onfE) {};
+
+
+		// Return results
+		if($sPort instanceof NetworkSwitchport) {
+			return $sPort;
+		}
+		else {
+			throw new ObjectNotFoundException("No switchport found!");
 		}
 	}
 }

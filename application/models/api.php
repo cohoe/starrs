@@ -42,10 +42,6 @@ class Api extends ImpulseModel {
 		$this->modify = new Api_management_modify();
 		$this->remove = new Api_management_remove();
 		$this->get = new Api_management_get();
-		
-		
-
-		$this->initialize($this->impulselib->get_username());
 	}
 
 	////////////////////////////////////////////////////////////////////////

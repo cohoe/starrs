@@ -9,6 +9,7 @@ class ImpulseController extends CI_Controller {
 	protected static $addr;
     protected static $mHost;
 	protected static $fwSys;
+	protected static $sPort;
 	protected $tableTemplate;
 	
 	public function __construct() {
@@ -34,6 +35,14 @@ class ImpulseController extends CI_Controller {
 			'table_close'         => '</table>'
 		);
 		$this->table->set_template($this->viewTemplate);
+		
+		try {
+			$this->api->initialize($this->impulselib->get_username());
+		}
+		catch(ObjectNotFoundException $onfE) {
+			$this->_error("Unable to find your username (".$this->impulselib->get_username().") Make sure the LDAP server is functioning properly.");
+		}
+		
 	}
     
     ////////////////////////////////////////////////////////////////////////
@@ -94,44 +103,47 @@ class ImpulseController extends CI_Controller {
 		return $this->load->view('core/warning',array("message"=>$message),TRUE);
 	}
 	
-	protected function _load_system($systemName=NULL) {
-        if($systemName) {
-            // Establish the system and address objects
-            try {
-                self::$sys = $this->impulselib->get_active_system();
-            }
-            catch (ObjectNotFoundException $onfE) {
-                $this->_error($onfE->getMessage());
-            }
-        }
-        else {
-            try {
-                self::$sys = $this->api->systems->get->system($systemName);
-            }
-            catch (ObjectNotFoundException $onfE) {
-                $this->_error($onfE->getMessage());
-            }
-        }
+	protected function _load_system($systemName=NULL,$complete=FALSE) {
+		try {
+			if($this->impulselib->get_active_system()->get_system_name() == $systemName) {
+				self::$sys = $this->impulselib->get_active_system();
+			}
+			else {
+				self::$sys = $this->api->systems->get->system($systemName,$complete);
+			}
+		}
+		catch(ObjectNotFoundException $onfE) {
+			try {
+				self::$sys = $this->api->systems->get->system($systemName,$complete);
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
+			}
+		}
+		catch(Exception $e) {
+			$this->_error($e->getMessage());
+		}
+		
+		return self::$sys;
     }
+	
+	protected function _load_interface($mac,$complete=FALSE) {
+		try {
+			self::$int = $this->api->systems->get->system_interface_data($mac,$complete);
+			return self::$int;
+		}
+		catch(Exception $e) {
+			$this->_error($e->getMessage());
+		}
+	}
 
 	protected function _load_address($address) {
 		try {
-			$ints = self::$sys->get_interfaces();
-			foreach ($ints as $int) {
-				try {
-					self::$addr = $int->get_address($address);
-					if(self::$addr instanceof InterfaceAddress) {
-						self::$int = $int;
-						break;
-					}
-				}
-				catch (ObjectException $apiE) {
-					$addr = NULL;
-				}
-			}
+			self::$addr = $this->api->systems->get->system_interface_address($address,TRUE);
+			return self::$addr;
 		}
-		catch (ObjectException $apiE) {
-			$this->_error($apiE->getMessage());
+		catch(Exception $e) {
+			$this->_error($e->getMessage());
 		}
 	}
 

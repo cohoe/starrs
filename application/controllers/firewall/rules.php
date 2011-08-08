@@ -11,9 +11,10 @@ class Rules extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
+		$address = rawurldecode($address);
 		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
@@ -46,12 +47,16 @@ class Rules extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
+		$address = rawurldecode($address);
 		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
 		}
 		
 		
@@ -116,9 +121,10 @@ class Rules extends ImpulseController {
 		if($port==NULL) {
 			$this->_error("No port specified");
 		}
-
+		$address = rawurldecode($address);
+		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
@@ -180,12 +186,16 @@ class Rules extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
+		$address = rawurldecode($address);
 		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
 		}
 		
 		if($this->input->post('submit')) {
@@ -230,4 +240,4 @@ class Rules extends ImpulseController {
 	}
 }
 /* End of file rules.php */
-/* Location: ./application/controllers/rules.php */
+/* Location: ./application/controllers/firewall/rules.php */

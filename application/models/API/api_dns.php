@@ -48,6 +48,23 @@ class Api_dns extends ImpulseModel {
             return false;
         }
     }
+	
+	public function nslookup($address) {
+		// SQL Query
+        $sql = "SELECT api.nslookup({$this->db->escape($address)})";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        // Return result
+        if($query->row()->fqdn != "") {
+            return $query->row()->fqdn;
+        }
+        else {
+            return null;
+        }
+	}
 }
 /* End of file api_dns.php */
 /* Location: ./application/models/API/api_dns.php */

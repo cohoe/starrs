@@ -20,9 +20,10 @@ class Rule extends ImpulseController {
 		if($port==NULL) {
 			$this->_error("No port specified");
 		}
-
+		$address = rawurldecode($address);
+		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
@@ -48,17 +49,15 @@ class Rule extends ImpulseController {
 
 		// Navbar
 		$navOptions['Rules'] = "/firewall/rules/view/".self::$addr->get_address();
+		$navbar = new Navbar($title, $navModes, $navOptions);
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$viewData['fwRule'] = self::$fwRule;
 		$info['title'] = "$title - ".self::$addr->get_address();
-		$navbar = new Navbar($title, $navModes, $navOptions);
-
-		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-
+		
+		$viewData['fwRule'] = self::$fwRule;
 		$info['data'] = $this->load->view('firewall/standalone_view',$viewData,TRUE);
 
 		// Load the main view
@@ -75,12 +74,16 @@ class Rule extends ImpulseController {
 		if($port==NULL) {
 			$this->_error("No port specified");
 		}
+		$address = rawurldecode($address);
 		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
 		}
 
 		try {
@@ -145,11 +148,16 @@ class Rule extends ImpulseController {
 			$this->_error("No port specified");
 		}
 
+		$address = rawurldecode($address);
+		
 		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
+			$this->_load_system($this->api->systems->get->interface_address_system($address));
 		}
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
 		}
 
 		try {

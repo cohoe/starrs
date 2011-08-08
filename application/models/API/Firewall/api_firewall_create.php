@@ -109,7 +109,6 @@ class Api_firewall_create extends ImpulseModel {
 			{$this->db->escape($deny)},
 			{$this->db->escape($owner)}
 		)";
-		echo $sql;
 		$query = $this->db->query($sql);
 
         // Check error

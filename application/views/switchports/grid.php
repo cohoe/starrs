@@ -16,7 +16,7 @@
                 $class = "switchport_disabled";
             }
 
-            if($sPort->get_port_state() == 't') {
+            if($sPort->get_port_state() == 't' && $sPort->get_admin_state() == 't') {
                 $class = "switchport_active";
             }
 

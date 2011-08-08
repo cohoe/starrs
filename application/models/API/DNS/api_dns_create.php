@@ -70,7 +70,7 @@ class Api_dns_create extends ImpulseModel {
 
      public function address($address, $hostname, $zone, $ttl, $owner) {
 		// SQL Query
-		$sql = "SELECT api.create_dns_address(
+		$sql = "SELECT * FROM api.create_dns_address(
 			{$this->db->escape($address)},
 			{$this->db->escape($hostname)},
 			{$this->db->escape($zone)},
@@ -81,9 +81,23 @@ class Api_dns_create extends ImpulseModel {
 
 		// Check error
 		$this->_check_error($query);
+		
+		if($query->num_rows() > 1) {
+			throw new APIException("The database returned more than one record. Contact your system administrator");
+		}
 
 		// Return object
-		return $this->get_address_record($address);
+		return new AddressRecord(
+			$query->row()->hostname,
+			$query->row()->zone,
+			$query->row()->address,
+			$query->row()->type,
+			$query->row()->ttl,
+			$query->row()->owner,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
 	}
 	
 	public function mailserver($hostname, $zone, $preference, $ttl, $owner) {

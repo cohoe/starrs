@@ -19,9 +19,8 @@ class Dns extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
-		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
-		}
+		$address = rawurldecode($address);
+		
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
 		}
@@ -51,7 +50,7 @@ class Dns extends ImpulseController {
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		
-		$data = $this->_load_records("view");
+		$data = $this->_load_record_view_data("view");
 		$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 
 		// Load the main view
@@ -59,7 +58,7 @@ class Dns extends ImpulseController {
 	
 	}
 	
-	private function _load_records($view="view") {
+	private function _load_record_view_data($view="view") {
 		$viewData = "";
 		if(self::$addr->get_address_record()) {
 			$viewData .= $this->load->view("dns/$view/a",array("record"=>self::$addr->get_address_record()),TRUE);
@@ -78,7 +77,8 @@ class Dns extends ImpulseController {
 		}
 		
 		if($viewData == "") {
-			$viewData = $this->load->view("dns/$view/none",null,TRUE);
+			#$viewData = $this->load->view("dns/$view/none",null,TRUE);
+			$viewData = $this->_warning("No DNS records configured!");
 		}
 		
 		return $viewData;
@@ -89,18 +89,22 @@ class Dns extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
-		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
-		}
+		$address = rawurldecode($address);
+		
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
+		}
+		if(!(self::$sys instanceof System)) {
+			$this->_load_system($this->api->systems->get->interface_address_system(self::$addr->get_address()));
 		}
 		
 		if($this->input->post('typeSubmit')) {
 		
 			if(self::$addr->get_address_record() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
 				$this->_error("Need to create an address (A/AAAA) record first!");
-				return;
 			}
 		
 			// Navbar
@@ -116,7 +120,10 @@ class Dns extends ImpulseController {
 			$form['addr'] = self::$addr;
 			$form['type'] = $this->input->post('type');
 			$form['user'] = $this->impulselib->get_username();
-			$form['zones'] = $this->api->dns->get->zones($form['user']);
+			try {
+				$form['zones'] = $this->api->dns->get->zones($form['user']);
+			}
+			catch (Exception $e) { $this->_error($e->getMessage()); }
 
 			// Are you an admin?
 			if($this->api->isadmin() == TRUE) {
@@ -124,7 +131,7 @@ class Dns extends ImpulseController {
 			}
 
 			// Continue loading view data
-			$info['data'] = $this->load->view('dns/create',$form,TRUE);
+			$info['data'] = $this->load->view("dns/create/".$this->input->post('type'),$form,TRUE);
 			$info['title'] = "Create DNS Address";
 
 			// Load the main view
@@ -188,11 +195,16 @@ class Dns extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
-		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
-		}
+		$address = rawurldecode($address);
+		
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
+		}
+		if(!(self::$sys instanceof System)) {
+			$this->_load_system($this->api->systems->get->interface_address_system(self::$addr->get_address()));
 		}
 		
 		// A given type indicates that we are doing something
@@ -214,7 +226,7 @@ class Dns extends ImpulseController {
 				$form['addr'] = self::$addr;
 				$form['type'] = $type;
 				$form['user'] = $this->impulselib->get_username();
-				$form['zones'] = $this->api->dns->get->dns_zones($form['user']);
+				$form['zones'] = $this->api->dns->get->zones($form['user']);
 				$form['record'] = $record;
 
 				// Are you an admin?
@@ -268,8 +280,8 @@ class Dns extends ImpulseController {
 			#}
 
 			// Continue loading view data
-			#$data = $this->_load_records("delete");
-			$data = $this->_load_records("edit_select");
+			#$data = $this->_load_record_view_data("delete");
+			$data = $this->_load_record_view_data("edit_select");
 			$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 			$info['title'] = "Edit DNS Address";
 
@@ -283,11 +295,16 @@ class Dns extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No address specified");
 		}
-		if(!(self::$sys instanceof System)) {
-			$this->_load_system();
-		}
+		$address = rawurldecode($address);
+		
 		if(!(self::$addr instanceof InterfaceAddress)) {
 			$this->_load_address($address);
+		}
+		if(!(self::$int instanceof NetworkInterface)) {
+			$this->_load_interface(self::$addr->get_mac());
+		}
+		if(!(self::$sys instanceof System)) {
+			$this->_load_system($this->api->systems->get->interface_address_system(self::$addr->get_address()));
 		}
 		
 		// A given type indicates that we are doing something
@@ -369,7 +386,7 @@ class Dns extends ImpulseController {
 
 			// Continue loading view data
 			#$info['data'] = $this->load->view('dns/delete',$form,TRUE);
-			$data = $this->_load_records("delete");
+			$data = $this->_load_record_view_data("delete");
 			$info['data'] = $this->load->view('dns/records', array("data"=>$data), TRUE);
 			$info['title'] = "Delete DNS Address";
 

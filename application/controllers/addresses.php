@@ -18,43 +18,31 @@ class Addresses extends ImpulseController {
 		if($address==NULL) {
 			$this->_error("No IP address specified!");
 		}
+		
+		$address = rawurldecode($address);
 
-        // Establish the interface
+        // Establish the address
         try {
-            $sys = $this->impulselib->get_active_system();
-			$int = $sys->get_interface($this->api->ip->arp($address));
-        }
-        catch (ObjectNotFoundException $onfE) {
-            $this->_error($onfE->getMessage());
-        }
-		catch (ObjectException $oE) {
-			$this->_error($oE->getMessage());
-		}
-
-		if(!($int instanceof NetworkInterface)) {
-			$this->_error("No interface could be found. Click Systems on the left to try again");
-		}
-        try {
-		    $addr = $int->get_address($address);
+			self::$addr = $this->api->systems->get->system_interface_address($address);
         }
         catch (APIException $apiE) {
             $this->_error($apiE->getMessage());
         }
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".$addr->get_address();
-		$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
-		if($addr->get_dynamic() == FALSE) {
-			$navOptions['Firewall Rules'] = "/firewall/rules/view/".$addr->get_address();
+		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
+		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
+		if(self::$addr->get_dynamic() == FALSE) {
+			$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
 		}
-		$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
-		$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
+		$navModes['EDIT'] = "/addresses/edit/".self::$addr->get_address();
+		$navModes['DELETE'] = "/addresses/delete/".self::$addr->get_mac()."/".self::$addr->get_address();
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['title'] = "Overview - ".$addr->get_address();
-		$viewData['address'] = $addr;
+		$info['title'] = "Overview - ".self::$addr->get_address();
+		$viewData['address'] = self::$addr;
 		$navbar = new Navbar("Address Overview", $navModes, $navOptions);
 
         // More view data
@@ -76,29 +64,35 @@ class Addresses extends ImpulseController {
 		if($mac == NULL) {
 			$this->_error("No interface specified!");
 		}
-
-        // Get the interface object
-		#$int = $this->impulselib->get_active_interface($mac);
-        $sys = $this->impulselib->get_active_system();
-        $int = $sys->get_interface($mac);
+		
+		$mac = rawurldecode($mac);
+		
+		// Get the interface object
+		try {
+			self::$int = $this->api->systems->get->system_interface_data($mac);
+			self::$sys = $this->_load_system(self::$int->get_system_name());
+        }
+        catch (APIException $apiE) {
+            $this->_error($apiE->getMessage());
+        }
 		
 		// Information is there. Create the address
 		if($this->input->post('submit')) {
 			// Create the address
-			$addr = $this->_create();
-			
-			// Check if it actually worked
-			if(!($addr instanceof InterfaceAddress)) {
-				return;
+			try {
+				self::$addr = $this->_create();
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
 			}
 			
 			// Update our stuff
-			$int->add_address($addr);
-            $sys->add_interface($int);
-			$this->impulselib->set_active_system($sys);
+			self::$int->add_address(self::$addr);
+            self::$sys->add_interface(self::$int);
+			$this->impulselib->set_active_system(self::$sys);
 			
 			// Send you on your way
-            redirect(base_url()."/interfaces/addresses/".$int->get_mac()."/".$addr->get_address(),'location');
+            redirect(base_url()."/interfaces/addresses/".self::$int->get_mac()."/".self::$addr->get_address(),'location');
 		}
         
         // Navbar
@@ -111,7 +105,7 @@ class Addresses extends ImpulseController {
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
         // Get the preset form data for drop down lists and things
-        $form['interface'] = $int;
+        $form['interface'] = self::$int;
         $form['ranges'] = $this->api->ip->get->ranges();
         $form['configs'] = $this->api->dhcp->get->config_types();
         $form['classes'] = $this->api->dhcp->get->classes();
@@ -142,14 +136,26 @@ class Addresses extends ImpulseController {
 			$this->_error("No interface specified!");
 		}
 
-        $sys = $this->impulselib->get_active_system();
-        $int = $sys->get_interface($mac);
+		$mac = rawurldecode($mac);
+		$address = rawurldecode($address);
+		
+        try {
+			self::$int = $this->api->systems->get->system_interface_data($mac,true);
+			self::$sys = $this->_load_system(self::$int->get_system_name());
+        }
+        catch (APIException $apiE) {
+            $this->_error($apiE->getMessage());
+        }
 		
 		// Information is there. Delete the address
 		if($this->input->post('submit')) {
-			$addr = $int->get_address($this->input->post('address'));
-			$this->_delete($addr);
-            redirect(base_url()."interfaces/addresses/".$addr->get_mac(),'location');
+			try {
+				$this->api->systems->remove->interface_address($this->input->post('address'));
+				redirect(base_url()."interfaces/addresses/".self::$int->get_mac(),'location');
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
+			}
 		}
         
         // Navbar
@@ -162,8 +168,8 @@ class Addresses extends ImpulseController {
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
         // Get the preset form data for drop down lists and things
-        $form['interface'] = $int;
-        $form['addresses'] = $int->get_interface_addresses();
+        $form['interface'] = self::$int;
+        $form['addresses'] = self::$int->get_interface_addresses();
         $form['address'] = $address;
 
         // Are you an admin?
@@ -190,28 +196,41 @@ class Addresses extends ImpulseController {
 			$this->_error("No address specified!");
 		}
 		
+		$address = rawurldecode($address);
+		
+		// Get the interface object
+		try {
+			self::$addr = $this->api->systems->get->system_interface_address($address);
+			self::$int = $this->api->systems->get->system_interface_data(self::$addr->get_mac());
+			self::$sys = $this->_load_system(self::$int->get_system_name());
+        }
+        catch (APIException $apiE) {
+            $this->_error($apiE->getMessage());
+        }
+		catch(ObjectNotFoundException $onfE) {
+			$this->_error($onfE->getMessage());
+		}		
+		
 		// Create the local interface object from the SESSION array.
-		$sys = $this->impulselib->get_active_system();
-        $int = $sys->get_interface($this->api->ip->arp($address));
-		$addr = $int->get_address($address);
+		
 		
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			try {
-				$this->_edit($addr);
-				$int->add_address($addr);
-				$sys->add_interface($int);
-				$this->impulselib->set_active_system($sys);
+				$this->_edit();
+				self::$int->add_address(self::$addr);
+				self::$sys->add_interface(self::$int);
+				$this->impulselib->set_active_system(self::$sys);
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());
 			}
 			
-			if($addr->get_dynamic() == TRUE) {
-				redirect(base_url()."interfaces/addresses/".$int->get_mac());
+			if(self::$addr->get_dynamic() == TRUE) {
+				redirect(base_url()."interfaces/addresses/".self::$int->get_mac());
 			}
 			else {
-				redirect(base_url()."addresses/view/".$addr->get_address());
+				redirect(base_url()."addresses/view/".self::$addr->get_address());
 			}
 			
 		}
@@ -231,7 +250,7 @@ class Addresses extends ImpulseController {
 			$form['ranges'] = $this->api->ip->get->ranges();
 			$form['configs'] = $this->api->dhcp->get->config_types();
 			$form['classes'] = $this->api->dhcp->get->classes();
-			$form['addr'] = $addr;
+			$form['addr'] = self::$addr;
 
 			// Are you an admin?
 			if($this->api->isadmin() == TRUE) {
@@ -288,7 +307,7 @@ class Addresses extends ImpulseController {
      * Edit the actual interface address
      * @param $addr     The address object to edit
      */
-	private function _edit(&$addr) {
+	private function _edit() {
 		$err = "";
 		
 		// If no address was given, get one from the selected range
@@ -296,36 +315,36 @@ class Addresses extends ImpulseController {
 		if($address == "") {
 			$range = $this->input->post('range');
 			if($range == "") {
-				$range = $addr->get_range();
+				$range = self::$addr->get_range();
 			}
-			$address = $this->api->ip->get->address_from_range($range);
-			try { $addr->set_address($address); }
+			self::$address = $this->api->ip->get->address_from_range($range);
+			try { self::$addr->set_address(self::$address); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		elseif($addr->get_address() != $this->input->post('address')) {
-			try { $addr->set_address($this->input->post('address')); }
+		elseif(self::$addr->get_address() != $this->input->post('address')) {
+			try { self::$addr->set_address($this->input->post('address')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		if($addr->get_config() != $this->input->post('config')) {
-			try { $addr->set_config($this->input->post('config')); }
+		if(self::$addr->get_config() != $this->input->post('config')) {
+			try { self::$addr->set_config($this->input->post('config')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		if($addr->get_class() != $this->input->post('class')) {
-			try { $addr->set_class($this->input->post('class')); }
+		if(self::$addr->get_class() != $this->input->post('class')) {
+			try { self::$addr->set_class($this->input->post('class')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		if($addr->get_isprimary() != $this->input->post('isprimary')) {
-			try { $addr->set_isprimary($this->input->post('isprimary')); }
+		if(self::$addr->get_isprimary() != $this->input->post('isprimary')) {
+			try { self::$addr->set_isprimary($this->input->post('isprimary')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
-		if($addr->get_comment() != $this->input->post('comment')) {
-			try { $addr->set_comment($this->input->post('comment')); }
+		if(self::$addr->get_comment() != $this->input->post('comment')) {
+			try { self::$addr->set_comment($this->input->post('comment')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
 
 		// If there were/were not errors
 		if($err != "") {
-			throw new ControllerException($err);
+			$this->_error($err);
 		}
 	}
 

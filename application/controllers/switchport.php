@@ -13,12 +13,17 @@ class Switchport extends ImpulseController {
             $this->_error("No port name specified view");
         }
 
-        $this->_load_system(urldecode($systemName));
-        $this->_load_switchports(urldecode($systemName));
-        self::$sPort = self::$sys->get_switchport(rawurldecode($portName));
+        $this->_load_system(rawurldecode($systemName));
+
+		try {
+			self::$sPort = $this->api->network->get->switchport(rawurldecode($systemName),rawurldecode($portName));
+		}
+		catch(Exception $e) {
+			$this->_error("Unable to view switchport:<br>".$e->getMessage());
+		}
 
         // Navbar
-        $navModes['EDIT'] = "/switchport/edit/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode($portName);
+        $navModes['EDIT'] = "/switchport/edit/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode(self::$sPort->get_port_name());
         $navModes['DELETE'] = "/switchport/delete/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode(self::$sPort->get_port_name());
         $navOptions['Switchports'] = "/switchports/view/".rawurlencode(self::$sys->get_system_name());
         $navbar = new Navbar("Switchport Details", $navModes, $navOptions);
@@ -68,7 +73,6 @@ class Switchport extends ImpulseController {
         $this->_load_switchports(rawurldecode($systemName));
         $portName = rawurldecode(htmlspecialchars_decode($portName));
         try {
-            exit($portName);
             self::$sPort = self::$sys->get_switchport(rawurldecode($portName));
         }
         catch(ObjectException $oE) {

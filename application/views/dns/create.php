@@ -9,8 +9,8 @@
 				<label for="zone">Domain: </label>
 				<select id="zone" name="zone" class="input_form_input" readonly>
 					<? foreach ($zones as $zone) {
-						if($zone = $addr->get_address_record()->get_zone()) {
-							echo "<option value=\"$zone\" selected=\"selected\">$zone</option>";
+						if($zone->get_zone() = $addr->get_address_record()->get_zone()) {
+							echo "<option value=\"".$zone->get_zone()."\" selected=\"selected\">$zone</option>";
 						}
 						else {
 							echo "<option value=\"$zone\">$zone</option>";

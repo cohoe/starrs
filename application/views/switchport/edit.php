@@ -16,8 +16,8 @@
         <label for="description">Description: </label><input type="text" name="description" value="<?echo $sPort->get_description();?>" class="input_form_input" /><br />
         <? if($sys->get_switchview_enable()=='t') {?>
             <label for="enable">Enable?: </label>
-		    <input type="radio" name="enable" value="t" class="input_form_radio" <?echo ($sys->get_switchview_enable()=='t')?"checked":""?> />Yes
-		    <input type="radio" name="enable" value="f" class="input_form_radio" <?echo ($sys->get_switchview_enable()=='f')?"checked":""?> />No
+		    <input type="radio" name="enable" value="t" class="input_form_radio" <?echo ($sPort->get_admin_state()=='t')?"checked":""?> />Yes
+		    <input type="radio" name="enable" value="f" class="input_form_radio" <?echo ($sPort->get_admin_state()=='f')?"checked":""?> />No
             <br />
         <?} else {?>
             <input type="hidden" name="enable" value="<?echo $sPort->get_admin_state();?>" />

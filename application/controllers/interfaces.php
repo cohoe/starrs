@@ -24,16 +24,24 @@ class Interfaces extends ImpulseController {
 		if($systemName == NULL) {
 			$this->_error("No system was specified");
 		}
+		$systemName = rawurldecode($systemName);
 		
 		// Create the local system object from the SESSION array.
         $sys = $this->impulselib->get_active_system();
-
+		try {
+			self::$sys = $this->_load_system($systemName);
+		}
+		catch(Exception $e) {
+			$this->_error("Unable to instantiate system/interface objects - ".$e->getMessage());
+		}
+		
         // Information is there. Create the system
         if($this->input->post('submit')) {
-            $int = $this->_create();
+            self::$int = $this->_create();
 			
 			// Add the interface
-			$sys->add_interface($int);
+			self::$sys->add_interface(self::$int);
+			$this->impulselib->set_active_system(self::$sys);
 			
 			// Send you on your way
 			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
@@ -80,18 +88,24 @@ class Interfaces extends ImpulseController {
 		if($mac == NULL) {
 			$this->_error("No interface was specified");
 		}
+		$mac = rawurldecode($mac);
 
-        // Create the local interface object from the SESSION array.
-        $sys = $this->impulselib->get_active_system();
-        $int = $sys->get_interface($mac);
+		// Define the local interface object
+		try {
+			self::$int = $this->api->systems->get->system_interface_data($mac);
+			self::$sys = $this->_load_system(self::$int->get_system_name());
+		}
+		catch(Exception $e) {
+			$this->_error("Unable to instantiate system/interface objects - ".$e->getMessage());
+		}
 
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
-			$this->_edit($int);
+			$this->_edit(self::$int);
 			
 			// Update the session data
-			$sys->add_interface($int);
-			$this->impulselib->set_active_system($sys);
+			self::$sys->add_interface(self::$int);
+			$this->impulselib->set_active_system(self::$sys);
 			
 			// Semd ypi pm ypir wau
 			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
@@ -114,7 +128,7 @@ class Interfaces extends ImpulseController {
 				$form['systems'] = $this->api->systems->get->systems(NULL);
                 $form['admin'] = TRUE;
 			}
-			$form['interface'] = $int;
+			$form['interface'] = self::$int;
 			
 			// Continue loading view data
 			$info['data'] = $this->load->view('interfaces/edit',$form,TRUE);
@@ -136,15 +150,17 @@ class Interfaces extends ImpulseController {
 		if($mac == NULL) {
 			$this->_error("No interface was specified");
 		}
+		
+		$mac = rawurldecode($mac);
 
         // Establish the local interface object
-		$int = $this->api->systems->get->system_interface_data($mac);
+		self::$int = $this->api->systems->get->system_interface_data($mac);
 		
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
-			$this->_delete($int);
+			$this->_delete(self::$int);
 			// Send you on your way
-			redirect(base_url()."systems/view/".$int->get_system_name()."/interfaces",'location');
+			redirect(base_url()."systems/view/".self::$int->get_system_name()."/interfaces",'location');
 		}
 		
 		// They hit no, don't delete the system
@@ -164,12 +180,12 @@ class Interfaces extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information
-			$prompt['message'] = "Delete interface \"".$int->get_interface_name()."\"?";
+			$prompt['message'] = "Delete interface \"".self::$int->get_interface_name()."\"?";
 			$prompt['rejectUrl'] = $this->input->server('HTTP_REFERER');
 			
 			// Continue loading the view data
 			$info['data'] = $this->load->view('core/prompt',$prompt,TRUE);	// Systems
-			$info['title'] = "Delete Interface \"".$int->get_interface_name()."\"";
+			$info['title'] = "Delete Interface \"".self::$int->get_interface_name()."\"";
 			
 			// Load the main view
 			$this->load->view('core/main',$info);
@@ -187,31 +203,32 @@ class Interfaces extends ImpulseController {
 		if($mac ==  NULL) {
 			$this->_error("No interface was given!");
 		}
+		
+		$mac = rawurldecode($mac);
 
         // Define the local interface object
-		$sys = $this->impulselib->get_active_system();
-		$int = $sys->get_interface($mac);		
+		try {
+			self::$int = $this->api->systems->get->system_interface_data($mac);
+		}
+		catch(Exception $e) {
+			$this->_error("Unable to instantiate system/interface objects - ".$e->getMessage());
+		}
 
 		// Navbar
 		$navModes['CREATE'] = "/addresses/create/".$mac;
 		$navModes['DELETE'] = "/addresses/delete/".$mac;
-		$navOptions['Interfaces'] = "/systems/view/".$int->get_system_name()."/interfaces";
+		$navOptions['Interfaces'] = "/systems/view/".self::$int->get_system_name()."/interfaces";
 		$navbar = new Navbar("Addresses on " . $mac, $navModes, $navOptions);
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		
-		$info['data'] = $this->_load_addresses($int);
+		$info['data'] = $this->_load_addresses(self::$int);
 		$info['title'] = "Addresses - ".$mac;
 		
 		// Load the main view
 		$this->load->view('core/main',$info);
-		
-		// Update data
-		$sys->add_interface($int);
-		$this->impulselib->set_active_system($sys);
 	}
 
     public function view($mac=NULL) {
@@ -229,11 +246,17 @@ class Interfaces extends ImpulseController {
         catch(Exception $e) {
             $this->_error($e->getMessage());
         }
+		
+		$navOptions['Addresses'] = "/interfaces/addresses/".rawurlencode(self::$int->get_mac());
+		try {
+			self::$sPort = $this->api->systems->get->interface_switchport(self::$int->get_mac());
+			$navOptions['Switchport'] = "/switchport/view/".rawurlencode(self::$sPort->get_system_name())."/".rawurlencode(self::$sPort->get_port_name());
+		}
+		catch(ObjectNotFoundException $onfE) { }
 
         // Navbar
         $navModes['EDIT'] = "/interfaces/edit/".rawurlencode(self::$int->get_mac());
         $navModes['DELETE'] = "/interfaces/delete/".rawurlencode(self::$int->get_mac());
-        $navOptions['Addresses'] = "/interfaces/addresses/".rawurlencode(self::$int->get_mac());
         $navbar = new Navbar("Interface ".self::$int->get_mac(), $navModes, $navOptions);
 
         // Load view data
