@@ -271,3 +271,25 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchport_macs"(input_system_name
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_network_switchport_macs"(text, text) IS 'Get a list of all mac addresses on a switchport';
+
+CREATE OR REPLACE FUNCTION "api"."get_network_switchport"(input_system_name text, input_port_name text) RETURNS SETOF "network"."switchport_data" AS $$
+	BEGIN
+		RETURN QUERY (
+		SELECT  "network"."switchports"."system_name",
+			"network"."switchports"."port_name",
+			"network"."switchports"."type",
+			"network"."switchports"."description",
+			"network"."switchport_states"."port_state",
+			"network"."switchport_states"."admin_state",
+			"network"."switchports"."date_created",
+			"network"."switchports"."date_modified",
+			"network"."switchports"."last_modifier"
+		FROM "network"."switchports"
+		LEFT JOIN "network"."switchport_states" 
+		ON "network"."switchports"."port_name" = "network"."switchport_states"."port_name" 
+		WHERE "network"."switchports"."system_name" = input_system_name 
+		AND "network"."switchports"."port_name" = input_port_name
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_network_switchport"(text,text) IS 'Get a switchport';
