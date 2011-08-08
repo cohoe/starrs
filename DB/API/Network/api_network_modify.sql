@@ -70,3 +70,29 @@ CREATE OR REPLACE FUNCTION "api"."modify_system_switchview"(input_system_name te
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_system_switchview"(text, text, text) IS 'Modify switchview on a system';
+
+/* API - modify_switchport_admin_state
+	1) Check privileges
+	2) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_switchport_admin_state"(input_system_name text, input_port_name text, input_state boolean) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_switchport_admin_state');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to edit port % on system % denied. You are not owner',input_port_name, input_system_name;
+			END IF;
+ 		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update switchport');
+
+		UPDATE "network"."switchport_states" SET "admin_state" = input_state WHERE "system_name" = input_system_name AND "port_name" = input_port_name;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_network_switchport');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_switchport_admin_state"(text, text, boolean) IS 'Set the administrative state of a switchport';
