@@ -94,7 +94,7 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 	6) Create record
 	7) Queue dns
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."a_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
@@ -136,6 +136,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
+		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
+		FROM "dns"."a" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
