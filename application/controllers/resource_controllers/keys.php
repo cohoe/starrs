@@ -27,7 +27,7 @@ class Keys extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "DNS Keys";
 		$navbar = new Navbar("DNS Keys", $navModes, $navOptions);
 
@@ -55,7 +55,7 @@ class Keys extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Key - ".self::$dnsKey->get_keyname();
 		$navbar = new Navbar("Key - ".self::$dnsKey->get_keyname(), $navModes, $navOptions);
 		
@@ -91,7 +91,7 @@ class Keys extends ImpulseController {
             
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Create DNS Key";
 			$navbar = new Navbar("Create DNS Key", $navModes, null);
 			
@@ -149,7 +149,7 @@ class Keys extends ImpulseController {
 			$navModes['CANCEL'] = "/resources/keys/view/".urlencode(self::$dnsKey->get_keyname());
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Edit ".self::$dnsKey->get_keyname();
 			$navbar = new Navbar("Edit ".self::$dnsKey->get_keyname(), $navModes, null);
 			

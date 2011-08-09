@@ -80,3 +80,13 @@ body {
 .infobar_text {
 	font-size: 80%;
 }
+
+.footer {
+   position:absolute;
+   bottom:0;
+   width:900px;
+   height:1.2em;   /* Height of the footer */
+   background:gray;
+   text-align: center;
+   line-height: 1.2em;
+}

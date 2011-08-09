@@ -29,10 +29,28 @@ class Api_network extends ImpulseModel {
 		// Check error
 		$this->_check_error($query);
     }
+	
+	public function switchview_scan_admin_state($systemName) {
+        // SQL Query
+		$sql = "SELECT api.switchview_scan_admin_state({$this->db->escape($systemName)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+    }
 
     public function switchview_scan_mac($systemName) {
         // SQL Query
 		$sql = "SELECT api.switchview_scan_mac({$this->db->escape($systemName)})";
+		$query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+    }
+	
+	public function switchview_scan_description($systemName) {
+        // SQL Query
+		$sql = "SELECT api.switchview_scan_description({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
 		// Check error

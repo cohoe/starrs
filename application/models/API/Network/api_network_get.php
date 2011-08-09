@@ -152,6 +152,29 @@ class Api_network_get extends ImpulseModel {
 			throw new ObjectNotFoundException("No MACs found.");
 		}
     }
+	
+	public function switchport_history($systemName, $portName) {
+		// SQL Query
+        $sql = "SELECT * FROM api.get_network_switchport_history({$this->db->escape($systemName)},{$this->db->escape($portName)})";
+        $query = $this->db->query($sql);
+
+		// Check error
+		$this->_check_error($query);
+
+        // Generate results
+        $resultSet = array();
+        foreach($query->result_array() as $result) {
+            $resultSet[$result['time']][] = $result['mac'];
+        }
+
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No MAC history for this switchport found.");
+		}
+	}
 }
 /* End of file api_network_get.php */
 /* Location: ./application/models/API/Network/api_network_get.php */

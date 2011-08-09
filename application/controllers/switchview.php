@@ -3,6 +3,21 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 
 class Switchview extends ImpulseController {
 
+	public function index() {
+		// Navbar
+        $navbar = new Navbar("Switchview", null, null);
+
+        // Load view data
+        $info['header'] = $this->load->view('core/header',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+        $info['title'] = "Switchview";
+        $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+        $info['data'] = "Hello!";
+
+        // Load the main view
+        $this->load->view('core/main',$info);
+	}
+
     public function settings($systemName=NULL) {
         $systemName = rawurldecode($systemName);
         try {
@@ -162,7 +177,9 @@ class Switchview extends ImpulseController {
         $systemName = rawurldecode($systemName);
         try {
             $this->api->network->switchview_scan_port_state($systemName);
+			$this->api->network->switchview_scan_admin_state($systemName);
             $this->api->network->switchview_scan_mac($systemName);
+			$this->api->network->switchview_scan_description($systemName);
             $this->_success("Reloaded switchview data!");
         }
         catch(Exception $e) {

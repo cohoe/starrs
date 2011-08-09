@@ -60,7 +60,7 @@ class Configuration extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "IMPULSE Site Configuration";
 		$navbar = new Navbar("Site Configuration", $navModes, null);
 		
@@ -82,7 +82,7 @@ class Configuration extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "IMPULSE Site Configuration";
 		$navbar = new Navbar("Site Configuration", $navModes, null);
 		
