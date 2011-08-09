@@ -369,3 +369,13 @@ CREATE OR REPLACE FUNCTION "api"."get_snmp_ro"(input_system_name text) RETURNS T
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_snmp_ro"(text) IS 'Get the name of the RO community of a system';
+
+/* API - get_network_switchport_history */
+CREATE OR REPLACE FUNCTION "api"."get_network_switchport_history"(input_system_name text, input_port_name text) RETURNS TABLE("mac" macaddr, "time" timestamp) AS $$
+	BEGIN
+		RETURN QUERY (SELECT distinct("network"."switchport_history"."mac"),"network"."switchport_history"."time" 
+		FROM "network"."switchport_history" WHERE "port_name" = input_port_name AND "system_name" = input_system_name
+		ORDER BY "time" DESC);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_network_switchport_history"(text,text) IS 'Get the MAC address history of a port';
