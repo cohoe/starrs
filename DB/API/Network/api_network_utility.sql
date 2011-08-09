@@ -48,3 +48,21 @@ CREATE OR REPLACE FUNCTION "api"."switchview_scan_description"(input_system_name
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."switchview_scan_description"(text) IS 'Load the description data for a set of ports on a system';
+
+CREATE OR REPLACE FUNCTION "api"."clean_switchport_history"(input_system_name text) RETURNS VOID AS $$
+	DECLARE
+		TimeCount INTEGER;
+	BEGIN
+		SELECT COUNT(DISTINCT("time")) INTO TimeCount
+		FROM "network"."switchport_history" 
+		WHERE "system_name" = input_system_name;
+
+		IF TimeCount > 5 THEN
+			DELETE FROM "network"."switchport_history"
+			WHERE "system_name" =  input_system_name
+			AND "time" IN
+			(SELECT "time" FROM "network"."switchport_history" GROUP BY "time" ORDER BY "time" ASC LIMIT (TimeCount - 5));
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."clean_switchport_history"(text) IS 'Keep the record of switchport scans to a sane level';
