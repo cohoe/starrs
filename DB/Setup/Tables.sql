@@ -78,8 +78,9 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."device_types"(
 "type" TEXT NOT NULL,
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
+"family" TEXT NOT NULL,
 CONSTRAINT "device_types_pkey" PRIMARY KEY ("type")
 )
 WITHOUT OIDS;
