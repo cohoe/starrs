@@ -29,7 +29,7 @@
 			<?echo $data;?>
 			</div>
 		</div>
-		<div class="footer">Created 2011 by Grant Cohoe &amp; the IMPULSE Development Team</div>
+		<!--<div class="footer">Created 2011 by Grant Cohoe &amp; the IMPULSE Development Team</div>-->
 	</div>
 	
 </body>
