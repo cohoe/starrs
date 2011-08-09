@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	use warnings;
 	no warnings 'redefine';
 
-	# first things first. defining the subroutines that make up this script.
+	# First things first. defining the subroutines that make up this script.
 
 	# Global Options
 	sub global_opts
@@ -82,17 +82,25 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		return $output;
 	}# end &dhcp_class_options
 
-	my $output2;
-	# shared network
+	# Shared networks
+	sub shared_networks
+	{
+		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
+		$output .= "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n  ";
+		$output .= &subnets;
+		return $output;
+	}
+	
+	# Subnets (for shared networks)
+	sub subnets
 	{
 		my $subnets = spi_query("SELECT get_dhcpd_subnets, netmask(get_dhcpd_subnets) FROM api.get_dhcpd_subnets()");
-		my $output;
-		# $subnet = ip + netmask in / notation; i.e. 10.21.49.0/24
+		
+		# $subnet = ip + netmask in slash notation; i.e. 10.21.49.0/24
 		# $net = only the network address; i.e. 10.21.49.0
 		# $mask = netmask in dotted decimal notation; i.e. 255.255.255.0
-		my ($subnet, $net, $mask, $row);
-		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-		$output .= "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n  "; 
+		my ($subnet, $net, $mask, $row, $output);
+		
 		while (defined($row = spi_fetchrow($subnets)))
 		{
 			$subnet = $row->{get_dhcpd_subnets};
@@ -100,56 +108,59 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$mask = $row->{netmask};
 			$output .= "subnet $net netmask $mask {\n    ";
 			$output .= "authoritative;";
+			$output .= &subnet_options($subnet);
+			$output .= &subnet_ranges($subnet);
+			$output .= "\n  }\n\n  ";
+		}
+		return $output;
+	}
+	
+	# Subnet options
+	sub subnet_options
+	{
+		my $subnet = $_[0];
+		my $options = spi_query("SELECT option,value from api.get_dhcpd_subnet_options('$subnet')");
+		my ($option, $value, $row, $output);
+		while (defined($row = spi_fetchrow($options)))
+		{
+			$option = $row->{option};
+			$value = $row->{value};
+			$output .= "\n    $option $value;";
+		}
+	}
+	
+	# Subnet ranges
+	sub subnet_ranges
+	{
+		my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
+		my ($range_name, $first_ip, $last_ip, $class, $row);
+		while (defined($row = spi_fetchrow($pool)))
+		{
+			$range_name = $row->{name};
+			$first_ip = $row->{first_ip};
+			$last_ip = $row->{last_ip};
+			$class = $row->{class};
+			$output .= "\n    pool {\n      range $first_ip $last_ip;";
 			{
-				my $options = spi_query("SELECT option,value from api.get_dhcpd_subnet_options('$subnet')");
+				my $range_options = spi_query("SELECT * from api.get_dhcpd_range_options('$range_name')");
 				my ($option, $value, $row);
-				while (defined($row = spi_fetchrow($options)))
+				while (defined($row = spi_fetchrow($range_options)))
 				{
 					$option = $row->{option};
 					$value = $row->{value};
-					$output .= "\n    $option $value;";
-				}
-				{
-					my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
-					my ($range_name, $first_ip, $last_ip, $class, $row);
-					while (defined($row = spi_fetchrow($pool)))
-					{
-						$range_name = $row->{name};
-						$first_ip = $row->{first_ip};
-						$last_ip = $row->{last_ip};
-						$class = $row->{class};
-						$output .= "\n    pool {\n      range $first_ip $last_ip;";
-						{
-							my $range_options = spi_query("SELECT * from api.get_dhcpd_range_options('$range_name')");
-							my ($option, $value, $row);
-							while (defined($row = spi_fetchrow($range_options)))
-							{
-								$option = $row->{option};
-								$value = $row->{value};
-								$output .= "\n      $option $value;";
-							}
-						}
-						if (defined($class))
-						{
-							$output .= "\n      allow members of \"$class\"";
-						}
-						else
-						{
-							$output .= "\n      allow unknown clients";
-						}
-						$output .= "\n    }";
-					}
+					$output .= "\n      $option $value;";
 				}
 			}
-			$output .= "\n  }\n\n  ";
+			if (defined($class))
+			{
+				$output .= "\n      allow members of \"$class\"";
+			}
+			else
+			{
+				$output .= "\n      allow unknown clients";
+			}
+			$output .= "\n    }";
 		}
-	$output2 = $output;
-	}# shared networks
-
-	# Shared networks
-	sub shared_networks
-	{
-#		my $networks 
 	}
 
 	# hosts
@@ -158,6 +169,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		my $static_hosts = spi_query("SELECT * FROM api.get_dhcpd_static_hosts() order by owner,hostname");
 		my $dynamic_hosts = spi_query("SELECT * FROM api.get_dhcpd_dynamic_hosts() order by owner,hostname");
 		my ($hostname, $zone, $mac, $address, $owner, $class, $row, $output);
+		$output .= "# Static hosts\n";
 		while (defined($row = spi_fetchrow($static_hosts)))
 		{
 			$hostname = $row->{hostname};
@@ -169,6 +181,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			
 			$output .= &host_config($hostname, $zone, $mac, $address, $owner, $class);
 		}
+		$output .= "# Dynamic hosts\n";
 		while (defined($row = spi_fetchrow($dynamic_hosts)))
 		{
 			$hostname = $row->{hostname};
@@ -215,9 +228,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	$output .= &dns_keys() . "\n";
 	$output .= &zones() . "\n";
 	$output .= &dhcp_classes() . "\n";
-#temp debugging only
-	$output .= $output2;
-	#$output .= &shared_networks() . "\n";
+	$output .= &shared_networks() . "\n";
 	$output .= &hosts() . "\n";
 
 	$output .= "\# End dhcpd configuration file";
