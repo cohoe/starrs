@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION "api"."switchview_scan_port_state"(input_system_name 
 	DECLARE
 		ScanResult RECORD;
 	BEGIN
-		FOR ScanResult IN (SELECT input_system_name,"port","state" FROM "api"."get_network_switchview_port_state"(api.get_system_primary_address(input_system_name),(SELECT "snmp_ro_community" FROM "network"."switchview" WHERE "system_name" = input_system_name))
+		FOR ScanResult IN (SELECT input_system_name,"port","state" FROM "api"."get_network_switchview_active_state"(api.get_system_primary_address(input_system_name),(SELECT "snmp_ro_community" FROM "network"."switchview" WHERE "system_name" = input_system_name))
 		WHERE "port" IN (SELECT "port_name" FROM "network"."switchports" WHERE "system_name" = input_system_name)) LOOP
 			UPDATE "network"."switchport_states" SET "port_state" = ScanResult.state WHERE "port_name" = ScanResult.port AND "system_name" = input_system_name;
 		END LOOP;
