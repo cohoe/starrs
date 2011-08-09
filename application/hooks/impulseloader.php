@@ -50,6 +50,8 @@ class ImpulseLoader {
 		
 		# UI Stuff
 		require_once(APPPATH . "libraries/core/navbar.php");
+		require_once(APPPATH . "libraries/core/sidebar.php");
+		require_once(APPPATH . "libraries/core/navitem.php");
 		
 		# Controllers
 		#require_once(APPPATH . "controllers/firewall/rule.php");

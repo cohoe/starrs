@@ -18,7 +18,7 @@ class Admin extends ImpulseController {
 	
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "IMPULSE Administration";
 		$navbar = new Navbar("Administration", null, $navOptions);
 		

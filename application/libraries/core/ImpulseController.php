@@ -10,6 +10,7 @@ class ImpulseController extends CI_Controller {
     protected static $mHost;
 	protected static $fwSys;
 	protected static $sPort;
+	protected static $sidebar;
 	protected $tableTemplate;
 	
 	public function __construct() {
@@ -41,6 +42,24 @@ class ImpulseController extends CI_Controller {
 		}
 		catch(ObjectNotFoundException $onfE) {
 			$this->_error("Unable to find your username (".$this->impulselib->get_username().") Make sure the LDAP server is functioning properly.");
+		}
+		catch(DBException $dbE) {
+			$this->_error("Database connection error: ".$dbE->getMessage());
+		}
+		
+		// Check if the session was started
+		if(session_id() == "") { 
+			session_start();
+		}
+		
+		if(isset($_SESSION['sidebar'])) {
+			#self::$sidebar = unserialize($_SESSION['sidebar']);
+			// @todo: Undo this
+			self::$sidebar = new Sidebar();
+		}
+		else {
+			self::$sidebar = new Sidebar();
+			$_SESSION['sidebar'] = serialize(self::$sidebar);
 		}
 		
 	}

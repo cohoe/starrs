@@ -32,7 +32,7 @@ class Zones extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "DNS Zones";
 
 		$viewData = $this->load->view("resources/zones/list",array("dnsZones"=>$dnsZones),TRUE);
@@ -56,7 +56,7 @@ class Zones extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Zone - ".self::$dnsZone->get_zone();
 		$navbar = new Navbar("Zone - ".self::$dnsZone->get_zone(), $navModes, $navOptions);
 		
@@ -94,7 +94,7 @@ class Zones extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Create DNS Zone";
 			$navbar = new Navbar("Create DNS Zone", $navModes, null);
 			$viewData['user'] = $this->api->get->current_user();
@@ -128,7 +128,7 @@ class Zones extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Edit Zone - ".self::$dnsZone->get_zone();
 			$navbar = new Navbar("Edit Zone - ".self::$dnsZone->get_zone(), $navModes, null);
 			$viewData['user'] = $this->api->get->current_user();
@@ -175,7 +175,7 @@ class Zones extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information

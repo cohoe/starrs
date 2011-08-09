@@ -29,7 +29,9 @@
 			<?echo $data;?>
 			</div>
 		</div>
+		<div style="width: 100%; height: 1.2em; border: 1px solid black; text-align: center; float: left;">Created by Grant Cohoe</div>
 	</div>
+	
 </body>
 
 </html>

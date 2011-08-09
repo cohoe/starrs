@@ -18,7 +18,7 @@ class Reference extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$viewData['help'] = "This area contains all of the documentation for the IMPULSE application. The API reference describes all of the functions available to developers.";
 		$viewData['start'] = "";
@@ -47,7 +47,7 @@ class Reference extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			$info['data'] = $this->load->view("reference/index",null,TRUE);
 			$info['title'] = "API Reference";
@@ -73,7 +73,7 @@ class Reference extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view("core/data",array('data'=>$viewData),TRUE);
 		$info['title'] = "API Reference";
@@ -90,7 +90,7 @@ class Reference extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view("help/$object/$view",null,TRUE);
 		$info['title'] = "Help: $object/$view";

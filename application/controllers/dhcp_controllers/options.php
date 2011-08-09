@@ -14,7 +14,7 @@ class Options extends ImpulseController {
 	
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "DHCP Options";
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('dhcp/index',null,TRUE);
@@ -35,7 +35,7 @@ class Options extends ImpulseController {
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "DHCP ".ucfirst($mode)." Options";
 
 		// More view data
@@ -82,7 +82,7 @@ class Options extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Create DHCP Option";
 			
 			// More view data
@@ -153,7 +153,7 @@ class Options extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Delete DHCP Option";
 			
 			// More view data
@@ -257,7 +257,7 @@ class Options extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Edit DHCP Option";
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			$info['data'] = $this->load->view('dhcp/options/edit_single',array("option"=>$option,"value"=>$value),TRUE);
@@ -271,7 +271,7 @@ class Options extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Edit DHCP Option";
 			
 			// More view data

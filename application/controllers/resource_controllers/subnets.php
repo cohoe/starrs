@@ -30,7 +30,7 @@ class Subnets extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Subnets";
 		$navbar = new Navbar("Subnets", $navModes, $navOptions);
 
@@ -59,7 +59,7 @@ class Subnets extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Subnets";
 		$navbar = new Navbar("Subnets", $navModes, $navOptions);
 
@@ -83,7 +83,7 @@ class Subnets extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Subnet - ".self::$sNet->get_subnet();
 		$navbar = new Navbar("Subnet - ".self::$sNet->get_subnet(), $navModes, $navOptions);
 		
@@ -125,7 +125,7 @@ class Subnets extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information
@@ -169,7 +169,7 @@ class Subnets extends ImpulseController {
             
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Create Subnet";
 			$navbar = new Navbar("Create Subnet", $navModes, null);
 			
@@ -210,7 +210,7 @@ class Subnets extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['title'] = "Edit Subnet - ".self::$sNet->get_subnet();
 			$navbar = new Navbar("Edit Subnet - ".self::$sNet->get_subnet(), $navModes, null);
 			if($this->api->isadmin() == TRUE) {

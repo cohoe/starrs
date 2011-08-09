@@ -4,8 +4,7 @@
  */
 class Impulselib {
 
-	private $fname;
-	private $lname;
+	private $fullName;
 	private $uname;
 	private $CI;
 
@@ -19,8 +18,9 @@ class Impulselib {
 		#$_SERVER['WEBAUTH_LDAP_GIVENNAME'] = "Grant";
 		#$_SERVER['WEBAUTH_LDAP_SN'] = "Cohoe";
        	$this->uname = $this->CI->input->server('WEBAUTH_USER');
-		$this->fname = $this->CI->input->server('WEBAUTH_LDAP_GIVENNAME');
-		$this->lname = $this->CI->input->server('WEBAUTH_LDAP_SN');
+		#$this->fname = $this->CI->input->server('WEBAUTH_LDAP_GIVENNAME');
+		#$this->lname = $this->CI->input->server('WEBAUTH_LDAP_SN');
+		$this->fullName = $this->CI->input->server('WEBAUTH_LDAP_CN');
 	}
 
 	public function test() {
@@ -136,7 +136,8 @@ class Impulselib {
      * @return string
      */
 	public function get_name() {
-		return "$this->fname $this->lname";
+		#return "$this->fname $this->lname";
+		return $this->fullName;
 	}
 	
 	public function hostname($string) {
