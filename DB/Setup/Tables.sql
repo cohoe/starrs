@@ -507,7 +507,7 @@ WITHOUT OIDS;
 
 CREATE TABLE "network"."switchport_history"(
 "mac" MACADDR NOT NULL,
-"time" TIME WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "port_name" TEXT NOT NULL,
 "system_name" TEXT NOT NULL
 )
