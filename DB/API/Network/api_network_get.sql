@@ -355,3 +355,17 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_descriptions"(inet,text) RETURN
 	return;
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_switchview_descriptions"(inet,text) IS 'Get the descriptions of each port on a device';
+
+CREATE OR REPLACE FUNCTION "api"."get_snmp_rw"(input_system_name text) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "snmp_rw_community" FROM "network"."switchview" WHERE "system_name" = input_system_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_snmp_rw"(text) IS 'Get the name of the RW community of a system';
+
+CREATE OR REPLACE FUNCTION "api"."get_snmp_ro"(input_system_name text) RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "snmp_ro_community" FROM "network"."switchview" WHERE "system_name" = input_system_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_snmp_ro"(text) IS 'Get the name of the RO community of a system';
