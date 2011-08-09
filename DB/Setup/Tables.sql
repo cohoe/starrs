@@ -568,6 +568,15 @@ CONSTRAINT "switchview_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "systems"."type_family"(
+"family" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "type_family_pkey" PRIMARY KEY ("family")
+)
+WITHOUT OIDS;
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
@@ -655,3 +664,5 @@ COMMENT ON TABLE "network"."switchport_states" IS 'Switchport control and curren
 COMMENT ON TABLE "network"."switchport_macs" IS 'MAC addresses currently on a switchport';
 
 COMMENT ON TABLE "network"."switchview" IS 'Connection data for switch enabling';
+
+COMMENT ON TABLE "systems"."type_family" IS 'Family of device types';
