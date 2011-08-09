@@ -5,13 +5,17 @@ Useful for collecting metrics on OS usage and device types. Much better than Chu
 */
 
 SELECT api.initialize('root');
+/*
+Device families
+*/
+INSERT INTO "systems"."type_family" ("family") VALUES ('PC'),('Network');
 
 /* Supported System Types
 Lets us see what all is on the network
 */
 INSERT INTO "systems"."device_types" 
-	("type") VALUES 
-	('Router'),('Firewall'),('Switch'),('Hub'),('Wireless Access Point'),('Desktop'),('Server'),('Virtual Machine'),('Laptop');
+	("type","family") VALUES 
+	('Router','Network'),('Firewall','Network'),('Switch','Network'),('Hub','Network'),('Wireless Access Point','Network'),('Desktop','PC'),('Server','PC'),('Virtual Machine','PC'),('Laptop','PC');
 	
 /* Network Port Types
 For configuring views for Uplinks, trunks, and other such things
