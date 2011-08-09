@@ -29,7 +29,7 @@
 			<?echo $data;?>
 			</div>
 		</div>
-		<div style="width: 100%; height: 1.2em; border: 1px solid black; text-align: center; float: left;">Created by Grant Cohoe</div>
+		<div class="footer">Created 2011 by Grant Cohoe &amp; the IMPULSE Development Team</div>
 	</div>
 	
 </body>

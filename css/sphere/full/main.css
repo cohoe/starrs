@@ -82,11 +82,12 @@ body {
 }
 
 .footer {
-   position:absolute;
-   bottom:0;
-   width:900px;
-   height:1.2em;   /* Height of the footer */
-   background:gray;
-   text-align: center;
-   line-height: 1.2em;
+	width: 898px; 
+	height: 2em; 
+	line-height: 2em; 
+	border: 1px solid black; 
+	text-align: center; 
+	float: left; 
+	margin-top: -1px; 
+	font-size: 8pt;
 }
