@@ -193,3 +193,17 @@ CREATE OR REPLACE FUNCTION "api"."get_system_interface_switchport"(input_mac mac
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_switchport"(macaddr) IS 'Get the switchport data that a mac address is on';
+
+/* API - get_other_systems */
+CREATE OR REPLACE FUNCTION "api"."get_other_systems"(input_username text) RETURNS SETOF "systems"."system_data" AS $$
+	BEGIN
+		IF input_username IS NULL THEN
+			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."systems" ORDER BY "system_name" ASC);
+		ELSE
+			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."systems" WHERE "owner" != input_username ORDER BY "system_name" ASC);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_other_systems"(text) IS 'Get all system names owned by a given user';
