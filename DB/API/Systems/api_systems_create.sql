@@ -38,8 +38,21 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system');
-		RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-		FROM "systems"."systems" WHERE "system_name" = input_system_name);
+		RETURN QUERY (SELECT 
+			"systems"."systems"."system_name",
+			"systems"."systems"."type",
+			"systems"."device_types"."family",
+			"systems"."systems"."os_name",
+			"systems"."systems"."owner",
+			"systems"."systems"."comment",
+			"systems"."systems"."renew_date",
+			"systems"."systems"."date_created",
+			"systems"."systems"."date_modified",
+			"systems"."systems"."last_modifier"
+		FROM "systems"."systems" 
+		JOIN "systems"."device_types" on
+		"systems"."device_types"."type" = "systems"."systems"."type"
+		WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text) IS 'Create a new system';
