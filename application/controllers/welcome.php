@@ -4,8 +4,8 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 class Welcome extends ImpulseController {
 
 	public function index() {
-		#$this->_success("Success");
-		$this->load->view('testing/sidebar');
+		$this->_success("Success");
+		#$this->load->view('testing/sidebar');
 	}
 
     private function _load_get_started() {
