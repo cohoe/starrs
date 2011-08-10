@@ -109,6 +109,9 @@ class Systems extends ImpulseController {
 			catch (ObjectNotFoundException $oNFE) {
 				$this->_error("System not found!");
 			}
+            catch(DBException $dbE) {
+                $this->_error("Error viewing system: ".$dbE->getMessage());
+            }
 			$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
 			
 			// Navbar information
@@ -124,7 +127,7 @@ class Systems extends ImpulseController {
 			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
 			// Check for network system
-			if(get_class($sys) == 'NetworkSystem') {
+			if($sys->get_family() == "Network") {
 				$navbar->add_option('Switchports','/switchports/view/'.rawurlencode($sys->get_system_name()));
                 $navbar->add_option('Switchview','/switchview/settings/'.rawurlencode($sys->get_system_name()));
 			}

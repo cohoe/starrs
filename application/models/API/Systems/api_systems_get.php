@@ -16,12 +16,13 @@ class Api_systems_get extends ImpulseModel {
         // Generate results
         $resultSet = array();
         foreach($query->result_array() as $system) {
-            if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$system['type'])) {
+            if($system['family'] == 'Network') {
 				$sys = new NetworkSystem(
 					$system['system_name'],
 					$system['owner'],
 					$system['comment'],
 					$system['type'],
+                    $system['family'],
 					$system['os_name'],
 					$system['renew_date'],
 					$system['date_created'],
@@ -35,6 +36,7 @@ class Api_systems_get extends ImpulseModel {
 					$system['owner'],
 					$system['comment'],
 					$system['type'],
+                    $system['family'],
 					$system['os_name'],
 					$system['renew_date'],
 					$system['date_created'],
@@ -66,7 +68,7 @@ class Api_systems_get extends ImpulseModel {
 	
 	public function system($systemName, $complete=false) {
         // SQL Query
-		$sql = "SELECT * FROM api.get_system_data({$this->db->escape($systemName)})";
+		$sql = "SELECT * FROM api.get_system({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 
         // Check errors
@@ -77,12 +79,13 @@ class Api_systems_get extends ImpulseModel {
 		
 		// Generate results
 		$systemData = $query->row_array();
-        if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$systemData['type'])) {
+        if($systemData['family'] == 'Network') {
             $sys = new NetworkSystem(
                 $systemData['system_name'],
                 $systemData['owner'],
                 $systemData['comment'],
                 $systemData['type'],
+                $systemData['family'],
                 $systemData['os_name'],
                 $systemData['renew_date'],
                 $systemData['date_created'],
@@ -96,6 +99,7 @@ class Api_systems_get extends ImpulseModel {
                 $systemData['owner'],
                 $systemData['comment'],
                 $systemData['type'],
+                $systemData['family'],
                 $systemData['os_name'],
                 $systemData['renew_date'],
                 $systemData['date_created'],

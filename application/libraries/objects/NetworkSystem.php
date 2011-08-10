@@ -13,9 +13,9 @@ class NetworkSystem extends System {
     ////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
     
-    public function __construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
+    public function __construct($systemName, $owner, $comment, $type, $family, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
-		parent::__construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier);
+		parent::__construct($systemName, $owner, $comment, $type, $family, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier);
 
         try {
             $settings = $this->CI->api->network->get->switchview_settings($systemName);

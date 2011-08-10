@@ -32,6 +32,9 @@ class System extends ImpulseObject {
 	// string	The type of system
 	private $type;
 
+    // string   The family of the type of system
+    private $family;
+
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
@@ -40,13 +43,14 @@ class System extends ImpulseObject {
 	 * @param	string	$owner			The owning username of the system
 	 * @param	string	$comment		A comment on the system
 	 * @param	string	$type			The type of system
+     * @param	string	$family			The family of the type of system
 	 * @param	string	$osName			The name of the primary operating system
 	 * @param	long	$renewDate		The date the system needs renewed on
 	 * @param	long	$dateCreated	Unix timestamp when the record was created
 	 * @param	long	$dateModified	Unix timestamp when the record was modifed
 	 * @param	string	$lastModifier	The last user to modify the record
 	 */
-	public function __construct($systemName, $owner, $comment, $type, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
+	public function __construct($systemName, $owner, $comment, $type, $family, $osName, $renewDate, $dateCreated, $dateModified, $lastModifier) {
 		// Chain into the parent
 		parent::__construct($dateCreated, $dateModified, $lastModifier);
 		
@@ -55,6 +59,7 @@ class System extends ImpulseObject {
 		$this->owner 		= $owner;
 		$this->comment 		= $comment;
 		$this->type			= $type;
+        $this->family		= $family;
 		$this->osName		= $osName;
 		$this->renewDate	= $renewDate; 
 		
@@ -71,6 +76,7 @@ class System extends ImpulseObject {
 	public function get_comment()       { return $this->comment; }
 	public function get_renew_date()    { return $this->renewDate; }
 	public function get_type()          { return $this->type; }
+    public function get_family()        { return $this->family; }
 	public function get_os_name()       { return $this->osName; }
 	public function get_interfaces()    { return $this->interfaces; }
     

@@ -23,12 +23,13 @@ class Api_systems_create extends ImpulseModel {
         }
 
 		// Generate and return result
-        if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$systemData['type'])) {
+        if($query->row()->family ==  'Network') {
             return new NetworkSystem(
                 $query->row()->system_name,
                 $query->row()->owner,
                 $query->row()->comment,
                 $query->row()->type,
+                $query->row()->family,
                 $query->row()->os_name,
                 $query->row()->renew_date,
                 $query->row()->date_created,
@@ -42,6 +43,7 @@ class Api_systems_create extends ImpulseModel {
                 $query->row()->owner,
                 $query->row()->comment,
                 $query->row()->type,
+                $query->row()->family,
                 $query->row()->os_name,
                 $query->row()->renew_date,
                 $query->row()->date_created,
