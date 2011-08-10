@@ -86,8 +86,9 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	sub shared_networks
 	{
 		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-		$output .= "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n  ";
+		my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n  ";
 		$output .= &subnets;
+		$output .= "}\n";
 		return $output;
 	}
 	
@@ -132,6 +133,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# Subnet ranges
 	sub subnet_ranges
 	{
+		my $subnet = $_[0];
 		my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
 		my ($range_name, $first_ip, $last_ip, $class, $row);
 		while (defined($row = spi_fetchrow($pool)))
