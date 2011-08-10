@@ -30,19 +30,21 @@ class Sidebar {
 	public function __construct() {
 		$this->CI =& get_instance();
 		$currentUser = $this->CI->api->get->current_user();
-		$this->ownedSystems = $this->CI->api->systems->list->owned_systems($currentUser);
-		foreach($this->ownedSystems as $system) {
-			$this->_load_system_data($system);
-		}
-		
-		$this->allSystems = $this->CI->api->systems->list->other_systems($currentUser);
-		foreach($this->allSystems as $system) {
-			try {
+		try {
+			$this->ownedSystems = $this->CI->api->systems->list->owned_systems($currentUser);
+			foreach($this->ownedSystems as $system) {
 				$this->_load_system_data($system);
 			}
-			catch(ObjectNotFoundException $onfE) {}
 		}
-		
+		catch(ObjectNotFoundException $onfE) {}
+		try {	
+			$this->allSystems = $this->CI->api->systems->list->other_systems($currentUser);
+			foreach($this->allSystems as $system) {
+				$this->_load_system_data($system);
+			}
+		}
+		catch(ObjectNotFoundException $onfE) {}
+
 		try {
 			$this->ownedMetahosts = $this->CI->api->firewall->list->owned_metahosts($currentUser);
 		}
@@ -166,9 +168,11 @@ class Sidebar {
 	
 	public function load_owned_system_view_data() {
 		$viewData = "";
-		
-		foreach($this->ownedSystems as $systemName) {
-			$viewData .= $this->_load_system_view_data($systemName,"OWNED");
+	
+		if($this->ownedSystems) {
+			foreach($this->ownedSystems as $systemName) {
+				$viewData .= $this->_load_system_view_data($systemName,"OWNED");
+			}
 		}
 		
 		return $viewData;
@@ -176,14 +180,16 @@ class Sidebar {
 	
 	public function load_owned_metahost_view_data() {
 		$viewData = "";
-		
-		foreach($this->ownedMetahosts as $metahostName) {
-			$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$rwSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
+	
+		if($this->ownedMetahosts) {
+			foreach($this->ownedMetahosts as $metahostName) {
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$rwSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
 				<ul style="display: none;">
 					<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
 					<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
 				</ul>
 			</li>';
+			}
 		}
 		
 		return $viewData;
@@ -192,13 +198,15 @@ class Sidebar {
 	public function load_other_metahost_view_data() {
 		$viewData = "";
 		
-		foreach($this->otherMetahosts as $metahostName) {
-			$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$roSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
-				'<ul style="display: none;">
-					<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-					<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
-				</ul>
-			</li>';
+		if($this->otherMetahosts) {
+			foreach($this->otherMetahosts as $metahostName) {
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$roSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
+					'<ul style="display: none;">
+						<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+						<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					</ul>
+				</li>';
+			}
 		}
 		
 		return $viewData;
