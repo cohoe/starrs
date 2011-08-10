@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/Firewall/api_firewall_create.php");
 require_once(APPPATH . "models/API/Firewall/api_firewall_modify.php");
 require_once(APPPATH . "models/API/Firewall/api_firewall_remove.php");
 require_once(APPPATH . "models/API/Firewall/api_firewall_get.php");
+require_once(APPPATH . "models/API/Firewall/api_firewall_list.php");
 
 /**
  * Firewall related information
@@ -19,6 +20,7 @@ class Api_firewall extends ImpulseModel {
 		$this->modify = new Api_firewall_modify();
 		$this->remove = new Api_firewall_remove();
         $this->get    = new Api_firewall_get();
+		$this->list   = new Api_firewall_list();
 	}
 	
 

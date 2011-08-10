@@ -8,6 +8,7 @@ abstract class ImpulseModel extends CI_Model {
     public $modify;
     public $remove;
     public $get;
+	public $list;
 
 	/**
      * Constructor

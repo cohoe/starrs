@@ -1,5 +1,5 @@
 <div class="item_container">
-	<?foreach($systems as $system) {?>
-		<a href="/systems/view/<?echo $system;?>/overview"><div class="system_list_box"><?echo $system;?></div></a>
+	<?foreach($systems as $sys) {?>
+		<a href="/systems/view/<?echo $sys->get_system_name();?>/overview"><div class="system_list_box"><?echo $sys->get_system_name();?></div></a>
 	<?}?>
 </div>

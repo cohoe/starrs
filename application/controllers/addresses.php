@@ -40,7 +40,7 @@ class Addresses extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Overview - ".self::$addr->get_address();
 		$viewData['address'] = self::$addr;
 		$navbar = new Navbar("Address Overview", $navModes, $navOptions);
@@ -101,7 +101,7 @@ class Addresses extends ImpulseController {
 
         // Load the view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
         // Get the preset form data for drop down lists and things
@@ -164,7 +164,7 @@ class Addresses extends ImpulseController {
 
         // Load the view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
         // Get the preset form data for drop down lists and things
@@ -243,7 +243,7 @@ class Addresses extends ImpulseController {
 			
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for drop down lists and things

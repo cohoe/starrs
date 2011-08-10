@@ -43,7 +43,7 @@ class Metahost_rule extends ImpulseController {
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$viewData['fwRule'] = self::$fwRule;
 		$info['title'] = "Firewall Metahost Rule";
 		$navbar = new Navbar("Firewall Metahost Rule", $navModes, $navOptions);
@@ -95,7 +95,7 @@ class Metahost_rule extends ImpulseController {
 			
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for dropdown lists and things

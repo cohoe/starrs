@@ -38,7 +38,7 @@ class Dns extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$viewData['address'] = self::$addr;
 		$info['title'] = "DNS - ".self::$addr->get_address();
 		$title = "DNS for ".self::$addr->get_address();
@@ -113,7 +113,7 @@ class Dns extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 			// Get the preset form data for drop down lists and things
@@ -170,7 +170,7 @@ class Dns extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 			// Get the preset form data for drop down lists and things
@@ -219,7 +219,7 @@ class Dns extends ImpulseController {
 
 				// Load the view data
 				$info['header'] = $this->load->view('core/header',"",TRUE);
-				$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+				$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 				$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 				// Get the preset form data for drop down lists and things
@@ -265,7 +265,7 @@ class Dns extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 			// Get the preset form data for drop down lists and things
@@ -370,7 +370,7 @@ class Dns extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
 			// Get the preset form data for drop down lists and things

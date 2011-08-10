@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/Systems/api_systems_create.php");
 require_once(APPPATH . "models/API/Systems/api_systems_modify.php");
 require_once(APPPATH . "models/API/Systems/api_systems_remove.php");
 require_once(APPPATH . "models/API/Systems/api_systems_get.php");
+require_once(APPPATH . "models/API/Systems/api_systems_list.php");
 
 class API_Systems extends ImpulseModel {
 	
@@ -16,6 +17,7 @@ class API_Systems extends ImpulseModel {
 		$this->modify = new Api_systems_modify();
 		$this->remove = new Api_systems_remove();
         $this->get    = new Api_systems_get();
+		$this->list   = new Api_systems_list();
 	}
 
 	public function renew($sys) {

@@ -12,7 +12,7 @@ class Statistics extends CI_Controller {
         
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('statistics/getstarted',array(),TRUE);
 		$info['title'] = "Statistics";
@@ -33,7 +33,7 @@ class Statistics extends CI_Controller {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('statistics/os_distribution',array("data"=>$data),TRUE);
 		$info['title'] = "OS Distribution";
@@ -54,7 +54,7 @@ class Statistics extends CI_Controller {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('statistics/os_family_distribution',array("data"=>$data),TRUE);
 		$info['title'] = "OS Family Distribution";

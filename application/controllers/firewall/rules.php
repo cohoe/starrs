@@ -28,7 +28,7 @@ class Rules extends ImpulseController {
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$viewData['rules'] = self::$addr->get_rules();
 		$viewData['deny'] = self::$addr->get_fw_default();
 		$viewData['addr'] = self::$addr;
@@ -91,7 +91,7 @@ class Rules extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$viewData['transports'] = $this->api->firewall->get->transports();
 			$viewData['addr'] = self::$addr;
 			$viewData['fwProgs'] = $this->api->firewall->get->programs();
@@ -220,7 +220,7 @@ class Rules extends ImpulseController {
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$viewData['addr'] = self::$addr;
 			$viewData['user'] = $this->impulselib->get_username();
 			if($this->api->isadmin() == TRUE) {

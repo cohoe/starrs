@@ -5,9 +5,9 @@
  */
 class Api_systems_get extends ImpulseModel {
 	
-	public function systems($owner=null) {
+	public function systems($owner=null, $complete=false) {
         // SQL Query
-        $sql = "SELECT api.get_systems({$this->db->escape($owner)})";
+        $sql = "SELECT * FROM api.get_systems({$this->db->escape($owner)})";
         $query = $this->db->query($sql);
 
         // Check error
@@ -16,7 +16,43 @@ class Api_systems_get extends ImpulseModel {
         // Generate results
         $resultSet = array();
         foreach($query->result_array() as $system) {
-            $resultSet[] = $system['get_systems'];
+            if(preg_match("/Router|Firewall|Switch|Hub|Wireless Access Point/",$system['type'])) {
+				$sys = new NetworkSystem(
+					$system['system_name'],
+					$system['owner'],
+					$system['comment'],
+					$system['type'],
+					$system['os_name'],
+					$system['renew_date'],
+					$system['date_created'],
+					$system['date_modified'],
+					$system['last_modifier']
+				);
+			}
+			else {
+				$sys = new System(
+					$system['system_name'],
+					$system['owner'],
+					$system['comment'],
+					$system['type'],
+					$system['os_name'],
+					$system['renew_date'],
+					$system['date_created'],
+					$system['date_modified'],
+					$system['last_modifier']
+				);
+			}
+			
+			// Generate a complete object
+			if($complete == true) {
+				// Grab the interfaces that the system has
+				foreach($this->system_interfaces($sys->get_system_name(), $complete) as $int) {
+					$sys->add_interface($int);
+				} 
+			}
+			
+			// Add to the array
+			$resultSet[] = $sys;
         }
 
         // Return results

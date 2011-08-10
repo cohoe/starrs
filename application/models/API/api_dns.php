@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/DNS/api_dns_create.php");
 require_once(APPPATH . "models/API/DNS/api_dns_modify.php");
 require_once(APPPATH . "models/API/DNS/api_dns_remove.php");
 require_once(APPPATH . "models/API/DNS/api_dns_get.php");
+require_once(APPPATH . "models/API/DNS/api_dns_list.php");
 
 /**
  *	DNS
@@ -19,6 +20,7 @@ class Api_dns extends ImpulseModel {
 		$this->modify = new Api_dns_modify();
 		$this->remove = new Api_dns_remove();
         $this->get    = new Api_dns_get();
+		$this->list   = new Api_dns_list();
 	}
 
 	public function resolve($hostname, $zone, $family) {

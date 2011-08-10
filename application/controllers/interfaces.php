@@ -55,7 +55,7 @@ class Interfaces extends ImpulseController {
 
             // Load the view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
-            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 
             // Get the preset form data for dropdown lists and things
@@ -119,7 +119,7 @@ class Interfaces extends ImpulseController {
 			
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for drop down lists and things
@@ -176,7 +176,7 @@ class Interfaces extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information
@@ -222,7 +222,7 @@ class Interfaces extends ImpulseController {
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->_load_addresses(self::$int);
 		$info['title'] = "Addresses - ".$mac;
@@ -261,7 +261,7 @@ class Interfaces extends ImpulseController {
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['title'] = "Interface ".self::$int->get_mac();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $info['data'] = $this->load->view('interfaces/view',array('int'=>self::$int),TRUE);

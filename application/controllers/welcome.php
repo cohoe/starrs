@@ -4,11 +4,8 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
 class Welcome extends ImpulseController {
 
 	public function index() {
-		#$this->_load_get_started();
-		#$this->_load_demo();
-		$this->_success("Success");
-		#$this->warning("warning");
-		#$this->error("Error");
+		#$this->_success("Success");
+		$this->load->view('testing/sidebar');
 	}
 
     private function _load_get_started() {
@@ -18,7 +15,7 @@ class Welcome extends ImpulseController {
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('getstarted',"",TRUE);
 		$info['title'] = "Getting Started";
@@ -38,7 +35,7 @@ class Welcome extends ImpulseController {
 
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $viewData;
 		$info['title'] = "Demo";

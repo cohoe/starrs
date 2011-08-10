@@ -23,7 +23,7 @@ class Metahost_members extends ImpulseController {
 		
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->_load_members();
 		$info['title'] = "Metahost Members - ".self::$mHost->get_name();
@@ -84,7 +84,7 @@ class Metahost_members extends ImpulseController {
 
 			// Load the view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Get the preset form data for dropdown lists and things

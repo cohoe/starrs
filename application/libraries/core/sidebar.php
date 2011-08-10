@@ -5,46 +5,84 @@ class Sidebar {
 	////////////////////////////////////////////////////////////////////////
 	// MEMBER VARIABLES
 	
-	private $navHeadings;
+	private $ownedSystems;
+	private $interfaces;
+	private $addresses;
+	private $CI;
+	private $allSystems;
+	private $ownedMetahosts;
+	private $otherMetahosts;
+	private $ownedKeys;
+	private $otherKeys;
+	private $ownedZones;
+	private $otherZones;
+	private $ownedSubnets;
+	private $otherSubnets;
+	private $ranges;
+	
+	private static $rwSystemImageUrl = "http://sub.obive.net/up.png";
+	private static $roSystemImageUrl = "http://sub.obive.net/error.png";
+	private static $xxSystemImageUrl = "http://sub.obive.net/down.png";
 	
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
 	
 	public function __construct() {
-		$systems['Owned'] = "/systems/owned";
-		$systems['All'] = "/systems/all";
-		$this->navHeadings['Systems'] = new Navitem('Systems','/systems',$systems);
+		$this->CI =& get_instance();
+		$currentUser = $this->CI->api->get->current_user();
+		$this->ownedSystems = $this->CI->api->systems->list->owned_systems($currentUser);
+		foreach($this->ownedSystems as $system) {
+			$this->_load_system_data($system);
+		}
 		
-		$metahosts['Owned'] = "/firewall/metahosts/owned";
-		$metahosts['All'] = "/firewall/metahosts/all";
-		$this->navHeadings['Metahosts'] = new Navitem('Metahosts','/firewall/metahosts',$metahosts);
-
-		$resources['Keys'] = "/resources/keys";
-		$resources['Zones'] = "/resources/zones";
-		$resources['Subnets']['Base'] = "/resources/subnets";
-		$resources['Subnets']['Owned'] = "/resources/subnets/owned";
-		$resources['Subnets']['All'] = "/resources/subnets/all";
-		$resources['Ranges'] = "/resources/ranges";
-		$this->navHeadings['Resources'] = new Navitem('Resources','/resources',$resources);
+		$this->allSystems = $this->CI->api->systems->list->other_systems($currentUser);
+		foreach($this->allSystems as $system) {
+			try {
+				$this->_load_system_data($system);
+			}
+			catch(ObjectNotFoundException $onfE) {}
+		}
 		
-		$dhcp['Classes'] = "/dhcp/classes/";
-		$dhcp['Global Options'] = "/dhcp/options/view/global";
-		$this->navHeadings['DHCP'] = new Navitem('DHCP','/dhcp',$dhcp);
+		try {
+			$this->ownedMetahosts = $this->CI->api->firewall->list->owned_metahosts($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
+		try {
+			$this->otherMetahosts = $this->CI->api->firewall->list->other_metahosts($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
 		
-		$admin['Site Configuration'] = "/admin/configuration/view/site";
-		$this->navHeadings['Administration'] = new Navitem('Administration','/admin',$admin);
+		try {
+			$this->ownedKeys = $this->CI->api->dns->list->owned_keys($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
+		try {	
+			$this->otherKeys = $this->CI->api->dns->list->other_keys($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
 		
-		$reference['API'] = "/reference/api";
-		$reference['Help'] = "/reference/help";
-		$this->navHeadings['Reference'] = new Navitem('Reference','/reference',$reference);
+		try {
+			$this->ownedZones = $this->CI->api->dns->list->owned_zones($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
+		try {	
+			$this->otherZones = $this->CI->api->dns->list->other_zones($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
 		
-		$output['DHCP Config'] = "/output/view/dhcpd.conf";
-		$output['Firewall Default Queue'] = "/output/view/fw_default_queue";
-		$this->navHeadings['Output'] = new Navitem('Output','/output',$output);
+		try {
+			$this->ownedSubnets = $this->CI->api->ip->list->owned_subnets($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
+		try {	
+			$this->otherSubnets = $this->CI->api->ip->list->other_subnets($currentUser);
+		}
+		catch(ObjectNotFoundException $onfE) {}
 		
-		#$this->navHeadings['Statistics'] = "/statistics";
-		#$this->navHeadings['Administration'] = "/admin";
-		#$this->navHeadings['Output'] = "/output";
+		try {	
+			$this->ranges = $this->CI->api->ip->list->ranges();
+		}
+		catch(ObjectNotFoundException $onfE) {}
 	}
 	
 	//////////////////////////////////////////////////////////////////////
@@ -52,14 +90,205 @@ class Sidebar {
 	
 	public function get_nav_headings()  { return $this->navHeadings; }
 	
+	public function get_interfaces($systemName=NULL) { 
+		if(isset($this->interfaces[$systemName])) { 
+			return $this->interfaces[$systemName]; 
+		}
+		return null;
+	}
+	
+	public function get_interface_addresses($mac=NULL)  { return $this->addresses[$mac]; }
+	
 	//////////////////////////////////////////////////////////////////////
 	/// SETTERS
 	
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
-
+	
+	private function _load_system_data($system) {
+		$this->interfaces[$system] = $this->CI->api->systems->list->interfaces($system);
+		foreach($this->interfaces[$system] as $interface) {
+			$this->addresses[$interface] = $this->CI->api->systems->list->interface_addresses($interface);
+		}
+	}
+	
+	private function _load_address_view_data($address) {
+		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/addresses/view/'.$address.'">.'.$address.'</a>
+					<ul style="display: none;">
+						<li><a href="/dns/view/'.$address.'">DNS Records</a></li>
+						<li class="last"><a href="/firewall/rules/view/'.$address.'">Firewall Rules</a></li>
+					</ul>
+				</li>';
+	}
+	
+	private function _load_interface_view_data($systemName,$interface) {
+		
+		$addressData = "";
+		
+		foreach($this->addresses[$this->interfaces[$systemName][$interface]] as $address) {
+			$addressData .= $this->_load_address_view_data($address);
+		}
+		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
+					<ul style="display: none;">'.
+						$addressData.
+					'</ul>
+				</li>';
+	}
+	
+	private function _load_system_view_data($systemName,$view) {
+		$systemData = "";
+		
+		$viewUrl = ($view=="OWNED")?self::$rwSystemImageUrl:self::$roSystemImageUrl;
+		
+		if(isset($this->interfaces[$systemName])) {
+			foreach(array_keys($this->interfaces[$systemName]) as $interface) {
+				$systemData = $this->_load_interface_view_data($systemName,$interface);
+			}
+		}
+		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.$systemName.'">'.$systemName.'</a>
+			<ul style="display: none;">'.$systemData.
+			'</ul>
+		</li>';
+	}
+	
     ////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
+	
+	public function load_other_system_view_data() {
+		$viewData = "";
+		
+		foreach($this->allSystems as $systemName) {
+			$viewData .= $this->_load_system_view_data($systemName,"OTHER");
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_owned_system_view_data() {
+		$viewData = "";
+		
+		foreach($this->ownedSystems as $systemName) {
+			$viewData .= $this->_load_system_view_data($systemName,"OWNED");
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_owned_metahost_view_data() {
+		$viewData = "";
+		
+		foreach($this->ownedMetahosts as $metahostName) {
+			$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$rwSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
+				<ul style="display: none;">
+					<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+					<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+				</ul>
+			</li>';
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_other_metahost_view_data() {
+		$viewData = "";
+		
+		foreach($this->otherMetahosts as $metahostName) {
+			$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$roSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
+				'<ul style="display: none;">
+					<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+					<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+				</ul>
+			</li>';
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_owned_key_view_data() {
+		$viewData = "";
+		
+		if($this->ownedKeys) {
+			foreach($this->ownedKeys as $keyname) {
+				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_other_key_view_data() {
+		$viewData = "";
+		
+		if($this->otherKeys) {
+			foreach($this->otherKeys as $keyname) {
+				$viewData .= '<li><img src="'.self::$xxSystemImageUrl.'" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_owned_zone_view_data() {
+		$viewData = "";
+		
+		if($this->ownedZones) {
+			foreach($this->ownedZones as $zone) {
+				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_other_zone_view_data() {
+		$viewData = "";
+		
+		if($this->otherZones) {
+			foreach($this->otherZones as $zone) {
+				$viewData .= '<li><img src="'.self::$roSystemImageUrl.'" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_owned_subnet_view_data() {
+		$viewData = "";
+		
+		if($this->ownedSubnets) {
+			foreach($this->ownedSubnets as $subnet) {
+				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_other_subnet_view_data() {
+		$viewData = "";
+		
+		if($this->otherSubnets) {
+			foreach($this->otherSubnets as $subnet) {
+				$viewData .= '<li><img src="'.self::$roSystemImageUrl.'" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function load_range_view_data() {
+		$viewData = "";
+		
+		$viewUrl = ($this->CI->api->isadmin())?self::$rwSystemImageUrl:self::$roSystemImageUrl;
+		
+		if($this->ranges) {
+			foreach($this->ranges as $range) {
+				$viewData .= '<li><img src="'.$viewUrl.'" /> <a href="/resources/ranges/view/'.$range.'">'.$range.'</a></li>';
+			}
+		}
+		
+		return $viewData;
+	}
 	
 }
 /* End of file sidebar.php */

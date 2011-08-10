@@ -49,7 +49,7 @@ class Switchview extends ImpulseController {
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['title'] = "Switchview Settings - ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $info['data'] = $viewData;
@@ -92,7 +92,7 @@ class Switchview extends ImpulseController {
 
             // Load view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
-            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
             $info['title'] = "Create Switchview Settings";
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
             $info['data'] = $this->load->view('network/switchview/create',null,TRUE);
@@ -143,7 +143,7 @@ class Switchview extends ImpulseController {
 
             // Load view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
-            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
             $info['title'] = "Edit Switchview Settings";
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
             $info['data'] = $this->load->view('network/switchview/edit',array("sys"=>self::$sys),TRUE);

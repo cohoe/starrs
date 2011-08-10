@@ -31,7 +31,7 @@ class Switchport extends ImpulseController {
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['title'] = "Switchport Details";
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $viewData['sPort'] = self::$sPort;
@@ -96,7 +96,7 @@ class Switchport extends ImpulseController {
 
             // Load view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
-            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
             $info['title'] = "Edit Switchport";
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
             $viewData['sPort'] = self::$sPort;
@@ -136,7 +136,7 @@ class Switchport extends ImpulseController {
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['title'] = "Switchport History";
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         

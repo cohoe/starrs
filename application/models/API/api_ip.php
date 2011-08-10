@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/IP/api_ip_create.php");
 require_once(APPPATH . "models/API/IP/api_ip_modify.php");
 require_once(APPPATH . "models/API/IP/api_ip_remove.php");
 require_once(APPPATH . "models/API/IP/api_ip_get.php");
+require_once(APPPATH . "models/API/IP/api_ip_list.php");
 
 /**
  * IP address information
@@ -19,6 +20,7 @@ class Api_ip extends ImpulseModel {
 		$this->modify = new Api_ip_modify();
 		$this->remove = new Api_ip_remove();
         $this->get    = new Api_ip_get();
+		$this->list   = new Api_ip_list();
 	}
 	
 	public function arp($address) {

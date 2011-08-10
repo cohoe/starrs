@@ -70,6 +70,7 @@ class Systems extends ImpulseController {
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+		#$info['sidebar'] = $this->load->view('testing/sidebar',null,TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $viewData;
 		$info['title'] = "Owned Systems";
@@ -86,7 +87,6 @@ class Systems extends ImpulseController {
      * @return void
      */
 	public function view($systemName=NULL,$target=NULL) {
-
 		$systemName = urldecode($systemName);
 		$target = urldecode($target);
 		

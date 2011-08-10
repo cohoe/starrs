@@ -11,11 +11,25 @@
 	<link href="/css/sphere/full/addresses.css" rel="stylesheet" type="text/css" />
 	<link href="/css/sphere/full/systems.css" rel="stylesheet" type="text/css" />
     <link href="/css/sphere/full/tabledata.css" rel="stylesheet" type="text/css" />
+	<link href="/css/sphere/full/sidebar.css" rel="stylesheet"  type="text/css" />
 	<style>#helpDiv { display:none; background-color:green;}</style><!-- @todo: not sure if this should be it's own css file -->
 	<!-- Also ^ needs to have the padding the same color as the background -->
 	
 	<script type="text/javascript" src='/js/jquery-1.6.2.js'></script>
 	<script type="text/javascript" src='/js/help.js'></script>
+	<script src="/js/jquery.cookie.js" type="text/javascript"></script>
+	<script src="/js/jquery.treeview.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(function() {
+		$("#tree").treeview({
+			collapsed: true,
+			// animated: "none",
+			control:"#sidetreecontrol",
+			prerendered: true,
+			persist: "location"
+		});
+	})	
+	</script>
 </head>
 
 <body>

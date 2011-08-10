@@ -33,7 +33,7 @@ class Switchports extends ImpulseController {
 
         // Load view data
         $info['header'] = $this->load->view('core/header',"",TRUE);
-        $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
         $info['title'] = "Switchports on ".self::$sys->get_system_name();
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $info['data'] = $viewData;
@@ -100,7 +100,7 @@ class Switchports extends ImpulseController {
 
             // Load view data
             $info['header'] = $this->load->view('core/header',"",TRUE);
-            $info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
+            $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
             $info['title'] = "Create Switchport";
             $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
             $form['sys'] = self::$sys;
