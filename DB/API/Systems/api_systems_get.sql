@@ -73,12 +73,14 @@ CREATE OR REPLACE FUNCTION "api"."get_system_data"(input_system_name text) RETUR
 $$ LANGUAGE 'plpgsql';
 
 /* API - get_systems */
-CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF text AS $$
+CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
 		IF input_username IS NULL THEN
-			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" ORDER BY "system_name" ASC);
+			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."systems" ORDER BY "system_name" ASC);
 		ELSE
-			RETURN QUERY (SELECT "system_name" FROM "systems"."systems" WHERE "owner" = input_username ORDER BY "system_name" ASC);
+			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
+			FROM "systems"."systems" WHERE "owner" = input_username ORDER BY "system_name" ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
