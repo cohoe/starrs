@@ -65,10 +65,23 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_data"(macaddr) IS 'Get all interface information on a system for a specific interface';
 
 /* API - get_system_data */
-CREATE OR REPLACE FUNCTION "api"."get_system_data"(input_system_name text) RETURNS SETOF "systems"."system_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system"(input_system_name text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."systems" WHERE "system_name" = input_system_name);
+		RETURN QUERY (SELECT 
+			"systems"."systems"."system_name",
+			"systems"."systems"."type",
+			"systems"."device_types"."family",
+			"systems"."systems"."os_name",
+			"systems"."systems"."owner",
+			"systems"."systems"."comment",
+			"systems"."systems"."renew_date",
+			"systems"."systems"."date_created",
+			"systems"."systems"."date_modified",
+			"systems"."systems"."last_modifier"
+		FROM "systems"."systems" 
+		JOIN "systems"."device_types" on
+		"systems"."device_types"."type" = "systems"."systems"."type"
+		WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 
@@ -76,11 +89,38 @@ $$ LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF "systems"."system_data" AS $$
 	BEGIN
 		IF input_username IS NULL THEN
-			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."systems" ORDER BY "system_name" ASC);
+			RETURN QUERY (SELECT 
+				"systems"."systems"."system_name",
+				"systems"."systems"."type",
+				"systems"."device_types"."family",
+				"systems"."systems"."os_name",
+				"systems"."systems"."owner",
+				"systems"."systems"."comment",
+				"systems"."systems"."renew_date",
+				"systems"."systems"."date_created",
+				"systems"."systems"."date_modified",
+				"systems"."systems"."last_modifier"
+			FROM "systems"."systems" 
+			JOIN "systems"."device_types" on
+			"systems"."device_types"."type" = "systems"."systems"."type"
+			ORDER BY "system_name" ASC);
 		ELSE
-			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."systems" WHERE "owner" = input_username ORDER BY "system_name" ASC);
+			RETURN QUERY (SELECT 
+				"systems"."systems"."system_name",
+				"systems"."systems"."type",
+				"systems"."device_types"."family",
+				"systems"."systems"."os_name",
+				"systems"."systems"."owner",
+				"systems"."systems"."comment",
+				"systems"."systems"."renew_date",
+				"systems"."systems"."date_created",
+				"systems"."systems"."date_modified",
+				"systems"."systems"."last_modifier"
+			FROM "systems"."systems" 
+			JOIN "systems"."device_types" on
+			"systems"."device_types"."type" = "systems"."systems"."type" 
+			WHERE "owner" = input_username 
+			ORDER BY "system_name" ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -193,17 +233,3 @@ CREATE OR REPLACE FUNCTION "api"."get_system_interface_switchport"(input_mac mac
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_switchport"(macaddr) IS 'Get the switchport data that a mac address is on';
-
-/* API - get_other_systems */
-CREATE OR REPLACE FUNCTION "api"."get_other_systems"(input_username text) RETURNS SETOF "systems"."system_data" AS $$
-	BEGIN
-		IF input_username IS NULL THEN
-			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."systems" ORDER BY "system_name" ASC);
-		ELSE
-			RETURN QUERY (SELECT "system_name","type","os_name","owner","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."systems" WHERE "owner" != input_username ORDER BY "system_name" ASC);
-		END IF;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_other_systems"(text) IS 'Get all system names owned by a given user';
