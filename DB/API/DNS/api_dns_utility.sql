@@ -106,18 +106,99 @@ CREATE OR REPLACE FUNCTION "api"."dns_resolve"(input_hostname text, input_zone t
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."dns_resolve"(text, text, integer) IS 'Resolve a hostname/zone to its IP address';
 
-/* API - nsupdate */
-CREATE OR REPLACE FUNCTION "api"."nsupdate"() RETURNS TEXT AS $$
-	my $sth = spi_query("SELECT * FROM dns.queue");
-	my $result = $sth->{status};
-	while (defined ($row = spi_fetchrow($sth))) {
-		$result .= "Hello";
-		my $command .= "UPDATE $row->{directive} $row->{hostname}.$row->{zone} $row->{ttl} $row->{type} $row->{extra} $row->{target} \nsend";
-		$result .= `echo "$command" | nsupdate 2>&1`;
+CREATE OR REPLACE FUNCTION "api"."nsupdate"(zone text, keyname text, key text, server inet, action text, record text) RETURNS TEXT AS $$
+	use strict;
+	use warnings;
+	use v5.10;
+	use Net::DNS;
+
+	# Local variable information
+	our $zone = shift(@_) or die("Invalid zone argument");
+	our $keyname = shift(@_) or die("Invalid keyname argument");
+	our $key = shift(@_) or die("Invalid key argument");
+	our $server = shift(@_) or die("Invalid server argument");
+	our $action = shift(@_) or die("Invalid action argument");
+	our $record = shift(@_) or die("Invalid record argument");
+
+	# DNS Server
+	our $res = Net::DNS::Resolver->new;
+	$res->nameservers($server);
+
+
+	# Update packet
+	our $update = Net::DNS::Update->new($zone);
+
+	# Do something
+	my $returnCode;
+	if($action eq "DELETE") {
+		$returnCode = &delete();
 	}
-	
-	#my $result = $command;
-	return $result;
+	elsif($action eq "ADD") {
+		$returnCode = &add();
+	}
+	else {
+		$returnCode = "INVALID ACTION";
+	}
+
+	# Delete a record
+	sub delete() {
+		# The record must be there to delete it
+		$update->push(pre => yxrrset($record));
+
+		# Delete the record
+		$update->push(update => rr_del($record));
+
+		# Sign it
+		$update->sign_tsig($keyname, $key);
+
+		# Send it
+		&send();
+	}
+
+	# Add a record
+	sub add() {
+		# The record must not exist
+		$update->push(pre => nxrrset($record));
+
+		# Add the record
+		$update->push(update => rr_add($record));
+
+		# Sign it
+		$update->sign_tsig($keyname, $key);
+
+		# Send it
+		&send();
+	}
+
+	# Send an update
+	sub send() {
+		my $reply = $res->send($update);
+		if($reply) {
+			if($reply->header->rcode eq 'NOERROR') {
+				return 0;
+			}
+			else {
+				return &interpret_error($reply->header->rcode);
+			}
+		}
+		else {
+			return &interpret_error($res->errorstring);
+		}
+	}
+
+	# Interpret the error codes if any
+	sub interpret_error() {
+		my $error = shift(@_);
+
+		given ($error) {
+			when (/NXRRSET/) { return "Error $error: Name does not exist"; }
+			when (/YXRRSET/) { return "Error $error: Name exists"; }
+			when (/NOTAUTH/) { return "Error $error: Not authorized. Check system clocks and or key"; }
+			default { return "$error unrecognized"; }
+		}
+	}
+
+	return $returnCode;
 $$ LANGUAGE 'plperlu';
 
 /* API - check_dns_hostname */
