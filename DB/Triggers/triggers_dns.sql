@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
+		/*
 		-- Check for zone mismatch
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."subnets"
@@ -14,7 +15,7 @@ CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
 		IF (RowCount < 1) THEN 
 			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
 		END IF;
-		
+		*/
 		-- Autofill type
 		IF family(NEW."address") = 4 THEN
 			NEW."type" := 'A';
