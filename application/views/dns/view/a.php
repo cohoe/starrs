@@ -7,11 +7,13 @@
 			<th>TTL</th>
 			<th>Last Modifier</th>
 		</tr>
-		<tr>
-			<td><?echo $record->get_hostname().".".$record->get_zone();?></td>
-			<td><?echo $record->get_type();?></td>
-			<td><?echo $record->get_ttl();?></td>
-			<td><?echo $record->get_last_modifier();?></td>
-		</tr>
+		<? foreach ($records as $record) {
+			echo "<tr>";
+			echo "<td>".$record->get_hostname().".".$record->get_zone()."</td>";
+			echo "<td>".$record->get_type()."</td>";
+			echo "<td>".$record->get_ttl()."</td>";
+			echo "<td>".$record->get_last_modifier()."</td>";
+			echo "</tr>";
+		}?>
 	</table>
 </div>

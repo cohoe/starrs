@@ -45,8 +45,13 @@ class Zones extends ImpulseController {
 	}
 	
 	public function view($zone=NULL) {
-		$zone = urldecode($zone);
-		self::$dnsZone = $this->api->dns->get->zone($zone);
+		$zone = rawurldecode($zone);
+		try {
+			self::$dnsZone = $this->api->dns->get->zone($zone);
+		}
+		catch(Exception $e) {
+			$this->_error("Unable to view zone \"$zone\": ".$e->getMessage());
+		}
 	
 		// Navbar
 		$navOptions['Zones'] = "/resources/zones/";
@@ -71,7 +76,7 @@ class Zones extends ImpulseController {
 	public function create() {
 		if($this->input->post('submit')) {
 			try {
-				$zone = $this->api->dns->create->zone(
+				self::$dnsZone = $this->api->dns->create->zone(
 					$this->input->post('zone'),
 					$this->input->post('keyname'),
 					$this->input->post('forward'),
@@ -79,10 +84,10 @@ class Zones extends ImpulseController {
 					$this->input->post('owner'),
 					$this->input->post('comment')
 				);
-				if(!($zone instanceof DnsZone)) {
+				if(!(self::$dnsZone instanceof DnsZone)) {
 					$this->_error("Unable to instantiate DNS zone object");
 				}
-				redirect("/resources/zones/view/".$zone->get_zone(),'location');
+				redirect(base_url()."resources/zones/view/".rawurlencode(self::$dnsZone->get_zone()),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -111,7 +116,7 @@ class Zones extends ImpulseController {
 	}
 	
 	public function edit($zone=NULL) {
-		$zone = urldecode($zone);
+		$zone = rawurldecode($zone);
 		if($zone == NULL) {
 			$this->_error("No zone given for edit");
 		}
@@ -120,11 +125,11 @@ class Zones extends ImpulseController {
 		
 		if($this->input->post('submit')) {
 			$this->_edit();
-			redirect("/resources/zones/view/".urlencode(self::$dnsZone->get_zone()));
+			redirect(base_url()."resources/zones/view/".rawurlencode(self::$dnsZone->get_zone()));
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "/resources/zones/view/".urlencode(self::$dnsZone->get_zone());
+			$navModes['CANCEL'] = "/resources/zones/view/".rawurlencode(self::$dnsZone->get_zone());
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -146,7 +151,7 @@ class Zones extends ImpulseController {
 	}
 	
 	public function delete($zone=NULL) {
-		$zone = urldecode($zone);
+		$zone = rawurldecode($zone);
 		if($zone == NULL) {
 			$this->_error("No zone given for delete");
 		}
@@ -155,7 +160,7 @@ class Zones extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->api->dns->remove->zone($zone);
-				redirect("/resources/zones/",'location');
+				redirect(base_url()."resources/zones/",'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -164,7 +169,7 @@ class Zones extends ImpulseController {
 		
 		// They hit no, don't delete the system
 		elseif($this->input->post('no')) {
-			redirect("/resources/zones/view/".urlencode($zone),'location');
+			redirect(base_url()."resources/zones/view/".rawurlencode($zone),'location');
 		}
 		
 		// Need to print the prompt

@@ -6,11 +6,11 @@
 		<label for="systemName">System Name: </label><select name="systemName" class="input_form_input">
 		<?
 			foreach ($systems as $system) {
-				if($systemName == $system) {
-					echo "<option value=\"$system\" selected>$system</option>";
+				if($systemName == $system->get_system_name()) {
+					echo '<option value="'.$system->get_system_name().'" selected>'.$system->get_system_name().'</option>';
 				}
 				else {
-					echo "<option value=\"$system\">$system</option>";
+					echo '<option value="'.$system->get_system_name().'">'.$system->get_system_name().'</option>';
 				}
 			}
 		?>

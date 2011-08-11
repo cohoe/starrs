@@ -21,6 +21,6 @@
 		
 		// Submit button
 		?>
-		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create" class="input_form_submit"/>
+		<label for="submit">&nbsp;</label><input type="submit" name="recordSubmit" value="Create" class="input_form_submit"/>
 	</form>
 </div>

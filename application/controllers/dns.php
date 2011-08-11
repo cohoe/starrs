@@ -60,8 +60,8 @@ class Dns extends ImpulseController {
 	
 	private function _load_record_view_data($view="view") {
 		$viewData = "";
-		if(self::$addr->get_address_record()) {
-			$viewData .= $this->load->view("dns/$view/a",array("record"=>self::$addr->get_address_record()),TRUE);
+		if(self::$addr->get_address_records()) {
+			$viewData .= $this->load->view("dns/$view/a",array("records"=>self::$addr->get_address_records()),TRUE);
 		}
 		if(self::$addr->get_pointer_records()) {
 			$viewData .= $this->load->view("dns/$view/pointer",array("records"=>self::$addr->get_pointer_records()),TRUE);
@@ -103,7 +103,7 @@ class Dns extends ImpulseController {
 		
 		if($this->input->post('typeSubmit')) {
 		
-			if(self::$addr->get_address_record() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
+			if(self::$addr->get_address_records() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
 				$this->_error("Need to create an address (A/AAAA) record first!");
 			}
 		
@@ -151,6 +151,9 @@ class Dns extends ImpulseController {
 			catch (ControllerException $cE) {
 				$this->_error("Cont: ".$cE->getMessage());
 			}
+			catch (APIException $apiE) {
+				$this->_error("API: ".$apiE->getMessage());
+			}
 			
 			// Add it to the address
 			self::$addr->add_record($record);
@@ -161,7 +164,7 @@ class Dns extends ImpulseController {
 			$this->impulselib->set_active_system(self::$sys);
 			
 			// Move along
-			redirect(base_url()."/dns/view/".self::$addr->get_address(),'location');
+			redirect(base_url()."dns/view/".self::$addr->get_address(),'location');
 		}
 		else {
 			// Navbar
@@ -255,7 +258,7 @@ class Dns extends ImpulseController {
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
 				
-				redirect(base_url()."/dns/edit/".self::$addr->get_address(),'location');
+				redirect(base_url()."dns/edit/".self::$addr->get_address(),'location');
 			}
 		}
 		else {	
@@ -341,14 +344,13 @@ class Dns extends ImpulseController {
 					$this->api->dns->remove->mailserver($hostname, $zone);
 					break;
 				case 'A':
-					$this->api->dns->remove->address($address);
+					$this->api->dns->remove->address($address, $zone);
 					break;
 				case 'AAAA':
-					$this->api->dns->remove->address($address);
+					$this->api->dns->remove->address($address, $zone);
 					break;
 				default:
 					$this->_error("Unable to determine your type. Make sure you aren't pulling any URL shenanigans.");
-					return;
 			}
 			
 			// Set the SESSION data
@@ -357,7 +359,7 @@ class Dns extends ImpulseController {
 			$this->impulselib->set_active_system(self::$sys);
 			
 			// Move along
-			redirect(base_url()."/dns/delete/".self::$addr->get_address(),'location');
+			redirect(base_url()."dns/delete/".self::$addr->get_address(),'location');
 		}
 		
 		else {
@@ -514,7 +516,7 @@ class Dns extends ImpulseController {
 			
 		if($record->get_hostname() != $this->input->post('hostname')) {
 			try { $record->set_hostname($this->input->post('hostname')); }
-			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
+			catch (Exception $e) { $err .= $e->getMessage(); }
 		}
 		if($record->get_zone() != $this->input->post('zone')) {
 			try { $record->get_zone($this->input->post('zone')); }
@@ -587,7 +589,7 @@ class Dns extends ImpulseController {
 		}
 		
 		if($err != "") {
-			throw new ControllerException($err);
+			$this->_error($err);
 		}
 	}
 	
@@ -614,10 +616,10 @@ class Dns extends ImpulseController {
 				$record = self::$addr->get_mx_record($hostname, $zone);
 				break;
 			case 'A':
-				$record = self::$addr->get_address_record();
+				$record = self::$addr->get_address_record($zone);
 				break;
 			case 'AAAA':
-				$record = self::$addr->get_address_record();
+				$record = self::$addr->get_address_record($zone);
 				break;
 			default:
 				throw new ControllerException("Unable to determine your type. Make sure you aren't pulling any URL shenanigans.");

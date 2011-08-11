@@ -14,9 +14,9 @@ class Api_dns_get extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Generate and return results
-        $mxRecord = $query->row_array();
-        if($query->num_rows() == 1) {
-            return new MxRecord(
+        $resultSet = array();
+        foreach ($query->result_array() as $mxRecord) {
+            $resultSet[] = new MxRecord(
                 $mxRecord['hostname'],
                 $mxRecord['zone'],
                 $mxRecord['address'],
@@ -29,12 +29,14 @@ class Api_dns_get extends ImpulseModel {
                 $mxRecord['last_modifier']
             );
         }
-		elseif($query->num_rows() > 0) {
-            throw new AmbiguousTargetException("Multiple MX records detected. This indicates a database error. Contact your administrator.");
-        }
-        else {
-            throw new ObjectNotFoundException("Could not locate a DNS MX record for address $address");
-        }
+		
+        // Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No MX records found for address $address");
+		}
 	}
 	
 	public function ns_records($address) {
@@ -141,7 +143,7 @@ class Api_dns_get extends ImpulseModel {
 		}
 	}
     
-    public function address_record($address) {
+    public function address_records($address) {
 		// SQL Query
 		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)})";
 		$query = $this->db->query($sql);
@@ -150,9 +152,9 @@ class Api_dns_get extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Generate & return result
-        $aRecord = $query->row_array();
-        if($query->num_rows() == 1) {
-            return new AddressRecord(
+        $resultSet = array();
+        foreach ($query->result_array() as $aRecord) {
+            $resultSet[] = new AddressRecord(
                 $aRecord['hostname'],
                 $aRecord['zone'],
                 $aRecord['address'],
@@ -164,12 +166,14 @@ class Api_dns_get extends ImpulseModel {
                 $aRecord['last_modifier']
             );
         }
-        elseif($query->num_rows() > 1) {
-            throw new AmbiguousTargetException("Multiple address records detected. This indicates a database error. Contact your system administrator.");
-        }
-        else {
-            throw new ObjectNotFoundException("Could not locate DNS address record for address $address");
-        }
+
+		// Return results
+		if(count($resultSet) > 0) {
+			return $resultSet;
+		}
+		else {
+			throw new ObjectNotFoundException("No address records found for address $address");
+		}
 	}
 
     public function record_types() {

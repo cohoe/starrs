@@ -40,7 +40,10 @@ class Sidebar {
 		try {	
 			$this->allSystems = $this->CI->api->systems->list->other_systems($currentUser);
 			foreach($this->allSystems as $system) {
-				$this->_load_system_data($system);
+				try {
+					$this->_load_system_data($system);
+				}
+				catch(ObjectNotFoundException $onfE) {}
 			}
 		}
 		catch(ObjectNotFoundException $onfE) {}
@@ -85,6 +88,8 @@ class Sidebar {
 			$this->ranges = $this->CI->api->ip->list->ranges();
 		}
 		catch(ObjectNotFoundException $onfE) {}
+		
+		#print_r($this->interfaces);
 	}
 	
 	//////////////////////////////////////////////////////////////////////
@@ -108,14 +113,15 @@ class Sidebar {
 	// PRIVATE METHODS
 	
 	private function _load_system_data($system) {
+		#echo "$system\n";
 		$this->interfaces[$system] = $this->CI->api->systems->list->interfaces($system);
 		foreach($this->interfaces[$system] as $interface) {
 			$this->addresses[$interface] = $this->CI->api->systems->list->interface_addresses($interface);
 		}
 	}
 	
-	private function _load_address_view_data($address) {
-		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.$address.'">'.$address.'</a>
+	private function _load_address_view_data($address,$last=NULL) {
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.$address.'">'.$address.'</a>
 					<ul style="display: none;">
 						<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.$address.'">DNS Records</a></li>
 						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.$address.'">Firewall Rules</a></li>
@@ -123,31 +129,50 @@ class Sidebar {
 				</li>';
 	}
 	
-	private function _load_interface_view_data($systemName,$interface) {
-		
+	private function _load_interface_view_data($systemName,$interface,$last=NULL) {
 		$addressData = "";
 		
-		foreach($this->addresses[$this->interfaces[$systemName][$interface]] as $address) {
-			$addressData .= $this->_load_address_view_data($address);
+		if(isset($this->addresses[$this->interfaces[$systemName][$interface]])) {
+			$addresses = $this->addresses[$this->interfaces[$systemName][$interface]];
+			while($addresses) {
+				$address = array_shift($addresses);
+				if($addresses) {
+					$addressData .= $this->_load_address_view_data($address);
+				}
+				else {
+					$addressData .= $this->_load_address_view_data($address,"last");
+				}	
+			}
+			
+			#foreach($this->addresses[$this->interfaces[$systemName][$interface]] as $address) {
+			#	
+			#}
 		}
-		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
 					<ul style="display: none;">'.
 						$addressData.
 					'</ul>
 				</li>';
 	}
 	
-	private function _load_system_view_data($systemName,$view) {
+	private function _load_system_view_data($systemName,$view,$last=NULL) {
 		$systemData = "";
 		
 		$viewUrl = ($view=="OWNED")?self::$rwSystemImageUrl:self::$roSystemImageUrl;
 		
 		if(isset($this->interfaces[$systemName])) {
-			foreach(array_keys($this->interfaces[$systemName]) as $interface) {
-				$systemData = $this->_load_interface_view_data($systemName,$interface);
+			$interfaces = array_keys($this->interfaces[$systemName]);
+			while($interfaces) {
+				$interface = array_shift($interfaces);
+				if($interfaces) {
+					$systemData .= $this->_load_interface_view_data($systemName,$interface);
+				}
+				else {
+					$systemData .= $this->_load_interface_view_data($systemName,$interface,"last");
+				}
 			}
 		}
-		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.$systemName.'">'.$systemName.'</a>
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.$systemName.'">'.$systemName.'</a>
 			<ul style="display: none;">'.$systemData.
 			'</ul>
 		</li>';
@@ -159,8 +184,17 @@ class Sidebar {
 	public function load_other_system_view_data() {
 		$viewData = "";
 		
-		foreach($this->allSystems as $systemName) {
-			$viewData .= $this->_load_system_view_data($systemName,"OTHER");
+		if($this->allSystems) {
+			$systems = $this->allSystems;
+			while($systems) {
+				$systemName = array_shift($systems);
+				if($systems) {
+					$viewData .= $this->_load_system_view_data($systemName,"OTHER");
+				}
+				else {
+					$viewData .= $this->_load_system_view_data($systemName,"OTHER","last");
+				}
+			}
 		}
 		
 		return $viewData;
@@ -199,13 +233,26 @@ class Sidebar {
 		$viewData = "";
 		
 		if($this->otherMetahosts) {
-			foreach($this->otherMetahosts as $metahostName) {
-				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
+			$metahosts = $this->otherMetahosts;
+			
+			while($metahosts) {
+				$metahostName = array_shift($metahosts);
+				if($metahosts) {
+					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
 					'<ul style="display: none;">
 						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
 						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
 					</ul>
 				</li>';
+				}
+				else {
+					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
+					'<ul style="display: none;">
+						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					</ul>
+				</li>';
+				}
 			}
 		}
 		

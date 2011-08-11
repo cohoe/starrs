@@ -24,9 +24,9 @@ class Api_dns_remove extends ImpulseModel {
 		$this->_check_error($query);
 	}
 
-    public function address($address) {
+    public function address($address, $zone) {
 		// SQL Query
-		$sql = "SELECT api.remove_dns_address({$this->db->escape($address)})";
+		$sql = "SELECT api.remove_dns_address({$this->db->escape($address)},{$this->db->escape($zone)})";
 		$query = $this->db->query($sql);
 
 		// Check error

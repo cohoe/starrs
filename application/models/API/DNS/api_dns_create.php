@@ -20,7 +20,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 		
 		if($query->num_rows() > 1) {
-			throw new APIException("The database returned more than one key. Contact your system administrator");
+			throw new APIException("The database returned more than one new key. Contact your system administrator");
 		}
 		
 		// Return object
@@ -51,7 +51,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 		
 		if($query->num_rows() > 1) {
-			throw new APIException("The database returned more than one zone. Contact your system administrator");
+			throw new APIException("The database returned more than one new zone. Contact your system administrator");
 		}
 		
 		// Return object
@@ -83,7 +83,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 		
 		if($query->num_rows() > 1) {
-			throw new APIException("The database returned more than one record. Contact your system administrator");
+			throw new APIException("The database returned more than one new record. Contact your system administrator");
 		}
 
 		// Return object
@@ -115,7 +115,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Return object
-		$record = $this->get_mx_records($this->resolve($hostname, $zone, 4));
+		$record = $this->$this->api->dns->get->mx_records($this->resolve($hostname, $zone, 4));
 		return $record;
 	}
 
@@ -134,7 +134,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Return object
-		foreach($this->get_ns_records($this->resolve($hostname, $zone, 4)) as $record) {
+		foreach($this->$this->api->dns->get->ns_records($this->resolve($hostname, $zone, 4)) as $record) {
 			if($record->get_isprimary() == $isprimary) {
 				return $record;
 			}
@@ -161,7 +161,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Return object
-		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
+		foreach($this->$this->api->dns->get->pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
 			if($record->get_alias() == $alias && $record->get_type() == "SRV") {
 				return $record;
 			}
@@ -183,7 +183,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Return object
-		foreach($this->get_pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
+		foreach($this->api->dns->get->pointer_records($this->resolve($hostname, $zone, 4)) as $record) {
 			if($record->get_alias() == $alias && $record->get_type() == "CNAME") {
 				return $record;
 			}
@@ -206,7 +206,7 @@ class Api_dns_create extends ImpulseModel {
 		$this->_check_error($query);
 
 		// Return object
-		foreach($this->get_text_records($this->resolve($hostname, $zone, 4)) as $record) {
+		foreach($this->$this->api->dns->get->text_records($this->resolve($hostname, $zone, 4)) as $record) {
 			if($record->get_text() == $text && $record->get_type() == $type) {
 				return $record;
 			}

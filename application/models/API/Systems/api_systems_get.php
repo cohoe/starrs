@@ -232,6 +232,15 @@ class Api_systems_get extends ImpulseModel {
 				}
 				catch (ObjectNotFoundException $onfE) {}
 
+				// Load DNS address records
+				try {
+					$aRecords = $this->api->dns->get->address_records($row['address']);
+					foreach ($aRecords as $aRecord) {
+						$addr->add_address_record($aRecord);
+					}
+				}
+				catch (ObjectNotFoundException $onfE) {}
+				
 				// Load DNS pointer records
 				try {
 					$pointerRecords = $this->api->dns->get->pointer_records($row['address']);
@@ -261,8 +270,10 @@ class Api_systems_get extends ImpulseModel {
 
 				// Load DNS mailserver records
 				try {
-					$mxRecord = $this->api->dns->get->mx_records($row['address']);
-					$addr->add_mx_record($mxRecord);
+					$mxRecords = $this->api->dns->get->mx_records($row['address']);
+					foreach ($mxRecords as $mxRecord) {
+						$addr->add_mx_record($mxRecord);
+					}
 				}
 				catch (ObjectNotFoundException $onfE) {}
             }
@@ -318,6 +329,14 @@ class Api_systems_get extends ImpulseModel {
 			}
 			catch (ObjectNotFoundException $onfE) {}
 
+			// Load DNS address records
+			try {
+				$aRecords = $this->api->dns->get->address_records($row['address']);
+				foreach ($aRecords as $aRecord) {
+					$addr->add_address_record($aRecord);
+				}
+			}
+			catch (ObjectNotFoundException $onfE) {}
 
 			// Load DNS pointer records
 			try {	
@@ -348,8 +367,10 @@ class Api_systems_get extends ImpulseModel {
 
 			// Load DNS mailserver records
 			try {
-				$mxRecord = $this->api->dns->get->mx_records($row['address']);
-				$addr->add_mx_record($mxRecord);
+				$mxRecords = $this->api->dns->get->mx_records($row['address']);
+				foreach ($mxRecords as $mxRecord) {
+					$addr->add_mx_record($mxRecord);
+				}
 			}
 			catch (ObjectNotFoundException $onfE) {}
 		}

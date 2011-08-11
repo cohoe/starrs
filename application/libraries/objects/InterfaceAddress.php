@@ -52,8 +52,8 @@ class InterfaceAddress extends ImpulseObject {
 	// string				The FQDN that resolves to this address
 	private $dnsFqdn;
 	
-	// AddressRecord		AddressRecord object of this address
-	private $dnsAddressRecord;
+	// array<AddressRecord>	AddressRecord objects of this address
+	private $dnsAddressRecords;
 	
 	// array<PointerRecord>	All pointer (CNAME,SRV) records that resolve to this address
 	private $dnsPointerRecords;
@@ -108,6 +108,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->family  = (strpos($address, ':') === false) ? 4 : 6;
 		
 		// Initialize variables
+		$this->dnsAddressRecords = array();
 		$this->dnsPointerRecords = array();
 		$this->dnsNsRecords = array();
 		$this->dnsMxRecords = array();
@@ -117,8 +118,8 @@ class InterfaceAddress extends ImpulseObject {
 
         // Try to get the address record that resolves to this address
 		try {
-			$this->dnsAddressRecord = $this->CI->api->dns->get->address_record($this->address);
-			$this->dnsFqdn = $this->dnsAddressRecord->get_hostname().".".$this->dnsAddressRecord->get_zone();
+			#$this->dnsAddressRecord = $this->CI->api->dns->get->address_record($this->address);
+			#$this->dnsFqdn = $this->dnsAddressRecord->get_hostname().".".$this->dnsAddressRecord->get_zone();
 		}
 		catch (ObjectNotFoundException $onfE) {
 			$this->dnsAddressRecord = null;
@@ -151,7 +152,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function get_fqdn()            { return $this->dnsFqdn; }
 	public function get_rules()           { return $this->fwRules; }
 	public function get_fw_default()      { return $this->fwDefault; }
-	public function get_address_record()  { return $this->dnsAddressRecord; }
+	public function get_address_records() { return $this->dnsAddressRecords; }
 	public function get_ns_records()      { return $this->dnsNsRecords; }
 	public function get_mx_records()      { return $this->dnsMxRecords; }
 	public function get_pointer_records() { return $this->dnsPointerRecords; }
@@ -188,13 +189,7 @@ class InterfaceAddress extends ImpulseObject {
 		$this->comment = $new; 
 	}
 
-    public function set_address_record($addressRecord) {
-		if(!$addressRecord instanceof AddressRecord) {
-			throw new ObjectException("Cannot add a non-address-record as a address-record");
-		}
-
-		$this->dnsAddressRecord = $addressRecord;
-	}
+    
 	
 	public function set_fw_default($action) {
 		$this->CI->api->firewall->modify->_default($this->address, $action);
@@ -203,6 +198,19 @@ class InterfaceAddress extends ImpulseObject {
 	
 	////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
+	
+	/**
+	 * Adds an address record to the address
+	 * @param AddressRecord	$addressRecord	The record object to add
+	 */
+	public function add_address_record($addressRecord) {
+		// If it's not a proper record, blow up
+		if(!$addressRecord instanceof AddressRecord) {
+			throw new ObjectException("Cannot add a non-address-record as a address-record");
+		}
+
+		$this->dnsAddressRecords[$addressRecord->get_zone()] = $addressRecord;
+	}
 
 	/**
 	 * Adds a firewall rule to the address
@@ -293,7 +301,7 @@ class InterfaceAddress extends ImpulseObject {
 	public function add_record($record) {
 		switch (get_class($record)) {
 			case "AddressRecord":
-				$this->set_address_record($record);
+				$this->add_address_record($record);
 				break;
 			case "NsRecord":
 				$this->add_ns_record($record);
@@ -310,6 +318,13 @@ class InterfaceAddress extends ImpulseObject {
 			default:
 				throw new ObjectException("Unsupported DNS record given");
 		}
+	}
+	
+	public function get_address_record($zone) {
+		if($this->dnsAddressRecords[$zone]) {
+			return $this->dnsAddressRecords[$zone];
+		}
+		throw new ObjectNotFoundException("No address record matching your criteria was found");
 	}
 	
 	public function get_pointer_record($alias, $hostname, $zone) {

@@ -32,9 +32,9 @@ class Api_dns_modify extends ImpulseModel {
 		$this->_check_error($query);
 	}
 
-    public function address($address, $field, $newValue) {
+    public function address($address, $zone, $field, $newValue) {
 		// SQL Query
-		$sql = "SELECT api.modify_dns_address({$this->db->escape($address)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
+		$sql = "SELECT api.modify_dns_address({$this->db->escape($address)}, {$this->db->escape($zone)}, {$this->db->escape($field)}, {$this->db->escape($newValue)})";
 		$query = $this->db->query($sql);
 
 		// Check error
