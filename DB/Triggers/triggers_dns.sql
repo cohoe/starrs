@@ -238,20 +238,60 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
 
 CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		RevZone TEXT;
 	BEGIN
-		IF NEW."type" ~* 'A|AAAA|NS' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",host(NEW."address"));
+		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+		INTO DnsKeyName, DnsKey, DnsServer
+		FROM "dns"."ns" 
+		JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+		JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+		WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+		IF NEW."type" ~* 'A|AAAA' THEN
+			-- Do the forward record first
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+
+			-- Check for errors
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;	
+
+			-- Get the proper zone for the reverse A record
+			SELECT "zone" INTO RevZone
+			FROM "ip"."subnets" 
+			WHERE NEW."address" << "subnet";
+
+			-- If it is in this domain, add the reverse entry
+			IF RevZone = NEW."zone" THEN
+				DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+
+		ELSEIF NEW."type" ~* 'NS' THEN
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 		ELSEIF NEW."type" ~* 'MX' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."preference",host(NEW."address"));
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('ADD',NEW."alias",NEW."zone",NEW."ttl",NEW."type",NEW."extra",NEW."hostname");
+			DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname";
+			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 		ELSEIF NEW."type" ~* 'TXT|SPF' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('ADD',NEW."hostname",NEW."zone",NEW."ttl",NEW."type",NEW."text");
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 		END IF;
+
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+		END IF;
+		
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
