@@ -50,7 +50,7 @@ ALTER TABLE "dns"."a" ADD CONSTRAINT "a_hostname_zone_type_key" UNIQUE ("hostnam
 
 COMMENT ON CONSTRAINT "a_hostname_zone_type_key" ON "dns"."a" IS 'Can only have 1 of each A or AAAA';
 
-ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_key" UNIQUE ("address");
+ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_zone_key" UNIQUE ("address","zone");
 
 COMMENT ON CONSTRAINT "a_address_key" ON "dns"."a" IS 'Addresses in this table must be unique';
 
