@@ -183,10 +183,10 @@ class Sidebar {
 	
 		if($this->ownedMetahosts) {
 			foreach($this->ownedMetahosts as $metahostName) {
-				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$rwSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
 				<ul style="display: none;">
-					<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-					<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+					<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
 				</ul>
 			</li>';
 			}
@@ -200,10 +200,10 @@ class Sidebar {
 		
 		if($this->otherMetahosts) {
 			foreach($this->otherMetahosts as $metahostName) {
-				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="'.self::$roSystemImageUrl.'" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
 					'<ul style="display: none;">
-						<li><a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-						<li class="last"><a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
 					</ul>
 				</li>';
 			}
@@ -217,7 +217,7 @@ class Sidebar {
 		
 		if($this->ownedKeys) {
 			foreach($this->ownedKeys as $keyname) {
-				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
 			}
 		}
 		
@@ -229,7 +229,7 @@ class Sidebar {
 		
 		if($this->otherKeys) {
 			foreach($this->otherKeys as $keyname) {
-				$viewData .= '<li><img src="'.self::$xxSystemImageUrl.'" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
 			}
 		}
 		
