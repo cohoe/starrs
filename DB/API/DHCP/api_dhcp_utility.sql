@@ -107,11 +107,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$subnet = $row->{get_dhcpd_subnets};
 			$net = substr($subnet, 0, index($subnet, "/"));
 			$mask = $row->{netmask};
-			$output .= "subnet $net netmask $mask {\n    ";
+			$output .= "  subnet $net netmask $mask {\n    ";
 			$output .= "authoritative;";
 			$output .= &subnet_options($subnet);
 			$output .= &subnet_ranges($subnet);
-			$output .= "\n  }\n\n  ";
+			$output .= "\n  }\n";
 		}
 		return $output;
 	}
@@ -128,6 +128,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$value = $row->{value};
 			$output .= "\n    $option $value;";
 		}
+		return $output;
 	}
 	
 	# Subnet ranges
@@ -135,7 +136,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	{
 		my $subnet = $_[0];
 		my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
-		my ($range_name, $first_ip, $last_ip, $class, $row);
+		my ($range_name, $first_ip, $last_ip, $class, $row, $output);
 		while (defined($row = spi_fetchrow($pool)))
 		{
 			$range_name = $row->{name};
@@ -163,6 +164,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			}
 			$output .= "\n    }";
 		}
+		return $output;
 	}
 
 	# hosts
