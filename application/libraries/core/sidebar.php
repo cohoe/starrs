@@ -241,7 +241,7 @@ class Sidebar {
 		
 		if($this->ownedZones) {
 			foreach($this->ownedZones as $zone) {
-				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
 			}
 		}
 		
@@ -253,7 +253,7 @@ class Sidebar {
 		
 		if($this->otherZones) {
 			foreach($this->otherZones as $zone) {
-				$viewData .= '<li><img src="'.self::$roSystemImageUrl.'" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
 			}
 		}
 		
@@ -265,7 +265,7 @@ class Sidebar {
 		
 		if($this->ownedSubnets) {
 			foreach($this->ownedSubnets as $subnet) {
-				$viewData .= '<li><img src="'.self::$rwSystemImageUrl.'" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
 			}
 		}
 		
@@ -277,7 +277,7 @@ class Sidebar {
 		
 		if($this->otherSubnets) {
 			foreach($this->otherSubnets as $subnet) {
-				$viewData .= '<li><img src="'.self::$roSystemImageUrl.'" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
 			}
 		}
 		
@@ -291,7 +291,7 @@ class Sidebar {
 		
 		if($this->ranges) {
 			foreach($this->ranges as $range) {
-				$viewData .= '<li><img src="'.$viewUrl.'" /> <a href="/resources/ranges/view/'.$range.'">'.$range.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/range.png" /> <a href="/resources/ranges/view/'.$range.'">'.$range.'</a></li>';
 			}
 		}
 		
