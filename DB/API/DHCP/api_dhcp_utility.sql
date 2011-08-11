@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		{
 			$option = $row->{option};
 			$value = $row->{value};
-			$output = "$option    $value;\n"
+			$output .= "$option    $value;\n"
 		}
 		return $output;
 	} # end global options
@@ -41,12 +41,13 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	{
 		my $zones = spi_query("SELECT * FROM api.get_dhcpd_reverse_zones()");
 		my ($zone, $keyname, $primary_ns, $row, $output);
+		$output = "";
 		while (defined ($row = spi_fetchrow($zones)))
 		{
 			$zone = $row->{zone};
 			$keyname = $row->{keyname};
 			$primary_ns = $row->{primary_ns};
-			$output = "zone $zone {\n  primary ${primary_ns};\n  key ${keyname};\n}\n";
+			$output .= "zone $zone {\n  primary ${primary_ns};\n  key ${keyname};\n}\n";
 		}
 		return $output;
 	}# end reverse zones
@@ -137,6 +138,8 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		my $subnet = $_[0];
 		my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
 		my ($range_name, $first_ip, $last_ip, $class, $row, $output);
+		$output="";
+		
 		while (defined($row = spi_fetchrow($pool)))
 		{
 			$range_name = $row->{name};
