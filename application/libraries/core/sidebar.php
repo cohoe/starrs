@@ -20,8 +20,8 @@ class Sidebar {
 	private $otherSubnets;
 	private $ranges;
 	
-	private static $rwSystemImageUrl = "http://sub.obive.net/up.png";
-	private static $roSystemImageUrl = "http://sub.obive.net/error.png";
+	private static $rwSystemImageUrl = "/media/images/sidebar/system.png";
+	private static $roSystemImageUrl = "/media/images/sidebar/system.png";
 	private static $xxSystemImageUrl = "http://sub.obive.net/down.png";
 	
 	////////////////////////////////////////////////////////////////////////

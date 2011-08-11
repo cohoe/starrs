@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="" />
+    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/libraries/core/sidebar.php" afterPath="$PROJECT_DIR$/application/libraries/core/sidebar.php" />
+    </list>
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -53,7 +56,7 @@
       <file leaf-file-name="sidebar.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="117" column="123" selection-start="3631" selection-end="3637" vertical-scroll-proportion="0.119">
+            <state line="23" column="53" selection-start="622" selection-end="622" vertical-scroll-proportion="0.391">
               <folding />
             </state>
           </provider>
@@ -689,7 +692,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="ip address image" />
+    <option name="LAST_COMMIT_MESSAGE" value="derp" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -724,9 +727,9 @@
     <MESSAGE value="added link" />
     <MESSAGE value="debug" />
     <MESSAGE value="added view" />
-    <MESSAGE value="derp" />
     <MESSAGE value="updated for family" />
     <MESSAGE value="ip address image" />
+    <MESSAGE value="derp" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -833,7 +836,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="117" column="123" selection-start="3631" selection-end="3637" vertical-scroll-proportion="0.119">
+        <state line="23" column="53" selection-start="622" selection-end="622" vertical-scroll-proportion="0.391">
           <folding />
         </state>
       </provider>
