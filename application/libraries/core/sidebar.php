@@ -117,8 +117,8 @@ class Sidebar {
 	private function _load_address_view_data($address) {
 		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.$address.'">'.$address.'</a>
 					<ul style="display: none;">
-						<li><a href="/dns/view/'.$address.'">DNS Records</a></li>
-						<li class="last"><a href="/firewall/rules/view/'.$address.'">Firewall Rules</a></li>
+						<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.$address.'">DNS Records</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.$address.'">Firewall Rules</a></li>
 					</ul>
 				</li>';
 	}
