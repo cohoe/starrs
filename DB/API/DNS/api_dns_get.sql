@@ -38,7 +38,7 @@ COMMENT ON FUNCTION "api"."get_dns_pointers"(inet) IS 'Get all DNS pointer (SRV,
 CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet) RETURNS SETOF "dns"."a_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."a" WHERE "address" = input_address);
+		FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for an address';
