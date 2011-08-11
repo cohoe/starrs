@@ -137,7 +137,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
 		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-		FROM "dns"."a" WHERE "address" = input_address);
+		FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
