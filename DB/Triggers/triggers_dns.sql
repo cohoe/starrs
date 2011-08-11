@@ -330,20 +330,64 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."queue_update"() IS 'Add a delete and add directive to the queue';
 
 CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		RevZone TEXT;
 	BEGIN
-		IF OLD."type" ~* 'A|AAAA|NS' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",host(OLD."address"));
-		ELSEIF OLD."type" ~* 'MX' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."preference",host(OLD."address"));
-		ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","extra","target")
-			VALUES ('DELETE',OLD."alias",OLD."zone",OLD."ttl",OLD."type",OLD."extra",OLD."hostname");
-		ELSEIF OLD."type" ~* 'TXT|SPF' THEN
-			INSERT INTO "dns"."queue" ("directive","hostname","zone","ttl","type","target")
-			VALUES ('DELETE',OLD."hostname",OLD."zone",OLD."ttl",OLD."type",OLD."text");
+		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) !~* 'static' THEN
+			RETURN OLD;
 		END IF;
+	
+		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+		INTO DnsKeyName, DnsKey, DnsServer
+		FROM "dns"."ns" 
+		JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+		JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+		WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+
+		IF OLD."type" ~* 'A|AAAA' THEN
+			-- Do the forward record first
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+
+			-- Check for errors
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;	
+
+			-- Get the proper zone for the reverse A record
+			SELECT "zone" INTO RevZone
+			FROM "ip"."subnets" 
+			WHERE OLD."address" << "subnet";
+
+			-- If it is in this domain, add the reverse entry
+			IF RevZone = OLD."zone" THEN
+				DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			END IF;
+
+		ELSEIF OLD."type" ~* 'NS' THEN
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		ELSEIF OLD."type" ~* 'MX' THEN
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
+			DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname";
+			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		ELSEIF OLD."type" ~* 'TXT|SPF' THEN
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		END IF;
+
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+		END IF;
+		
 		RETURN OLD;
 	END;
 $$ LANGUAGE 'plpgsql';
