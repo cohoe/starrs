@@ -111,6 +111,7 @@ CREATE OR REPLACE FUNCTION "api"."nsupdate"(zone text, keyname text, key text, s
 	use warnings;
 	use v5.10;
 	use Net::DNS;
+	no warnings('redefine');
 
 	# Local variable information
 	our $zone = shift(@_) or die("Invalid zone argument");
@@ -143,7 +144,7 @@ CREATE OR REPLACE FUNCTION "api"."nsupdate"(zone text, keyname text, key text, s
 	# Delete a record
 	sub delete() {
 		# The record must be there to delete it
-		$update->push(pre => yxrrset($record));
+		# $update->push(pre => yxrrset($record));
 
 		# Delete the record
 		$update->push(update => rr_del($record));
