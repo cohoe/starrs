@@ -246,54 +246,53 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 		DnsRecord TEXT;
 		RevZone TEXT;
 	BEGIN
-		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) !~* 'static' THEN
-			RETURN NEW;
-		END IF;
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
 	
-		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
-		INTO DnsKeyName, DnsKey, DnsServer
-		FROM "dns"."ns" 
-		JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-		JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-		WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
 
-		IF NEW."type" ~* 'A|AAAA' THEN
-			-- Do the forward record first
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			IF NEW."type" ~* 'A|AAAA' THEN
+				-- Do the forward record first
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;	
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
 
-			-- Get the proper zone for the reverse A record
-			SELECT "zone" INTO RevZone
-			FROM "ip"."subnets" 
-			WHERE NEW."address" << "subnet";
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE NEW."address" << "subnet";
 
-			-- If it is in this domain, add the reverse entry
-			IF RevZone = NEW."zone" THEN
-				DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = NEW."zone" THEN
+					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+					ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				END IF;
+
+			ELSEIF NEW."type" ~* 'NS' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* 'MX' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* 'TXT|SPF' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 
-		ELSEIF NEW."type" ~* 'NS' THEN
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'MX' THEN
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
-			DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname";
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'TXT|SPF' THEN
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		END IF;
-
-		IF ReturnCode != '0' THEN
-			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
 		END IF;
 		
 		RETURN NEW;
@@ -311,109 +310,109 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 		RevZone TEXT;
 	BEGIN
 		IF NEW."address" != OLD."address" THEN
-			IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) !~* 'static' THEN
-				RETURN NEW;
-			END IF;
-		END IF;
-	
-		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
-		INTO DnsKeyName, DnsKey, DnsServer
-		FROM "dns"."ns" 
-		JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-		JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-		WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
 
-		IF NEW."type" ~* 'A|AAAA' THEN
-		-- REMOVE THE OLD RECORD
-			-- Do the forward record first
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;	
-
-			-- Get the proper zone for the reverse A record
-			SELECT "zone" INTO RevZone
-			FROM "ip"."subnets" 
-			WHERE OLD."address" << "subnet";
-
-			-- If it is in this domain, add the reverse entry
-			IF RevZone = OLD."zone" THEN
-				DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-			END IF;
-
-		-- NEW RECORD
-			-- Do the forward record first
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;	
-
-			-- Get the proper zone for the reverse A record
-			SELECT "zone" INTO RevZone
-			FROM "ip"."subnets" 
-			WHERE NEW."address" << "subnet";
-
-			-- If it is in this domain, add the reverse entry
-			IF RevZone = NEW."zone" THEN
-				DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-			END IF;
-
-		ELSEIF NEW."type" ~* 'NS' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+				INTO DnsKeyName, DnsKey, DnsServer
+				FROM "dns"."ns" 
+				JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+				JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+				WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+				IF NEW."type" ~* 'A|AAAA' THEN
+				-- REMOVE THE OLD RECORD
+					-- Do the forward record first
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
+
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE OLD."address" << "subnet";
+
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = OLD."zone" THEN
+						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+						ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					END IF;
+
+				-- NEW RECORD
+					-- Do the forward record first
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
+
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE NEW."address" << "subnet";
+
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = NEW."zone" THEN
+						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+						ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					END IF;
+
+				ELSEIF NEW."type" ~* 'NS' THEN
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;
+					
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				ELSEIF NEW."type" ~* 'MX' THEN
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;
+
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
+					DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname";
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;
+
+					DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname";
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				ELSEIF NEW."type" ~* 'TXT|SPF' THEN
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;
+					
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				END IF;
+
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;
 			END IF;
-			
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'MX' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;
-
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'SRV|CNAME' THEN
-			DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname";
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;
-
-			DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname";
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		ELSEIF NEW."type" ~* 'TXT|SPF' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;
-			
-			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
-			ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
-		END IF;
-
-		IF ReturnCode != '0' THEN
-			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
 		END IF;
 		
 		RETURN NEW;
@@ -430,54 +429,53 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 		DnsRecord TEXT;
 		RevZone TEXT;
 	BEGIN
-		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) !~* 'static' THEN
-			RETURN OLD;
-		END IF;
+		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
 	
-		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
-		INTO DnsKeyName, DnsKey, DnsServer
-		FROM "dns"."ns" 
-		JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-		JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-		WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
 
-		IF OLD."type" ~* 'A|AAAA' THEN
-			-- Do the forward record first
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			IF OLD."type" ~* 'A|AAAA' THEN
+				-- Do the forward record first
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 
-			-- Check for errors
-			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-			END IF;	
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
 
-			-- Get the proper zone for the reverse A record
-			SELECT "zone" INTO RevZone
-			FROM "ip"."subnets" 
-			WHERE OLD."address" << "subnet";
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE OLD."address" << "subnet";
 
-			-- If it is in this domain, add the reverse entry
-			IF RevZone = OLD."zone" THEN
-				DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-				ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = OLD."zone" THEN
+					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+					ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				END IF;
+
+			ELSEIF OLD."type" ~* 'NS' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* 'MX' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname";
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* 'TXT|SPF' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			END IF;
 
-		ELSEIF OLD."type" ~* 'NS' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-		ELSEIF OLD."type" ~* 'MX' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-		ELSEIF OLD."type" ~* 'SRV|CNAME' THEN
-			DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname";
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-		ELSEIF OLD."type" ~* 'TXT|SPF' THEN
-			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
-			ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-		END IF;
-
-		IF ReturnCode != '0' THEN
-			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
 		END IF;
 		
 		RETURN OLD;
