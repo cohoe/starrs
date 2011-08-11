@@ -29,6 +29,10 @@
 	font-size: 9pt;
 }
 
+.treeview li img {
+	margin-bottom: -2px;
+}
+
 .treeview a.selected {
 	background-color: #eee;
 }
