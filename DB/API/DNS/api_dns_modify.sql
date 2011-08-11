@@ -132,17 +132,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_field, inet(input_new_value);		
+			USING input_old_address, input_old_zone, input_field, inet(input_new_value);		
 		ELSIF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_field, cast(input_new_value as int);
+			USING input_old_address, input_old_zone, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_field, input_new_value;
+			USING input_old_address, input_old_zone, input_field, input_new_value;
 		END IF;
 
 		-- Done
