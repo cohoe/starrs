@@ -105,13 +105,13 @@ COMMENT ON FUNCTION "api"."modify_dns_zone"(text, text, text) IS 'Modify an exis
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_address');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."addresss" WHERE "address" = input_old_address) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."addresss" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner',input_old_address;
 			END IF;
 
@@ -129,19 +129,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		IF input_field ~* 'address' THEN
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($2) || ' = $3, 
+			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1' 
+			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_field, inet(input_new_value);		
 		ELSIF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($2) || ' = $3, 
+			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1' 
+			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_field, cast(input_new_value as int);
 		ELSE
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($2) || ' = $3, 
+			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1' 
+			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_field, input_new_value;
 		END IF;
 
@@ -149,7 +149,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_address"(inet,text,text) IS 'Modify an existing DNS address';
+COMMENT ON FUNCTION "api"."modify_dns_address"(inet,text,text,text) IS 'Modify an existing DNS address';
 
 /* API - modify_dns_mailserver
 	1) Check privileges
