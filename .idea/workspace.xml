@@ -53,7 +53,7 @@
       <file leaf-file-name="sidebar.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="243" column="43" selection-start="7992" selection-end="7992" vertical-scroll-proportion="0.80410254">
+            <state line="272" column="5" selection-start="8745" selection-end="8745" vertical-scroll-proportion="0.3548718">
               <folding />
             </state>
           </provider>
@@ -833,7 +833,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="243" column="43" selection-start="7992" selection-end="7992" vertical-scroll-proportion="0.80410254">
+        <state line="272" column="5" selection-start="8745" selection-end="8745" vertical-scroll-proportion="0.3548718">
           <folding />
         </state>
       </provider>
