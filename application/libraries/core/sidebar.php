@@ -130,7 +130,7 @@ class Sidebar {
 		foreach($this->addresses[$this->interfaces[$systemName][$interface]] as $address) {
 			$addressData .= $this->_load_address_view_data($address);
 		}
-		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
+		return '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
 					<ul style="display: none;">'.
 						$addressData.
 					'</ul>
