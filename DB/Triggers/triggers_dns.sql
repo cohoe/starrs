@@ -246,6 +246,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 		DnsRecord TEXT;
 		RevZone TEXT;
 	BEGIN
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) !~* 'static' THEN
+			RETURN NEW;
+		END IF;
+	
 		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
 		INTO DnsKeyName, DnsKey, DnsServer
 		FROM "dns"."ns" 
