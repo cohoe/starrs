@@ -62,25 +62,25 @@ COMMENT ON FUNCTION "api"."remove_dns_zone"(text) IS 'Delete existing DNS zone';
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet, input_zone text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_address');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_address) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS address %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_address;
 			END IF;
 		END IF;
 
 		-- Remove record
 		PERFORM api.create_log_entry('API', 'INFO', 'deleting address record');
-		DELETE FROM "dns"."a" WHERE "address" = input_address;
+		DELETE FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone;
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_address"(inet) IS 'delete an A or AAAA record';
+COMMENT ON FUNCTION "api"."remove_dns_address"(inet,text) IS 'delete an A or AAAA record';
 
 /* API - remove_dns_mailserver 
 	1) Check privileges
