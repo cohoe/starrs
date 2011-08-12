@@ -7,8 +7,8 @@
 		</tr>
 		<? foreach ($records as $record) {
 			echo "<tr>";
-			echo "<td>".$record->get_text()."</td>";
-			echo "<td><a href=\"/dns/edit/".$record->get_address()."/".$record->get_type()."/".$record->get_zone()."/".$record->get_hostname()."\">E</a></td>";
+			echo "<td>".htmlentities($record->get_text())."</td>";
+			echo "<td><a href=\"/dns/edit/".rawurlencode($record->get_address())."/".rawurlencode($record->get_type())."/".rawurlencode($record->get_zone())."/".rawurlencode($record->get_hostname())."\">E</a></td>";
 			echo "</tr>";
 		}?>
 	</table>

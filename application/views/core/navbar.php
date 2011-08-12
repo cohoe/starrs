@@ -1,15 +1,15 @@
 <div class="navbar" id='navBar'>
 	<div>
-		<div class="nav_title"><?echo $navbar->get_title();?></div>
-		<div class="nav_user"><?echo $navbar->get_user()." (".strtolower($navbar->get_priv()).")";?></div>
+		<div class="nav_title"><?echo htmlentities($navbar->get_title());?></div>
+		<div class="nav_user"><?echo htmlentities($navbar->get_user())." (".strtolower(htmlentities($navbar->get_priv())).")";?></div>
 	</div>
 	<br>
 	<? foreach ($navbar->get_navOptions() as $menuOption) {
 
 		if(strcasecmp($menuOption['title'],$navbar->get_active_page()) == 0) {?>
-			<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left nav_item_left_active"><span><?echo $menuOption['title'];?></span></div></a>
+			<a href="<?echo htmlentities($menuOption['link']);?>"><div class="nav_item_left nav_item_left_active"><span><?echo htmlentities($menuOption['title']);?></span></div></a>
 		<?} else {?>
-			<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left"><span><?echo $menuOption['title'];?></span></div></a>
+			<a href="<?echo htmlentities($menuOption['link']);?>"><div class="nav_item_left"><span><?echo htmlentities($menuOption['title']);?></span></div></a>
 		<?}
 	}
 	

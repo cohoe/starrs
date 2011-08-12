@@ -30,13 +30,13 @@ class Addresses extends ImpulseController {
         }
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
-		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
+		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 		if(self::$addr->get_dynamic() == FALSE) {
-			$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
+			$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 		}
-		$navModes['EDIT'] = "/addresses/edit/".self::$addr->get_address();
-		$navModes['DELETE'] = "/addresses/delete/".self::$addr->get_mac()."/".self::$addr->get_address();
+		$navModes['EDIT'] = "/addresses/edit/".rawurlencode(self::$addr->get_address());
+		$navModes['DELETE'] = "/addresses/delete/".rawurlencode(self::$addr->get_mac())."/".rawurlencode(self::$addr->get_address());
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -90,9 +90,10 @@ class Addresses extends ImpulseController {
 			self::$int->add_address(self::$addr);
             self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 			
 			// Send you on your way
-            redirect(base_url()."/interfaces/addresses/".self::$int->get_mac()."/".self::$addr->get_address(),'location');
+            redirect(base_url()."interfaces/addresses/".rawurlencode(self::$int->get_mac())."/".rawurlencode(self::$addr->get_address()),'location');
 		}
         
         // Navbar
@@ -151,7 +152,8 @@ class Addresses extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$this->api->systems->remove->interface_address($this->input->post('address'));
-				redirect(base_url()."interfaces/addresses/".self::$int->get_mac(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."interfaces/addresses/".rawurlencode(self::$int->get_mac()),'location');
 			}
 			catch(Exception $e) {
 				$this->_error($e->getMessage());
@@ -221,16 +223,17 @@ class Addresses extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());
 			}
 			
 			if(self::$addr->get_dynamic() == TRUE) {
-				redirect(base_url()."interfaces/addresses/".self::$int->get_mac());
+				redirect(base_url()."interfaces/addresses/".rawurlencode(self::$int->get_mac()),'location');
 			}
 			else {
-				redirect(base_url()."addresses/view/".self::$addr->get_address());
+				redirect(base_url()."addresses/view/".rawurlencode(self::$addr->get_address()),'location');
 			}
 			
 		}

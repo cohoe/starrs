@@ -87,6 +87,7 @@ class Zones extends ImpulseController {
 				if(!(self::$dnsZone instanceof DnsZone)) {
 					$this->_error("Unable to instantiate DNS zone object");
 				}
+				self::$sidebar->reload();
 				redirect(base_url()."resources/zones/view/".rawurlencode(self::$dnsZone->get_zone()),'location');
 			}
 			catch (Exception $e) {
@@ -125,6 +126,7 @@ class Zones extends ImpulseController {
 		
 		if($this->input->post('submit')) {
 			$this->_edit();
+			self::$sidebar->reload();
 			redirect(base_url()."resources/zones/view/".rawurlencode(self::$dnsZone->get_zone()));
 		}
 		else {
@@ -160,7 +162,8 @@ class Zones extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->api->dns->remove->zone($zone);
-				redirect(base_url()."resources/zones/",'location');
+				self::$sidebar->reload();
+				redirect(base_url()."resources/zones",'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());

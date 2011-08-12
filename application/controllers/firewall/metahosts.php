@@ -77,11 +77,11 @@ class Metahosts extends ImpulseController {
 		}
 		
 		// Navbar
-		$navModes['EDIT'] = "/firewall/metahosts/edit/".self::$mHost->get_name();
-		$navModes['DELETE'] = "/firewall/metahosts/delete/".self::$mHost->get_name();
-		$navOptions['Overview'] = '/firewall/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/firewall/metahost_members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/firewall/metahosts/rules/view/'.self::$mHost->get_name();
+		$navModes['EDIT'] = "/firewall/metahosts/edit/".rawurlencode(self::$mHost->get_name());
+		$navModes['DELETE'] = "/firewall/metahosts/delete/".rawurlencode(self::$mHost->get_name());
+		$navOptions['Overview'] = '/firewall/metahosts/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Members'] = '/firewall/metahost_members/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Rules'] = '/firewall/metahosts/rules/view/'.rawurlencode(self::$mHost->get_name());
 		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
 		
 		// Load the view data
@@ -98,7 +98,8 @@ class Metahosts extends ImpulseController {
 	public function create() {
 		if($this->input->post('submit')) {
 			$mHost = $this->_create();
-			redirect(base_url()."firewall/metahosts/view/".$mHost->get_name(),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."firewall/metahosts/view/".rawurlencode($mHost->get_name()),'location');
 		}
 		else {
 			// Navbar
@@ -146,6 +147,7 @@ class Metahosts extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->_delete(self::$mHost);
+				self::$sidebar->reload();
 				redirect(base_url()."firewall/metahosts/owned","location");
 			}
 			catch (DBException $dbE) {
@@ -206,7 +208,8 @@ class Metahosts extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$this->_edit();
-				redirect(base_url()."firewall/metahosts/view/".self::$mHost->get_name(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."firewall/metahosts/view/".rawurlencode(self::$mHost->get_name()),'location');
 			}
 			catch (ControllerException $cE) {
 				$this->_error($cE->getMessage());

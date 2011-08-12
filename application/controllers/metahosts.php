@@ -79,11 +79,11 @@ class Metahosts22DELETEETETETETE extends ImpulseController {
 		}
 		
 		// Navbar
-		$navModes['EDIT'] = "/metahosts/edit/".self::$mHost->get_name();
-		$navModes['DELETE'] = "/metahosts/delete/".self::$mHost->get_name();
-		$navOptions['Overview'] = '/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/metahosts/members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/metahosts/rules/view/'.self::$mHost->get_name();
+		$navModes['EDIT'] = "/metahosts/edit/".rawurlencode(self::$mHost->get_name());
+		$navModes['DELETE'] = "/metahosts/delete/".rawurlencode(self::$mHost->get_name());
+		$navOptions['Overview'] = '/metahosts/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Members'] = '/metahosts/members/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Rules'] = '/metahosts/rules/view/'.rawurlencode(self::$mHost->get_name());
 		$navbar = new Navbar(self::$mHost->get_name(), $navModes, $navOptions);
 		
 		// Load the view data
@@ -208,7 +208,7 @@ class Metahosts22DELETEETETETETE extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$this->_edit();
-				redirect(base_url()."metahosts/view/".self::$mHost->get_name(),'location');
+				redirect(base_url()."metahosts/view/".rawurlencode(self::$mHost->get_name()),'location');
 			}
 			catch (ControllerException $cE) {
 				$this->_error($cE->getMessage());

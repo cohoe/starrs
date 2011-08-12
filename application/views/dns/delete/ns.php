@@ -8,9 +8,9 @@
 		</tr>
 		<? foreach ($records as $record) {
 			echo "<tr>";
-			echo "<td>".$record->get_zone()."</td>";
-			echo "<td>".$record->get_isprimary()."</td>";
-			echo "<td><a href=\"/dns/delete/".$record->get_address()."/".$record->get_type()."/".$record->get_zone()."/".$record->get_hostname()."\">X</a></td>";
+			echo "<td>".htmlentities($record->get_zone())."</td>";
+			echo "<td>".($record->get_isprimary())?"Yes":"No"."</td>";
+			echo "<td><a href=\"/dns/delete/".rawurlencode($record->get_address())."/".rawurlencode($record->get_type())."/".rawurlencode($record->get_zone())."/".rawurlencode($record->get_hostname())."\">X</a></td>";
 			echo "</tr>";
 		}?>
 	</table>

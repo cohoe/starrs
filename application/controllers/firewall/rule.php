@@ -37,9 +37,9 @@ class Rule extends ImpulseController {
 		}
 
 
-        if(preg_match("/^standalone-/",self::$fwRule->get_source())) {
-            $navModes['DELETE'] = "/firewall/rule/delete/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
-            $navModes['EDIT'] = "/firewall/rule/edit/".self::$addr->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+        if(preg_match("/^standalone-",self::$fwRule->get_source())) {
+            $navModes['DELETE'] = "/firewall/rule/delete/".rawurlencode(self::$addr->get_address())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
+            $navModes['EDIT'] = "/firewall/rule/edit/".rawurlencode(self::$addr->get_address())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
             $title = "Standalone Rule";
         }
         else {
@@ -48,7 +48,7 @@ class Rule extends ImpulseController {
         }
 
 		// Navbar
-		$navOptions['Rules'] = "/firewall/rules/view/".self::$addr->get_address();
+		$navOptions['Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 		$navbar = new Navbar($title, $navModes, $navOptions);
 
 		// Load view data
@@ -103,7 +103,8 @@ class Rule extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
-				redirect(base_url()."firewall/rule/view/".self::$fwRule->get_address()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."firewall/rule/view/".rawurlencode(self::$fwRule->get_address())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port()),'location');
 			}
 			catch (ControllerException $cE) {
 				$this->_error($cE->getMessage());
@@ -179,9 +180,10 @@ class Rule extends ImpulseController {
 			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 
 			// Move along
-			redirect(base_url()."/firewall/rules/view/".self::$addr->get_address(),'location');
+			redirect(base_url()."firewall/rules/view/".rawurlencode(self::$addr->get_address()),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());

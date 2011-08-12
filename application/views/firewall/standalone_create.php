@@ -4,7 +4,7 @@
 		<select name="program" class="input_form_input">
 			<option selected></option>
 			<? foreach ($fwProgs as $fwProg) {
-				echo "<option value=\"".$fwProg->get_name()."\">".$fwProg->get_name()." (".$fwProg->get_port()."-".$fwProg->get_transport().")</option>";
+				echo '<option value="'.$fwProg->get_name().'">'.$fwProg->get_name()." (".$fwProg->get_port()."-".$fwProg->get_transport().")</option>";
 			} ?>
 		</select><br />
 		<div style="float: right; width: 100%; text-align: center; font-weight: bold;">-OR-</div>
@@ -13,7 +13,7 @@
 		<select name="transport" class="input_form_input">
 			<option selected></option>
 			<? foreach ($transports as $transport) {
-				echo "<option value=\"$transport\">$transport</option>";
+				echo '<option value="'.$transport.'">'$transport.'</option>';
 			} ?>
 		</select><br />
 		<label for="comment">Comment: </label><input type="text" name="comment" class="input_form_input" /><br /><br />

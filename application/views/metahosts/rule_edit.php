@@ -16,14 +16,14 @@
 		<select name="transport" class="input_form_input">
 			<? foreach ($transports as $transport) {
 				if($transport == $fwRule->get_transport()) {
-					echo "<option value=\"$transport\" selected>$transport</option>";
+					echo '<option value="'.$transport.'" selected>'.$transport.'</option>';
 				}
 				else {
-					echo "<option value=\"$transport\">$transport</option>";
+					echo '<option value='.$transport.'">'.$transport.'</option>';
 				}
 			} ?>
 		</select><br />
-		<label for="comment">Comment: </label><input type="text" name="comment" value="<?echo $fwRule->get_comment();?>" class="input_form_input" /><br /><br />
+		<label for="comment">Comment: </label><input type="text" name="comment" value="<?echo $fwRule->get_comment()?>" class="input_form_input" /><br /><br />
 		<label for="text">Deny?: </label>
 			<input type="radio" name="deny" value="t" class="input_form_radio" <?echo ($fwRule->get_deny() == 't')?"checked":""?> />Yes
 			<input type="radio" name="deny" value="f" class="input_form_radio" <?echo ($fwRule->get_deny() == 'f')?"checked":""?> />No<br />

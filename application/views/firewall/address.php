@@ -17,7 +17,7 @@
             else {
                 $class = "firewall_rule_port_box_unknown";
             }
-			echo "<td class=\"$class\"><a href=\"/firewall/rule/view/".$addr->get_address()."/".$rule->get_transport()."/".$rule->get_port()."/\">".$rule->get_port()."</a></td>";
+			echo "<td class=\"$class\"><a href=\"/firewall/rule/view/".rawurlencode($addr->get_address())."/".rawurlencode($rule->get_transport())."/".rawurlencode($rule->get_port())."/\">".htmlentities($rule->get_port())."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {
 				echo "</tr>";
 			}
@@ -38,6 +38,6 @@
 			$class = "firewall_rule_default_box_unknown";
 		}
 		?>
-		<tr><td class="<?echo $class;?>" colspan="<?echo $cells_per_row;?>"><a href="/firewall/rules/action/<?echo $addr->get_address();?>"><?echo $message;?></a></td></tr>
+		<tr><td class="<?echo $class;?>" colspan="<?echo $cells_per_row;?>"><a href="/firewall/rules/action/<?echo rawurlencode($addr->get_address());?>"><?echo htmlentities($message);?></a></td></tr>
 	</table>
 </div>

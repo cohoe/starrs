@@ -14,7 +14,7 @@
 			elseif($rule->get_deny() == 'f') {
 				$class = "firewall_rule_port_box_allow";
 			}
-			echo "<td class=\"$class\"><a href=\"/firewall/metahost_rule/view/".$mHost->get_name()."/".$rule->get_transport()."/".$rule->get_port()."\">".$rule->get_port()."</a></td>";
+			echo "<td class=\"$class\"><a href=\"/firewall/metahost_rule/view/".rawurlencode($mHost->get_name())."/".rawurlencode($rule->get_transport())."/".rawurlencode($rule->get_port())."\">".htmlentities($rule->get_port())."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {
 				echo "</tr>";
 			}

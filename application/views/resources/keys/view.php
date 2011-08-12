@@ -7,5 +7,5 @@
 	</table>
 </div>
 <div class="infobar">
-	<span class="infobar_text">Created on <?echo $dnsKey->get_date_created();?> - Modified by <?echo $dnsKey->get_last_modifier();?> on <?echo $dnsKey->get_date_modified();?></span>
+	<span class="infobar_text">Created on <?echo htmlentities($dnsKey->get_date_created());?> - Modified by <?echo htmlentities($dnsKey->get_last_modifier());?> on <?echo htmlentities($dnsKey->get_date_modified());?></span>
 </div>

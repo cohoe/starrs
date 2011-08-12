@@ -15,10 +15,10 @@ class Metahost_rules extends ImpulseController {
         $this->_load_metahost($metahostName);
 		
 		// Navbar
-		$navModes['CREATE'] = "/firewall/metahost_rules/create/".self::$mHost->get_name();
-		$navOptions['Overview'] = '/firewall/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/firewall/metahost_members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.self::$mHost->get_name();
+		$navModes['CREATE'] = "/firewall/metahost_rules/create/".rawurlencode(self::$mHost->get_name());
+		$navOptions['Overview'] = '/firewall/metahosts/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Members'] = '/firewall/metahost_members/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.rawurlencode(self::$mHost->get_name());
 		$navbar = new Navbar(self::$mHost->get_name()." - Rules", $navModes, $navOptions);
 		
 		// Load the view data
@@ -47,7 +47,8 @@ class Metahost_rules extends ImpulseController {
         if($this->input->post('submit')) {
             try {
                 $mHostRule = $this->_create();
-                redirect(base_url()."firewall/metahost_rules/view/".self::$mHost->get_name(),'location');
+				self::$sidebar->reload();
+                redirect(base_url()."firewall/metahost_rules/view/".rawurlencode(self::$mHost->get_name()),'location');
             }
             catch (DBException $dbE) {
                 $this->_error($dbE->getMessage());
@@ -55,7 +56,7 @@ class Metahost_rules extends ImpulseController {
 		}
         else {
 			// Navbar
-            $navModes['CANCEL'] = "/firewall/metahost_rules/view/".self::$mHost->get_name();
+            $navModes['CANCEL'] = "/firewall/metahost_rules/view/".rawurlencode(self::$mHost->get_name());
             $navbar = new Navbar("Create Metahost Rule", $navModes, null);
 
 			// Load the view data
@@ -110,7 +111,8 @@ class Metahost_rules extends ImpulseController {
 			}
 
 			// Move along
-			redirect(base_url()."/firewall/metahost_rules/view/".self::$mHost->get_name(),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."firewall/metahost_rules/view/".rawurlencode(self::$mHost->get_name()),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());

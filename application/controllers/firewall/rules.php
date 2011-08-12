@@ -21,10 +21,10 @@ class Rules extends ImpulseController {
 		}
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
-		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
-		$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
-		$navModes['CREATE'] = "/firewall/rules/create/".self::$addr->get_address();
+		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
+		$navModes['CREATE'] = "/firewall/rules/create/".rawurlencode(self::$addr->get_address());
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -71,9 +71,10 @@ class Rules extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
 				
 				// Move along
-				redirect(base_url()."/firewall/rules/view/".self::$addr->get_address(),'location');
+				redirect(base_url()."firewall/rules/view/".rawurlencode(self::$addr->get_address()),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error("DB: ".$dbE->getMessage());
@@ -87,7 +88,7 @@ class Rules extends ImpulseController {
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "/firewall/view/".self::$addr->get_address();
+			$navModes['CANCEL'] = "/firewall/view/".rawurlencode(self::$addr->get_address());
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -101,7 +102,7 @@ class Rules extends ImpulseController {
 			}
 			
 			// More view data
-			$info['title'] = "Create Standalone Firewall Rule - ".self::$addr->get_address();
+			$info['title'] = "Create Standalone Firewall Rule - ".rawurlencode(self::$addr->get_address());
 			$navbar = new Navbar("Create Standalone Firewall Rule", $navModes, null);
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			$info['data'] = $this->load->view('firewall/standalone_create',$viewData,true);
@@ -149,9 +150,10 @@ class Rules extends ImpulseController {
 			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 
 			// Move along
-			redirect(base_url()."/firewall/view/".self::$addr->get_address(),'location');
+			redirect(base_url()."firewall/view/".rawurlencode(self::$addr->get_address()),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -206,9 +208,10 @@ class Rules extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
 				
 				// Move along
-				redirect("/firewall/rules/view/".self::$addr->get_address(),'location');
+				redirect("firewall/rules/view/".rawurlencode(self::$addr->get_address()),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());

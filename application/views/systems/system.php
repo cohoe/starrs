@@ -10,5 +10,5 @@
 	</table>
 </div>
 <div class="infobar">
-	<span class="infobar_text">Created on <?echo $system->get_date_created();?> - Modified by <?echo $system->get_last_modifier();?> on <?echo $system->get_date_modified();?></span>
+	<span class="infobar_text">Created on <?echo htmlentities($system->get_date_created());?> - Modified by <?echo htmlentities($system->get_last_modifier());?> on <?echo htmlentities($system->get_date_modified());?></span>
 </div>

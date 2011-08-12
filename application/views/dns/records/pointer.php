@@ -11,12 +11,12 @@
 		</tr>
 		<? foreach ($records as $record) {
 			echo "<tr>";
-			echo "<td>".$record->get_alias()."</td>";
-			echo "<td>".$record->get_hostname().".".$record->get_zone()."</td>";
-			echo "<td>".$record->get_extra()."</td>";
-			echo "<td>".$record->get_type()."</td>";
-			echo "<td>".$record->get_ttl()."</td>";
-			echo "<td>".$record->get_last_modifier()."</td>";
+			echo "<td>".htmlentities($record->get_alias())."</td>";
+			echo "<td>".htmlentities($record->get_hostname()).".".htmlentities($record->get_zone())."</td>";
+			echo "<td>".htmlentities($record->get_extra())."</td>";
+			echo "<td>".htmlentities($record->get_type())."</td>";
+			echo "<td>".htmlentities($record->get_ttl())."</td>";
+			echo "<td>".htmlentities($record->get_last_modifier())."</td>";
 			echo "</tr>";
 		}?>
 	</table>

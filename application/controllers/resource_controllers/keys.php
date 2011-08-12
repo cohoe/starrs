@@ -79,7 +79,8 @@ class Keys extends ImpulseController {
 				if(!($dnsKey instanceof DnsKey)) {
 					$this->_error("Unable to instantiate DNS key object");
 				}
-				redirect("/resources/keys/view/".$dnsKey->get_keyname(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."resources/keys/view/".rawurlencode($dnsKey->get_keyname()),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -119,6 +120,7 @@ class Keys extends ImpulseController {
 		
 		try {
 			$this->api->dns->remove->key($keyname);
+			self::$sidebar->reload();
 			redirect(base_url()."resources/keys",'location');
 		}
 		catch (Exception $e) {
@@ -138,7 +140,8 @@ class Keys extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$this->_edit();
-				redirect("/resources/keys/view/".self::$dnsKey->get_keyname(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."resources/keys/view/".rawurlencode(self::$dnsKey->get_keyname()),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());

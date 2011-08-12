@@ -5,10 +5,10 @@
 		<?
 			foreach ($systemTypes as $type) {
 				if($type == $system->get_type()) {
-					echo "<option value=\"$type\" selected=\"selected\">$type</option>";
+					echo '<option value="'.$type.'" selected>'.$type.'</option>';
 				}
 				else {
-					echo "<option value=\"$type\">$type</option>";
+					echo '<option value="'.$type.'">'.$type.'</option>';
 				}
 			}
 		?>
@@ -17,10 +17,10 @@
 		<?
 			foreach ($operatingSystems as $os) {
 				if($os == $system->get_os_name()) {
-					echo "<option value=\"$os\" selected=\"selected\">$os</option>";
+					echo '<option value="'.$os.'" selected>'.$os.'</option>';
 				}
 				else {
-					echo "<option value=\"$os\">$os</option>";
+					echo '<option value="'.$os.'">'.$os.'</option>';
 				}
 			}
 		?>
@@ -30,7 +30,7 @@
 		<? if(isset($admin)) {?>
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $system->get_owner();?>" class="input_form_input" /><br />
 		<?} else {?>
-			<input type="hidden" name="owner" value="<?echo $user;?>" class="input_form_input" /><br />
+			<input type="hidden" name="owner" value="<?echo $system->get_owner();?>" class="input_form_input" /><br />
 		<?}?>
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Save" class="input_form_submit" class="input_form_input" />
 	</form>

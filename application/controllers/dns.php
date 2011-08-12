@@ -26,15 +26,15 @@ class Dns extends ImpulseController {
 		}
 
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".self::$addr->get_address();
-		$navOptions['DNS Records'] = "/dns/view/".self::$addr->get_address();
+		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 		if(self::$addr->get_dynamic() == FALSE) {
-			$navOptions['Firewall Rules'] = "/firewall/rules/view/".self::$addr->get_address();
+			$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 		}
 		
-		$navModes['CREATE'] = "/dns/create/".self::$addr->get_address();
-		$navModes['EDIT'] = "/dns/edit/".self::$addr->get_address();
-		$navModes['DELETE'] = "/dns/delete/".self::$addr->get_address();
+		$navModes['CREATE'] = "/dns/create/".rawurlencode(self::$addr->get_address());
+		$navModes['EDIT'] = "/dns/edit/".rawurlencode(self::$addr->get_address());
+		$navModes['DELETE'] = "/dns/delete/".rawurlencode(self::$addr->get_address());
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -103,12 +103,12 @@ class Dns extends ImpulseController {
 		
 		if($this->input->post('typeSubmit')) {
 		
-			if(self::$addr->get_address_records() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
+			if(self::$addr->get_address_records() == NULL && !preg_match("/^A+$",$this->input->post('type'))) {
 				$this->_error("Need to create an address (A/AAAA) record first!");
 			}
 		
 			// Navbar
-			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+			$navModes['CANCEL'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 			$navbar = new Navbar("Create DNS Record", $navModes, null);
 
 			// Load the view data
@@ -131,7 +131,7 @@ class Dns extends ImpulseController {
 			}
 
 			// Continue loading view data
-			$info['data'] = $this->load->view("dns/create/".$this->input->post('type'),$form,TRUE);
+			$info['data'] = $this->load->view("dns/create/".rawurlencode($this->input->post('type')),$form,TRUE);
 			$info['title'] = "Create DNS Address";
 
 			// Load the main view
@@ -162,13 +162,14 @@ class Dns extends ImpulseController {
 			self::$int->add_address(self::$addr);
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 			
 			// Move along
-			redirect(base_url()."dns/view/".self::$addr->get_address(),'location');
+			redirect(base_url()."dns/view/".rawurlencode(self::$addr->get_address()),'location');
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+			$navModes['CANCEL'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 			$navbar = new Navbar("Create DNS Record", $navModes, null);
 
 			// Load the view data
@@ -217,7 +218,7 @@ class Dns extends ImpulseController {
 				$record = $this->_get_record_obj($address,$type,$zone,$hostname,$alias);
 				
 				// Navbar
-				$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+				$navModes['CANCEL'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 				$navbar = new Navbar("Edit DNS Record", $navModes, null);
 
 				// Load the view data
@@ -257,13 +258,14 @@ class Dns extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
 				
-				redirect(base_url()."dns/edit/".self::$addr->get_address(),'location');
+				redirect(base_url()."dns/edit/".rawurlencode(self::$addr->get_address()),'location');
 			}
 		}
 		else {	
 			// Navbar
-			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+			$navModes['CANCEL'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 			$navbar = new Navbar("Edit DNS Record", $navModes, null);
 
 			// Load the view data
@@ -357,9 +359,10 @@ class Dns extends ImpulseController {
 			self::$int->add_address($this->api->systems->get->system_interface_address($address,true));
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 			
 			// Move along
-			redirect(base_url()."dns/delete/".self::$addr->get_address(),'location');
+			redirect(base_url()."dns/delete/".rawurlencode(self::$addr->get_address()),'location');
 		}
 		
 		else {
@@ -367,7 +370,7 @@ class Dns extends ImpulseController {
 			#$type = $this->input->post('type');
 			
 			// Navbar
-			$navModes['CANCEL'] = "/dns/view/".self::$addr->get_address();
+			$navModes['CANCEL'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 			$navbar = new Navbar("Delete DNS Record", $navModes, null);
 
 			// Load the view data

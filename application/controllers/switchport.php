@@ -55,7 +55,8 @@ class Switchport extends ImpulseController {
 
         try {
             $this->api->network->remove->switchport($portName, $systemName);
-            redirect(base_url()."switchports/view/".rawurlencode($systemName));
+			self::$sidebar->reload();
+            redirect(base_url()."switchports/view/".rawurlencode($systemName),'location');
         }
         catch(DBException $dbE) {
             $this->_error($dbE->getMessage());
@@ -83,6 +84,7 @@ class Switchport extends ImpulseController {
         if($this->input->post('submit')) {
             try {
                 $this->_edit();
+				self::$sidebar->reload();
                 redirect(base_url()."switchport/view/".rawurlencode(self::$sys->get_system_name())."/".rawurlencode(self::$sPort->get_port_name()),'location');
             }
             catch(ObjectNotFoundException $oE) {

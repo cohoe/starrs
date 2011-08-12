@@ -42,15 +42,16 @@ class Interfaces extends ImpulseController {
 			// Add the interface
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 			
 			// Send you on your way
-			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
+			redirect(base_url()."systems/view/".rawurlencode($this->input->post('systemName'))."/interfaces",'location');
         }
 			
         // Need to input the information
         else {
             // Navbar
-            $navModes['CANCEL'] = "";
+            $navModes['CANCEL'] = "/systems/view/".rawurlencode($sys->get_system_name())."/interfaces";
             $navbar = new Navbar("Create Interface", $navModes, null);
 
             // Load the view data
@@ -106,9 +107,10 @@ class Interfaces extends ImpulseController {
 			// Update the session data
 			self::$sys->add_interface(self::$int);
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
 			
-			// Semd ypi pm ypir wau
-			redirect(base_url()."systems/view/".$this->input->post('systemName')."/interfaces",'location');
+			// Send you on your way
+			redirect(base_url()."systems/view/".rawurlencode($this->input->post('systemName'))."/interfaces",'location');
 		}
 		
 		// Need to input the information
@@ -159,8 +161,11 @@ class Interfaces extends ImpulseController {
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
 			$this->_delete(self::$int);
+			
+			self::$sidebar->reload();
+			
 			// Send you on your way
-			redirect(base_url()."systems/view/".self::$int->get_system_name()."/interfaces",'location');
+			redirect(base_url()."systems/view/".rawurlencode(self::$int->get_system_name())."/interfaces",'location');
 		}
 		
 		// They hit no, don't delete the system
@@ -215,9 +220,9 @@ class Interfaces extends ImpulseController {
 		}
 
 		// Navbar
-		$navModes['CREATE'] = "/addresses/create/".$mac;
-		$navModes['DELETE'] = "/addresses/delete/".$mac;
-		$navOptions['Interfaces'] = "/systems/view/".self::$int->get_system_name()."/interfaces";
+		$navModes['CREATE'] = "/addresses/create/".rawurlencode($mac);
+		$navModes['DELETE'] = "/addresses/delete/".rawurlencode($mac);
+		$navOptions['Interfaces'] = "/systems/view/".rawurlencode(self::$int->get_system_name())."/interfaces";
 		$navbar = new Navbar("Addresses on " . $mac, $navModes, $navOptions);
 
 		// Load the view data
@@ -225,7 +230,7 @@ class Interfaces extends ImpulseController {
 		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->_load_addresses(self::$int);
-		$info['title'] = "Addresses - ".$mac;
+		$info['title'] = "Addresses - ".rawurlencode($mac);
 		
 		// Load the main view
 		$this->load->view('core/main',$info);
@@ -361,12 +366,12 @@ class Interfaces extends ImpulseController {
 
 			// For each of the address objects, draw it's box and append it to the view
 			foreach($addrs as $addr) {
-				$navOptions['DNS Records'] = "/dns/view/".$addr->get_address();
+				$navOptions['DNS Records'] = "/dns/view/".rawurlencode($addr->get_address());
 				if($addr->get_dynamic() != TRUE) {
-					$navOptions['Firewall Rules'] = "/firewall/rules/view/".$addr->get_address();
+					$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode($addr->get_address());
 				}
-				$navModes['EDIT'] = "/addresses/edit/".$addr->get_address();
-				$navModes['DELETE'] = "/addresses/delete/".$addr->get_mac()."/".$addr->get_address();
+				$navModes['EDIT'] = "/addresses/edit/".rawurlencode($addr->get_address());
+				$navModes['DELETE'] = "/addresses/delete/".rawurlencode($addr->get_mac())."/".rawurlencode($addr->get_address());
 								
 				$navbar = new Navbar("Address", $navModes, $navOptions);
 				$addressViewData .= $this->load->view('systems/address',array('addr'=>$addr, 'navbar'=>$navbar),TRUE);
@@ -381,6 +386,5 @@ class Interfaces extends ImpulseController {
 		}
 	}	
 }
-
 /* End of file interfaces.php */
 /* Location: ./application/controllers/interfaces.php */

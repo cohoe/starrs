@@ -15,10 +15,10 @@ class Metahost_members extends ImpulseController {
 		$this->_load_metahost($metahostName);
 		
 		// Navbar
-		$navModes['CREATE'] = "/firewall/metahost_members/create/".self::$mHost->get_name();
-		$navOptions['Overview'] = '/firewall/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/firewall/metahost_members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.self::$mHost->get_name();
+		$navModes['CREATE'] = "/firewall/metahost_members/create/".rawurlencode(self::$mHost->get_name());
+		$navOptions['Overview'] = '/firewall/metahosts/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Members'] = '/firewall/metahost_members/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.rawurlencode(self::$mHost->get_name());
 		$navbar = new Navbar(self::$mHost->get_name()." - Members", $navModes, $navOptions);
 		
 		// Load the view data
@@ -46,7 +46,8 @@ class Metahost_members extends ImpulseController {
 
 			$this->api->firewall->remove->metahost_member($membr);
 			self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
-			redirect(base_url()."/firewall/metahost_members/view/".self::$mHost->get_name(),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."firewall/metahost_members/view/".rawurlencode(self::$mHost->get_name()),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());
@@ -65,7 +66,8 @@ class Metahost_members extends ImpulseController {
 				self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
 				$membr = $this->_create();
 				self::$mHost = $this->api->firewall->get->metahost($metahostName,true);
-				redirect(base_url()."firewall/metahost_members/view/".$membr->get_name(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."firewall/metahost_members/view/".rawurlencode($membr->get_name()),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());

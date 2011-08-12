@@ -23,7 +23,7 @@ class Systems extends ImpulseController {
     public function all() {
 
 		// Navbar
-		$navModes['CREATE'] = "/systems/create/";
+		$navModes['CREATE'] = "/systems/create";
 		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
 		$navbar = new Navbar("All Systems", $navModes, $navOptions);
 		
@@ -54,7 +54,7 @@ class Systems extends ImpulseController {
     public function owned() {
 
 		// Navbar
-		$navModes['CREATE'] = "/systems/create/";
+		$navModes['CREATE'] = "/systems/create";
 		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
 		$navbar = new Navbar("Owned Systems", $navModes, $navOptions);
 		
@@ -92,7 +92,7 @@ class Systems extends ImpulseController {
 		
 		// If no system was specified, then go to the get started page. 
 		if($systemName == NULL) {
-			$this->_load_get_started();
+			$this->owned();
 		}
 		
 		// We got a system, deal with it
@@ -116,13 +116,13 @@ class Systems extends ImpulseController {
 			
 			// Navbar information
 			$navModes = array();
-			$navOptions['Overview'] = "/systems/view/".$sys->get_system_name()."/overview";
-			$navOptions['Interfaces'] = "/systems/view/".$sys->get_system_name()."/interfaces";
+			$navOptions['Overview'] = "/systems/view".rawurlencode($sys->get_system_name())."/overview";
+			$navOptions['Interfaces'] = "/systems/view".rawurlencode($sys->get_system_name())."/interfaces";
 			
 			if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-				$navOptions['Renew'] = "/systems/renew/".$sys->get_system_name();
-				$navModes['EDIT'] = "/systems/edit/";
-				$navModes['DELETE'] = "/systems/delete/";
+				$navOptions['Renew'] = "/systems/renew".rawurlencode($sys->get_system_name());
+				$navModes['EDIT'] = "/systems/edit";
+				$navModes['DELETE'] = "/systems/delete";
 			}
 			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
 			
@@ -137,7 +137,7 @@ class Systems extends ImpulseController {
 				case 'interfaces':
 					$info['data'] = $this->_load_interfaces($sys);
 					if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-						$navbar->set_create(TRUE,"/interfaces/create/".$sys->get_system_name());
+						$navbar->set_create(TRUE,"/interfaces/create".rawurlencode($sys->get_system_name()));
 					}
 					$navbar->set_edit(FALSE,NULL);
 					$navbar->set_delete(FALSE,NULL);
@@ -174,7 +174,8 @@ class Systems extends ImpulseController {
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			$this->_edit($sys);
-			redirect(base_url()."systems/view/".$this->input->post('systemName'),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."systems/view/".rawurlencode($this->input->post('systemName')),'location');
 		}
 		
 		// Need to input the information
@@ -219,7 +220,8 @@ class Systems extends ImpulseController {
 		if($this->input->post('submit')) {
 			$sys = $this->_create();
 			$this->impulselib->set_active_system($sys);
-			redirect(base_url()."systems/view/".$sys->get_system_name(),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."systems/view/".rawurlencode($sys->get_system_name()),'location');
 		}
 		
 		// Need to input the information
@@ -262,7 +264,8 @@ class Systems extends ImpulseController {
 		// They hit yes, delete the system
 		if($this->input->post('yes')) {
 			$this->_delete($sys);
-			redirect(base_url()."systems/","location");
+			self::$sidebar->reload();
+			redirect(base_url()."systems","location");
 		}
 		
 		// They hit no, don't delete the system
@@ -354,10 +357,10 @@ class Systems extends ImpulseController {
 				
 				// Navbar
 				if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-					$navModes['EDIT'] = "/interfaces/edit/".$int->get_mac();
-					$navModes['DELETE'] = "/interfaces/delete/".$int->get_mac();
+					$navModes['EDIT'] = "/interfaces/edit/".rawurlencode($int->get_mac());
+					$navModes['DELETE'] = "/interfaces/delete/".rawurlencode($int->get_mac());
 				}
-				$navOptions['Addresses'] = "/interfaces/addresses/".$int->get_mac();
+				$navOptions['Addresses'] = "/interfaces/addresses/".rawurlencode($int->get_mac());
 				$navbar = new Navbar("Interface", $navModes, $navOptions);
 			
 				$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);

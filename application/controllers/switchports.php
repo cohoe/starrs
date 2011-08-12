@@ -91,6 +91,7 @@ class Switchports extends ImpulseController {
 
             // Set the system object
 			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
             redirect(base_url()."switchports/view/".rawurlencode(self::$sys->get_system_name()),'location');
         }
         else {

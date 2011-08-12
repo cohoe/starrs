@@ -32,6 +32,9 @@ class Output extends ImpulseController {
 		
 		switch($target) {
 			case "dhcpd.conf":
+				if(!$this->api->isadmin()) {
+					$this->_error("Permission denied. You are not admin.");
+				}
 				$info['data'] = $this->_dhcpdConf();
 				break;
 			case "fw_default_queue":
@@ -70,6 +73,5 @@ class Output extends ImpulseController {
 		return $this->table->generate($query);
 	}
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+/* End of file output.php */
+/* Location: ./application/controllers/output.php */

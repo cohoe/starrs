@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/DHCP/api_dhcp_create.php");
 require_once(APPPATH . "models/API/DHCP/api_dhcp_modify.php");
 require_once(APPPATH . "models/API/DHCP/api_dhcp_remove.php");
 require_once(APPPATH . "models/API/DHCP/api_dhcp_get.php");
+require_once(APPPATH . "models/API/DHCP/api_dhcp_list.php");
 
 /**
  * DHCP
@@ -19,6 +20,7 @@ class Api_dhcp extends ImpulseModel {
 		$this->modify = new Api_dhcp_modify();
 		$this->remove = new Api_dhcp_remove();
         $this->get    = new Api_dhcp_get();
+		$this->list   = new Api_dhcp_list();
 	}
 	
 	

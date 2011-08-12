@@ -20,6 +20,7 @@ class Sidebar {
 	private $ownedSubnets;
 	private $otherSubnets;
 	private $ranges;
+	private $classes;
 	
 	private static $rwSystemImageUrl = "/media/images/sidebar/system.png";
 	private static $roSystemImageUrl = "/media/images/sidebar/system.png";
@@ -90,6 +91,11 @@ class Sidebar {
 		}
 		catch(ObjectNotFoundException $onfE) {}
 		
+		try {
+			$this->classes = $this->CI->api->dhcp->list->classes();
+		}
+		catch(ObjectNotFoundException $onfE) {}
+		
 		#print_r($this->interfaces);
 	}
 	
@@ -122,10 +128,10 @@ class Sidebar {
 	}
 	
 	private function _load_address_view_data($address,$last=NULL) {
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.$address.'">'.$address.'</a>
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.rawurlencode($address).'">'.$address.'</a>
 					<ul style="display: none;">
-						<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.$address.'">DNS Records</a></li>
-						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.$address.'">Firewall Rules</a></li>
+						<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.rawurlencode($address).'">DNS Records</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.rawurlencode($address).'">Firewall Rules</a></li>
 					</ul>
 				</li>';
 	}
@@ -144,10 +150,6 @@ class Sidebar {
 					$addressData .= $this->_load_address_view_data($address,"last");
 				}	
 			}
-			
-			#foreach($this->addresses[$this->interfaces[$systemName][$interface]] as $address) {
-			#	
-			#}
 		}
 		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
 					<ul style="display: none;">'.
@@ -173,7 +175,7 @@ class Sidebar {
 				}
 			}
 		}
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.$systemName.'">'.$systemName.'</a>
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a>
 			<ul style="display: none;">'.$systemData.
 			'</ul>
 		</li>';
@@ -218,10 +220,10 @@ class Sidebar {
 	
 		if($this->ownedMetahosts) {
 			foreach($this->ownedMetahosts as $metahostName) {
-				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.rawurlencode($metahostName).'">'.$metahostName.'</a>
 				<ul style="display: none;">
-					<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-					<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.rawurlencode($metahostName).'">Members</a></li>
+					<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahost_rules/view/'.rawurlencode($metahostName).'">Rules</a></li>
 				</ul>
 			</li>';
 			}
@@ -239,18 +241,18 @@ class Sidebar {
 			while($metahosts) {
 				$metahostName = array_shift($metahosts);
 				if($metahosts) {
-					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
-					'<ul style="display: none;">
-						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.rawurlencode($metahostName).'">'.$metahostName.'</a>
+					<ul style="display: none;">
+						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.rawurlencode($metahostName).'">Members</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahost_rules/view/'.rawurlencode($metahostName).'">Rules</a></li>
 					</ul>
 				</li>';
 				}
 				else {
-					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.$metahostName.'">'.$metahostName.'</a>'.
-					'<ul style="display: none;">
-						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.$metahostName.'">Members</a></li>
-						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahosts/rules/view/'.$metahostName.'">Rules</a></li>
+					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/metahost.png" /> <a href="/firewall/metahosts/view/'.rawurlencode($metahostName).'">'.$metahostName.'</a>
+					<ul style="display: none;">
+						<li><img src="/media/images/sidebar/members.png" /> <a href="/firewall/metahost_members/view/'.rawurlencode($metahostName).'">Members</a></li>
+						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/metahost_rules/view/'.rawurlencode($metahostName).'">Rules</a></li>
 					</ul>
 				</li>';
 				}
@@ -265,7 +267,7 @@ class Sidebar {
 		
 		if($this->ownedKeys) {
 			foreach($this->ownedKeys as $keyname) {
-				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.rawurlencode($keyname).'">'.$keyname.'</a></li>';
 			}
 		}
 		
@@ -277,7 +279,7 @@ class Sidebar {
 		
 		if($this->otherKeys) {
 			foreach($this->otherKeys as $keyname) {
-				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.$keyname.'">'.$keyname.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/key.png" /> <a href="/resources/keys/view/'.rawurlencode($keyname).'">'.$keyname.'</a></li>';
 			}
 		}
 		
@@ -289,7 +291,7 @@ class Sidebar {
 		
 		if($this->ownedZones) {
 			foreach($this->ownedZones as $zone) {
-				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.rawurlencode($zone).'">'.$zone.'</a></li>';
 			}
 		}
 		
@@ -301,7 +303,7 @@ class Sidebar {
 		
 		if($this->otherZones) {
 			foreach($this->otherZones as $zone) {
-				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.$zone.'">'.$zone.'</a></li>';
+				$viewData .= '<li><img src="/media/images/sidebar/zone.png" /> <a href="/resources/zones/view/'.rawurlencode($zone).'">'.$zone.'</a></li>';
 			}
 		}
 		
@@ -313,7 +315,11 @@ class Sidebar {
 		
 		if($this->ownedSubnets) {
 			foreach($this->ownedSubnets as $subnet) {
-				$viewData .= '<li><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.rawurlencode($subnet).'">'.$subnet.'</a>
+					<ul style="display: none">
+						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/subnet/'.rawurlencode($subnet).'">DHCP Options</a></li>
+					</ul>
+				</li>';
 			}
 		}
 		
@@ -325,7 +331,11 @@ class Sidebar {
 		
 		if($this->otherSubnets) {
 			foreach($this->otherSubnets as $subnet) {
-				$viewData .= '<li><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.$subnet.'">'.$subnet.'</a></li>';
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.rawurlencode($subnet).'">'.$subnet.'</a>
+					<ul style="display: none">
+						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/subnet/'.rawurlencode($subnet).'">DHCP Options</a></li>
+					</ul>
+				</li>';
 			}
 		}
 		
@@ -335,15 +345,50 @@ class Sidebar {
 	public function load_range_view_data() {
 		$viewData = "";
 		
-		$viewUrl = ($this->CI->api->isadmin())?self::$rwSystemImageUrl:self::$roSystemImageUrl;
+		#$viewUrl = ($this->CI->api->isadmin())?self::$rwSystemImageUrl:self::$roSystemImageUrl;
 		
 		if($this->ranges) {
 			foreach($this->ranges as $range) {
-				$viewData .= '<li><img src="/media/images/sidebar/range.png" /> <a href="/resources/ranges/view/'.$range.'">'.$range.'</a></li>';
+				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/range.png" /> <a href="/resources/ranges/view/'.rawurlencode($range).'">'.$range.'</a>
+					<ul style="display: none">
+						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/range/'.rawurlencode($range).'">DHCP Options</a></li>
+					</ul>
+				</li>';
 			}
 		}
 		
 		return $viewData;
+	}
+	
+	public function load_class_view_data() {
+		$viewData = "";
+		
+		if($this->classes) {
+			$classes = $this->classes;
+			while($classes) {
+				$class = array_shift($classes);
+				if($classes) {
+					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/class.png" /> <a href="/dhcp/classes/view/'.rawurlencode($class).'">'.$class.'</a>
+						<ul style="display: none">
+							<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/class/'.$class.'">DHCP Options</a></li>
+						</ul>
+					</li>';
+				}
+				else {
+					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/class.png" /> <a href="/dhcp/classes/view/'.rawurlencode($class).'">'.$class.'</a>
+						<ul style="display: none">
+							<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/class/'.$class.'">DHCP Options</a></li>
+						</ul>
+					</li>';
+				}
+			}
+		}
+		
+		return $viewData;
+	}
+	
+	public function reload() {
+		$_SESSION['sidebar'] = null;
 	}
 	
 }

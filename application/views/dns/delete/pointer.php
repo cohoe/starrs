@@ -10,11 +10,11 @@
 		</tr>
 		<? foreach ($records as $record) {
 			echo "<tr>";
-			echo "<td>".$record->get_alias()."</td>";
-			echo "<td>".$record->get_hostname().".".$record->get_zone()."</td>";
-			echo "<td>".$record->get_extra()."</td>";
-			echo "<td>".$record->get_type()."</td>";
-			echo "<td><a href=\"/dns/delete/".$record->get_address()."/".$record->get_type()."/".$record->get_zone()."/".$record->get_hostname()."/".$record->get_alias()."\">X</a></td>";
+			echo "<td>".htmlentities($record->get_alias())."</td>";
+			echo "<td>".htmlentities($record->get_hostname()).".".htmlentities($record->get_zone())."</td>";
+			echo "<td>".htmlentities($record->get_extra())."</td>";
+			echo "<td>".htmlentities($record->get_type())."</td>";
+			echo "<td><a href=\"/dns/delete/".rawurlencode($record->get_address())."/".rawurlencode($record->get_type())."/".rawurlencode($record->get_zone())."/".rawurlencode($record->get_hostname())."/".rawurlencode($record->get_alias())."\">X</a></td>";
 			echo "</tr>";
 		}?>
 	</table>

@@ -1,3 +1,4 @@
+<!-- THIS FILE HAS BEEN DEPRECATED!!!!!!!!!!!!!!
 <div class="item_container">
 	<? if($address->get_address_record()){?>
 		<div class="item_information_area_container">
@@ -56,3 +57,4 @@
         <?}?>
 	</div>
 </div>
+-->

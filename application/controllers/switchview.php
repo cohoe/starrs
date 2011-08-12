@@ -79,6 +79,7 @@ class Switchview extends ImpulseController {
                     $this->input->post('ro_community'),
                     $rwCommunity
                 );
+				self::$sidebar->reload();
                 redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
             }
             catch(Exception $e) {
@@ -107,6 +108,7 @@ class Switchview extends ImpulseController {
         try {
             $this->_load_system($systemName);
             $this->api->network->remove->switchview_settings($systemName);
+			self::$sidebar->reload();
             redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
         }
         catch(ObjectNotFoundException $onfE) {
@@ -130,6 +132,7 @@ class Switchview extends ImpulseController {
             try {
                 $this->_edit();
                 $this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
                 redirect(base_url()."switchview/settings/".rawurlencode(self::$sys->get_system_name()),'location');
             }
             catch(Exception $e) {

@@ -82,7 +82,8 @@ class Ranges extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->api->ip->remove->range($range);
-				redirect("/resources/ranges/",'location');
+				self::$sidebar->reload();
+				redirect("resources/ranges",'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -91,7 +92,7 @@ class Ranges extends ImpulseController {
 		
 		// They hit no, don't delete the subnet
 		elseif($this->input->post('no')) {
-			redirect("/resources/ranges/view/".rawurlencode($range),'location');
+			redirect("resources/ranges/view/".rawurlencode($range),'location');
 		}
 		
 		// Need to print the prompt
@@ -134,7 +135,8 @@ class Ranges extends ImpulseController {
 				if(!($ipRange instanceof IpRange)) {
 					$this->_error("Unable to instantiate range object");
 				}
-				redirect("/resources/ranges/view/".rawurlencode($ipRange->get_name()),'location');
+				self::$sidebar->reload();
+				redirect("resources/ranges/view/".rawurlencode($ipRange->get_name()),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -180,7 +182,8 @@ class Ranges extends ImpulseController {
 				
 		if($this->input->post('submit')) {
 			$this->_edit();
-			redirect("/resources/ranges/view/".rawurlencode(self::$ipRange->get_name()));
+			self::$sidebar->reload();
+			redirect("resources/ranges/view/".rawurlencode(self::$ipRange->get_name()),'location');
 		}
 		else {
 			// Navbar

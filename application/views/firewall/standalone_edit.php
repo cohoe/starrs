@@ -4,10 +4,10 @@
 		<select name="address" class="input_form_input">
 			<? foreach ($addrs as $addr) {
 				if($addr->get_address() == $fwRule->get_address()) {
-					echo "<option value=\"".$addr->get_address()."\" selected>".$addr->get_address()."</option>";
+					echo '<option value="'.$addr->get_address().'" selected>'.$addr->get_address().'</option>';
 				}
 				else {
-					echo "<option value=\"".$addr->get_address()."\">".$addr->get_address()."</option>";
+					echo '<option value="'.$addr->get_address().'">'.$addr->get_address().'</option>';
 				}
 			}?>
 		</select>
@@ -16,10 +16,10 @@
 		<select name="transport" class="input_form_input">
 			<? foreach ($transports as $transport) {
 				if($transport == $fwRule->get_transport()) {
-					echo "<option value=\"$transport\" selected>$transport</option>";
+					echo '<option value="'.$transport.'" selected>'.$transport.'</option>';
 				}
 				else {
-					echo "<option value=\"$transport\">$transport</option>";
+					echo '<option value="'.$transport.'">'.$transport.'</option>';
 				}
 			} ?>
 		</select><br />

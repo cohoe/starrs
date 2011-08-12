@@ -46,7 +46,7 @@ class Dhcp extends ImpulseController {
 		
 		// They hit no, don't delete the class
 		elseif($this->input->post('no')) {
-			redirect(base_url()."/dhcp",'location');
+			redirect(base_url()."dhcp",'location');
 		}
 		
 		// Need to print the prompt

@@ -13,5 +13,5 @@
 	</table>
 </div>
 <div class="infobar">
-	<span class="infobar_text">Created on <?echo $sNet->get_date_created();?> - Modified by <?echo $sNet->get_last_modifier();?> on <?echo $sNet->get_date_modified();?></span>
+	<span class="infobar_text">Created on <?echo htmlentities($sNet->get_date_created());?> - Modified by <?echo htmlentities($sNet->get_last_modifier());?> on <?echo htmlentities($sNet->get_date_modified());?></span>
 </div>

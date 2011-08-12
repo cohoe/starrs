@@ -1,3 +1,4 @@
+<!-- THIS FILE HAS BEEN DEPRECTATED!!!!!!!!!!!!!!!!!!!!
 <script src='/js/hostnameInUse.js'></script>
 <div class="item_container">
 	<form method="POST" class="input_form">
@@ -126,3 +127,4 @@
 		<label for="submit">&nbsp;</label><input type="submit" name="recordSubmit" value="Create" class="input_form_submit"/>
 	</form>
 </div>
+-->

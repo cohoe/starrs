@@ -31,15 +31,15 @@ class Metahost_rule extends ImpulseController {
 			$this->_error($onfE->getMessage());
 		}
 
-		$navModes['DELETE'] = "/firewall/metahost_rule/delete/".self::$mHost->get_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+		$navModes['DELETE'] = "/firewall/metahost_rule/delete/".rawurlencode(self::$mHost->get_name())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
 		if(self::$fwRule->get_mode() != 'PROGRAM') {
-			$navModes['EDIT'] = "/firewall/metahost_rule/edit/".self::$mHost->get_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port();
+			$navModes['EDIT'] = "/firewall/metahost_rule/edit/".rawurlencode(self::$mHost->get_name())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
 		}
 
 		// Navbar
-		$navOptions['Overview'] = '/firewall/metahosts/view/'.self::$mHost->get_name();
-		$navOptions['Members'] = '/firewall/metahost_members/view/'.self::$mHost->get_name();
-		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.self::$mHost->get_name();
+		$navOptions['Overview'] = '/firewall/metahosts/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Members'] = '/firewall/metahost_members/view/'.rawurlencode(self::$mHost->get_name());
+		$navOptions['Rules'] = '/firewall/metahost_rules/view/'.rawurlencode(self::$mHost->get_name());
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -82,7 +82,8 @@ class Metahost_rule extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				$this->_edit();
-				redirect(base_url()."firewall/metahost_rule/view/".self::$mHost->get_name()."/".self::$fwRule->get_transport()."/".self::$fwRule->get_port(),'location');
+				self::$sidebar->reload();
+				redirect(base_url()."firewall/metahost_rule/view/".rawurlencode(self::$mHost->get_name())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port()),'location');
 			}
 			catch (ControllerException $cE) {
 				$this->_error($cE->getMessage());
@@ -148,7 +149,8 @@ class Metahost_rule extends ImpulseController {
 			}
 
 			// Move along
-			redirect(base_url()."/firewall/metahost_rules/view/".self::$mHost->get_name(),'location');
+			self::$sidebar->reload();
+			redirect(base_url()."firewall/metahost_rules/view/".rawurlencode(self::$mHost->get_name()),'location');
 		}
 		catch (DBException $dbE) {
 			$this->_error($dbE->getMessage());

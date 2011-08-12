@@ -4,14 +4,14 @@
 		<label for="type">Type: </label><select name="type" class="input_form_input">
 		<?
 			foreach ($systemTypes as $type) {
-				echo "<option value=\"$type\">$type</option>";
+				echo "<option value=\"$type\">".$type."</option>";
 			}
 		?>
 		</select><br />
 		<label for="osName">Operating System: </label><select name="osName" class="input_form_input">
 		<?
 			foreach ($operatingSystems as $os) {
-				echo "<option value=\"$os\">$os</option>";
+				echo "<option value=\"$os\">".$os."</option>";
 			}
 		?>
 		</select><br />

@@ -75,7 +75,8 @@ class Options extends ImpulseController {
 		
 		if($this->input->post('submit')) {
 			$this->_create($mode, urldecode($target));
-			redirect(base_url()."/dhcp/options/view/$mode/$target",'location');
+			self::$sidebar->reload();
+			redirect(base_url()."dhcp/options/view/$mode/$target",'location');
 		}
 		else {
 			$navModes['CANCEL'] = "/dhcp/options/view/$mode/$target";
@@ -142,11 +143,13 @@ class Options extends ImpulseController {
 						$this->_error("Invalid view target given");
 						break;
 				}
+				
+				self::$sidebar->reload();
+				redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());
 			}
-			redirect(base_url()."/dhcp/options/view/$mode/".rawurlencode($target),'location');
 		}
 		else {
 			$navModes['CANCEL'] = "/dhcp/options/view/$mode/$target";
@@ -203,49 +206,59 @@ class Options extends ImpulseController {
 		$target = html_entity_decode(rawurldecode($target));
 			
 		if($this->input->post('submit')) {
-            #print_r($_POST);
-            #echo "$option - $value";
 			if($this->input->post('option') != $option) {
-				switch($mode) {
-					case "global":
-						$this->api->dhcp->modify->global_option($option,$value,'option',$this->input->post('option'));
-						break;
-					case "class":
-						$this->api->dhcp->modify->class_option($target,$option,$value,'option',$this->input->post('option'));
-						break;
-					case "subnet":
-						$this->api->dhcp->modify->subnet_option($target,$option,$value,'option',$this->input->post('option'));
-						break;
-					case "range":
-						$this->api->dhcp->modify->range_options($target,$option,$value,'option',$this->input->post('option'));
-						break;
-					default:
-						$this->_error("Invalid edit mode given");
-						break;
+				try {
+					switch($mode) {
+						case "global":
+							$this->api->dhcp->modify->global_option($option,$value,'option',$this->input->post('option'));
+							break;
+						case "class":
+							$this->api->dhcp->modify->class_option($target,$option,$value,'option',$this->input->post('option'));
+							break;
+						case "subnet":
+							$this->api->dhcp->modify->subnet_option($target,$option,$value,'option',$this->input->post('option'));
+							break;
+						case "range":
+							$this->api->dhcp->modify->range_options($target,$option,$value,'option',$this->input->post('option'));
+							break;
+						default:
+							$this->_error("Invalid edit mode given");
+							break;
+					}
+					$option = $this->input->post('option');
 				}
-                $option = $this->input->post('option');
+				catch(Exception $e) {
+					$this->_error($e->getMessage());
+				}
 			}
 			if($this->input->post('value') != $value) {
-				switch($mode) {
-					case "global":
-						$this->api->dhcp->modify->global_option($option,$value,'value',$this->input->post('value'));
-						break;
-					case "class":
-						$this->api->dhcp->modify->class_option($target,$option,$value,'value',$this->input->post('value'));
-						break;
-					case "subnet":
-						$this->api->dhcp->modify->subnet_option($target,$option,$value,'value',$this->input->post('value'));
-						break;
-					case "range":
-						$this->api->dhcp->modify->range_options($target,$option,$value,'value',$this->input->post('value'));
-						break;
-					default:
-						$this->_error("Invalid edit mode given");
-						break;
+				try {
+					switch($mode) {
+						case "global":
+							$this->api->dhcp->modify->global_option($option,$value,'value',$this->input->post('value'));
+							break;
+						case "class":
+							$this->api->dhcp->modify->class_option($target,$option,$value,'value',$this->input->post('value'));
+							break;
+						case "subnet":
+							$this->api->dhcp->modify->subnet_option($target,$option,$value,'value',$this->input->post('value'));
+							break;
+						case "range":
+							$this->api->dhcp->modify->range_options($target,$option,$value,'value',$this->input->post('value'));
+							break;
+						default:
+							$this->_error("Invalid edit mode given");
+							break;
+					}
+					$value = $this->input->post('value');
+					self::$sidebar->reload();
+					redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
 				}
-                $value = $this->input->post('value');
+				catch(Exception $e) {
+					$this->_error($e->getMessage());
+				}
 			}
-			redirect(base_url()."dhcp/options/view/$mode/".rawurlencode($target),'location');
+			
 		}
 		elseif ($option && $value) {
 			$option = urldecode($option);

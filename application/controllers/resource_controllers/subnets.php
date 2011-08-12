@@ -10,7 +10,7 @@ class Subnets extends ImpulseController {
 	}
 	
 	public function index() {
-		redirect("/resources/subnets/owned",'location');
+		redirect("resources/subnets/owned",'location');
 	}
 	
 	public function owned() {
@@ -105,7 +105,8 @@ class Subnets extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->api->ip->remove->subnet($subnet);
-				redirect("/resources/subnets/owned",'location');
+				self::$sidebar->reload();
+				redirect("resources/subnets/owned",'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -114,7 +115,7 @@ class Subnets extends ImpulseController {
 		
 		// They hit no, don't delete the subnet
 		elseif($this->input->post('no')) {
-			redirect("/resources/subnets/view/".urlencode($subnet),'location');
+			redirect("resources/subnets/view/".urlencode($subnet),'location');
 		}
 		
 		// Need to print the prompt
@@ -157,7 +158,8 @@ class Subnets extends ImpulseController {
 				if(!($sNet instanceof Subnet)) {
 					$this->_error("Unable to instantiate subnet object");
 				}
-				redirect("/resources/subnets/view/".urlencode($sNet->get_subnet()),'location');
+				self::$sidebar->reload();
+				redirect("resources/subnets/view/".urlencode($sNet->get_subnet()),'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -202,7 +204,8 @@ class Subnets extends ImpulseController {
 		
 		if($this->input->post('submit')) {
 			$this->_edit();
-			redirect("/resources/subnets/view/".urlencode(self::$sNet->get_subnet()));
+			self::$sidebar->reload();
+			redirect("resources/subnets/view/".urlencode(self::$sNet->get_subnet()),'location');
 		}
 		else {
 			// Navbar

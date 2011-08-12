@@ -14,7 +14,7 @@
 			elseif($rule->get_deny() == 'f') {
 				$class = "firewall_rule_port_box_allow";
 			}
-			echo "<td class=\"$class\">".$rule->get_port()."</a></td>";
+			echo "<td class=\"$class\">".htmlentities($rule->get_port())."</a></td>";
 			if(($i+1) % $cells_per_row == 0) {
 				echo "</tr>";
 			}

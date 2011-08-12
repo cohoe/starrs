@@ -8,9 +8,9 @@
 		</tr>
 		<? foreach ($records as $record) {
 			echo "<tr>";
-			echo "<td>".$record->get_text()."</td>";
-			echo "<td>".$record->get_ttl()."</td>";
-			echo "<td>".$record->get_last_modifier()."</td>";
+			echo "<td>".htmlentities($record->get_text())."</td>";
+			echo "<td>".htmlentities($record->get_ttl())."</td>";
+			echo "<td>".htmlentities($record->get_last_modifier())."</td>";
 			echo "</tr>";
 		}?>
 	</table>

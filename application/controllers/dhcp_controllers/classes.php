@@ -81,6 +81,7 @@ class Classes extends ImpulseController {
 		if($this->input->post('submit')) {
 			try {
 				self::$class = $this->api->dhcp->create->_class($this->input->post('class'),$this->input->post('comment'));
+				self::$sidebar->reload();
 				redirect(base_url()."dhcp/classes/view/".urlencode(self::$class->get_class()),'location');
 			}
 			catch (ObjectNotFoundException $onfE) {
@@ -117,7 +118,8 @@ class Classes extends ImpulseController {
 		if($this->input->post('yes')) {
 			try {
 				$this->api->dhcp->remove->_class($class);
-				redirect(base_url()."dhcp/classes/",'location');
+				self::$sidebar->reload();
+				redirect(base_url()."dhcp/classes",'location');
 			}
 			catch (Exception $e) {
 				$this->_error($e->getMessage());
@@ -182,6 +184,7 @@ class Classes extends ImpulseController {
 				$this->_error($err);
 			}
 			else {
+				self::$sidebar->reload();
 				redirect(base_url()."dhcp/classes/view/$class",'location');
 			}
 		}
