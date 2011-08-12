@@ -37,6 +37,7 @@ class Api_systems_create extends ImpulseModel {
                 $query->row()->last_modifier
             );
         }
+        //@todo: Firewall system (also in the database as a system family)
         else {
            return new System(
                 $query->row()->system_name,

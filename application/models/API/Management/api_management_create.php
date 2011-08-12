@@ -12,6 +12,7 @@ class Api_management_create extends ImpulseModel {
 			{$this->db->escape($severity)},
 			{$this->db->escape($message)}
 		)";
+        $query = $this->db->query($sql);
 		
 		// Check errors
         $this->_check_error($query);
@@ -23,6 +24,7 @@ class Api_management_create extends ImpulseModel {
 			{$this->db->escape($directive)},
 			{$this->db->escape($value)}
 		)";
+        $query = $this->db->query($sql);
 		
 		// Check errors
         $this->_check_error($query);

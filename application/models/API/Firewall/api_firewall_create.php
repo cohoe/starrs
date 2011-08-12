@@ -14,13 +14,23 @@ class Api_firewall_create extends ImpulseModel {
         // Check error
         $this->_check_error($query);
 
-		// Return result object
-		return $this->get_metahost_member($address);
+        if($query->num_rows() > 1) {
+			throw new APIException("The database returned more than one new record. Contact your system administrator");
+		}
+
+		// Return object
+		return new MetahostMember(
+            $query->row()->name,
+            $query->row()->address,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 	
 	public function metahost($name,$owner,$comment) {
 		// SQL Query
-		$sql = "SELECT api.create_firewall_metahost(
+		$sql = "SELECT * FROM api.create_firewall_metahost(
 			{$this->db->escape($name)},
 			{$this->db->escape($owner)},
 			{$this->db->escape($comment)}
@@ -30,7 +40,19 @@ class Api_firewall_create extends ImpulseModel {
         // Check error
         $this->_check_error($query);
 
-		return $this->get_metahost($name);
+		 if($query->num_rows() > 1) {
+			throw new APIException("The database returned more than one new record. Contact your system administrator");
+		}
+
+		// Return object
+		return new Metahost(
+            $query->row()->name,
+            $query->row()->comment,
+            $query->row()->owner,
+            $query->row()->date_created,
+            $query->row()->date_modified,
+            $query->row()->last_modifier
+        );
 	}
 	
 	public function metahost_rule($metahostName, $port, $transport, $deny, $comment) {
@@ -65,8 +87,6 @@ class Api_firewall_create extends ImpulseModel {
             $query->row()->last_modifier
         );
     }
-	
-	// @todo: Firewall device address
 	
 	public function standalone_rule($address, $port, $transport, $deny, $owner, $comment) {
 		// SQL Query
