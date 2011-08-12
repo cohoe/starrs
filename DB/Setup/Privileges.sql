@@ -69,6 +69,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_states" TO "impulse_c
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_macs" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchview" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_history" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both
