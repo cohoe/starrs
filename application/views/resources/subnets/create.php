@@ -21,7 +21,7 @@
 			<br />
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" class="input_form_input" /><br />
 		<?} else {?>
-			<input type="text" name="owner" value="<?echo $user;?>" class="input_form_input" hidden /><br />
+			<input type="hidden" name="owner" value="<?echo $user;?>" class="input_form_input" /><br />
 			<input type="hidden" name="dhcp" value="f" />
 		<?}?>
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create" class="input_form_submit"/>

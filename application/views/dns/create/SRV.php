@@ -13,14 +13,14 @@
 		<label for="priority">Priority: </label><input type="text" name="priority" class="input_form_input" /><br>
 		<label for="weight">Weight: </label><input type="text" name="weight" class="input_form_input" /><br>
 		<label for="port">Port: </label><input type="text" name="port" class="input_form_input" /><br>
-		<label for="ttl">TTL: </label><input type="ttl" name="ttl" class="input_form_input" />
+		<label for="ttl">TTL: </label><input type="text" name="ttl" class="input_form_input" />
 		<?
 		// Owner input
 		if(isset($admin)) {?>
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $user;?>" class="input_form_input" />
 		<?}
 		else {?>
-			<input type="text" name="owner" value="<?echo $user;?>" class="input_form_input" hidden="true" />
+			<input type="hidden" name="owner" value="<?echo $user;?>" class="input_form_input" />
 		<?}
 		
 		// Submit button

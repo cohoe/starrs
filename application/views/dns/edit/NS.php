@@ -17,14 +17,14 @@
 		<label for="text">Primary?: </label>
 			<input type="radio" name="isprimary" value="t" class="input_form_radio" <?echo ($record->get_isprimary() == 't')?"checked":"";?> />Yes
 			<input type="radio" name="isprimary" value="f" class="input_form_radio" <?echo ($record->get_isprimary() == 'f')?"checked":"";?> />No
-		<label for="ttl">TTL: </label><input type="ttl" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" />
+		<label for="ttl">TTL: </label><input type="text" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" />
 		<?
 		// Owner input
 		if(isset($admin)) {?>
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
 		<?}
 		else {?>
-			<input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" hidden="true" />
+			<input type="hidden" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
 		<?}
 		
 		// Submit button

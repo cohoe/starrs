@@ -5,9 +5,9 @@
 			<? foreach ($ranges as $range) {
 				echo "<option value=\"".$range->get_name()."\">".$range->get_name()."</option>";
 			} ?>
-		</select></br>
+		</select><br/>
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
-		</br>
+		<br/>
 		<label for="address">Address: </label><input type="text" name="address" class="input_form_input" /><br />
 		<label for="config">Configuration: </label><select name="config" class="input_form_input">
 			<? foreach ($configs as $config) {

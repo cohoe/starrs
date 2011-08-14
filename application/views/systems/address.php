@@ -11,10 +11,10 @@ else {
 		<div class="interface_box_nav">
 			<? foreach ($navbar->get_navOptions() as $menuOption) {
 				if(strcasecmp($menuOption['title'],$navbar->get_active_page()) == 0) {?>
-					<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left nav_item_left_active"><span><?echo $menuOption['title'];?></span></div></a>
+					<a href="<?= $menuOption['link'];?>"><div class="nav_item_left nav_item_left_active"><span><?= $menuOption['title'];?></span></div></a>
 				<?} 
 				else {?>
-					<a href="<?echo $menuOption['link'];?>"><div class="nav_item_left"><span><?echo $menuOption['title'];?></span></div></a>
+					<a href="<?= $menuOption['link'];?>"><div class="nav_item_left"><span><?= $menuOption['title'];?></span></div></a>
 				<?}
 			}
 			if($navbar->get_cancel() == true) {
