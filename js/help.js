@@ -3,21 +3,12 @@
  */
 
 function toggleHelp() {
-	// Grab the div that contains the help
-	var helpDiv =  document.getElementById('helpDiv');
-	
-	// If it's not visible, we've got a contingency
-	if(helpDiv == null) {
-		// Create a new helpDiv
-		helpDiv = document.createElement("div");
-		helpDiv.id = "helpDiv";
-		helpDiv.className = "item_container";
-		
-		// Insert it before the important stuff
-		dataDiv = document.getElementById("dataDiv");
-		dataDiv.insertBefore(helpDiv, dataDiv);
+	// If it doesn't exist, we're not going to show it, but we'll follow the link
+	if(helpDiv == null || helpDiv == undefined) {
+		return true;
 	}
 	
 	// Now animate it open
-	helpDiv.slideToggle("slow")
+	$("#helpDiv").slideToggle("slow");
+	return false;
 }
