@@ -33,7 +33,21 @@ CREATE OR REPLACE FUNCTION "network"."switchports_update"() RETURNS TRIGGER AS $
 				RAISE EXCEPTION 'Cannot create a switchport on non-network device type %',DeviceType;
 			END IF;
 		END IF;
+		
+		IF NEW."description" != OLD."description" THEN
+			PERFORM api.modify_network_switchport_description(api.get_system_primary_address(NEW."system_name"),NEW."port_name",(SELECT "snmp_rw_community" FROM "network"."switchview" WHERE "system_name" = NEW."system_name"),NEW."description");
+		END IF;
+		
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "network"."switchports_update"() IS 'verifications for network switchports';
+
+CREATE OR REPLACE FUNCTION "network"."switchport_states_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF NEW."admin_state" != OLD."admin_state" THEN
+			PERFORM api.modify_network_switchport_admin_state(api.get_system_primary_address(NEW."system_name"),NEW."port_name",(SELECT "snmp_rw_community" FROM "network"."switchview" WHERE "system_name" = NEW."system_name"),NEW."admin_state");
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';

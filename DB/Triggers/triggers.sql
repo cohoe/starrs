@@ -207,3 +207,7 @@ FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_insert"();
 CREATE TRIGGER "firewall_defaults_update"
 AFTER UPDATE ON "firewall"."defaults"
 FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_update"();
+
+CREATE TRIGGER "network_switchport_states_update"
+BEFORE UPDATE ON "network"."switchport_states"
+FOR EACH ROW EXECUTE PROCEDURE "network"."switchport_states_update"();
