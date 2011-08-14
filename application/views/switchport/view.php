@@ -6,7 +6,7 @@ $macaddrs = $sPort->get_mac_addresses();
 		<table class="item_information_area_table">
 			<tr><td><em>System Name:</em></td><td><?echo htmlentities($sPort->get_system_name());?></td></tr>
 			<tr><td><em>Port Name:</em></td><td><?echo htmlentities($sPort->get_port_name());?></td></tr>
-			<tr><td><em>Type:</em></td><td><?echo htmlentities($sPort->get_type();?></td></tr>
+			<tr><td><em>Type:</em></td><td><?echo htmlentities($sPort->get_type());?></td></tr>
 			<tr><td><em>Description:</em></td><td><?echo htmlentities($sPort->get_description());?></td></tr>
             <?if($sys->get_switchview_enable()=='t') {?>
 			    <tr><td><em>Current State:</em></td><td><?echo ($sPort->get_port_state()=='t')?"Active":"Inactive";?></td></tr>
