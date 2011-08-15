@@ -10,9 +10,9 @@
 					echo "<option value=\"".$range->get_name()."\">".$range->get_name()."</option>";
 				}
 			} ?>
-		</select></br>
+		</select><br/>
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
-		</br>
+		<br/>
 		<?
 			if($addr->get_dynamic() ==  TRUE) {
 				echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"Dynamic\" class=\"input_form_input\" disabled />";

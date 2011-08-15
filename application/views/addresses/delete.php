@@ -10,7 +10,7 @@
 					echo "<option value=\"".$intAddr->get_address()."\">".$intAddr->get_address()."</option>";
 				}
 			} ?>
-		</select></br>
+		</select><br/>
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Delete" class="input_form_submit"/>
 	</form>
 </div>

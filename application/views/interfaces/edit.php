@@ -8,7 +8,7 @@
 					echo '<option value="'.$system.'" selected>'.$system.'</option>';
 				}
 				else {
-					echo '<option value=".'$system.'">'.$system.'</option>';
+					echo "<option value='{$system}'>{$system}</option>";
 				}
 			}
 		?>

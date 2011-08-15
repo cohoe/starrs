@@ -26,8 +26,8 @@
 			<br />
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $sNet->get_owner();?>" class="input_form_input" /><br />
 		<?} else {?>
-			<input type="text" name="owner" value="<?echo $sNet->get_owner();?>" class="input_form_input" hidden /><br />
-			<input type="radio" name="dhcp" value="<?echo $sNet->get_dhcp_enable();?>" class="input_form_radio" checked hidden />Yes
+			<input type="hidden" name="owner" value="<?echo $sNet->get_owner();?>" class="input_form_input" /><br />
+			<input type="hidden" name="dhcp" value="<?echo $sNet->get_dhcp_enable();?>" class="input_form_radio" />Yes
 		<?}?>
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Save" class="input_form_submit"/>
 	</form>

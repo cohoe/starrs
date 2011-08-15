@@ -54,5 +54,4 @@
 		No DNS records found for this IP address
         </div>
         <?}?>
-	</div>
 </div>

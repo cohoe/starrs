@@ -6,7 +6,7 @@
 			<? foreach ($addrs as $addr) {
 					echo "<option value=\"".$addr->get_address()."\">".$addr->get_address()."</option>";
 			} ?>
-		</select></br>
+		</select><br/>
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create" class="input_form_submit"/>
 	</form>
 </div>

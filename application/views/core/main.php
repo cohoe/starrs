@@ -23,10 +23,11 @@
 	$(function() {
 		$("#tree").treeview({
 			collapsed: true,
-			// animated: "none",
+			animated: "fast",
 			control:"#sidetreecontrol",
 			prerendered: true,
-			persist: "location"
+			//persist: "location"
+			persist: "cookie"
 		});
 	})	
 	</script>

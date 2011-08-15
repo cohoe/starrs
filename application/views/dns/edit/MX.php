@@ -15,14 +15,14 @@
 			} ?>
 		</select><br />
 		<label for="preference">Preference: </label><input type="text" name="preference" class="input_form_input" value="<?echo $record->get_preference();?>" /><br>
-		<label for="ttl">TTL: </label><input type="ttl" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" />
+		<label for="ttl">TTL: </label><input type="text" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" />
 		<?
 		// Owner input
 		if(isset($admin)) {?>
 			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
 		<?}
 		else {?>
-			<input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" hidden="true" />
+			<input type="hidden" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
 		<?}
 		
 		// Submit button
