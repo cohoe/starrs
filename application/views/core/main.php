@@ -23,7 +23,7 @@
 	$(function() {
 		$("#tree").treeview({
 			collapsed: true,
-			animated: "fast",
+			//animated: "fast",
 			control:"#sidetreecontrol",
 			prerendered: true,
 			//persist: "location"
