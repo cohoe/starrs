@@ -88,7 +88,7 @@ class Rules extends ImpulseController {
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "/firewall/view/".rawurlencode(self::$addr->get_address());
+			$navModes['CANCEL'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);

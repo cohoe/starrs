@@ -116,11 +116,11 @@ class Systems extends ImpulseController {
 			
 			// Navbar information
 			$navModes = array();
-			$navOptions['Overview'] = "/systems/view".rawurlencode($sys->get_system_name())."/overview";
-			$navOptions['Interfaces'] = "/systems/view".rawurlencode($sys->get_system_name())."/interfaces";
+			$navOptions['Overview'] = "/systems/view/".rawurlencode($sys->get_system_name())."/overview";
+			$navOptions['Interfaces'] = "/systems/view/".rawurlencode($sys->get_system_name())."/interfaces";
 			
 			if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-				$navOptions['Renew'] = "/systems/renew".rawurlencode($sys->get_system_name());
+				$navOptions['Renew'] = "/systems/renew/".rawurlencode($sys->get_system_name());
 				$navModes['EDIT'] = "/systems/edit";
 				$navModes['DELETE'] = "/systems/delete";
 			}
