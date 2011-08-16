@@ -4,6 +4,7 @@ require_once(APPPATH . "models/API/Network/api_network_create.php");
 require_once(APPPATH . "models/API/Network/api_network_modify.php");
 require_once(APPPATH . "models/API/Network/api_network_remove.php");
 require_once(APPPATH . "models/API/Network/api_network_get.php");
+require_once(APPPATH . "models/API/Network/api_network_list.php");
 
 /**
  *
@@ -18,7 +19,8 @@ class Api_network extends ImpulseModel {
 		$this->create = new Api_network_create();
 		$this->modify = new Api_network_modify();
 		$this->remove = new Api_network_remove();
-        $this->get    = new Api_network_get();
+          $this->get    = new Api_network_get();
+		$this->list   = new Api_network_list();
 	}
 
     public function switchview_scan_port_state($systemName) {

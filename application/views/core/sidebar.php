@@ -12,7 +12,12 @@
 					</li>
 				</ul>
 			</li>
-			
+
+			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Network</strong></span>
+				<ul style="display: none;">
+				<?echo $sidebar->load_network_system_data();?>
+			</ul>
+
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Metahosts</strong></span>
 				<ul style="display: none;">
 					<?echo $sidebar->load_owned_metahost_view_data();?>
@@ -23,7 +28,7 @@
 					</li>
 				</ul>
 			</li>
-			
+									
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Statistics</strong></span>
 				
 			</li>

@@ -21,6 +21,7 @@ class Sidebar {
 	private $otherSubnets;
 	private $ranges;
 	private $classes;
+	private $netSystems;
 	
 	private static $rwSystemImageUrl = "/media/images/sidebar/system.png";
 	private static $roSystemImageUrl = "/media/images/sidebar/system.png";
@@ -93,6 +94,11 @@ class Sidebar {
 		
 		try {
 			$this->classes = $this->CI->api->dhcp->list->classes();
+		}
+		catch(ObjectNotFoundException $onfE) {}
+
+		try {
+			$this->netSystems = $this->CI->api->network->list->systems();
 		}
 		catch(ObjectNotFoundException $onfE) {}
 		
@@ -384,6 +390,36 @@ class Sidebar {
 			}
 		}
 		
+		return $viewData;
+	}
+
+	public function load_network_system_data() {
+		$viewData = "";
+
+		if($this->netSystems) {
+			$systems = $this->netSystems;
+			while($systems) {
+				$system = array_shift($systems);
+				if($systems) {
+					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/systems/view/'.rawurlencode($system).'">'.$system.'</a>
+						<ul style="display: none">
+							<li><a href="/switchports/view/'.rawurlencode($system).'">Switchports</a></li>
+							<li class="last"><a href="/switchview/settings/'.rawurlencode($system).'">Switchview</a></li>
+						</ul>
+					</li>';
+				}
+				else {
+					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/systems/view/'.rawurlencode($system).'">'.$system.'</a>
+						<ul style="display: none">
+							<li><a href="/switchports/view/'.rawurlencode($system).'">Switchports</a></li>
+							<li class="last"><a href="/switchview/settings/'.rawurlencode($system).'">Switchview</a></li>
+						</ul>
+					</li>';
+
+				}
+			}
+		}
+
 		return $viewData;
 	}
 	
