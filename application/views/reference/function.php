@@ -10,7 +10,7 @@
 			<?
 			foreach ($args as $arg)
 			{
-				echo '<li>'.htmlentities($arg[argument]).' - '.htmlentities($arg[comment]).'</li>';
+				echo '<li>'.htmlentities($arg['argument']).' - '.htmlentities($arg['comment']).'</li>';
 			}
 			?>
 			</ul></td></tr>
