@@ -63,6 +63,7 @@ class Metahosts extends ImpulseController {
 		if($metahostName == NULL) {
 			$this->_error("No metahost specified");
 		}
+		$metahostName = rawurldecode($metahostName);
 		try {
 			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
@@ -130,6 +131,7 @@ class Metahosts extends ImpulseController {
 		if($metahostName == NULL) {
 			$this->_error("No metahost specified");
 		}
+		$metahostName = rawurldecode($metahostName);
 		try {
 			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
@@ -191,6 +193,7 @@ class Metahosts extends ImpulseController {
 		if($metahostName == NULL) {
 			$this->_error("No metahost specified");
 		}
+		$metahostName = rawurldecode($metahostName);
 		try {
 			self::$mHost = $this->api->firewall->get->metahost($metahostName,false);
 		}
@@ -291,4 +294,4 @@ class Metahosts extends ImpulseController {
 	}
 }
 /* End of file metahosts.php */
-/* Location: ./application/controllers/metahosts.php */
+/* Location: ./application/controllers/firewall/metahosts.php */
