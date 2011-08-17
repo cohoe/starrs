@@ -275,9 +275,13 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 	while (defined ($row = spi_fetchrow($cursor)))
 	{
 		$output = $row->{value};
+		my @output = split(/\n/, $output);
 		if ($wroteToFile)
 		{
-			print CONFIG $output;
+			foreach (@output)
+			{
+				print CONFIG "$_\n";
+			}
 		}
 	}
 	
