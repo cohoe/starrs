@@ -13,7 +13,7 @@ class Reference extends ImpulseController {
      */
 	public function index() {
 		// Navbar
-        $navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'reference/help');
+        $navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'/reference/help');
         $navbar = new Navbar("Reference", null, $navOptions);
 		
 		// Load view data
