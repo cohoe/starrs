@@ -39,7 +39,7 @@
 		<?echo $sidebar;?>
 		<div class="information">
 			<?echo $navbar;?>
-			<?if(isset($help)) { echo $help; }?>
+			<?if(isset($help)) { echo '<div id="helpDiv">'.$help.'</div>'; }?>
 			<div id="dataDiv">
 			<?echo $data;?>
 			</div>

@@ -62,6 +62,7 @@ class Keys extends ImpulseController {
 		// More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('resources/keys/view',array("dnsKey"=>self::$dnsKey),TRUE);
+		$info['help'] = "LOLZYLOLZYLOLZ";
 
 		// Load the main view
 		$this->load->view('core/main',$info);
