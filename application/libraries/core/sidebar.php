@@ -157,7 +157,7 @@ class Sidebar {
 				}	
 			}
 		}
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interfaces/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
+		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interface/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
 					<ul style="display: none;">'.
 						$addressData.
 					'</ul>

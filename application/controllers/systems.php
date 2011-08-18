@@ -24,8 +24,7 @@ class Systems extends ImpulseController {
 
 		// Navbar
 		$navModes['CREATE'] = "/systems/create";
-		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
-		$navbar = new Navbar("All Systems", $navModes, $navOptions);
+		$navbar = new Navbar("Systems - All", $navModes, null);
 		
 		// List of systems
 		try {
@@ -55,8 +54,7 @@ class Systems extends ImpulseController {
 
 		// Navbar
 		$navModes['CREATE'] = "/systems/create";
-		$navOptions = array('Owned Systems'=>'/systems/owned','All Systems'=>'/systems/all');
-		$navbar = new Navbar("Owned Systems", $navModes, $navOptions);
+		$navbar = new Navbar("Systems - Owned", $navModes, null);
 		
 		// List of systems
 		try {
@@ -70,7 +68,6 @@ class Systems extends ImpulseController {
 		// Load the view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
-		#$info['sidebar'] = $this->load->view('testing/sidebar',null,TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $viewData;
 		$info['title'] = "Owned Systems";
@@ -87,79 +84,76 @@ class Systems extends ImpulseController {
      * @return void
      */
 	public function view($systemName=NULL,$target=NULL) {
-		$systemName = urldecode($systemName);
-		$target = urldecode($target);
-		
-		// If no system was specified, then go to the get started page. 
+		$systemName = rawurldecode($systemName);
+		$target = rawurldecode($target);
+
 		if($systemName == NULL) {
-			$this->owned();
+			$this->_error("No system specified for viewing");
 		}
 		
 		// We got a system, deal with it
-		else {
-			// If no target was specified, go to the overview page
-			if($target == NULL) {
-				$target = "overview";
-			}
-			
-			// System Object
-			try {
-				$sys = $this->api->systems->get->system($systemName,false);
-			}
-			catch (ObjectNotFoundException $oNFE) {
-				$this->_error("System not found!");
-			}
+		// If no target was specified, go to the overview page
+		if($target == NULL) {
+			$target = "overview";
+		}
+		
+		// System Object
+		try {
+			$sys = $this->api->systems->get->system($systemName,false);
+		}
+		catch (ObjectNotFoundException $oNFE) {
+			$this->_error("System not found!");
+		}
             catch(DBException $dbE) {
                 $this->_error("Error viewing system: ".$dbE->getMessage());
             }
-			$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
-			
-			// Navbar information
-			$navModes = array();
-			$navOptions['Overview'] = "/systems/view/".rawurlencode($sys->get_system_name())."/overview";
-			$navOptions['Interfaces'] = "/systems/view/".rawurlencode($sys->get_system_name())."/interfaces";
-			
-			if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-				$navOptions['Renew'] = "/systems/renew/".rawurlencode($sys->get_system_name());
-				$navModes['EDIT'] = "/systems/edit";
-				$navModes['DELETE'] = "/systems/delete";
-			}
-			$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
-			
-			// Check for network system
-			if($sys->get_family() == "Network") {
-				$navbar->add_option('Switchports','/switchports/view/'.rawurlencode($sys->get_system_name()));
-                $navbar->add_option('Switchview','/switchview/settings/'.rawurlencode($sys->get_system_name()));
-			}
-			
-			// Figure out what page we are on and print accordingly
-			switch(strtolower($target)) {
-				case 'interfaces':
-					$info['data'] = $this->_load_interfaces($sys);
-					if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-						$navbar->set_create(TRUE,"/interfaces/create".rawurlencode($sys->get_system_name()));
-					}
-					$navbar->set_edit(FALSE,NULL);
-					$navbar->set_delete(FALSE,NULL);
-					break;
-
-				default:
-					$info['data'] = $this->load->view('core/data',array('data'=>$systemViewData),TRUE);
-					break;
-			}
-			
-			// Load the view data
-			$info['header'] = $this->load->view('core/header',"",TRUE);
-			$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
-			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-			$info['title'] = "System - ".$sys->get_system_name();
-			
-			// Load the main view
-			$this->load->view('core/main',$info);
-			
-			// Set the system object
-			$this->impulselib->set_active_system($sys);
+		$systemViewData = $this->load->view('systems/system',array('system'=>$sys),TRUE);
+		
+		// Navbar information
+		$navModes = array();
+		#$navOptions['Overview'] = "/systems/view/".rawurlencode($sys->get_system_name())."/overview";
+		$navOptions['Interfaces'] = "/interfaces/view/".rawurlencode($sys->get_system_name());
+		
+		if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
+			$navOptions['Renew'] = "/systems/renew/".rawurlencode($sys->get_system_name());
+			$navModes['EDIT'] = "/systems/edit";
+			$navModes['DELETE'] = "/systems/delete";
 		}
+		$navbar = new Navbar($sys->get_system_name(), $navModes, $navOptions);
+		
+		// Check for network system
+		if($sys->get_family() == "Network") {
+			$navbar->add_option('Switchports','/switchports/view/'.rawurlencode($sys->get_system_name()));
+                $navbar->add_option('Switchview','/switchview/settings/'.rawurlencode($sys->get_system_name()));
+		}
+		
+		// Figure out what page we are on and print accordingly
+		switch(strtolower($target)) {
+			case 'interfaces':
+				$info['data'] = $this->_load_interfaces($sys);
+				if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
+					$navbar->set_create(TRUE,"/interfaces/create".rawurlencode($sys->get_system_name()));
+				}
+				$navbar->set_edit(FALSE,NULL);
+				$navbar->set_delete(FALSE,NULL);
+				break;
+
+			default:
+				$info['data'] = $this->load->view('core/data',array('data'=>$systemViewData),TRUE);
+				break;
+		}
+		
+		// Load the view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['title'] = "System - ".$sys->get_system_name();
+		
+		// Load the main view
+		$this->load->view('core/main',$info);
+		
+		// Set the system object
+		$this->impulselib->set_active_system($sys);
 	}
 
     /**
@@ -316,67 +310,6 @@ class Systems extends ImpulseController {
 		catch (ObjectException $oE) {
 			$this->_error("Obj:".$oE->getMessage());
 		}
-	}
-
-    /**
-	 * This will open the getting started view to point users in the right direction
-     * @return void
-     */
-/*	private function _load_get_started() {
-
-		// Navbar
-        $navOptions = array('Create System'=>'/systems/create');
-        $navbar = new Navbar("Getting Started", $navModes, $navOptions);
-		
-		// Load view data
-		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',"",TRUE);
-		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('systems/getstarted',"",TRUE);
-		$info['title'] = "Getting Started";
-		
-		// Load the main view
-		$this->load->view('core/main',$info);
-	}*/
-
-    /**
-	 * Prepare a list of all interfaces attached to a system.
-     * @param $sys
-     * @return string
-     */
-	private function _load_interfaces($sys) {
-		// Value of all interface view data
-		$interfaceViewData = "";
-		
-		// Get the interface objects for the system
-		try {
-			$ints = $this->api->systems->get->system_interfaces($sys->get_system_name(),false);
-			
-			// Concatenate all view data into one string
-			foreach ($ints as $int) {
-				
-				// Navbar
-				if($this->impulselib->get_username() == $sys->get_owner() || $this->api->isadmin() == TRUE) {
-					$navModes['EDIT'] = "/interfaces/edit/".rawurlencode($int->get_mac());
-					$navModes['DELETE'] = "/interfaces/delete/".rawurlencode($int->get_mac());
-				}
-				$navOptions['Addresses'] = "/interfaces/addresses/".rawurlencode($int->get_mac());
-				$navbar = new Navbar("Interface", $navModes, $navOptions);
-			
-				$interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);
-				
-				#$this->impulselib->add_active_interface($interface);
-				# Should be using the system object
-				$sys->add_interface($int);
-			}
-		}
-		catch (ObjectNotFoundException $onfE) {
-			$navbar = new Navbar("Interface", null, null);
-			$interfaceViewData = $this->load->view('core/warning',array("message"=>"No interfaces found!"),TRUE);
-		}
-		
-		// Spit back all of the interface data
-		return $this->load->view('core/data',array('data'=>$interfaceViewData),TRUE);
 	}
 
     /**
