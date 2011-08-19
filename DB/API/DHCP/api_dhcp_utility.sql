@@ -271,7 +271,7 @@ CREATE OR REPLACE FUNCTION "api"."write_dhcpd_config"() RETURNS VOID AS $$
 
 	my $row;
 	my $output;
-	my $cursor = spi_query("SELECT * FROM management.output where file = 'dhcpd.conf' order by output_id desc limit 1");
+	my $cursor = spi_query("SELECT * FROM management.output WHERE file = 'dhcpd.conf' ORDER BY output_id DESC LIMIT 1");
 	while (defined ($row = spi_fetchrow($cursor)))
 	{
 		$output = $row->{value};
