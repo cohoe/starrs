@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_static_hosts"() RETURNS SETOF "dhcp"
 		"systems"."interface_addresses"."mac","systems"."interface_addresses"."address","systems"."systems"."owner",
 		"systems"."interface_addresses"."class"
 		FROM "systems"."interface_addresses"
-		JOIN "dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
+		LEFT JOIN "dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
 		JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dynamic_hosts"() RETURNS SETOF "dhcp
 		RETURN QUERY (SELECT "dns"."a"."hostname","dns"."a"."zone",
 		"systems"."interface_addresses"."mac","systems"."systems"."owner","systems"."interface_addresses"."class"
 		FROM "systems"."interface_addresses"
-		JOIN "dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
+		LEFT JOIN "dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
 		JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
