@@ -26,7 +26,9 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_static_hosts"() RETURNS SETOF "dhcp"
 		JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
-		AND NOT "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))));
+		AND NOT "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))
+		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE)
+		OR "dns"."a"."zone" IS NULL));	
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_static_hosts"() IS 'Get all information for a host block of the dhcpd.conf file';
@@ -41,7 +43,9 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dynamic_hosts"() RETURNS SETOF "dhcp
 		JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
-		AND "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET'))));
+		AND "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))
+		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE)
+		OR "dns"."a"."zone" IS NULL));
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_dynamic_hosts"() IS 'Get all information for a host block of the dhcpd.conf file';
