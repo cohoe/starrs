@@ -207,8 +207,17 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	{
 		my ($hostname, $zone, $mac, $address, $owner, $class) = @_;
 		
+		my $hostmac = $mac;
+		$hostmac =~ s/://g;
+		
 		my $output .= "# $owner\n";
-		$output .= "host $hostname {\n";
+		if ($hostname)
+		{
+			$output .= "host $hostname {\n";
+		}else 
+		{
+			$output .= "host $hostmac {\n";
+		}
 		$output .= "  option dhcp-client-identifier 1:$mac;\n";
 		$output .= "  hardware ethernet $mac;\n";
 		$output .= "  fixed-address $address;\n" if (defined($address));
