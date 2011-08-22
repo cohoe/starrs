@@ -30,7 +30,11 @@
 			</li>
 									
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Statistics</strong></span>
-				
+				<ul style="display: none;">
+					<?
+					echo $sidebar->load_statistics_view_data();
+					?>
+				</ul>
 			</li>
 			
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Resources</strong></span>
@@ -71,7 +75,7 @@
 			
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Administration</strong></span>
 				<ul style="display: none;">
-					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/admin/configuration/view/site">Site Configuration</a></li>
+					<li class="last"><a href="/admin/configuration/view/site">Site Configuration</a></li>
 				</ul>
 			</li>
 			
@@ -88,17 +92,24 @@
 				</ul>
 			</li>
 			
-			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Reference</strong></span>
+			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><a href="/reference/api"><strong>API Reference</strong></a></span>
 				<ul style="display: none;">
-					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/reference/api">API</a></li>
-					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/reference/reference/help">Help</a></li>
+					<li><a href="/reference/api/dhcp">DHCP</a></li>
+					<li><a href="/reference/api/dns">DNS</a></li>
+					<li><a href="/reference/api/firewall">Firewall</a></li>
+					<li><a href="/reference/api/ip">IP</a></li>
+					<li><a href="/reference/api/management">Management</a></li>
+					<li><a href="/reference/api/network">Network</a></li>
+					<li><a href="/reference/api/systems">Systems</a></li>
+					<li><a href="/reference/api/all">All</a></li>
+					<li class="last"><a href="/reference/api/none">None</a></li>
 				</ul>
 			</li>
 			
-			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>Output</strong></span>
+			<li class="expandable last"><div class="hitarea expandable-hitarea"></div><span><strong>Output</strong></span>
 				<ul style="display: none;">
-					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/output/view/dhcpd.conf">DHCPD Config</a></li>
-					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/output/view/fw_default_queue">Firewall Default Queue</a></li>
+					<li><a href="/output/view/dhcpd.conf">DHCPD Config</a></li>
+					<li class="last"><a href="/output/view/fw_default_queue">Firewall Default Queue</a></li>
 				</ul>
 			</li>
 		</ul>

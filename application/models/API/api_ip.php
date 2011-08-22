@@ -46,6 +46,18 @@ class Api_ip extends ImpulseModel {
 		// Return result
 		return $query->row()->ip_in_subnet;
 	}
+	
+	public function is_dynamic($address) {
+		// SQL Query
+		$sql = "SELECT api.ip_is_dynamic({$this->db->escape($address)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+		
+		// Return result
+		return $query->row()->ip_is_dynamic;
+	}
 }
 /* End of file api_ip.php */
 /* Location: ./application/models/API/api_ip.php */

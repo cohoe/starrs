@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Statistics extends CI_Controller {
+require_once(APPPATH . "libraries/core/ImpulseController.php");
+
+class Statistics extends ImpulseController {
 
     /**
      * @return void
@@ -7,8 +9,7 @@ class Statistics extends CI_Controller {
 	public function index() {
 		
 		// Information
-        $navOptions = array("OS Distribution"=>'/statistics/os_distribution',"OS Family Distribution"=>'/statistics/os_family_distribution');
-		$navbar = new Navbar("Statistics", null, $navOptions);
+		$navbar = new Navbar("Statistics", null, null);
         
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -25,11 +26,10 @@ class Statistics extends CI_Controller {
      * @return void
      */
 	public function os_distribution() {
-		$data = $this->api->systems->get_os_distribution();
+		$data = $this->api->statistics->get->os_distribution();
 		
 		// Information
-		$navOptions = array("OS Distribution"=>'/statistics/os_distribution',"OS Family Distribution"=>'/statistics/os_family_distribution');
-		$navbar = new Navbar("Statistics", null, $navOptions);
+		$navbar = new Navbar("Statistics - Operating System Distribution", null, null);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -46,11 +46,10 @@ class Statistics extends CI_Controller {
      * @return void
      */
 	public function os_family_distribution() {
-		$data = $this->api->systems->get_os_family_distribution();
+		$data = $this->api->statistics->get->os_family_distribution();
 		
 		// Information
-		$navOptions = array("OS Distribution"=>'/statistics/os_distribution',"OS Family Distribution"=>'/statistics/os_family_distribution');
-		$navbar = new Navbar("Statistics", null, $navOptions);
+		$navbar = new Navbar("Statistics - Operating System Family Distribution", null, null);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);

@@ -197,45 +197,6 @@ class Network_interface extends ImpulseController {
 		}
 	}
 
-    /**
-     * See the various addresses on the interface. 
-     * @param null $mac The MAC address of the interface to view
-     * @return
-     */
-	public function addresses($mac=NULL) {
-
-        // If the user did something silly.
-		if($mac ==  NULL) {
-			$this->_error("No interface was given!");
-		}
-		
-		$mac = rawurldecode($mac);
-
-        // Define the local interface object
-		try {
-			self::$int = $this->api->systems->get->system_interface_data($mac);
-		}
-		catch(Exception $e) {
-			$this->_error("Unable to instantiate system/interface objects - ".$e->getMessage());
-		}
-
-		// Navbar
-		$navModes['CREATE'] = "/addresses/create/".rawurlencode($mac);
-		$navModes['DELETE'] = "/addresses/delete/".rawurlencode($mac);
-		$navOptions['Interfaces'] = "/systems/view/".rawurlencode(self::$int->get_system_name())."/interfaces";
-		$navbar = new Navbar("Addresses on " . $mac, $navModes, $navOptions);
-
-		// Load the view data
-		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
-		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->_load_addresses(self::$int);
-		$info['title'] = "Addresses - ".rawurlencode($mac);
-		
-		// Load the main view
-		$this->load->view('core/main',$info);
-	}
-
     public function view($mac=NULL) {
         if($mac==NULL) {
             $this->_error("No MAC address specified for view");
@@ -252,7 +213,7 @@ class Network_interface extends ImpulseController {
             $this->_error($e->getMessage());
         }
 		
-		$navOptions['Addresses'] = "/interface/addresses/".rawurlencode(self::$int->get_mac());
+		$navOptions['Addresses'] = "/addresses/view/".rawurlencode(self::$int->get_mac());
 		try {
 			self::$sPort = $this->api->systems->get->interface_switchport(self::$int->get_mac());
 			$navOptions['Switchport'] = "/switchport/view/".rawurlencode(self::$sPort->get_system_name())."/".rawurlencode(self::$sPort->get_port_name());
@@ -350,41 +311,7 @@ class Network_interface extends ImpulseController {
 		}
 	}
 
-    /**
-     * Load all of the interface address data. 
-     * @param &$int  The interface object to add to. (WARNING: This does by ref, so be careful!)
-     * @return string|void
-     */
-	private function _load_addresses(&$int) {
-
-        // View data
-		$addressViewData = "";
-
-        // Array of address objects
-		try {
-			$addrs = $this->api->systems->get->system_interface_addresses($int->get_mac(), true);
-
-			// For each of the address objects, draw it's box and append it to the view
-			foreach($addrs as $addr) {
-				$navOptions['DNS Records'] = "/dns/view/".rawurlencode($addr->get_address());
-				if($addr->get_dynamic() != TRUE) {
-					$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode($addr->get_address());
-				}
-				$navModes['EDIT'] = "/addresses/edit/".rawurlencode($addr->get_address());
-				$navModes['DELETE'] = "/addresses/delete/".rawurlencode($addr->get_mac())."/".rawurlencode($addr->get_address());
-								
-				$navbar = new Navbar("Address", $navModes, $navOptions);
-				$addressViewData .= $this->load->view('systems/address',array('addr'=>$addr, 'navbar'=>$navbar),TRUE);
-				$int->add_address($addr);
-			}
-			
-			return $addressViewData;
-		}
-		// There were no addresses
-		catch (ObjectNotFoundException $onfE) {
-			return $this->_warning("No addresses found!");
-		}
-	}	
+    
 }
 /* End of file interfaces.php */
 /* Location: ./application/controllers/interfaces.php */

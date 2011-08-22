@@ -68,6 +68,22 @@ class Api_systems_list extends ImpulseModel {
 		
 		return $resultSet;
 	}
+	
+	public function dynamic_interface_addresses($mac) {
+		// SQL query
+		$sql = "SELECT address FROM api.get_system_interface_addresses({$this->db->escape($mac)}) WHERE address << cidr((SELECT api.get_site_configuration('DYNAMIC_SUBNET')))";
+		$query = $this->db->query($sql);
+
+        // Check error
+        $this->_check_error($query);
+		
+		$resultSet = array();
+		foreach($query->result_array() as $result) {
+			$resultSet[] = $result['address'];
+		}
+		
+		return $resultSet;
+	}
 }
 /* End of file api_systems_list.php */
 /* Location: ./application/models/API/Systems/api_systems_list.php */

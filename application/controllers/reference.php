@@ -35,14 +35,24 @@ class Reference extends ImpulseController {
 			$this->_load_api_functions("none");
 		}
 		elseif($schema == 'all') {
-			$this->_load_api_functions("all");
+			try {
+				$this->_load_api_functions("all");
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
+			}
 		}
 		elseif($schema != NULL) {
-			$this->_load_api_functions($schema);
+			try {
+				$this->_load_api_functions($schema);
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
+			}
 		}
 		else {
 			// Navbar
-			$navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'reference/help');
+			$navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'/reference/help');
 			$navbar = new Navbar("API Reference", null, $navOptions);
 			
 			// Load view data

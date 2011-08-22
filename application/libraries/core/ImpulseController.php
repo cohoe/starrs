@@ -192,6 +192,42 @@ class ImpulseController extends CI_Controller {
             $this->_error($dbE->getMessage());
         }
     }
+	
+	/**
+     * Load all of the interface address data. 
+     * @param &$int  The interface object to add to. (WARNING: This does by ref, so be careful!)
+     * @return string|void
+     */
+	protected function _load_addresses() {
+
+        // View data
+		$addressViewData = "";
+
+        // Array of address objects
+		try {
+			$addrs = $this->api->systems->get->system_interface_addresses(self::$int->get_mac(), true);
+
+			// For each of the address objects, draw it's box and append it to the view
+			foreach($addrs as $addr) {
+				$navOptions['DNS Records'] = "/dns/view/".rawurlencode($addr->get_address());
+				if($addr->get_dynamic() != TRUE) {
+					$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode($addr->get_address());
+				}
+				$navModes['EDIT'] = "/address/edit/".rawurlencode($addr->get_address());
+				$navModes['DELETE'] = "/address/delete/".rawurlencode($addr->get_mac())."/".rawurlencode($addr->get_address());
+								
+				$navbar = new Navbar("Address", $navModes, $navOptions);
+				$addressViewData .= $this->load->view('systems/address',array('addr'=>$addr, 'navbar'=>$navbar),TRUE);
+				self::$int->add_address($addr);
+			}
+			
+			return $addressViewData;
+		}
+		// There were no addresses
+		catch (ObjectNotFoundException $onfE) {
+			return $this->_warning("No addresses found!");
+		}
+	}
 }
 /* End of file ImpulseController.php */
 /* Location: ./application/libraries/core/ImpulseController.php */

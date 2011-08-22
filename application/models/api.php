@@ -18,6 +18,7 @@ class Api extends ImpulseModel {
 	public $management;
 	public $network;
 	public $systems;
+	public $statistics;
 
 	////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTOR
@@ -37,6 +38,7 @@ class Api extends ImpulseModel {
 		$this->management = new API_Management();
 		$this->network = new API_Network();
 		$this->systems = new API_Systems();
+		$this->statistics = new API_Statistics();
 		
 		$this->create = new Api_management_create();
 		$this->modify = new Api_management_modify();
@@ -95,6 +97,7 @@ class Api extends ImpulseModel {
 		$this->load->model('API/api_management');
 		$this->load->model('API/api_network');
 		$this->load->model('API/api_systems');
+		$this->load->model('API/api_statistics');
 
 		$this->load->library('impulselib');
 	}

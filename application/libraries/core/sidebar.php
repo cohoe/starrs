@@ -36,7 +36,10 @@ class Sidebar {
 		try {
 			$this->ownedSystems = $this->CI->api->systems->list->owned_systems($currentUser);
 			foreach($this->ownedSystems as $system) {
-				$this->_load_system_data($system);
+				try {
+					$this->_load_system_data($system);
+				}
+				catch(ObjectNotFoundException $onfE) {}
 			}
 		}
 		catch(ObjectNotFoundException $onfE) {}
@@ -44,7 +47,10 @@ class Sidebar {
 			$this->allSystems = $this->CI->api->systems->list->other_systems($currentUser);
 			foreach($this->allSystems as $system) {
 				try {
-					$this->_load_system_data($system);
+					try {
+						$this->_load_system_data($system);
+					}
+					catch(ObjectNotFoundException $onfE) {}
 				}
 				catch(ObjectNotFoundException $onfE) {}
 			}
@@ -134,12 +140,22 @@ class Sidebar {
 	}
 	
 	private function _load_address_view_data($address,$last=NULL) {
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/addresses/view/'.rawurlencode($address).'">'.$address.'</a>
-					<ul style="display: none;">
-						<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.rawurlencode($address).'">DNS Records</a></li>
-						<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.rawurlencode($address).'">Firewall Rules</a></li>
-					</ul>
-				</li>';
+	
+		if($this->CI->api->ip->is_dynamic($address) == 't') {
+			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/address/view/'.rawurlencode($address).'">Dynamic</a>
+				<ul style="display: none;">
+					<li class="last"><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.rawurlencode($address).'">DNS Records</a></li>
+				</ul>
+			</li>';
+		}
+		else {
+			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/address/view/'.rawurlencode($address).'">'.$address.'</a>
+						<ul style="display: none;">
+							<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.rawurlencode($address).'">DNS Records</a></li>
+							<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.rawurlencode($address).'">Firewall Rules</a></li>
+						</ul>
+					</li>';
+		}
 	}
 	
 	private function _load_interface_view_data($systemName,$interface,$last=NULL) {
@@ -157,11 +173,17 @@ class Sidebar {
 				}	
 			}
 		}
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interface/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
-					<ul style="display: none;">'.
-						$addressData.
-					'</ul>
-				</li>';
+		
+		if($addressData != "") {
+			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/nic.png" /> <a href="/interface/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a>
+						<ul style="display: none;">'.
+							$addressData.
+						'</ul>
+					</li>';
+			}
+		else {
+			return '<li class="expandable '.$last.'"><img src="/media/images/sidebar/nic.png" /> <a href="/interface/view/'.$this->interfaces[$systemName][$interface].'">'.$interface.'</a></li>';
+		}
 	}
 	
 	private function _load_system_view_data($systemName,$view,$last=NULL) {
@@ -181,10 +203,16 @@ class Sidebar {
 				}
 			}
 		}
-		return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a>
+		
+		if($systemData != "") {
+			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a>
 			<ul style="display: none;">'.$systemData.
-			'</ul>
-		</li>';
+				'</ul>
+			</li>';
+		}
+		else {
+			return '<li class="'.$last.'"><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a></li>';
+		}
 	}
 	
     ////////////////////////////////////////////////////////////////////////
@@ -421,6 +449,13 @@ class Sidebar {
 		}
 
 		return $viewData;
+	}
+	
+	public function load_statistics_view_data() {
+		return '<ul>
+			<li><a href="/statistics/os_distribution">OS Distribution</a></li>
+			<li class="last"><a href="/statistics/os_family_distribution">OS Family Distribution</a></li>
+		</ul>';
 	}
 	
 	public function reload() {

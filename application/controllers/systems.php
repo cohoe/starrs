@@ -231,8 +231,8 @@ class Systems extends ImpulseController {
 			
 			// Get the preset form data for dropdown lists and things
 			$form['operatingSystems'] = $this->api->systems->get->operating_systems();
-			$form['systemTypes'] = $this->api->systems->get->system_types();
 			$form['user'] = $this->api->get->current_user();
+			
 			if($this->api->isadmin() == TRUE) {
 				$form['admin'] = TRUE;
 			}

@@ -13,7 +13,74 @@ class Interfaces extends ImpulseController {
 		$this->_error("No action or object was specified.");
 	}
 
+	/**
+     * Delete an address on an interface
+     * @param null $mac     The MAC address of the interface
+     * @param null $address The address of the interface to delete
+     * @return void
+     */
+	public function delete($address=NULL) {
 
+        // If the user forgot to specify something
+		if($mac == NULL) {
+			$this->_error("No interface specified!");
+		}
+
+		#$mac = rawurldecode($mac);
+		$address = rawurldecode($address);
+		
+        #try {
+			#self::$int = $this->api->systems->get->system_interface_data($mac,true);
+			#self::$sys = $this->_load_system(self::$int->get_system_name());
+			
+        #}
+        #catch (APIException $apiE) {
+        #    $this->_error($apiE->getMessage());
+        #}
+		
+		// Information is there. Delete the address
+		if($this->input->post('submit')) {
+			try {
+				$this->api->systems->remove->interface_address($this->input->post('address'));
+				self::$addr = $this->api->systems->get->system_interface_address($address);
+				self::$int = $this->api->systems->get->system_interface_data(self::$addr->get_mac(),true);
+				self::$sys->add_interface(self::$int);
+				$this->impulselib->set_active_system(self::$sys);
+				self::$sidebar->reload();
+				redirect(base_url()."interfaces/addresses/".rawurlencode(self::$int->get_mac()),'location');
+			}
+			catch(Exception $e) {
+				$this->_error($e->getMessage());
+			}
+		}
+        
+        // Navbar
+        $navModes['CANCEL'] = "";
+        $navbar = new Navbar("Delete Address", $navModes, null);
+
+        // Load the view data
+        $info['header'] = $this->load->view('core/header',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+        $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+
+        // Get the preset form data for drop down lists and things
+        $form['interface'] = self::$int;
+        $form['addresses'] = self::$int->get_interface_addresses();
+        $form['address'] = $address;
+
+        // Are you an admin?
+        if($this->api->isadmin() == TRUE) {
+            $form['admin'] = TRUE;
+        }
+
+        // Continue loading view data
+        $info['data'] = $this->load->view('addresses/delete',$form,TRUE);
+        $info['title'] = "Delete Address";
+
+        // Load the main view
+        $this->load->view('core/main',$info);
+	}
+	
 	public function view($systemName=NULL) {
 		// If the user tried to do something silly.
 		if($systemName == NULL) {
@@ -31,7 +98,7 @@ class Interfaces extends ImpulseController {
 
 		$navModes = array();
 		if($this->impulselib->get_username() == self::$sys->get_owner() || $this->api->isadmin() == TRUE) {
-			$navModes['CREATE'] = "/interfaces/create/".rawurlencode(self::$sys->get_system_name());
+			$navModes['CREATE'] = "/interface/create/".rawurlencode(self::$sys->get_system_name());
 		}
 		
 		$navOptions['System'] = "/systems/view/".rawurlencode(self::$sys->get_system_name());
@@ -51,7 +118,7 @@ class Interfaces extends ImpulseController {
 		$this->impulselib->set_active_system(self::$sys);
 	}
 
-private function _load_interfaces($sys) {
+	private function _load_interfaces($sys) {
         // Value of all interface view data
         $interfaceViewData = "";
 
@@ -67,7 +134,7 @@ private function _load_interfaces($sys) {
                     $navModes['EDIT'] = "/interface/edit/".rawurlencode($int->get_mac());
                     $navModes['DELETE'] = "/interface/delete/".rawurlencode($int->get_mac());
                 }
-                $navOptions['Addresses'] = "/interface/addresses/".rawurlencode($int->get_mac());
+                $navOptions['Addresses'] = "/addresses/view/".rawurlencode($int->get_mac());
                 $navbar = new Navbar("Interface", $navModes, $navOptions);
 
                 $interfaceViewData .= $this->load->view('systems/interfaces',array('interface'=>$int, 'navbar'=>$navbar),TRUE);
