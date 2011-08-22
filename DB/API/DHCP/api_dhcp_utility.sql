@@ -212,10 +212,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		$output .= "  option dhcp-client-identifier 1:$mac;\n";
 		$output .= "  hardware ethernet $mac;\n";
 		$output .= "  fixed-address $address;\n" if (defined($address));
-		$output .= "  option host-name \"$hostname\";\n";
-		$output .= "  ddns-hostname \"$hostname\";\n";
-		$output .= "  ddns-domainname \"$zone\";\n";
-		$output .= "  option domain-name \"$zone\";\n}\n";
+		$output .= "  option host-name \"$hostname\";\n" if ($hostname);
+		$output .= "  ddns-hostname \"$hostname\";\n" if ($hostname);
+		$output .= "  ddns-domainname \"$zone\";\n" if ($zone);
+		$output .= "  option domain-name \"$zone\";\n" if ($zone);
+		$output .= "}\n";
 		$output .= "subclass \"$class\" 1:$mac;\n";
 		$output .= "subclass \"$class\" $mac;\n\n";
 		return $output;
