@@ -17,3 +17,13 @@ CREATE OR REPLACE FUNCTION "api"."ip_in_subnet"(input_address inet, input_subnet
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."ip_in_subnet"(inet, cidr) IS 'True or False if an address is contained within a given subnet';
+
+CREATE OR REPLACE FUNCTION "api"."ip_is_dynamic"(input_address inet) RETURNS BOOLEAN AS $$
+	BEGIN
+		IF input_address << cidr((SELECT api.get_site_configuration('DYNAMIC_SUBNET'))) THEN
+			RETURN TRUE;
+		ELSE
+			RETURN FALSE;
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
