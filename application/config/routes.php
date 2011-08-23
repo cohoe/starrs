@@ -48,6 +48,7 @@ $route['resources/(.*?)'] = 'resource_controllers/$1';
 $route['dhcp/(.*?)'] = 'dhcp_controllers/$1';
 $route['dhcp/reload'] = 'dhcp/reload';
 $route['interface/(.*?)'] = 'network_interface/$1';
+$route['system/(.*?)'] = 'computer_system/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

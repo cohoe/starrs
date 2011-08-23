@@ -26,7 +26,7 @@ class Dns extends ImpulseController {
 		}
 
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['Overview'] = "/address/view/".rawurlencode(self::$addr->get_address());
 		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 		if(self::$addr->get_dynamic() == FALSE) {
 			$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());

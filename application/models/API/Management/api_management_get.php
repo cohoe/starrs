@@ -40,6 +40,18 @@ class Api_management_get extends ImpulseModel {
 		// Return result
 		return $query->row()->get_site_configuration;
 	}
+	
+	public function site_configuration_all() {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_site_configuration_all()";
+		$query = $this->db->query($sql);
+		
+		// Check error
+        $this->_check_error($query);
+		
+		// Return result
+		return $query;
+	}
 }
 /* End of file api_management_get.php */
 /* Location: ./application/models/API/DNS/api_management_get.php */

@@ -20,15 +20,14 @@ class API_Systems extends ImpulseModel {
 		$this->list   = new Api_systems_list();
 	}
 
-	public function renew($sys) {
+	public function renew($systemName) {
 		// SQL Query
-		$sql = "SELECT api.renew_system({$this->db->escape($sys->get_system_name())})";
+		$sql = "SELECT api.renew_system({$this->db->escape($systemName)})";
 		$query = $this->db->query($sql);
 		
 		// Check error
 		$this->_check_error($query);
 	}
 }
-
 /* End of file api_systems.php */
 /* Location: ./application/models/API/api_systems.php */

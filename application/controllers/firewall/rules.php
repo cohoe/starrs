@@ -21,7 +21,7 @@ class Rules extends ImpulseController {
 		}
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		$navOptions['Overview'] = "/address/view/".rawurlencode(self::$addr->get_address());
 		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 		$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 		$navModes['CREATE'] = "/firewall/rules/create/".rawurlencode(self::$addr->get_address());
@@ -208,10 +208,9 @@ class Rules extends ImpulseController {
 				self::$int->add_address(self::$addr);
 				self::$sys->add_interface(self::$int);
 				$this->impulselib->set_active_system(self::$sys);
-				self::$sidebar->reload();
 				
 				// Move along
-				redirect("firewall/rules/view/".rawurlencode(self::$addr->get_address()),'location');
+				redirect(base_url()."firewall/rules/view/".rawurlencode(self::$addr->get_address()),'location');
 			}
 			catch (DBException $dbE) {
 				$this->_error($dbE->getMessage());

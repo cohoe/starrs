@@ -2,10 +2,10 @@
 	<div id="sidetree">
 		<ul class="treeview" id="tree">
 			<li><a href="/"><span><strong>Home</strong></span></a></li>
-			<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/systems"><span><strong>Systems</strong></span></a>
+			<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/systems/view/owned"><span><strong>Systems</strong></span></a>
 				<ul style="display: none;">
 					<?echo $sidebar->load_owned_system_view_data();?>
-					<li class="expandable last"><div class="hitarea expandable-hitarea"></div><span><strong>Other</strong></span>
+					<li class="expandable last"><div class="hitarea expandable-hitarea"></div><a href="/systems/view/all"><span><strong>Other</strong></span></a>
 						<ul style="display: none;">
 							<?echo $sidebar->load_other_system_view_data();?>
 						</ul>

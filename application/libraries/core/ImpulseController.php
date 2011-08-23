@@ -193,11 +193,7 @@ class ImpulseController extends CI_Controller {
         }
     }
 	
-	/**
-     * Load all of the interface address data. 
-     * @param &$int  The interface object to add to. (WARNING: This does by ref, so be careful!)
-     * @return string|void
-     */
+
 	protected function _load_addresses() {
 
         // View data
@@ -214,7 +210,7 @@ class ImpulseController extends CI_Controller {
 					$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode($addr->get_address());
 				}
 				$navModes['EDIT'] = "/address/edit/".rawurlencode($addr->get_address());
-				$navModes['DELETE'] = "/address/delete/".rawurlencode($addr->get_mac())."/".rawurlencode($addr->get_address());
+				$navModes['DELETE'] = "/address/delete/".rawurlencode($addr->get_address());
 								
 				$navbar = new Navbar("Address", $navModes, $navOptions);
 				$addressViewData .= $this->load->view('systems/address',array('addr'=>$addr, 'navbar'=>$navbar),TRUE);

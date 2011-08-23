@@ -11,6 +11,7 @@ class Api_management_modify extends ImpulseModel {
 			{$this->db->escape($directive)},
 			{$this->db->escape($value)}
 		)";
+		$query = $this->db->query($sql);
 		
 		// Check errors
         $this->_check_error($query);

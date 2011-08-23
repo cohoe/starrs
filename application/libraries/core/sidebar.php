@@ -152,7 +152,8 @@ class Sidebar {
 			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/address/view/'.rawurlencode($address).'">'.$address.'</a>
 						<ul style="display: none;">
 							<li><img src="/media/images/sidebar/dns.png" /> <a href="/dns/view/'.rawurlencode($address).'">DNS Records</a></li>
-							<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.rawurlencode($address).'">Firewall Rules</a></li>
+							<li><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/view/'.rawurlencode($address).'">Firewall Rules</a></li>
+							<li class="last"><img src="/media/images/sidebar/firewall.png" /> <a href="/firewall/rules/action/'.rawurlencode($address).'">Default Action</a></li>
 						</ul>
 					</li>';
 		}
@@ -205,13 +206,13 @@ class Sidebar {
 		}
 		
 		if($systemData != "") {
-			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a>
+			return '<li class="expandable '.$last.'"><div class="hitarea expandable-hitarea"></div><img src="'.$viewUrl.'" /> <a href="/system/view/'.rawurlencode($systemName).'">'.$systemName.'</a>
 			<ul style="display: none;">'.$systemData.
 				'</ul>
 			</li>';
 		}
 		else {
-			return '<li class="'.$last.'"><img src="'.$viewUrl.'" /> <a href="/systems/view/'.rawurlencode($systemName).'">'.$systemName.'</a></li>';
+			return '<li class="'.$last.'"><img src="'.$viewUrl.'" /> <a href="/system/view/'.rawurlencode($systemName).'">'.$systemName.'</a></li>';
 		}
 	}
 	
@@ -459,7 +460,7 @@ class Sidebar {
 	}
 	
 	public function reload() {
-		$_SESSION['sidebar'] = null;
+		$_SESSION['sidebar'] = serialize(new Sidebar());
 	}
 	
 }

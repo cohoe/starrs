@@ -6,6 +6,97 @@ require_once(APPPATH . "libraries/core/ImpulseController.php");
  */
 class Address extends ImpulseController {
 
+	/**
+     * Create a new address on the interface
+     * @param null $mac The MAC address of the interface to add on
+     * @return void
+     */
+	public function create($mac=NULL) {
+        // If the user forgot something
+		if($mac == NULL) {
+			$this->_error("No interface specified!");
+		}
+		$mac = rawurldecode($mac);
+		
+		// Get the interface object
+		try {
+			self::$int = $this->api->systems->get->system_interface_data($mac);
+			self::$sys = $this->_load_system(self::$int->get_system_name());
+        }
+        catch (APIException $apiE) {
+            $this->_error($apiE->getMessage());
+        }
+		
+		// Information is there. Create the address
+		if($this->input->post('submit')) {
+			// Create the address
+			$this->_create();
+
+			// Update our stuff
+			self::$int->add_address(self::$addr);
+            self::$sys->add_interface(self::$int);
+			$this->impulselib->set_active_system(self::$sys);
+			self::$sidebar->reload();
+			
+			// Send you on your way
+            redirect(base_url()."address/view/".rawurlencode(self::$addr->get_address()),'location');
+		}
+        
+        // Navbar
+        $navModes['CANCEL'] = "/addresses/view/".rawurlencode($mac);
+        $navbar = new Navbar("Create Address", $navModes, null);
+
+        // Get the preset form data for drop down lists and things
+        $form['interface'] = self::$int;
+        $form['ranges'] = $this->api->ip->get->ranges();
+        $form['configs'] = $this->api->dhcp->get->config_types();
+        $form['classes'] = $this->api->dhcp->get->classes();
+        if($this->api->isadmin() == TRUE) {
+            $form['admin'] = TRUE;
+        }
+
+        // Load the view data
+        $info['header'] = $this->load->view('core/header',"",TRUE);
+        $info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+        $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+        $info['data'] = $this->load->view('addresses/create',$form,TRUE);
+        $info['title'] = "Create Address";
+
+        // Load the main view
+        $this->load->view('core/main',$info);
+	}
+	
+	/**
+     * Create a new address
+     * @return InterfaceAddress     The object of the new interface address
+     */
+	private function _create() {
+
+        // Is this interface to be primary
+		$isPrimary = ($this->input->post('isprimary')=='t'?"TRUE":"FALSE");
+
+        // If no address was given, get one from the selected range
+		$address = $this->input->post('address');
+		if($address == "") {
+			$address = $this->api->ip->get->address_from_range($this->input->post('range'));
+		}
+
+        // Call the create function
+		try {
+			self::$addr = $this->api->systems->create->interface_address(
+				$this->input->post('mac'),
+				$address,
+				$this->input->post('config'),
+				$this->input->post('class'),
+				$isPrimary,
+				$this->input->post('comment')
+			);
+		}
+		catch (Exception $e) {
+			$this->_error("Unable to create address: {$e->getMessage()}");
+		}
+	}
+
     /**
      * View an address on an interface
      * @param null $address     The IP address that we are working with
@@ -13,41 +104,31 @@ class Address extends ImpulseController {
      * @return void
      */
 	public function view($address=NULL) {
-
         // If the user tried to do something silly
 		if($address==NULL) {
 			$this->_error("No IP address specified!");
 		}
-		
 		$address = rawurldecode($address);
 
         // Establish the address
-        try {
-			self::$addr = $this->api->systems->get->system_interface_address($address);
-        }
-        catch (APIException $apiE) {
-            $this->_error($apiE->getMessage());
-        }
+		self::$addr = $this->_load_address($address);
 		
 		// Navbar
-		$navOptions['Overview'] = "/addresses/view/".rawurlencode(self::$addr->get_address());
+		#$navOptions['Overview'] = "/address/view/".rawurlencode(self::$addr->get_address());
 		$navOptions['DNS Records'] = "/dns/view/".rawurlencode(self::$addr->get_address());
 		if(self::$addr->get_dynamic() == FALSE) {
 			$navOptions['Firewall Rules'] = "/firewall/rules/view/".rawurlencode(self::$addr->get_address());
 		}
 		$navModes['EDIT'] = "/address/edit/".rawurlencode(self::$addr->get_address());
 		$navModes['DELETE'] = "/address/delete/".rawurlencode(self::$addr->get_address());
+		$navbar = new Navbar("Address Overview", $navModes, $navOptions);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['title'] = "Overview - ".self::$addr->get_address();
-		$viewData['address'] = self::$addr;
-		$navbar = new Navbar("Address Overview", $navModes, $navOptions);
-
-        // More view data
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view('addresses/overview', $viewData, TRUE);
+		$info['data'] = $this->load->view('addresses/overview', array("address"=>self::$addr), TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
@@ -201,8 +282,8 @@ class Address extends ImpulseController {
 			self::$sidebar->reload();
 			redirect(base_url()."addresses/view/".rawurlencode(self::$addr->get_mac()),'location');
         }
-        catch (APIException $apiE) {
-            $this->_error($apiE->getMessage());
+        catch (Exception $e) {
+            $this->_error($e->getMessage());
         }
 	}
 	

@@ -145,6 +145,15 @@ class Impulselib {
 		$string = preg_replace('/[^a-zA-Z0-9_]/','_',$string);
 		return $string;
 	}
+	
+	public function iseditable($object) {
+		if($this->get_username() == $object->get_owner() || $this->CI->api->isadmin() == TRUE) {
+			return true;
+		}
+		else {
+			return null;
+		}
+	}
 }
 /* End of file Impulselib.php */
 /* Location: ./application/libraries/Impulselib.php */
