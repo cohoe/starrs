@@ -138,7 +138,7 @@ COMMENT ON FUNCTION "api"."get_site_configuration"(text) IS 'Get a site configur
 
 CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS TABLE(option text, value text) AS $$
 	BEGIN
-		RETURN QUERY (SELECT "management"."configuration"."option","management"."configuration"."value" FROM "management"."configuration");
+		RETURN QUERY (SELECT "management"."configuration"."option","management"."configuration"."value" FROM "management"."configuration" ORDER BY "management"."configuration"."option" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration_all"() IS 'Get all site configuration directives';
