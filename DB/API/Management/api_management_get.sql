@@ -135,3 +135,10 @@ CREATE OR REPLACE FUNCTION "api"."get_site_configuration"(input_directive text) 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration"(text) IS 'Get a site configuration directive';
+
+CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS TABLE(option text, value text) AS $$
+	BEGIN
+		RETURN QUERY (SELECT "management"."configuration"."option","management"."configuration"."value" FROM "management"."configuration");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_site_configuration_all"() IS 'Get all site configuration directives';
