@@ -95,7 +95,6 @@ class Reference extends ImpulseController {
 	public function help($object=NULL,$view=NULL) {
 		// Navbar
         $navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'reference/help');
-		$navModes['CANCEL'] = "";
         $navbar = new Navbar("Help", $navModes, $navOptions);
 		
 		// Load view data
@@ -109,6 +108,5 @@ class Reference extends ImpulseController {
 		$this->load->view('core/main',$info);
 	}
 }
-
 /* End of file reference.php */
 /* Location: ./application/controllers/reference.php */

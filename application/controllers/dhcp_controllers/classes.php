@@ -50,7 +50,7 @@ class Classes extends ImpulseController {
 			$viewData = $this->load->view('dhcp/classes/view',array("class"=>self::$class),TRUE);
 		}
 		catch (ObjectNotFoundException $onfE) {
-			$viewData = $this->_error("Could not find a class named \"$class\".");
+			$viewData = $this->_error("Could not find a class named \"{$class}\".");
 		}
 		catch (Exception $e) {
 			$this->_error($e->getMessage());
@@ -58,11 +58,11 @@ class Classes extends ImpulseController {
 
         // Navbar
 		$navOptions['All'] = "/dhcp/classes/";
-		$navOptions['DHCP Options'] = "/dhcp/options/view/class/$class";
+		$navOptions['DHCP Options'] = "/dhcp/options/view/class/{$class}";
 		$navModes = array();
 		if($this->api->isadmin()) {
-			$navModes['EDIT'] = "/dhcp/classes/edit/$class";
-			$navModes['DELETE'] = "/dhcp/classes/delete/$class";
+			$navModes['EDIT'] = "/dhcp/classes/edit/{$class}";
+			$navModes['DELETE'] = "/dhcp/classes/delete/{$class}";
 		}
 		$navbar = new Navbar("DHCP Class - ".ucfirst($class), $navModes, $navOptions);
 		
@@ -82,7 +82,7 @@ class Classes extends ImpulseController {
 			try {
 				self::$class = $this->api->dhcp->create->_class($this->input->post('class'),$this->input->post('comment'));
 				self::$sidebar->reload();
-				redirect(base_url()."dhcp/classes/view/".urlencode(self::$class->get_class()),'location');
+				redirect(base_url()."dhcp/classes/view/".rawurlencode(self::$class->get_class()),'location');
 			}
 			catch (ObjectNotFoundException $onfE) {
 				$this->_error("API didn't return your class.");
@@ -109,7 +109,7 @@ class Classes extends ImpulseController {
 	}
 	
 	public function delete($class=NULL) {
-		$class = urldecode($class);
+		$class = rawurldecode($class);
 		if($class == NULL) {
 			$this->_error("No class given for delete");
 		}
@@ -128,13 +128,13 @@ class Classes extends ImpulseController {
 		
 		// They hit no, don't delete the class
 		elseif($this->input->post('no')) {
-			redirect(base_url()."dhcp/classes/view/".urlencode($class),'location');
+			redirect(base_url()."dhcp/classes/view/".rawurlencode($class),'location');
 		}
 		
 		// Need to print the prompt
 		else {
 			// Navbar
-            $navModes['CANCEL'] = "/dhcp/classes/view/".urlencode($class);
+            $navModes['CANCEL'] = "/dhcp/classes/view/".rawurlencode($class);
 			$navbar = new Navbar("Delete Class", $navModes, null);
 
 			// Load the view data
@@ -143,12 +143,12 @@ class Classes extends ImpulseController {
 			$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 			
 			// Load the prompt information
-			$prompt['message'] = "Delete class \"$class\" and all associated objects?";
+			$prompt['message'] = "Delete class \"{$class}\" and all associated objects?";
 			$prompt['rejectUrl'] = $this->input->server('HTTP_REFERER');
 			
 			// Continue loading the view data
 			$info['data'] = $this->load->view('core/prompt',$prompt,TRUE);	// Systems
-			$info['title'] = "Delete Class - $class";
+			$info['title'] = "Delete Class - {$class}";
 			
 			// Load the main view
 			$this->load->view('core/main',$info);
@@ -156,7 +156,7 @@ class Classes extends ImpulseController {
 	}
 
 	public function edit($class=NULL) {
-		$class = urldecode($class);
+		$class = rawurldecode($class);
 		if($class == NULL) {
 			$this->_error("No class given for delete");
 		}
@@ -185,12 +185,12 @@ class Classes extends ImpulseController {
 			}
 			else {
 				self::$sidebar->reload();
-				redirect(base_url()."dhcp/classes/view/$class",'location');
+				redirect(base_url()."dhcp/classes/view/".rawurlencode($class),'location');
 			}
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "/dhcp/classes/view/$class";
+			$navModes['CANCEL'] = "/dhcp/classes/view/{$class}";
 			$navbar = new Navbar("Edit Class ".ucfirst($class), $navModes, null);
 
 			// Load view data

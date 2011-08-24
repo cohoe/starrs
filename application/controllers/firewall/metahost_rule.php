@@ -70,6 +70,10 @@ class Metahost_rule extends ImpulseController {
 		if(!(self::$mHost instanceof Metahost)) {
 			$this->_load_metahost($metahostName);
 		}
+		
+		$metahostName = rawurldecode($metahostName);
+		$transport = rawurldecode($transport);
+		$port = rawurldecode($port);
 
 		try {
 			self::$fwRule = self::$mHost->get_rule($port,$transport);
@@ -91,7 +95,7 @@ class Metahost_rule extends ImpulseController {
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "";
+			$navModes['CANCEL'] = "/firewall/metahost_rule/view/".rawurlencode($metahostName)."/".rawurlencode($transport)."/".rawurlencode($port);
 			$navbar = new Navbar("Edit Metahost Rule", $navModes, null);
 			
 			// Load the view data

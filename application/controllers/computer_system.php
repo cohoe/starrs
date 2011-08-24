@@ -189,7 +189,7 @@ class Computer_system extends ImpulseController {
 		// Need to print the prompt
 		else {
 			// Navbar
-            $navModes['CANCEL'] = "/system/view/{$systemName}";
+            $navModes['CANCEL'] = "/system/view/".rawurlencode($systemName);
 			$navbar = new Navbar("Delete System", $navModes, null);
 			
 			// Load the prompt information

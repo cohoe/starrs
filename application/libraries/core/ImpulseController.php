@@ -74,15 +74,16 @@ class ImpulseController extends CI_Controller {
      */
 	protected function _error($message) {
 		// Navbar
-		$navModes['CANCEL'] = current_url();
-		$navbar = new Navbar("Error", $navModes, null);
+		#$navModes['CANCEL'] = current_url();
+		#$navbar = new Navbar("Error", $navModes, null);
 
 		$data['message'] = $message;
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
-		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
-		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		#$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+		$info['sidebar'] = "";
+		$info['navbar'] = $this->load->view('core/navbar_error',null,TRUE);
 		$info['data'] = $this->load->view('core/error',$data,TRUE);
 		$info['title'] = "Error";
 		

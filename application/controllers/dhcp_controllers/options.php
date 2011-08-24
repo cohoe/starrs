@@ -79,7 +79,7 @@ class Options extends ImpulseController {
 			redirect(base_url()."dhcp/options/view/$mode/$target",'location');
 		}
 		else {
-			$navModes['CANCEL'] = "/dhcp/options/view/$mode/$target";
+			$navModes['CANCEL'] = "/dhcp/options/view/$mode/".rawurlencode($target);
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -152,7 +152,7 @@ class Options extends ImpulseController {
 			}
 		}
 		else {
-			$navModes['CANCEL'] = "/dhcp/options/view/$mode/$target";
+			$navModes['CANCEL'] = "/dhcp/options/view/$mode/".rawurlencode($target);
 			
 			// Load view data
 			$info['header'] = $this->load->view('core/header',"",TRUE);
@@ -265,7 +265,7 @@ class Options extends ImpulseController {
 			$value = urldecode($value);
 			
 			// Navbar
-			$navModes['CANCEL'] = "/dhcp/options/view/$mode/$target";
+			$navModes['CANCEL'] = "/dhcp/options/view/$mode/".rawurlencode($target);
 			$navbar = new Navbar("Edit DHCP ".ucfirst($mode)." Option", $navModes, null);
 			
 			// Load view data

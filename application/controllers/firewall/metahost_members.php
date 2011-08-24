@@ -81,7 +81,7 @@ class Metahost_members extends ImpulseController {
 		}
 		else {
 			// Navbar
-            $navModes['CANCEL'] = "";
+            $navModes['CANCEL'] = "/firewall/metahost_members/view/".rawurlencode($metahostName);
             $navbar = new Navbar("Create Metahost Member", $navModes, null);
 
 			// Load the view data

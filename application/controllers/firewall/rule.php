@@ -85,6 +85,10 @@ class Rule extends ImpulseController {
 		if(!(self::$int instanceof NetworkInterface)) {
 			$this->_load_interface(self::$addr->get_mac());
 		}
+		
+		$address = rawurldecode($address);
+		$transport = rawurldecode($transport);
+		$port = rawurldecode($port);
 
 		try {
 			self::$fwRule = self::$addr->get_rule($port,$transport);
@@ -112,7 +116,7 @@ class Rule extends ImpulseController {
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "";
+			$navModes['CANCEL'] = "/firewall/rule/view/".rawurlencode($address)."/".rawurlencode($transport)."/".rawurlencode($port);
 			$navbar = new Navbar("Edit Firewall Rule", $navModes, null);
 				
 			// Load the view data

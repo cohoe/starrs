@@ -104,7 +104,7 @@ class Metahosts extends ImpulseController {
 		}
 		else {
 			// Navbar
-            $navModes['CANCEL'] = "";
+            $navModes['CANCEL'] = "/firewall/metahosts/owned";
             $navbar = new Navbar("Create Metahost", $navModes, null);
 
 			// Load the view data
@@ -168,7 +168,7 @@ class Metahosts extends ImpulseController {
 		// Need to print the prompt
 		else {
 			// Navbar
-            $navModes['CANCEL'] = "";
+            $navModes['CANCEL'] = "/firewall/metahosts/view/".rawurlencode($metahostName);
 			$navbar = new Navbar("Delete Metahost", $navModes, null);
 
 			// Load the view data
@@ -220,7 +220,7 @@ class Metahosts extends ImpulseController {
 		}
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "";
+			$navModes['CANCEL'] = "/firewall/metahosts/view/".rawurlencode($metahostName);
 			$navbar = new Navbar("Edit Metahost", $navModes, null);
 			
 			// Load the view data

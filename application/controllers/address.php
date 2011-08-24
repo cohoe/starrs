@@ -188,7 +188,7 @@ class Address extends ImpulseController {
 		// Need to input the information
 		else {
 			// Navbar
-			$navModes['CANCEL'] = "";
+			$navModes['CANCEL'] = "/address/view/".rawurlencode($address);
 			$navbar = new Navbar("Edit Address", $navModes, null);
 			
 			// Load the view data
