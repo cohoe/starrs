@@ -159,7 +159,8 @@ CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "api"."search
 FROM 	"systems"."systems"
 LEFT JOIN	"systems"."interfaces" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
 LEFT JOIN	"systems"."interface_addresses" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
-LEFT JOIN	"dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address");
+LEFT JOIN	"dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
+ORDER BY "systems"."interface_addresses"."address","systems"."interfaces"."mac");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_search_data"() IS 'Get search data to parse';
