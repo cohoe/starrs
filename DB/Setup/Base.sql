@@ -54,7 +54,8 @@ INSERT INTO "systems"."os"
 	('FreeBSD','BSD'),
 	('OpenBSD','BSD'),
 	('Mac OS X', 'Mac'),
-	('NetBSD','BSD');
+	('NetBSD','BSD'),
+	('Other','Other');
 	
 /* NETWORK INFORMATION
 Use a table to keep track of all active IP addresses and what they are used for. IP's must be activated here before they can be handed out
