@@ -142,3 +142,24 @@ CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS TABLE(op
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration_all"() IS 'Get all site configuration directives';
+
+CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "api"."search_data" AS $$
+	BEGIN
+		RETURN QUERY (SELECT
+	"systems"."systems"."system_name",
+	"systems"."interfaces"."mac",
+	"systems"."interface_addresses"."address",
+	"systems"."systems"."owner" AS "system_owner",
+	"systems"."systems"."last_modifier" AS "system_last_modifier",
+	"api"."get_address_range"("systems"."interface_addresses"."address") AS "range",
+	"dns"."a"."hostname",
+	"dns"."a"."zone",
+	"dns"."a"."owner" AS "dns_owner",
+	"dns"."a"."last_modifier" AS "dns_last_modifier"
+FROM 	"systems"."systems"
+LEFT JOIN	"systems"."interfaces" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
+LEFT JOIN	"systems"."interface_addresses" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
+LEFT JOIN	"dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_search_data"() IS 'Get search data to parse';

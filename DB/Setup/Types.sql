@@ -146,3 +146,5 @@ CREATE TYPE "network"."switchport_data" AS (system_name text, port_name text, ty
 CREATE TYPE "network"."switchview_setting_data" AS (snmp_ro_community text, snmp_rw_community text, enable boolean);
 
 CREATE TYPE "network"."switchview_state_data" AS (port text, state boolean);
+
+CREATE TYPE "api"."search_data" AS (system_name text, mac macaddr, address inet, system_owner text, system_last_modifier text, range text, hostname varchar(63), zone text, dns_owner text, dns_last_modifier text);
