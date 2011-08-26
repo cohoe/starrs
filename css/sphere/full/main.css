@@ -1,7 +1,7 @@
 body {
 	font-family:arial, helvetica;
-	#font-size: 1em;
-	font-size: 9pt;
+	font-size: 1em;
+	#font-size: 9pt;
 }
 
 .content {
@@ -28,6 +28,7 @@ body {
 	border: 1px solid black;
 	float: left;
 	margin-left: -1px;
+	font-size: 9pt; 
 }
 
 .data {
@@ -76,12 +77,12 @@ body {
 	text-align: center; 
 	border-top: 1px solid black; 
 	line-height:24px;
-	
+	font-size: 11pt;
 }
 
 .infobar_text {
-	#font-size: 80%;
-	font-size: 8pt;
+	font-size: 80%;
+	#font-size: 8pt;
 }
 
 .footer {
