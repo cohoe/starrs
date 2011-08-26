@@ -31,7 +31,8 @@ a .nav_item_right {
 
 /* Right aligned item text */
 .nav_item_right span {
-	font-size: 70%;
+	#font-size: 70%;
+	font-size: 8pt;
 }
 
 /* Left aligned item */
@@ -57,7 +58,8 @@ a .nav_item_left {
 
 /* Right aligned item text */
 .nav_item_left span {
-	font-size: 70%;
+	#font-size: 70%;
+	font-size: 8pt;
 }
 
 /* Nav bar title */

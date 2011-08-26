@@ -2,6 +2,7 @@
 	<div id="sidetree">
 		<ul class="treeview" id="tree">
 			<li><a href="/"><span><strong>Home</strong></span></a></li>
+			<li><a href="/search"><span><strong>Search</strong></span></a></li>
 			<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/systems/view/owned"><span><strong>Systems</strong></span></a>
 				<ul style="display: none;">
 					<?echo $sidebar->load_owned_system_view_data();?>

@@ -80,6 +80,44 @@ class Api extends ImpulseModel {
 		// Check error
         $this->_check_error($query);
 	}
+	
+	public function search($searchArray) {
+		// Build query string
+		$searchString = "WHERE system_name IS NOT NULL ";
+		if($searchArray['systemName']) {
+			$searchString .= "AND system_name = {$this->db->escape($searchArray['systemName'])} ";
+		}
+		if($searchArray['mac']) {
+			$searchString .= "AND mac = {$this->db->escape($searchArray['mac'])} ";
+		}
+		if($searchArray['ipaddress']) {
+			$searchString .= "AND address = {$this->db->escape($searchArray['ipaddress'])} ";
+		}
+		if($searchArray['range']) {
+			$searchString .= "AND range = {$this->db->escape($searchArray['range'])} ";
+		}
+		if($searchArray['hostname']) {
+			$searchString .= "AND hostname = {$this->db->escape($searchArray['hostname'])} ";
+		}
+		if($searchArray['zone']) {
+			$searchString .= "AND zone = {$this->db->escape($searchArray['zone'])} ";
+		}
+		if($searchArray['owner']) {
+			$searchString .= "AND system_owner = {$this->db->escape($searchArray['owner'])} AND dns_owner = {$this->db->escape($searchArray['owner'])} ";
+		}
+		if($searchArray['lastmodifier']) {
+			$searchString .= "AND system_last_modfiier = {$this->db->escape($searchArray['lastmodifier'])} AND dns_last_modifier = {$this->db->escape($searchArray['lastmodifier'])} ";
+		}
+		
+		// SQL Query
+		$sql = "SELECT * FROM api.get_search_data() {$searchString}";
+		$query = $this->db->query($sql);
+		
+		// Check error
+        $this->_check_error($query);
+		
+		return $query;
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS

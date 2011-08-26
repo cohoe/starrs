@@ -1,10 +1,11 @@
 body {
 	font-family:arial, helvetica;
-	font-size: 1em;
+	#font-size: 1em;
+	font-size: 9pt;
 }
 
 .content {
-	width: 900px;
+	width: 1200px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -23,7 +24,7 @@ body {
 }
 
 .information {
-	width: 698px;
+	width: 998px;
 	border: 1px solid black;
 	float: left;
 	margin-left: -1px;
@@ -75,10 +76,12 @@ body {
 	text-align: center; 
 	border-top: 1px solid black; 
 	line-height:24px;
+	
 }
 
 .infobar_text {
-	font-size: 80%;
+	#font-size: 80%;
+	font-size: 8pt;
 }
 
 .footer {
