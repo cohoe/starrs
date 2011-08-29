@@ -85,6 +85,7 @@ class Computer_system extends ImpulseController {
 		// Information is there. Execute the edit
 		if($this->input->post('submit')) {
 			$this->_edit();
+			$this->impulselib->set_active_system(self::$sys);
 			self::$sidebar->reload();
 			redirect(base_url()."system/view/".rawurlencode(self::$sys->get_system_name()),'location');
 		}
@@ -280,7 +281,7 @@ class Computer_system extends ImpulseController {
 		try {
 			self::$sys = $this->api->systems->create->system(
 				$this->input->post('systemName'),
-				$this->impulselib->get_username(),
+				$this->input->post('owner'),
 				$this->input->post('type'),
 				$this->input->post('osName'),
 				$this->input->post('comment')

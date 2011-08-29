@@ -31,7 +31,7 @@ class Network_interface extends ImpulseController {
 		
         // Information is there. Create the system
         if($this->input->post('submit')) {
-            $this->_create();
+            $this->_create($systemName);
 			
 			// Add the interface
 			self::$sys->add_interface(self::$int);
@@ -238,11 +238,11 @@ class Network_interface extends ImpulseController {
      * Create an interface
      * @return void
      */
-	private function _create() {
+	private function _create($systemName) {
         // Call the function
 		try {
 			self::$int = $this->api->systems->create->_interface(
-				$this->input->post('systemName'),
+				$systemName,
 				$this->input->post('mac'),
 				$this->input->post('name'),
 				$this->input->post('comment')
