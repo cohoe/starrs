@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/dns.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/dns.psd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/firewall.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/firewall.psd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/ipaddr.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/ipaddr.psd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/members.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/members.psd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/range.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/range.psd" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/media/images/sidebar/zone.psd" afterPath="$PROJECT_DIR$/media/images/sidebar/zone.psd" />
-    </list>
+    <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="" />
     <ignored path="impulse-web.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,37 +23,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="api_systems_create.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="44" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_systems_get.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="0" selection-start="1907" selection-end="1907" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="systems.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="132" column="13" selection-start="4682" selection-end="4682" vertical-scroll-proportion="0.0">
+            <state line="26" column="19" selection-start="628" selection-end="628" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sidebar.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
+      <file leaf-file-name="create.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="272" column="5" selection-start="8745" selection-end="8745" vertical-scroll-proportion="0.3548718">
+            <state line="26" column="6" selection-start="1052" selection-end="1052" vertical-scroll-proportion="0.44782168">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="statistics.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/controllers/statistics.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="switchport.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="104" column="27" selection-start="4380" selection-end="4380" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -147,6 +140,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -572,17 +566,16 @@
         </subPane>
       </pane>
       <pane id="Favorites" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="Errors" />
     <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="Errors" />
     <property name="DefaultHtmlFileTemplate" value="Html" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RunManager" selected="PHP Script.index.php">
     <configuration default="false" name="index.php" type="PhpLocalRunConfigurationType" factoryName="PHP Console" temporary="true" path="$PROJECT_DIR$/index.php">
@@ -652,13 +645,12 @@
     <frame x="-4" y="-4" width="1928" height="1180" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995194" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30432463" sideWeight="0.67115384" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30806193" sideWeight="0.67115384" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32827586" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -666,6 +658,7 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884616" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24986653" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -739,35 +732,14 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/models/API/api_network.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="39" selection-start="1002" selection-end="1021" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchview.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/models/API/Network/api_network_get.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="3" selection-start="98" selection-end="98" vertical-scroll-proportion="0.06712735">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/views/interfaces/view.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="6" selection-start="526" selection-end="526" vertical-scroll-proportion="0.122176595">
-          <folding />
-        </state>
+        <state line="7" column="6" selection-start="526" selection-end="526" vertical-scroll-proportion="0.122176595" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/systems/interfaces.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="14" selection-start="1616" selection-end="1836" vertical-scroll-proportion="0.55852157">
-          <folding />
-        </state>
+        <state line="32" column="14" selection-start="1616" selection-end="1836" vertical-scroll-proportion="0.55852157" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/systems/interface.php">
@@ -777,70 +749,83 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/interfaces.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="242" column="46" selection-start="8045" selection-end="8045" vertical-scroll-proportion="0.016781837">
-          <folding />
-        </state>
+        <state line="242" column="46" selection-start="8045" selection-end="8045" vertical-scroll-proportion="0.016781837" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/views/switchport/view.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="36" selection-start="882" selection-end="882" vertical-scroll-proportion="0.24435319">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="54" selection-start="679" selection-end="1572" vertical-scroll-proportion="0.016781837">
-          <folding />
-        </state>
+        <state line="14" column="36" selection-start="882" selection-end="882" vertical-scroll-proportion="0.24435319" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/switchports.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="45" selection-start="881" selection-end="1731" vertical-scroll-proportion="0.016781837">
-          <folding />
-        </state>
+        <state line="41" column="45" selection-start="881" selection-end="1731" vertical-scroll-proportion="0.016781837" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/NetworkSystem.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="194" selection-end="194" vertical-scroll-proportion="0.15103653">
-          <folding />
-        </state>
+        <state line="9" column="0" selection-start="194" selection-end="194" vertical-scroll-proportion="0.15103653" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/libraries/objects/System.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="55" selection-start="1063" selection-end="1063" vertical-scroll-proportion="-0.6278381">
-          <folding />
+        <state line="37" column="55" selection-start="1063" selection-end="1063" vertical-scroll-proportion="-0.6278381" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="286" column="61" selection-start="9764" selection-end="9764" vertical-scroll-proportion="0.255">
+          <folding>
+            <marker date="1314318010882" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="44" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.0">
+        <state line="36" column="44" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.016781837">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/API/Systems/api_systems_get.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="0" selection-start="1907" selection-end="1907" vertical-scroll-proportion="0.0">
+        <state line="430" column="22" selection-start="11743" selection-end="11743" vertical-scroll-proportion="0.5394737">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/computer_system.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="8" selection-start="971" selection-end="971" vertical-scroll-proportion="0.4698914">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="27" selection-start="4380" selection-end="4380" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/statistics.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="132" column="13" selection-start="4682" selection-end="4682" vertical-scroll-proportion="0.0">
+        <state line="26" column="19" selection-start="628" selection-end="628" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/core/sidebar.php">
+    <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="272" column="5" selection-start="8745" selection-end="8745" vertical-scroll-proportion="0.3548718">
+        <state line="26" column="6" selection-start="1052" selection-end="1052" vertical-scroll-proportion="0.44782168">
           <folding />
         </state>
       </provider>
