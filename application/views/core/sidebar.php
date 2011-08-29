@@ -80,7 +80,7 @@
 				</ul>
 			</li>
 			
-			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><strong>DHCP</strong></span>
+			<li class="expandable"><div class="hitarea expandable-hitarea"></div><span><a href="/dhcp/"><strong>DHCP</strong></a></span>
 				<ul style="display: none;">
 					<li class="expandable"><div class="hitarea expandable-hitarea"></div><a href="/dhcp/classes">Classes</a>
 						<ul style="display: none;">

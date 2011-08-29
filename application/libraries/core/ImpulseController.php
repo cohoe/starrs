@@ -124,8 +124,14 @@ class ImpulseController extends CI_Controller {
 	
 	protected function _load_system($systemName=NULL,$complete=FALSE) {
 		try {
-			if($this->impulselib->get_active_system()->get_system_name() == $systemName) {
-				self::$sys = $this->impulselib->get_active_system();
+			if($this->impulselib->get_active_system() instanceof System) {
+				if($this->impulselib->get_active_system()->get_system_name() == $systemName) {
+					#@todo: Fix this
+					self::$sys = $this->impulselib->get_active_system();
+				}
+				else {
+					self::$sys = $this->api->systems->get->system($systemName,$complete);
+				}
 			}
 			else {
 				self::$sys = $this->api->systems->get->system($systemName,$complete);

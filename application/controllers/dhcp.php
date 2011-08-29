@@ -40,7 +40,7 @@ class Dhcp extends ImpulseController {
 				$this->_success("Reloaded all DHCP configuration!");
 			}
 			catch (DBException $dbE) {
-				echo $this->_warning($dbE->getMessage());
+				echo $this->_error($dbE->getMessage());
 			}
 		}
 		
