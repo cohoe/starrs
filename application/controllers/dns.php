@@ -103,7 +103,7 @@ class Dns extends ImpulseController {
 		
 		if($this->input->post('typeSubmit')) {
 		
-			if(self::$addr->get_address_records() == NULL && !preg_match("/^A+$",$this->input->post('type'))) {
+			if(self::$addr->get_address_records() == NULL && !preg_match("/^A+$/",$this->input->post('type'))) {
 				$this->_error("Need to create an address (A/AAAA) record first!");
 			}
 		

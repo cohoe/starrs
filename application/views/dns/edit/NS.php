@@ -1,7 +1,7 @@
 <div class="item_container">
 	<form method="POST" class="input_form">
-		<label for="type">Record Type: </label><input type="text" name="type" value="<?echo $record->get_type();?>" class="input_form_input" readonly />
-		<label for="address">Address: </label><input type="text" name="address" value="<?echo $record->get_address();?>" class="input_form_input" readonly />
+		<label for="type">Record Type: </label><input type="text" name="type" value="<?echo $record->get_type();?>" class="input_form_input" readonly /><br />
+		<label for="address">Address: </label><input type="text" name="address" value="<?echo $record->get_address();?>" class="input_form_input" readonly /><br />
 		<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $record->get_hostname();?>" /><br>
 		<label for="zone">Domain: </label>
 		<select name="zone" class="input_form_input">
@@ -17,14 +17,14 @@
 		<label for="text">Primary?: </label>
 			<input type="radio" name="isprimary" value="t" class="input_form_radio" <?echo ($record->get_isprimary() == 't')?"checked":"";?> />Yes
 			<input type="radio" name="isprimary" value="f" class="input_form_radio" <?echo ($record->get_isprimary() == 'f')?"checked":"";?> />No
-		<label for="ttl">TTL: </label><input type="text" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" />
+		<label for="ttl">TTL: </label><input type="text" name="ttl" class="input_form_input" value="<?echo $record->get_ttl();?>" /><br />
 		<?
 		// Owner input
 		if(isset($admin)) {?>
-			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
+			<label for="owner">Owner: </label><input type="text" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" /><br />
 		<?}
 		else {?>
-			<input type="hidden" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" />
+			<input type="hidden" name="owner" value="<?echo $record->get_owner();?>" class="input_form_input" /><br />
 		<?}
 		
 		// Submit button
