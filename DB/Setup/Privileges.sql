@@ -75,4 +75,6 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
 	Read or Write only, not both
 */
 GRANT SELECT,INSERT ON "management"."log_master" TO "impulse_client";
-GRANT SELECT ON "management"."output" TO "impulse_client";
+GRANT SELECT,INSERT ON "management"."output" TO "impulse_client";
+
+GRANT USAGE,SELECT ON SEQUENCE "management"."output_id_seq" TO "impulse_client";

@@ -103,7 +103,7 @@ CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETO
 			FROM "systems"."systems" 
 			JOIN "systems"."device_types" on
 			"systems"."device_types"."type" = "systems"."systems"."type"
-			ORDER BY "system_name" ASC);
+			ORDER BY lower("system_name") ASC);
 		ELSE
 			RETURN QUERY (SELECT 
 				"systems"."systems"."system_name",
@@ -120,7 +120,7 @@ CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETO
 			JOIN "systems"."device_types" on
 			"systems"."device_types"."type" = "systems"."systems"."type" 
 			WHERE "owner" = input_username 
-			ORDER BY "system_name" ASC);
+			ORDER BY lower("system_name") ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';

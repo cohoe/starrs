@@ -135,6 +135,11 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 	BEGIN
 		-- Get level
 		SELECT api.get_ldap_user_level(input_username) INTO Level;
+		--IF input_username ~* 'cohoe|clockfort|russ|dtyler|worr|benrr101' THEN
+			--Level := 'ADMIN';
+		--ELSE
+			--Level := 'USER';
+		--END IF;
 		IF Level='NONE' THEN
 			RAISE EXCEPTION 'Could not identify "%".',input_username;
 		END IF;

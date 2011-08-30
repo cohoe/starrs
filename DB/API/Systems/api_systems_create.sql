@@ -129,12 +129,12 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
 
-CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_os_name text, input_mac macaddr, input_address inet) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_os_name text, input_mac macaddr, input_address inet, input_owner text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_system(input_system_name, null, 'Desktop', input_os_name, null);
+		PERFORM api.create_system(input_system_name, input_owner, 'Desktop', input_os_name, null);
 		PERFORM api.create_interface(input_system_name, input_mac, 'Main Interface', null);
 		PERFORM api.create_interface_address(input_mac, input_address, 'dhcp', null, true, null);
-		PERFORM api.create_dns_address(input_address, lower(input_system_name), null, null, null);
+		PERFORM api.create_dns_address(input_address, lower(input_system_name), null, null, input_owner);
 		PERFORM api.modify_firewall_default(input_address,FALSE);
 	END;
 $$ LANGUAGE 'plpgsql';

@@ -35,9 +35,25 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}# end DNS keys
+	
+	# Zones are added here.
+	sub forward_zones
+	{
+		my $zones = spi_query("SELECT * FROM api.get_dhcpd_forward_zones()");
+		my ($zone, $keyname, $primary_ns, $row, $output);
+		$output = "";
+		while (defined ($row = spi_fetchrow($zones)))
+		{
+			$zone = $row->{zone};
+			$keyname = $row->{keyname};
+			$primary_ns = $row->{primary_ns};
+			$output .= "zone $zone {\n  primary ${primary_ns};\n  key ${keyname};\n}\n";
+		}
+		return $output;
+	}# end forward zones
 
 	# Zones are added here.
-	sub zones
+	sub reverse_zones
 	{
 		my $zones = spi_query("SELECT * FROM api.get_dhcpd_reverse_zones()");
 		my ($zone, $keyname, $primary_ns, $row, $output);
@@ -159,11 +175,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			}
 			if (defined($class))
 			{
-				$output .= "\n      allow members of \"$class\"";
+				$output .= "\n      allow members of \"$class\";";
 			}
 			else
 			{
-				$output .= "\n      allow unknown clients";
+				$output .= "\n      allow unknown clients;";
 			}
 			$output .= "\n    }";
 		}
@@ -243,7 +259,8 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# now for the rest of the config file
 	$output .= &global_opts() . "\n";
 	$output .= &dns_keys() . "\n";
-	$output .= &zones() . "\n";
+	$output .= &forward_zones() . "\n";
+	$output .= &reverse_zones() . "\n";
 	$output .= &dhcp_classes() . "\n";
 	$output .= &shared_networks() . "\n";
 	$output .= &hosts() . "\n";

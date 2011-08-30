@@ -194,7 +194,7 @@ COMMENT ON FUNCTION "api"."create_dns_mailserver"(text, text, integer, integer, 
 	3) Check privileges
 	4) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, input_zone text, input_isprimary boolean, input_ttl integer, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, input_zone text, input_isprimary boolean, input_ttl integer, input_owner text) RETURNS SETOF "dns"."ns_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_nameserver');
 
@@ -230,6 +230,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_nameserver');
+		RETURN QUERY (SELECT "hostname","zone","address","type","isprimary","ttl","owner","date_created","date_modified","last_modifier"
+		FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "isprimary" = input_isprimary);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_nameserver"(text, text, boolean, integer, text) IS 'create a new NS record for the zone';

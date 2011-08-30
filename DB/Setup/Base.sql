@@ -15,7 +15,7 @@ Lets us see what all is on the network
 */
 INSERT INTO "systems"."device_types" 
 	("type","family") VALUES 
-	('Router','Network'),('Firewall','Network'),('Switch','Network'),('Hub','Network'),('Wireless Access Point','Network'),('Desktop','PC'),('Server','PC'),('Virtual Machine','PC'),('Laptop','PC');
+	('Router','Network'),('Firewall','Network'),('Switch','Network'),('Hub','Network'),('Wireless Access Point','Network'),('Desktop','PC'),('Server','PC'),('Virtual Machine','PC'),('Laptop','PC'),('Printer','PC');
 	
 /* Network Port Types
 For configuring views for Uplinks, trunks, and other such things

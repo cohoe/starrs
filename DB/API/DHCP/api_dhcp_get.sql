@@ -202,3 +202,12 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcp_subnet_options"(input_subnet cidr) RE
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_subnet_options"(cidr) IS 'Get all DHCP subnet option data';
+
+/* API - get_dhcpd_config */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_config"() RETURNS TEXT AS $$
+	BEGIN
+		--DELETE FROM "management"."output" WHERE "output_id" = (SELECT output_id FROM "management"."output" ORDER BY "timestamp" ASC LIMIT 1);
+		RETURN (SELECT "value" FROM "management"."output" WHERE "file"='dhcpd.conf' ORDER BY "timestamp" DESC LIMIT 1);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_config"() IS 'Get the latest DHCPD configuration file';
