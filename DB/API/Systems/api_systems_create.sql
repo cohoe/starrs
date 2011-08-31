@@ -134,7 +134,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 		PERFORM api.create_system(input_system_name, input_owner, 'Desktop', input_os_name, null);
 		PERFORM api.create_interface(input_system_name, input_mac, 'Main Interface', null);
 		PERFORM api.create_interface_address(input_mac, input_address, 'dhcp', null, true, null);
-		PERFORM api.create_dns_address(input_address, lower(input_system_name), null, null, input_owner);
+		PERFORM api.create_dns_address(input_address, lower(regexp_replace(input_system_name,' ','-')), null, null, input_owner);
 		PERFORM api.modify_firewall_default(input_address,FALSE);
 	END;
 $$ LANGUAGE 'plpgsql';
