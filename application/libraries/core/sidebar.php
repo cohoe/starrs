@@ -430,7 +430,7 @@ class Sidebar {
 			while($systems) {
 				$system = array_shift($systems);
 				if($systems) {
-					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/systems/view/'.rawurlencode($system).'">'.$system.'</a>
+					$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/system/view/'.rawurlencode($system).'">'.$system.'</a>
 						<ul style="display: none">
 							<li><a href="/switchports/view/'.rawurlencode($system).'">Switchports</a></li>
 							<li class="last"><a href="/switchview/settings/'.rawurlencode($system).'">Switchview</a></li>
@@ -438,7 +438,7 @@ class Sidebar {
 					</li>';
 				}
 				else {
-					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/systems/view/'.rawurlencode($system).'">'.$system.'</a>
+					$viewData .= '<li class="expandable last"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/network.png" /> <a href="/system/view/'.rawurlencode($system).'">'.$system.'</a>
 						<ul style="display: none">
 							<li><a href="/switchports/view/'.rawurlencode($system).'">Switchports</a></li>
 							<li class="last"><a href="/switchview/settings/'.rawurlencode($system).'">Switchview</a></li>

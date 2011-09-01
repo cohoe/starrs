@@ -61,9 +61,10 @@ class Output extends ImpulseController {
 	}
 
 	private function _dhcpdConf() {
-		$sql = "select value from management.output where file='dhcpd.conf' order by output_id desc limit 1";
+		#$sql = "select value from management.output where file='dhcpd.conf' order by output_id desc limit 1";
+		$sql = "SELECT api.get_dhcpd_config()";
 		$query = $this->db->query($sql);
-		$output = $query->row()->value;
+		$output = $query->row()->get_dhcpd_config;
 		return "<pre style=\"padding: 5px;	\">$output</pre>";
 	}
 	

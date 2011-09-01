@@ -37,7 +37,7 @@ class Dhcp extends ImpulseController {
 			
 			try {
 				$this->api->dhcp->reload();
-				$this->_success("Reloaded all DHCP configuration!");
+				$this->_success("Reloaded all DHCP configuration! Please wait up to 1 minute before renewing your lease.");
 			}
 			catch (DBException $dbE) {
 				echo $this->_error($dbE->getMessage());

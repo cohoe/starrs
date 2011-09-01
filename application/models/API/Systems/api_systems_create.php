@@ -54,13 +54,14 @@ class Api_systems_create extends ImpulseModel {
         }
 	}
 	
-	public function system_quick($systemName, $osName, $mac, $address) {		
+	public function system_quick($systemName, $osName, $mac, $address, $owner) {		
 		// SQL Query
 		$sql = "SELECT api.create_system_quick(
 			{$this->db->escape($systemName)},
 			{$this->db->escape($osName)},
 			{$this->db->escape($mac)},
-			{$this->db->escape($address)})";
+			{$this->db->escape($address)},
+			{$this->db->escape($owner)})";
 		$query = $this->db->query($sql);
 		
 		// Check error

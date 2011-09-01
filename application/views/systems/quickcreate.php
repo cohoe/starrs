@@ -19,7 +19,7 @@
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
 		<br/>
 		<label for="address">Address: </label><input type="text" name="address" class="input_form_input" /><br />
-		
+		<label for="owner">Owner: </label><input type="text" name="owner" value="<?=$user;?>" <?=(isset($isadmin))?"readonly":""?>><br />
 		<label for="submit">&nbsp;</label><input type="submit" name="submit" value="Create System" class="input_form_submit" class="input_form_input" />
 	</form>
 

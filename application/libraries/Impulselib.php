@@ -20,7 +20,8 @@ class Impulselib {
        	$this->uname = $this->CI->input->server('WEBAUTH_USER');
 		#$this->fname = $this->CI->input->server('WEBAUTH_LDAP_GIVENNAME');
 		#$this->lname = $this->CI->input->server('WEBAUTH_LDAP_SN');
-		$this->fullName = $this->CI->input->server('WEBAUTH_LDAP_CN');
+		#$this->fullName = $this->CI->input->server('WEBAUTH_LDAP_CN');
+		$this->fullName = $this->uname;
 	}
 
 	public function test() {

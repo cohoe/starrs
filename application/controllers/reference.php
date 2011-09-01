@@ -95,7 +95,7 @@ class Reference extends ImpulseController {
 	public function help($object=NULL,$view=NULL) {
 		// Navbar
         $navOptions = array('API Reference'=>'/reference/api', 'Help System'=>'reference/help');
-        $navbar = new Navbar("Help", $navModes, $navOptions);
+        $navbar = new Navbar("Help", null, $navOptions);
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);

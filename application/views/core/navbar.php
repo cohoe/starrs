@@ -15,7 +15,7 @@
 	
 	//echo "<a href=\"".$navbar->get_help_link()."\"><div class=\"nav_item_right\"><span>Help</span></div></a>";
 	// The link will be followed if a helpDiv does not exist, otherwise it'll be toggled
-	echo "<a href='{$navbar->get_help_link()}' onClick='toggleHelp()'><div class='nav_item_right'><span>Help</span></div></a>";
+	echo "<a href='{$navbar->get_help_link()}' onClick='return toggleHelp();'><div class='nav_item_right'><span>Help</span></div></a>";
 	//echo "<a onClick='toggleHelp()'><div class='nav_item_right'><span>Help</span></div></a>";
 	
 	if($navbar->get_cancel() == true) {

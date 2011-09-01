@@ -241,7 +241,7 @@ class Computer_system extends ImpulseController {
 			}
 			
 			try {
-				$this->api->systems->create->system_quick($this->input->post('systemName'), $this->input->post('osName'), $this->input->post('mac'), $address);
+				$this->api->systems->create->system_quick($this->input->post('systemName'), $this->input->post('osName'), $this->input->post('mac'), $address, $this->input->post('owner'));
 				redirect(base_url()."system/view/".rawurlencode($this->input->post('systemName')),'location');
 			}
 			catch(Exception $e) {
