@@ -61,4 +61,22 @@ class Statistics extends ImpulseController {
 		// Load the main view
 		$this->load->view('core/main',$info);
 	}
+
+    public function range_utilization($range=NULL) {
+        $range = rawurldecode($range);
+        $data = $this->api->statistics->get->range_utilization($range);
+
+		// Information
+		$navbar = new Navbar("Statistics - Operating System Family Distribution", null, null);
+
+		// Load view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view('statistics/range_utilization',array("data"=>$data),TRUE);
+		$info['title'] = "Range Utilization";
+
+		// Load the main view
+		$this->load->view('core/main',$info);
+    }
 }

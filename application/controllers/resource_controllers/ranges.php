@@ -52,6 +52,7 @@ class Ranges extends ImpulseController {
 		// Navbar
 		$navOptions['Ranges'] = "/resources/ranges/";
         $navOptions['DHCP Options'] = "/dhcp/options/view/range/".rawurlencode(self::$ipRange->get_name());
+        $navOptions['Utilization'] = "/statistics/range_utilization/".rawurlencode(self::$ipRange->get_name());
 		$navModes['EDIT'] = "/resources/ranges/edit/".rawurlencode(self::$ipRange->get_name());
 		$navModes['DELETE'] = "/resources/ranges/delete/".rawurlencode(self::$ipRange->get_name());
 		
