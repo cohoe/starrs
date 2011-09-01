@@ -109,7 +109,17 @@ class Navbar {
 		if(isset($modes['HELP'])) {
 			#$this->helpLink = $modes['HELP'];
 		}
-		$this->helpLink = "/reference/help/".$this->CI->uri->segment(1)."/".$this->CI->uri->segment(2);
+
+        $object = $this->CI->uri->segment(1);
+        $view = $this->CI->uri->segment(2);
+
+        if($view) {
+            $this->helpLink = "/reference/help/$object/$view";
+        }
+        else {
+            $this->helpLink = "/reference/help/$object";
+        }
+		#$this->helpLink = "/reference/help/".$this->CI->uri->segment(1)."/".$this->CI->uri->segment(2);
 
         // Load your user information
 		$this->user = $this->CI->impulselib->get_name();
