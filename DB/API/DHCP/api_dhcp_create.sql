@@ -40,7 +40,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_class"(text, text) IS 'Create a new DHCP 
 	1) Check privileges
 	2) Create class option
 */
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS SETOF "dhcp"."option_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_class_option');
 
@@ -57,6 +57,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_class_option');
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."class_options" 
+		WHERE "class" = input_class AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Create a new DHCP class option';
@@ -65,7 +67,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_class_option"(text, text, text) IS 'Creat
 	1) Check privileges
 	2) Create subnet option
 */
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS SETOF "dhcp"."option_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_subnet_option');
 
@@ -82,6 +84,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_subnet_option');
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."subnet_options" 
+		WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Create DHCP subnet option';
@@ -91,7 +95,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_subnet_option"(cidr, text, text) IS 'Crea
 	2) Check for range DHCPness
 	3) Create option
 */
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, input_option text, input_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, input_option text, input_value text) RETURNS SETOF "dhcp"."option_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin create_dhcp_range_option');
 
@@ -112,6 +116,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, in
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_dhcp_range_option');
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."range_options" 
+		WHERE "range" = input_range AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_range_option"(text, text, text) IS 'Create a DHCP range option';
@@ -120,7 +126,7 @@ COMMENT ON FUNCTION "api"."create_dhcp_range_option"(text, text, text) IS 'Creat
 	1) Check privileges
 	2) Create class option
 */
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, input_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, input_value text) RETURNS SETOF "dhcp"."option_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dhcp_global_option');
 
@@ -136,6 +142,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, 
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_dhcp_global_option');
+		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."global_options" 
+		WHERE "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_global_option"(text, text) IS 'Create a new DHCP global option';
