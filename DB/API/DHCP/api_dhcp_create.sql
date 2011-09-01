@@ -117,7 +117,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, in
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish create_dhcp_range_option');
 		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."range_options" 
-		WHERE "range" = input_range AND "option" = input_option AND "value" = input_value);
+		WHERE "name" = input_range AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_range_option"(text, text, text) IS 'Create a DHCP range option';
