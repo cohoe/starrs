@@ -16,6 +16,7 @@ class Welcome extends ImpulseController {
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('core/success',$data,TRUE);
 		$info['title'] = "Welcome";
+		$info['help'] = $this->load->view("help/welcome",null,TRUE);		
 		
 		// Load the main view
 		$this->load->view('core/main',$info);

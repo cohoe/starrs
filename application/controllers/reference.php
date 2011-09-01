@@ -101,7 +101,15 @@ class Reference extends ImpulseController {
 		$info['header'] = $this->load->view('core/header',"",TRUE);
 		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
-		$info['data'] = $this->load->view("help/$object/$view",null,TRUE);
+		if($view) {
+			$info['data'] = $this->load->view("help/$object/$view",null,TRUE);
+		}
+		elseif($object) {
+			$info['data'] = $this->load->view("help/$object.php",null,TRUE);
+		}
+		else {
+			$info['data'] = $this->load->view("help/welcome",null,TRUE);
+		}
 		$info['title'] = "Help: $object/$view";
 		
 		// Load the main view
