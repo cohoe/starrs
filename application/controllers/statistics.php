@@ -67,7 +67,7 @@ class Statistics extends ImpulseController {
         $data = $this->api->statistics->get->range_utilization($range);
 
 		// Information
-		$navbar = new Navbar("Statistics - Operating System Family Distribution", null, null);
+		$navbar = new Navbar("Statistics - Range Utilization", null, null);
 
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);

@@ -18,7 +18,8 @@
 		data.addColumn('string', 'Topping');
 		data.addColumn('number', 'Slices');
 		data.addRows([
-			<?="In Use,$data[inuse],Free,{$data[total] - $data[inuse]}";?>
+			['In Use',<?="$data[inuse]";?>],
+			['Free',<?="$data[free]";?>]
 		]);
 
 		// Instantiate and draw our chart, passing in some options.
@@ -27,6 +28,14 @@
 	}
 </script>
 
+<div class="item_container">
+	<table>
+		<tr><td>Range:</td><td><?=htmlentities($data['name'])?></td><tr>
+		<tr><td>In Use:</td><td><?=htmlentities($data['inuse'])?></td><tr>
+		<tr><td>Free:</td><td><?=htmlentities($data['free'])?></td><tr>
+		<tr><td>Total:</td><td><?=htmlentities($data['total'])?></td><tr>
+	</table>
+</div>
 <div class="item_container">
 	<div id="chart_div"></div>
 </div>

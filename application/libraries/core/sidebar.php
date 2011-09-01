@@ -387,6 +387,7 @@ class Sidebar {
 				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/range.png" /> <a href="/resources/ranges/view/'.rawurlencode($range).'">'.$range.'</a>
 					<ul style="display: none">
 						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/range/'.rawurlencode($range).'">DHCP Options</a></li>
+						<li class="last"><img src="/media/images/sidebar/statistic.png" /> <a href="/statistics/range_utilization/'.rawurlencode($range).'">Utilization</a></li>
 					</ul>
 				</li>';
 			}
