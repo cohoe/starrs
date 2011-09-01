@@ -61,6 +61,7 @@ class Address extends ImpulseController {
         $info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
         $info['data'] = $this->load->view('addresses/create',$form,TRUE);
         $info['title'] = "Create Address";
+        $info['help'] = $this->load->view("help/addresses/create",NULL,TRUE);
 
         // Load the main view
         $this->load->view('core/main',$info);
@@ -129,6 +130,7 @@ class Address extends ImpulseController {
 		$info['title'] = "Overview - ".self::$addr->get_address();
 		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
 		$info['data'] = $this->load->view('addresses/overview', array("address"=>self::$addr), TRUE);
+        $info['help'] = $this->load->view("help/addresses/view",NULL,TRUE);
 
 		// Load the main view
 		$this->load->view('core/main',$info);
@@ -210,6 +212,7 @@ class Address extends ImpulseController {
 			// Continue loading view data
 			$info['data'] = $this->load->view('addresses/edit',$form,TRUE);
 			$info['title'] = "Edit Address";
+            $info['help'] = $this->load->view("help/addresses/edit",NULL,TRUE);
 			
 			// Load the main view
 			$this->load->view('core/main',$info);
