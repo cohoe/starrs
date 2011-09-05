@@ -122,6 +122,10 @@ class Ranges extends ImpulseController {
 
 	public function create() {
 		if($this->input->post('submit')) {
+			$class = $this->input->post('class');
+			if($class == "") {
+				$class = null;
+			}
 			try {
 				$ipRange = $this->api->ip->create->range(
 					$this->input->post('name'),
@@ -129,7 +133,7 @@ class Ranges extends ImpulseController {
 					$this->input->post('last_ip'),
 					$this->input->post('subnet'),
 					$this->input->post('use'),
-					$this->input->post('class'),
+					$class,
 					$this->input->post('comment')
 					
 				);
