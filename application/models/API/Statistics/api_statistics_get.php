@@ -20,7 +20,8 @@ class Api_statistics_get extends ImpulseModel {
     public function range_utilization($range) {
 		$sql = "SELECT * FROM api.get_range_utilization() WHERE name = {$this->db->escape($range)}";
 		$query = $this->db->query($sql);
-		return $query->result_array();
+		#return $query->result_array();
+		return $query->row_array();
 	}
 }
 /* End of file api_statistics_get.php */

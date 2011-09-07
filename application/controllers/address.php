@@ -233,7 +233,7 @@ class Address extends ImpulseController {
 			if($range == "") {
 				$range = self::$addr->get_range();
 			}
-			self::$address = $this->api->ip->get->address_from_range($range);
+			self::$addr = $this->api->ip->get->address_from_range($range);
 			try { self::$addr->set_address(self::$address); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}

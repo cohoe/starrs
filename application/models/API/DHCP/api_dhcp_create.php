@@ -49,7 +49,7 @@ class Api_dhcp_create extends ImpulseModel {
 		
 		// Return object
 		return new ClassOption(
-			$query->row()->class,
+			$class,
 			$query->row()->option,
 			$query->row()->value,
 			$query->row()->date_created,
@@ -76,7 +76,7 @@ class Api_dhcp_create extends ImpulseModel {
 		
 		// Return object
 		return new SubnetOption(
-			$query->row()->subnet,
+			$subnet,
 			$query->row()->option,
 			$query->row()->value,
 			$query->row()->date_created,
@@ -103,7 +103,7 @@ class Api_dhcp_create extends ImpulseModel {
 		
 		// Return object
 		return new RangeOption(
-			$query->row()->range,
+			$range,
 			$query->row()->option,
 			$query->row()->value,
 			$query->row()->date_created,
