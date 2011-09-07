@@ -15,7 +15,7 @@ Lets us see what all is on the network
 */
 INSERT INTO "systems"."device_types" 
 	("type","family") VALUES 
-	('Router','Network'),('Firewall','Network'),('Switch','Network'),('Hub','Network'),('Wireless Access Point','Network'),('Desktop','PC'),('Server','PC'),('Virtual Machine','PC'),('Laptop','PC'),('Printer','PC');
+	('Router','Network'),('Firewall','Network'),('Switch','Network'),('Hub','Network'),('Wireless Access Point','Network'),('Desktop','PC'),('Server','PC'),('Virtual Machine','PC'),('Laptop','PC'),('Printer','PC'),('Game Console','PC');
 	
 /* Network Port Types
 For configuring views for Uplinks, trunks, and other such things
@@ -55,6 +55,9 @@ INSERT INTO "systems"."os"
 	('OpenBSD','BSD'),
 	('Mac OS X', 'Mac'),
 	('NetBSD','BSD'),
+	('XBox','Other'),
+	('PS3','Other'),
+	('Wii','Other'),
 	('Other','Other');
 	
 /* NETWORK INFORMATION

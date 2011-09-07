@@ -245,6 +245,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 		DnsServer INET;
 		DnsRecord TEXT;
 		RevZone TEXT;
+		RevSubnet CIDR;
 	BEGIN
 		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
 	
@@ -270,10 +271,15 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 				FROM "ip"."subnets" 
 				WHERE NEW."address" << "subnet";
 
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE NEW."address" << "subnet";
+
 				-- If it is in this domain, add the reverse entry
 				IF RevZone = NEW."zone" THEN
 					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-					ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 				END IF;
 
 			ELSEIF NEW."type" ~* 'NS' THEN
@@ -308,6 +314,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 		DnsServer INET;
 		DnsRecord TEXT;
 		RevZone TEXT;
+		RevSubnet CIDR;
 	BEGIN
 		IF NEW."address" != OLD."address" THEN
 			IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
@@ -335,11 +342,16 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 					SELECT "zone" INTO RevZone
 					FROM "ip"."subnets" 
 					WHERE OLD."address" << "subnet";
+					
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE OLD."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
 					IF RevZone = OLD."zone" THEN
 						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-						ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 					END IF;
 
 				-- NEW RECORD
@@ -356,11 +368,16 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 					SELECT "zone" INTO RevZone
 					FROM "ip"."subnets" 
 					WHERE NEW."address" << "subnet";
+					
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE NEW."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
 					IF RevZone = NEW."zone" THEN
 						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-						ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 					END IF;
 
 				ELSEIF NEW."type" ~* 'NS' THEN
@@ -428,6 +445,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 		DnsServer INET;
 		DnsRecord TEXT;
 		RevZone TEXT;
+		RevSubnet CIDR;
 	BEGIN
 		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
 	
@@ -452,11 +470,16 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 				SELECT "zone" INTO RevZone
 				FROM "ip"."subnets" 
 				WHERE OLD."address" << "subnet";
+				
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE OLD."address" << "subnet";
 
 				-- If it is in this domain, add the reverse entry
 				IF RevZone = OLD."zone" THEN
 					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-					ReturnCode := api.nsupdate(RevZone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 				END IF;
 
 			ELSEIF OLD."type" ~* 'NS' THEN
