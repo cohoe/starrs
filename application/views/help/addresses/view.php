@@ -15,3 +15,5 @@ Alternatively, you can specify the address that you wish to assign (if available
 <p>
     Comments are optional.
 </p>
+<p>
+You can view <em>DNS Records</em> and <em>Firewall Rules</em> that are associated with this <em>address</em>, or <em>Edit</em><em>Delete</em> the address.
