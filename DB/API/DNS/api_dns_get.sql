@@ -35,10 +35,15 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_pointers"(inet) IS 'Get all DNS pointer (SRV,CNAME) records for an address';
 
 /* API - get_dns_a */
-CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet) RETURNS SETOF "dns"."a_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet, input_zone text) RETURNS SETOF "dns"."a_data" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-		FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
+		IF input_zone IS NULL THEN
+			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
+		ELSE
+			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
+			FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for an address';
