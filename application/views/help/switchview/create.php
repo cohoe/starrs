@@ -1,0 +1,1 @@
+A <em>SNMP RO</em> community is the only required element needed to enable <em>Switchview</em>. A <em>SNMP RW</em> can be specified for certain other functions such as description setting, administrative state alterations, etc.
