@@ -410,12 +410,16 @@ class Dns extends ImpulseController {
 		
 		$type = $this->input->post('type');
 		
+		if(preg_match("/^A|AAAA$/",$type)===false) { 
+			$aRecord = $this->api->dns->get->address_record($this->input->post('address'),$this->input->post('zone'));
+		}
+		
 		// Call the create function
 		switch($type) {
 			case 'CNAME':
 				$pointerRecord = $this->api->dns->create->cname(
 					$this->input->post('alias'),
-					$this->input->post('hostname'),
+					$aRecord->get_hostname(),
 					$this->input->post('zone'),
 					$ttl,
 					$this->input->post('owner')
@@ -517,10 +521,10 @@ class Dns extends ImpulseController {
 	private function _edit(&$record) {		
 		$err = "";
 			
-		if($record->get_hostname() != $this->input->post('hostname')) {
-			try { $record->set_hostname($this->input->post('hostname')); }
-			catch (Exception $e) { $err .= $e->getMessage(); }
-		}
+		#if($record->get_hostname() != $this->input->post('hostname')) {
+		#	try { $record->set_hostname($this->input->post('hostname')); }
+		#	catch (Exception $e) { $err .= $e->getMessage(); }
+		#}
 		if($record->get_zone() != $this->input->post('zone')) {
 			try { $record->get_zone($this->input->post('zone')); }
 			catch (ObjectException $oE) { $err .= $oE->getMessage(); }

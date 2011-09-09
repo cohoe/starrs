@@ -1,9 +1,8 @@
 <div class="item_container">
 	<form method="POST" class="input_form">
 		<label for="type">Record Type: </label><input type="text" name="type" value="<?echo $record->get_type();?>" class="input_form_input" readonly /><br />
-		<label for="address">Address: </label><input type="text" name="address" value="<?echo $record->get_address();?>" class="input_form_input" readonly /><br />
+		<input type="hidden" name="address" value="<?echo $record->get_address();?>" readonly />
 		<label for="alias">Alias: </label><input type="text" name="alias" class="input_form_input" value="<?echo $record->get_alias();?>" /><br>
-		<label for="hostname">Hostname: </label><input type="text" name="hostname" class="input_form_input" value="<?echo $record->get_hostname();?>" /><br>
 		<label for="zone">Domain: </label>
 		<select name="zone" class="input_form_input">
 			<? foreach ($zones as $zone) {

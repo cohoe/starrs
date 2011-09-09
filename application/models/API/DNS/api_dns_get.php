@@ -318,6 +318,35 @@ class Api_dns_get extends ImpulseModel {
 		// Return results
 		return $dnsKey;
 	}
+	
+	public function address_record($address, $zone=NULL) {
+		// SQL Query
+		$sql = "SELECT * FROM api.get_dns_a({$this->db->escape($address)}, {$this->db->escape($zone)})";
+		$query = $this->db->query($sql);
+		
+		// Check error
+		$this->_check_error($query);
+
+		if($query->num_rows() > 1) {
+			throw new AmbiguousTargetException("Multiple A records found for this zone? This is a database error. Contact your system administrator");
+		}
+
+		// Generate results
+		$addressRecord = new AddressRecord(
+			$query->row()->hostname,
+			$query->row()->zone,
+			$query->row()->address,
+			$query->row()->type,
+			$query->row()->ttl,
+			$query->row()->owner,
+			$query->row()->date_created,
+			$query->row()->date_modified,
+			$query->row()->last_modifier
+		);
+
+		// Return result
+		return $addressRecord;
+	}
 }
 /* End of file api_dns_get.php */
 /* Location: ./application/models/API/DNS/api_dns_get.php */

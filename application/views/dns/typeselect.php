@@ -6,6 +6,7 @@
 				echo '<option value="'.$type.'">'.$type.'</option>';
 			} ?>
 		</select>
+		<br />
 		<label for="submit">&nbsp;</label><input type="submit" name="typeSubmit" value="Continue" class="input_form_submit"/>
 	</form>
 </div>
