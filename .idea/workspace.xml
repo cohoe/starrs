@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd7ec6b6-7fad-475f-a02b-919dafdef89a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/controllers/administration/os.php" />
+      <change type="DELETED" beforePath="I:\impulse-web\application\controllers\administration\os.php" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="impulse-web.iws" />
@@ -26,19 +26,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="os.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/controllers/administration/os.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="328" selection-end="328" vertical-scroll-proportion="0.21816386">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dns.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="dns.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/dns.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="35" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0">
+            <state line="119" column="40" selection-start="4228" selection-end="4228" vertical-scroll-proportion="0.62092793">
               <folding />
             </state>
           </provider>
@@ -475,15 +466,16 @@
     </servers>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1928" height="1180" extended-state="0" />
+    <frame x="1916" y="-4" width="1928" height="1180" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298077" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Phing Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995194" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31500268" sideWeight="0.6721154" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31500268" sideWeight="0.42884615" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278846" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -491,7 +483,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884616" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24986653" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -522,7 +513,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="range utilization" />
+    <option name="LAST_COMMIT_MESSAGE" value="os controller" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -535,7 +526,6 @@
     <option name="UPDATE_GROUP_BY_CHANGELIST" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="moved redirect" />
     <MESSAGE value="added edit" />
     <MESSAGE value="added edit data" />
     <MESSAGE value="added switchview edit" />
@@ -560,41 +550,12 @@
     <MESSAGE value="more images" />
     <MESSAGE value="navbar help" />
     <MESSAGE value="range utilization" />
+    <MESSAGE value="os controller" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/views/systems/create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="38" selection-start="548" selection-end="548" vertical-scroll-proportion="0.20944558" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/libraries/core/navbar.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="23" selection-start="2063" selection-end="2063" vertical-scroll-proportion="-6.36" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="25" selection-start="2319" selection-end="2328" vertical-scroll-proportion="0.7482725" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/help/addresses/create.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="26" selection-start="0" selection-end="894" vertical-scroll-proportion="0.25172755" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/help/addresses/edit.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="3" selection-start="589" selection-end="589" vertical-scroll-proportion="0.11747285" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/views/statistics/os_family_distribution.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/resource_controllers/ranges.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="67" column="0" selection-start="2445" selection-end="2445" vertical-scroll-proportion="0.06712735">
@@ -637,13 +598,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/address.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="212" column="72" selection-start="7383" selection-end="7383" vertical-scroll-proportion="0.016781837">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/search.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="71" column="49" selection-start="2771" selection-end="2771" vertical-scroll-proportion="0.46298125">
@@ -651,16 +605,58 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/dns.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/systems.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="35" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0">
+        <state line="53" column="7" selection-start="1466" selection-end="1469" vertical-scroll-proportion="0.8894373">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/administration/os.php">
+    <entry file="file://$PROJECT_DIR$/application/controllers/admin.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="328" selection-end="328" vertical-scroll-proportion="0.21816386">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/addresses.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/address.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="234" column="13" selection-start="7968" selection-end="7968" vertical-scroll-proportion="3.910168">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/resources.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/switchport.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="17" selection-start="774" selection-end="774" vertical-scroll-proportion="0.40276408">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/computer_system.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="143" column="12" selection-start="5043" selection-end="5117" vertical-scroll-proportion="0.544">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/dns.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="119" column="40" selection-start="4228" selection-end="4228" vertical-scroll-proportion="0.62092793">
           <folding />
         </state>
       </provider>
