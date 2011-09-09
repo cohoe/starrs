@@ -29,7 +29,7 @@ For seeing overall who uses what
 */
 INSERT INTO "systems"."os_family" 
 	("family") VALUES 
-	('Windows'),('Linux'),('BSD'),('Mac'),('Other');
+	('Windows'),('Linux'),('BSD'),('Mac'),('UNIX'),('Solaris'),('Other');
 
 /* OS Distribution
 Better than chuckles' scan-everyone method of figuring out what OS's are on the network
@@ -58,6 +58,14 @@ INSERT INTO "systems"."os"
 	('XBox','Other'),
 	('PS3','Other'),
 	('Wii','Other'),
+	('Plan9','UNIX'),
+	('GNU/Hurd','UNIX'),
+	('Haiku','Other'),
+	('BeOS','Other'),
+	('OpenIndiana','Solaris'),
+	('OpenSolaris','Solaris'),
+	('Solaris','Solaris'),
+	('Illumos','Solaris'),
 	('Other','Other');
 	
 /* NETWORK INFORMATION
