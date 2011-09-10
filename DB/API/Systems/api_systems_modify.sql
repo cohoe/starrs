@@ -102,6 +102,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		IF input_field !~* 'comment|address|config|isprimary|mac|class' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
+		
+		-- Check dynamic
+		IF api.ip_is_dynamic(input_old_address) IS TRUE THEN
+			IF input_field ~* 'config|class' THEN
+				RAISE EXCEPTION 'Cannot modify the configuration or class of a dynamic address';
+			END IF;
+		END IF;
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update interface address');
