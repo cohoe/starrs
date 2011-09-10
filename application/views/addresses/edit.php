@@ -1,6 +1,14 @@
 <div class="item_container">
 	<form method="POST" class="input_form">
 		<label for="mac">Interface: </label><input type="text" name="mac" value="<?echo $addr->get_mac();?>" disabled="disabled" class="input_form_input" /><br />
+		<br/>
+		<?
+			if($addr->get_dynamic() ==  TRUE) {
+				#echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"Dynamic\" class=\"input_form_input\" disabled />";
+				echo "<input type=\"hidden\" name=\"address\" value=\"".$addr->get_address()."\" />";
+			}
+			else {?>
+			
 		<label for="range">Range: </label><select name="range" class="input_form_input">
 			<? foreach ($ranges as $range) {
 				if($addr->get_range() == $range->get_name()) {
@@ -12,12 +20,7 @@
 			} ?>
 		</select><br/>
 		<div style="float: right; width: 100%; text-align: center;">-OR-</div>
-		<br/>
-		<?
-			if($addr->get_dynamic() ==  TRUE) {
-				echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"Dynamic\" class=\"input_form_input\" disabled />";
-			}
-			else {
+<?
 				echo "<label for=\"address\">Address: </label><input type=\"text\" name=\"address\" value=\"".$addr->get_address()."\" class=\"input_form_input\" />";
 			}
 		?>		

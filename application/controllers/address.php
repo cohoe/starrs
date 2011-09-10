@@ -226,18 +226,7 @@ class Address extends ImpulseController {
 	private function _edit() {
 		$err = "";
 		
-		// If no address was given, get one from the selected range
-		$address = $this->input->post('address');
-		if($address == "") {
-			$range = $this->input->post('range');
-			if($range == "") {
-				$range = self::$addr->get_range();
-			}
-			self::$addr = $this->api->ip->get->address_from_range($range);
-			try { self::$addr->set_address(self::$address); }
-			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
-		}
-		elseif(self::$addr->get_address() != $this->input->post('address')) {
+		if(self::$addr->get_address() != $this->input->post('address')) {
 			try { self::$addr->set_address($this->input->post('address')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}

@@ -39,7 +39,8 @@ class Network_interface extends ImpulseController {
 			self::$sidebar->reload();
 			
 			// Send you on your way
-			redirect(base_url()."interface/view/".rawurlencode(self::$int->get_mac()),'location');
+			#redirect(base_url()."interface/view/".rawurlencode(self::$int->get_mac()),'location');
+			redirect(base_url()."interfaces/view/".rawurlencode(self::$sys->get_system_name()),'location');
         }
 			
         // Need to input the information

@@ -409,8 +409,7 @@ class Dns extends ImpulseController {
 		}
 		
 		$type = $this->input->post('type');
-		
-		if(preg_match("/^A|AAAA$/",$type)===false) { 
+		if(preg_match("/^A|AAAA$/",$type)==false) { 
 			$aRecord = $this->api->dns->get->address_record($this->input->post('address'),$this->input->post('zone'));
 		}
 		
