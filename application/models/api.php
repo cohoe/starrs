@@ -85,28 +85,28 @@ class Api extends ImpulseModel {
 		// Build query string
 		$searchString = "WHERE system_name IS NOT NULL ";
 		if($searchArray['systemName']) {
-			$searchString .= "AND system_name = {$this->db->escape($searchArray['systemName'])} ";
+			$searchString .= "AND system_name ~* {$this->db->escape($searchArray['systemName'])} ";
 		}
 		if($searchArray['mac']) {
-			$searchString .= "AND mac = {$this->db->escape($searchArray['mac'])} ";
+			$searchString .= "AND mac ~* {$this->db->escape($searchArray['mac'])} ";
 		}
 		if($searchArray['ipaddress']) {
-			$searchString .= "AND address = {$this->db->escape($searchArray['ipaddress'])} ";
+			$searchString .= "AND address ~* {$this->db->escape($searchArray['ipaddress'])} ";
 		}
 		if($searchArray['range']) {
-			$searchString .= "AND range = {$this->db->escape($searchArray['range'])} ";
+			$searchString .= "AND range ~* {$this->db->escape($searchArray['range'])} ";
 		}
 		if($searchArray['hostname']) {
-			$searchString .= "AND hostname = {$this->db->escape($searchArray['hostname'])} ";
+			$searchString .= "AND hostname ~* {$this->db->escape($searchArray['hostname'])} ";
 		}
 		if($searchArray['zone']) {
-			$searchString .= "AND zone = {$this->db->escape($searchArray['zone'])} ";
+			$searchString .= "AND zone ~* {$this->db->escape($searchArray['zone'])} ";
 		}
 		if($searchArray['owner']) {
-			$searchString .= "AND system_owner = {$this->db->escape($searchArray['owner'])} AND dns_owner = {$this->db->escape($searchArray['owner'])} ";
+			$searchString .= "AND system_owner ~* {$this->db->escape($searchArray['owner'])} AND dns_owner = {$this->db->escape($searchArray['owner'])} ";
 		}
 		if($searchArray['lastmodifier']) {
-			$searchString .= "AND system_last_modfiier = {$this->db->escape($searchArray['lastmodifier'])} AND dns_last_modifier = {$this->db->escape($searchArray['lastmodifier'])} ";
+			$searchString .= "AND system_last_modifier ~* {$this->db->escape($searchArray['lastmodifier'])} AND dns_last_modifier = {$this->db->escape($searchArray['lastmodifier'])} ";
 		}
 		
 		// SQL Query
