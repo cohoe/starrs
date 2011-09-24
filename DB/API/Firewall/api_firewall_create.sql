@@ -13,7 +13,7 @@
 	2) Check for dynamic
 	3) Create member (Insertion triggers new rules to be applied)
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address inet, input_metahost text) RETURNS SETOF "firewall"."metahost_member_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost_member');
 
@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost_member"(input_address
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_firewall_metahost_member');
+		RETURN QUERY (SELECT "name","address","date_created","date_modified","last_modifier" FROM "firewall"."metahost_members" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost_member"(inet, text) IS 'add a member to a metahost. this deletes all previous rules.';
@@ -45,7 +46,7 @@ COMMENT ON FUNCTION "api"."create_firewall_metahost_member"(inet, text) IS 'add 
 	3) Fill in owner
 	4) Create metahost
 */
-CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, input_owner text, input_comment text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, input_owner text, input_comment text) RETURNS SETOF "firewall"."metahost_data" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_firewall_metahost');
 
@@ -71,6 +72,7 @@ CREATE OR REPLACE FUNCTION "api"."create_firewall_metahost"(input_name text, inp
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_firewall_metahost');
+		RETURN QUERY (SELECT "name","comment","owner","date_created","date_modified","last_modifier" FROM "firewall"."metahosts" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_firewall_metahost"(text, text, text) IS 'create a firewall metahost';

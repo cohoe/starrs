@@ -132,7 +132,8 @@ CREATE OR REPLACE FUNCTION "api"."get_os_family_distribution"() RETURNS SETOF "s
 		RETURN QUERY(SELECT "family",count("family")::integer,round(count("family")::numeric/(SELECT count(*)::numeric FROM "systems"."systems")*100,0)::integer AS "percentage"
 		FROM "systems"."systems" 
 		JOIN "systems"."os" ON "systems"."systems"."os_name" = "systems"."os"."name" 
-		GROUP BY "family");
+		GROUP BY "family"
+		ORDER BY count("family") DESC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_os_family_distribution"() IS 'Get fun statistics on registered operating system families';
@@ -143,7 +144,8 @@ CREATE OR REPLACE FUNCTION "api"."get_os_distribution"() RETURNS SETOF "systems"
 		RETURN QUERY(SELECT "os_name",count("os_name")::integer,round(count("os_name")::numeric/(SELECT count(*)::numeric FROM "systems"."systems")*100,0)::integer AS "percentage"
 		FROM "systems"."systems" 
 		JOIN "systems"."os" ON "systems"."systems"."os_name" = "systems"."os"."name" 
-		GROUP BY "os_name");
+		GROUP BY "os_name"
+		ORDER BY count("os_name") DESC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_os_distribution"() IS 'Get fun statistics on registered operating systems';
