@@ -23,7 +23,7 @@ class Addresses extends ImpulseController {
 
 		// Navbar
 		$navModes['CREATE'] = "/address/create/".rawurlencode($mac);
-		$navOptions['Interfaces'] = "/interface/view/".rawurlencode($mac);
+		$navOptions['Interfaces'] = "/interfaces/view/".rawurlencode(self::$int->get_system_name());
 		$navbar = new Navbar("Addresses on {$mac}", $navModes, $navOptions);
 
 		// Load the view data
