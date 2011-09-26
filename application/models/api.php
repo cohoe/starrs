@@ -108,6 +108,8 @@ class Api extends ImpulseModel {
 		if($searchArray['lastmodifier']) {
 			$searchString .= "AND system_last_modifier ~* {$this->db->escape($searchArray['lastmodifier'])} AND dns_last_modifier = {$this->db->escape($searchArray['lastmodifier'])} ";
 		}
+
+		$searchString .= " ORDER BY system_owner ASC";
 		
 		// SQL Query
 		$sql = "SELECT * FROM api.get_search_data() {$searchString}";
