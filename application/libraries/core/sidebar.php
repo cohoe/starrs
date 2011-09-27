@@ -352,6 +352,7 @@ class Sidebar {
 			foreach($this->ownedSubnets as $subnet) {
 				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.rawurlencode($subnet).'">'.$subnet.'</a>
 					<ul style="display: none">
+					    <li><img src="/media/images/sidebar/statistic.png" /> <a href="/statistics/subnet_utilization/'.rawurlencode($subnet).'">Utilization</a></li>
 						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/subnet/'.rawurlencode($subnet).'">DHCP Options</a></li>
 					</ul>
 				</li>';
@@ -368,6 +369,7 @@ class Sidebar {
 			foreach($this->otherSubnets as $subnet) {
 				$viewData .= '<li class="expandable"><div class="hitarea expandable-hitarea"></div><img src="/media/images/sidebar/ipaddr.png" /> <a href="/resources/subnets/view/'.rawurlencode($subnet).'">'.$subnet.'</a>
 					<ul style="display: none">
+					    <li><img src="/media/images/sidebar/statistic.png" /> <a href="/statistics/subnet_utilization/'.rawurlencode($subnet).'">Utilization</a></li>
 						<li class="last"><img src="/media/images/sidebar/option.png" /> <a href="/dhcp/options/view/subnet/'.rawurlencode($subnet).'">DHCP Options</a></li>
 					</ul>
 				</li>';
