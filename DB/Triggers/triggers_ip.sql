@@ -279,25 +279,29 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update"() RETURNS TRIGGER AS $$
 			-- Define lower boundary for range
 			-- Loop through all ranges and find what is near the new range
 			FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" AND "first_ip" != OLD."first_ip" LOOP
+				-- Check if the new first_ip is contained within the next lower range
 				IF NEW."first_ip" >= query_result.first_ip AND NEW."first_ip" <= query_result.last_ip THEN
 					RAISE EXCEPTION 'First address out of bounds.';
+
+				--Check if the new last_ip is contained with the next lower range
+				ELSIF NEW."last_ip" >= query_result.first_ip AND NEW."last_ip" <= query_result.last_ip THEN
+					RAISE EXCEPTION 'Last address LOLOLOL is out of bounds';
 				ELSIF NEW."first_ip" > query_result.last_ip THEN
 					LowerBound := query_result.last_ip;
 				END IF;
-				IF NEW."last_ip" >= query_result.first_ip AND NEW."last_ip" <= query_result.last_ip THEN
-					RAISE EXCEPTION 'Last address is out of bounds';
-				END IF;
+				
 			END LOOP;
 
 			-- Define upper boundry for range
 			SELECT "first_ip" INTO UpperBound
 			FROM "ip"."ranges"
-			WHERE "first_ip" >= LowerBound
-			ORDER BY "first_ip" LIMIT 1;
+			WHERE "first_ip" > LowerBound
+			AND "name" != NEW."name"
+			ORDER BY "first_ip" DESC LIMIT 1;
 
 			-- Check for range spanning
 			IF NEW."last_ip" >= UpperBound THEN
-				RAISE EXCEPTION 'Last address is out of bounds';
+				RAISE EXCEPTION 'Last address HAHAH is out of bounds';
 			END IF;
 		END IF;
 		-- Done
