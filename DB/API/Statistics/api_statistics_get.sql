@@ -15,8 +15,8 @@ CREATE OR REPLACE FUNCTION api.get_subnet_utilization() RETURNS TABLE("subnet" c
 	BEGIN
 		RETURN QUERY (SELECT "ip"."subnets"."subnet",
 			(SELECT COUNT("systems"."interface_addresses"."address") FROM "systems"."interface_addresses" WHERE "systems"."interface_addresses"."address" << "ip"."subnets"."subnet")::integer as "inuse",
-			(SELECT COUNT("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer AS "total",
-			((SELECT count("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer - (SELECT count("systems"."interface_addresses"."address") FROM "systems"."interface_addresses" WHERE "systems"."interface_addresses"."address" << "ip"."subnets"."subnet")::integer) AS "free"
+			((SELECT count("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer - (SELECT count("systems"."interface_addresses"."address") FROM "systems"."interface_addresses" WHERE "systems"."interface_addresses"."address" << "ip"."subnets"."subnet")::integer) AS "free",
+			(SELECT COUNT("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer AS "total"
 			FROM "ip"."subnets" GROUP BY "ip"."subnets"."subnet");
 	END;
 $$ LANGUAGE plpgsql;
