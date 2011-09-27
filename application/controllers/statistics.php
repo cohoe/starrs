@@ -79,4 +79,22 @@ class Statistics extends ImpulseController {
 		// Load the main view
 		$this->load->view('core/main',$info);
     }
+
+     public function subnet_utilization($subnet=NULL) {
+        $subnet = rawurldecode($subnet);
+        $data = $this->api->statistics->get->subnet_utilization($subnet);
+
+		// Information
+		$navbar = new Navbar("Statistics - Subnet Utilization", null, null);
+
+		// Load view data
+		$info['header'] = $this->load->view('core/header',"",TRUE);
+		$info['sidebar'] = $this->load->view('core/sidebar',array("sidebar"=>self::$sidebar),TRUE);
+		$info['navbar'] = $this->load->view('core/navbar',array("navbar"=>$navbar),TRUE);
+		$info['data'] = $this->load->view('statistics/subnet_utilization',array("data"=>$data),TRUE);
+		$info['title'] = "Subnet Utilization";
+
+		// Load the main view
+		$this->load->view('core/main',$info);
+    }
 }
