@@ -66,6 +66,7 @@ INSERT INTO "systems"."os"
 	('OpenSolaris','Solaris'),
 	('Solaris','Solaris'),
 	('Illumos','Solaris'),
+	('Vyatta','Other'),
 	('Other','Other');
 	
 /* NETWORK INFORMATION
