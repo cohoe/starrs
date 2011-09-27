@@ -302,6 +302,35 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 			IF ReturnCode != '0' THEN
 				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
 			END IF;
+		ELSE 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+			IF NEW."type" ~* '^NS$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV|CNAME$' THEN
+				IF NEW."extra" IS NULL THEN
+					DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ELSE	
+					DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname"||'.'||NEW."zone";
+				END IF;
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT|SPF$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
 		END IF;
 		
 		RETURN NEW;
@@ -411,12 +440,52 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
 				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+			IF NEW."type" ~* '^NS$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV|CNAME$' THEN
+				IF OLD."extra" IS NULL THEN
+					DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
+				ELSE	
+					DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname"||'.'||OLD."zone";
+				END IF;
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				IF NEW."extra" IS NULL THEN
+					DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ELSE	
+					DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."extra"||' '||NEW."hostname"||'.'||NEW."zone";
+				END IF;
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT|SPF$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
 
 			IF ReturnCode != '0' THEN
 				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
 			END IF;
 		END IF;
-		
 		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
