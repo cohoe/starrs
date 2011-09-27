@@ -77,9 +77,10 @@ class Subnets extends ImpulseController {
 	
 		// Navbar
 		$navOptions['Subnets'] = "/resources/subnets/";
-        $navOptions['DHCP Options'] = "/dhcp/options/view/subnet/".urlencode(self::$sNet->get_subnet());
-		$navModes['EDIT'] = "/resources/subnets/edit/".urlencode(self::$sNet->get_subnet());
-		$navModes['DELETE'] = "/resources/subnets/delete/".urlencode(self::$sNet->get_subnet());
+        $navOptions['DHCP Options'] = "/dhcp/options/view/subnet/".rawurlencode(self::$sNet->get_subnet());
+        $navOptions['Utilization'] = "/statistics/subnet_utilization/".rawurlencode(self::$sNet->get_subnet());
+		$navModes['EDIT'] = "/resources/subnets/edit/".rawurlencode(self::$sNet->get_subnet());
+		$navModes['DELETE'] = "/resources/subnets/delete/".rawurlencode(self::$sNet->get_subnet());
 		
 		// Load view data
 		$info['header'] = $this->load->view('core/header',"",TRUE);
