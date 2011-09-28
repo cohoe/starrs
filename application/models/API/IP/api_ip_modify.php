@@ -13,6 +13,8 @@ class Api_ip_modify extends ImpulseModel {
 			{$this->db->escape($field)},
 			{$this->db->escape($value)}
 		)";
+		#echo $sql;
+		#exit;
 		$query = $this->db->query($sql);
 		
 		// Check error
