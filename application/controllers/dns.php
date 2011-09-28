@@ -520,10 +520,10 @@ class Dns extends ImpulseController {
 	private function _edit(&$record) {		
 		$err = "";
 			
-		#if($record->get_hostname() != $this->input->post('hostname')) {
-		#	try { $record->set_hostname($this->input->post('hostname')); }
-		#	catch (Exception $e) { $err .= $e->getMessage(); }
-		#}
+		if($record->get_hostname() != $this->input->post('hostname')) {
+			try { $record->set_hostname($this->input->post('hostname')); }
+			catch (Exception $e) { $err .= $e->getMessage(); }
+		}
 		if($record->get_zone() != $this->input->post('zone')) {
 			try { $record->get_zone($this->input->post('zone')); }
 			catch (ObjectException $oE) { $err .= $oE->getMessage(); }
