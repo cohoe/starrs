@@ -76,7 +76,7 @@ class Impulselib {
 		$paths['OpenWRT'] = "/media/images/os/OpenWRT.png";
 		$paths['Vyatta'] = "/media/images/os/Vyatta.png";
 		$paths['Android'] = "/media/images/os/Android.png";
-		$paths['GNU/Hurd'] = "/media/images/os/gnuhurd.png";
+		$paths['GNU/Hurd'] = "/media/images/os/hurd.gif";
 		$paths['VMware ESX(i)'] = "/media/images/os/vmwareesxi.png";
 		$paths['Other'] = "/media/images/os/other.png";
 
