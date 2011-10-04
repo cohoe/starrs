@@ -19,7 +19,7 @@ $macaddrs = $sPort->get_mac_addresses();
                 </td></tr>
             <?  if($macaddrs) {
                     foreach($macaddrs as $mac) {
-                        echo "<tr><td></td><td><a href=\"/interfaces/view/".rawurlencode($mac)."\">".htmlentities($mac)."</a></td></tr>";
+                        echo "<tr><td></td><td><a href=\"/interface/view/".rawurlencode($mac)."\">".htmlentities($mac)."</a></td></tr>";
                     }
                 }
             }?>
