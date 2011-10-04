@@ -347,7 +347,8 @@ CREATE TABLE "dns"."a"(
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "a_pkey" PRIMARY KEY ("hostname","address","zone"),
-CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$')
+CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$'),
+CONSTRAINT "dns_a_hostname" CHECK ("hostname" !~ '_')
 )
 WITHOUT OIDS;
 
