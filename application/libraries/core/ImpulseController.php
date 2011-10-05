@@ -53,9 +53,9 @@ class ImpulseController extends CI_Controller {
 		}
 		
 		if(isset($_SESSION['sidebar'])) {
-			#self::$sidebar = unserialize($_SESSION['sidebar']);
+			self::$sidebar = unserialize($_SESSION['sidebar']);
 			// @todo: Undo this
-			self::$sidebar = new Sidebar();
+			#self::$sidebar = new Sidebar();
 		}
 		else {
 			self::$sidebar = new Sidebar();

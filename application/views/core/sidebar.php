@@ -115,5 +115,5 @@
 			</li>
 		</ul>
 	</div>
-	<div id="sidetreecontrol"> <a href="?#">Collapse All</a> | <a href="?#">Expand All</a> </div>
+<!--	<div id="sidetreecontrol"> <a href="?#">Collapse All</a> | <a href="?#">Expand All</a> </div> -->
 </div>
