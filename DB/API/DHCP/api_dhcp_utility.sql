@@ -103,7 +103,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	sub shared_networks
 	{
 		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-		my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n  ";
+		my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n";
 		$output .= &subnets;
 		$output .= "}\n";
 		return $output;
