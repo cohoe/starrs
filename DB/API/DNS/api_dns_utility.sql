@@ -227,3 +227,38 @@ CREATE OR REPLACE FUNCTION "api"."nslookup"(input_address inet) RETURNS TABLE(fq
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."nslookup"(inet) IS 'Get the DNS name of an IP address in the database';
+
+/* API - dns_audit*/
+CREATE OR REPLACE FUNCTION "api"."dns_audit"(input_subnet CIDR) RETURNS SETOF "dns"."audit_data" AS $$
+	BEGIN
+		RETURN QUERY (
+			SELECT "ip"."addresses"."address","dns"."a"."hostname"||'.'||"dns"."a"."zone","api"."dns_forward_lookup"("dns"."a"."hostname"||'.'||"dns"."a"."zone"),"api"."dns_reverse_lookup"("ip"."addresses"."address")
+			FROM "ip"."addresses"
+			LEFT JOIN "dns"."a"
+			ON "dns"."a"."address" = "ip"."addresses"."address"
+			WHERE "ip"."addresses"."address" << input_subnet
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."dns_audit"(cidr) IS 'Check if your DNS is what you think it is';
+
+CREATE OR REPLACE FUNCTION "api"."dns_forward_lookup"(text) RETURNS INET AS $$
+	use Socket;
+
+	my $hostname = $_[0];
+	#my $ipaddr = `host $hostname | cut -d ' ' -f 4`;
+	$packed_ip = gethostbyname("$hostname");
+	if (defined $packed_ip) {
+		$ip_address = inet_ntoa($packed_ip);
+	}
+	return $ip_address;
+$$ LANGUAGE 'plperlu';
+
+CREATE OR REPLACE FUNCTION "api"."dns_reverse_lookup"(inet) RETURNS TEXT AS $$
+	use Socket;
+
+	my $ip_address = $_[0];
+	my $iaddr = inet_aton("$ip_address"); # or whatever address
+	$name  = gethostbyaddr($iaddr, AF_INET);
+	return $name;
+$$ LANGUAGE 'plperlu';
