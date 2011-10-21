@@ -225,8 +225,13 @@ class Address extends ImpulseController {
      */
 	private function _edit() {
 		$err = "";
+
+		$address = $this->input->post('address');
+		if($address == "") {
+			$address = NULL;
+		}
 		
-		if(self::$addr->get_address() != $this->input->post('address')) {
+		if(self::$addr->get_address() != $address) {
 			try { self::$addr->set_address($this->input->post('address')); }
 			catch (APIException $apiE) { $err .= $apiE->getMessage(); }
 		}
