@@ -37,7 +37,7 @@ class Rule extends ImpulseController {
 		}
 
 
-        if(preg_match("/^standalone-",self::$fwRule->get_source())) {
+        if(preg_match("/^standalone-/",self::$fwRule->get_source())) {
             $navModes['DELETE'] = "/firewall/rule/delete/".rawurlencode(self::$addr->get_address())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
             $navModes['EDIT'] = "/firewall/rule/edit/".rawurlencode(self::$addr->get_address())."/".rawurlencode(self::$fwRule->get_transport())."/".rawurlencode(self::$fwRule->get_port());
             $title = "Standalone Rule";
