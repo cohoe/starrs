@@ -184,3 +184,13 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_range_uses"() RETURNS SETOF TEXT AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_ip_range_uses"() IS 'Get a list of all use codes';
+
+/* API - get_ip_range_total */
+CREATE OR REPLACE FUNCTION "api"."get_ip_range_total"(input_range text) RETURNS integer AS $$
+	BEGIN
+		RETURN (SELECT COUNT(api.get_address_range("address"))
+		FROM "ip"."addresses"
+		WHERE api.get_address_range("address") ~* input_range);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_range_total"(text) IS 'Get the number of possible addresses in a particiular range';
