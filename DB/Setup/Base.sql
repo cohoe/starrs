@@ -50,6 +50,8 @@ INSERT INTO "systems"."os"
 	('Slackware','Linux'),
 	('Arch','Linux'),
 	('Exherbo','Linux'),
+	('Scientific','Linux'),
+	('RHEL','Linux'),
 	('Debian','Linux'),
 	('FreeBSD','BSD'),
 	('OpenBSD','BSD'),
