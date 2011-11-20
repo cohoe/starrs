@@ -111,7 +111,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."addresss" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner',input_old_address;
 			END IF;
 
