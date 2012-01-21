@@ -227,9 +227,9 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		$hostmac =~ s/://g;
 		
 		my $output .= "# $owner\n";
-		if (defined($hostname))
+		if (defined($hostname) && defined($zone))
 		{
-			$output .= "host $hostname {\n";
+			$output .= "host $hostname.$zone {\n";
 		}else 
 		{
 			$output .= "host $hostmac {\n";
