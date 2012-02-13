@@ -126,8 +126,16 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$mask = $row->{netmask};
 			$output .= "  subnet $net netmask $mask {\n    ";
 			$output .= "authoritative;";
-			$output .= &subnet_options($subnet);
-			$output .= &subnet_ranges($subnet);
+			my $subnet_option = &subnet_options($subnet);
+			if(defined($subnet_option))
+			{
+			   $output .= $subnet_option;
+			}
+			my $subnet_range = &subnet_ranges($subnet);
+			if(defined($subnet_range))
+			{
+			   $output .= $subnet_range;
+			}
 			$output .= "\n  }\n";
 		}
 		return $output;
