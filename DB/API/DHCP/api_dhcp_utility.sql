@@ -100,12 +100,12 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	}# end &dhcp_class_options
 
 	# Shared networks
-	sub networks
+	sub shared_networks
 	{
 		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-		my $output = $network->{rows}[0]->{get_site_configuration}. " {\n";
+		my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n";
 		$output .= &subnets;
-		$output .= "\n";
+		$output .= "}\n";
 		return $output;
 	}
 	
@@ -270,7 +270,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	$output .= &forward_zones() . "\n";
 	$output .= &reverse_zones() . "\n";
 	$output .= &dhcp_classes() . "\n";
-	$output .= &networks() . "\n";
+	$output .= &shared_networks() . "\n";
 	$output .= &hosts() . "\n";
 
 	$output .= "\# End dhcpd configuration file";
