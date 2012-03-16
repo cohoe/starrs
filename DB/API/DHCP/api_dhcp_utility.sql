@@ -99,15 +99,15 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		return $output;
 	}# end &dhcp_class_options
 
-	# Shared networks
-	sub shared_networks
-	{
-		my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-		my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n";
-		$output .= &subnets;
-		$output .= "}\n";
-		return $output;
-	}
+	## Shared networks
+	#sub shared_networks
+	#{
+	#	my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
+	#	my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n";
+	#	$output .= &subnets;
+	#	$output .= "}\n";
+	#	return $output;
+	#}
 	
 	# Subnets (for shared networks)
 	sub subnets
@@ -124,7 +124,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$subnet = $row->{get_dhcpd_subnets};
 			$net = substr($subnet, 0, index($subnet, "/"));
 			$mask = $row->{netmask};
-			$output .= "  subnet $net netmask $mask {\n    ";
+			$output .= "subnet $net netmask $mask {\n  ";
 			$output .= "authoritative;";
 			my $subnet_option = &subnet_options($subnet);
 			if(defined($subnet_option))
@@ -136,7 +136,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			{
 			   $output .= $subnet_range;
 			}
-			$output .= "\n  }\n";
+			$output .= "\n}\n";
 		}
 		return $output;
 	}
@@ -270,7 +270,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	$output .= &forward_zones() . "\n";
 	$output .= &reverse_zones() . "\n";
 	$output .= &dhcp_classes() . "\n";
-	$output .= &shared_networks() . "\n";
+	$output .= &subnets() . "\n";
 	$output .= &hosts() . "\n";
 
 	$output .= "\# End dhcpd configuration file";
