@@ -6,6 +6,7 @@ Network resource management and system registration system
 ###Dev Team<br />
 [Grant Cohoe](https://github.com/cohoe) - Did most of the work<br />
 [Anthony Gargiulo](https://github.com/agargiulo) - Bug Fixes<br />
+[Ethan House](https://github.com/ehouse) - Bug Fixes<br />
 
 ###Setup
 A detailed list of dependency can be found at<br />
