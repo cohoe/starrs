@@ -6,7 +6,7 @@ use Cwd;
 
 my $dbhost = "localhost";
 my $dbuser = "impulse_admin";
-my $dbport = 8632;
+my $dbport = 5432;
 my $dbname = "impulse";
 
 my @files = ('create','remove','get','modify','utility');
