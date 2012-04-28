@@ -12,8 +12,8 @@ Network resource management and system registration system
 A detailed list of dependency can be found at<br />
 <https://github.com/cohoe/impulse/wiki><br />
 
-cd into DB file and run
-`perl ./Setup/Installer.pl`
+cd into DB file and run<br />
+`perl ./Installer.pl`
 
 ###Additionally
 impulse requires user impulse_admin with CREATEROLE and CREATEDB for postgres permissions<br /><br />
