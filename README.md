@@ -3,7 +3,7 @@ IMPULSE
 Network resource management and system registration system
 --------------
 
-###Dev Team<br />
+###[Dev Team](https://github.com/cohoe/impulse/wiki#wiki-Project_Team)<br />
 [Grant Cohoe](https://github.com/cohoe) - Core Application & Database, Web Desktop/Mobile Client<br />
 [Ryan Brown](https://github.com/ryansb) - Python CLI client<br />
 [Sam Lucidi](https://github.com/mansam) - Python code assistance/review<br />
