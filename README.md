@@ -12,7 +12,7 @@ Network resource management and system registration system
 A detailed list of dependency can be found at<br />
 <https://github.com/cohoe/impulse/wiki><br />
 
-cd into DB file and run<br />
+cd into DB/Setup file and run<br />
 `perl ./Installer.pl`
 
 ###Additionally
