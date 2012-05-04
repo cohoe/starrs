@@ -3,7 +3,7 @@ IMPULSE
 Network resource management and system registration system
 --------------
 
-###[Dev Team](https://github.com/cohoe/impulse/wiki#wiki-Project_Team)<br />
+###Dev Team
 [Grant Cohoe](https://github.com/cohoe) - Core Application & Database, Web Desktop/Mobile Client<br />
 [Anthony Gargiulo](https://github.com/agargiulo) - Core application output<br />
 [Ethan House](https://github.com/ehouse) - Bug Fixes<br />
