@@ -1,0 +1,27 @@
+body {
+	background-color: #FFFFFF;
+}
+
+
+.network_resource_title {
+	color: white;
+	background-color: #0E780E;
+	border: 1px solid black;
+	height: 48px;
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+
+.dns_resource_title {
+	color: white;
+	background-color: #666699;
+	border: 1px solid black;
+	height: 48px;
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}

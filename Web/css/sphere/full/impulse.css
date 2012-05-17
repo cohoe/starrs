@@ -1,0 +1,509 @@
+/**************************************** 
+	Main
+	Overall styles for the entire page
+****************************************/
+
+body {
+	background-color: white;
+	color: black;
+}
+
+
+/**************************************** 
+	Item Title Bars
+	Intended for sub items where there may be multiple instances
+****************************************/
+
+/* Orange */
+.item_title_style1 {
+	border: 1px solid black;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Yellow */
+.item_title_style2 {
+	border: 1px solid black;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Green */
+
+/* Blue */
+
+/* Purple */
+.item_title_style5 {
+	border: 1px solid black;
+	height: 24px;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/****************************************
+	Item Information Areas
+	Places where useful infomrmation goes 
+****************************************/
+
+/* Orange */
+.item_information_area_style1 {
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+/* Yellow */
+.item_information_area_style2 {
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Green */
+.item_information_area_style3 {
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Blue */
+.item_information_area_style4 {
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Purple */
+.item_information_area_style5 {
+     border: 1px solid black;
+     border-top: none;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     padding-top: 10px;
+     padding-bottom: 10px;
+}
+
+
+/****************************************
+	Item Information Area Containers
+	Boxes for detailed stuff
+****************************************/
+
+.item_information_area_container {
+	width: 90%;
+	border: 1px solid black;
+	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/****************************************
+	Item Information Area Table
+	How the data in this view gets presented
+****************************************/
+.item_information_area_table {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.item_information_area_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.item_information_area_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+}
+
+.item_information_area_table td {
+	padding-left: .75em;
+	padding-right: .75em;
+	vertical-align: top;
+	max-width: 500px;
+}
+
+.item_information_area_table ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+/****************************************
+	DNS Information Area Table
+	How the data in this view gets presented
+****************************************/
+.dns_information_area_table {
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.dns_information_area_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.dns_information_area_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+	border-bottom: 1px solid black;
+}
+
+.dns_information_area_table td {
+	padding-left: .75em;
+	padding-right: .75em;
+	vertical-align: top;
+	max-width: 500px;
+}
+
+.dns_information_area_table ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+/****************************************
+	Item Lower Bars 
+	Used mainly for date information 
+****************************************/
+
+/* Orange */
+.item_lower_bar_style1 {
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+/* Yellow */
+.item_lower_bar_style2 {
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+/* Green */
+.item_lower_bar_style3 {
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+/* Blue */
+.item_lower_bar_style4 {
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+/* Purple */
+.item_lower_bar_style5 {
+     border: 1px solid black;
+     border-top: 0px;
+     height: 24px;
+     width: 100%;
+     margin-left:auto;
+     margin-right: auto;
+     text-align: center;
+     font-size: 10pt;
+     text-valign: middle;
+     line-height: 24px;
+}
+
+
+/****************************************
+	Resource Title Bars
+	Intended for important objects such as systems and interfaces
+****************************************/
+
+/* Orange */
+
+/* Yellow */
+
+/* Green */
+.resource_title_bar_style3 {
+	border: 1px solid black;
+	height: 48px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+/* Blue */
+.resource_title_bar_style4 {
+	border: 1px solid black;
+	height: 48px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	color: black;
+	background-color: white;
+}
+
+/****************************************
+	Images
+	Used for interface and system title bars
+****************************************/
+
+/* Interface Image */
+.interface_image {
+	width: 48px;
+	height: 48px;
+	float: right;
+	background-image:url('../../../media/images/nic.png');
+}
+
+/* System Image */
+.system_image {
+	width: 48px;
+	height: 48px;
+	float: right;
+}
+
+/****************************************
+	Item Title Bar Content
+	Small blocks of text to provide certain notes
+****************************************/
+
+/* Left Information */
+.item_title_bar_left {
+	width: auto;
+	float: left;
+	font-weight: bold;
+	line-height: 24px;
+	padding-left: 10px;
+}
+
+/* Right Information */
+.item_title_bar_right {
+	width: auto;
+	float: right;
+	font-weight: bold;
+	line-height: 24px;
+	padding-right: 10px;
+}
+
+/****************************************
+	Resource Title Bar Content
+	Small blocks of text to provide certain notes
+****************************************/
+
+/* Left Information */
+.resource_title_bar_left {
+	width: auto;
+	float: left;
+	font-weight: bold;
+	line-height: 48px;
+	padding-left: 10px;
+}
+
+/* Center Information */
+.resource_title_bar_center {
+	text-align: center;
+	width: auto;
+	font-weight: bold;
+	line-height: 48px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Right Information */
+.resource_title_bar_right {
+	width: auto;
+	float: right;
+	font-weight: bold;
+	line-height: 48px;
+	padding-right: 10px;
+}
+
+/****************************************
+	Item Container
+	Holding box for the entire item entry
+	
+	removed float: none due to deprecation
+****************************************/
+.item_container {
+	min-width: 520px;
+	margin: 1em;
+}
+
+/****************************************
+	Links
+	For if you like clicking on things
+****************************************/
+
+a .system_image  {
+	border: none;
+}
+
+a .resource_title_bar_style4 {
+	text-decoration: none;
+}
+
+a {
+	text-decoration: none;
+	color: none;
+}
+
+/****************************************
+	Firewall Box
+	Change color depending on the deny
+	action of the rule.
+****************************************/
+.firewall_rule_port_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_deny a {
+	color: white;
+}
+
+.firewall_rule_port_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_allow a {
+	color: white;
+}
+
+.firewall_rule_port_box_unknown {
+    text-align: center;
+	color: white;
+	background-color: gold;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_port_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.firewall_rule_default_box_deny {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_allow {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 60px;
+}
+
+.firewall_rule_default_box_unknown {
+	text-align: center;
+	color: black;
+	background-color: gold;
+	border: 1px solid black;
+	min-width: 120px;
+}
+
+/****************************************
+	Switchport Status
+	Change color depending on the state
+	of the port
+****************************************/
+
+.switchport_enabled {
+	text-align: center;
+	color: white;
+	background-color: gray;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.switchport_enabled a {
+	color: white;
+}
+
+.switchport_disabled {
+	text-align: center;
+	color: white;
+	background-color: darkred;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.switchport_disabled a {
+	color: white;
+}
+
+.switchport_active {
+	text-align: center;
+	color: white;
+	background-color: forestgreen;
+	border: 1px solid black;
+	width: 30px;
+}
+
+.switchport_active a {
+	color: white;
+}

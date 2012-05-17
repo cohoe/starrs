@@ -1,0 +1,234 @@
+body {
+	background-color: #0C141F;
+}
+
+.system_resource_container {
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.system_resource_title {
+	color: white;
+	background-color: #0E0E78;
+	border: 1px solid black;
+	height: 48px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.system_resource_information {
+	background-color: #CCCCCC;
+	color: black;
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.system_resource_information table {
+	width: auto;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.system_resource_information em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.interface_resource_container {
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	clear:both;
+}
+
+.interface_resource_title {
+	color: white;
+	background-color: #780e0e;
+	border: 1px solid black;
+	height: 48px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.interface_resource_information {
+	background-color: #CCCCCC;
+	color: black;
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.resource_information_table {
+	width: auto;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.resource_information_table em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+.resource_information_table th {
+	text-align: left;
+	padding-left: .75em;
+	padding-right: .75em;
+}
+
+.resource_information_table	 td {
+	padding-left: .75em;
+	padding-right: .75em;
+}
+
+.address_resource_container {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	float: none;
+
+}
+
+.address_resource_title {
+	color: white;
+	background-color: #0E7878;
+	border: 1px solid black;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.address_resource_information {
+	background-color: #CCCCCC;
+	color: black;
+	border: 1px solid black;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+}
+
+.interface_primary_span {
+	width: auto;
+	float: right;
+	font-weight: bold;
+	line-height: 24px;
+	padding-right: 10px;
+}
+
+.system_date_bar {
+	color: white;
+	background-color: #0E0E78;
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+.interface_date_bar {
+	color: white;
+	background-color: #780e0e;
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+.address_date_bar {
+	color: white;
+	background-color: #0E7878;
+	border: 1px solid black;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+}
+
+
+.firewall_resource_title {
+	color: white;
+	background-color: #780e0e;
+	border: 1px solid black;
+	height: 48px;
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.network_resource_title {
+	color: white;
+	background-color: #0E780E;
+	border: 1px solid black;
+	height: 48px;
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.dns_resource_title {
+	color: white;
+	background-color: #666699;
+	border: 1px solid black;
+	height: 48px;
+	width: 50%;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.resource_title_span {
+	width: auto;
+	float: left;
+	font-weight: bold;
+	line-height: 48px;
+	padding-left: 10px;
+}
+
+.item_title_span {
+	width: auto;
+	float: left;
+	font-weight: bold;
+	line-height: 24px;
+	padding-left: 10px;
+}
+
+.resource_title_img {
+	width: 48px;
+	height: 48px;
+	float: right;
+}
+
+.resource_title_em {
+	font: inherit;
+	font-weight: normal;
+}

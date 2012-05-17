@@ -1,0 +1,85 @@
+.interface_resource_container {
+	width: 50%;
+	min-width: 520px;
+	margin-left:auto;
+	margin-right: auto;
+	margin-bottom: 15px;
+	clear:both;
+}
+
+.interface_resource_title {
+	color: black;
+	background-color: #FFFFFF;
+	border: 1px solid #a0fd67;
+	height: 48px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	border-radius:5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+	border-bottom-left-radius: 0;
+	-webkit-border-bottom-left-radius:0;
+    -moz-border-bottom-left-radius:0;
+	border-bottom-right-radius: 0;
+	-webkit-border-bottom-right-radius:0;
+    -moz-border-bottom-right-radius:0;
+	box-shadow:0 0 35px #73ae57; 
+	-webkit-box-shadow:0 0 35px #73ae57;
+	-moz-box-shadow: 0 0 20px #73ae57; 
+}
+
+.interface_primary_span {
+	width: auto;
+	float: right;
+	font-weight: bold;
+	line-height: 24px;
+	padding-right: 10px;
+}
+
+.interface_resource_information {
+	background-color: #0C141F;
+	border: 1px solid #a0fd67;
+	border-top: none;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	box-shadow:0 0 35px #73ae57; 
+	-webkit-box-shadow:0 0 35px #73ae57; 
+	-moz-box-shadow: 0 0 20px #73ae57; 
+}
+
+.interface_date_bar {
+	color: black;
+	background-color: #FFFFFF;
+	border: 1px solid #a0fd67;
+	border-top: 0px;
+	height: 24px;
+	width: 100%;
+	margin-left:auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 10pt;
+	text-valign: middle;
+	line-height: 24px;
+	border-radius:5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+	border-top-left-radius: 0;
+	-webkit-border-top-left-radius:0;
+    -moz-border-top-left-radius:0;
+	border-top-right-radius: 0;
+	-webkit-border-top-right-radius:0;
+    -moz-border-top-right-radius:0;
+	box-shadow:0 0 35px #73ae57; 
+	-webkit-box-shadow:0 0 35px #73ae57; 
+	-moz-box-shadow: 0 0 20px #73ae57; 
+}
+
+.interface_title_img {
+	width: 48px;
+	height: 48px;
+	float: right;
+	background-image:url('../../../media/images/nic.png');
+}
+

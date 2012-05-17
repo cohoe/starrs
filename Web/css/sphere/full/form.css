@@ -1,0 +1,74 @@
+.input_form {
+	width: 50%;
+	padding: .5em;
+	font-size: 12pt;
+}
+
+.input_form label {
+	float: left;
+	margin-right: 5px;
+	display: block;
+	width: 150px;
+	text-align: right;
+}
+
+.input_form select {
+    width: 150px;
+}
+
+.input_form_input {
+	width: 150px;
+}
+
+.input_form_radio {
+	display: inline; 
+}
+
+.input_form_submit {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	border: 1px solid black;
+	background-color: #7b869c;
+	color: white;
+}
+
+.prompt {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.prompt_form {
+	width: auto;
+	padding: .75em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	border: 1px solid black;
+}
+
+.prompt_form_message {
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.prompt_form_submit {
+	margin-top: 1em;
+	border: 1px solid black;
+	background-color: #7b869c;
+	color: white;
+	width: 8em;
+}
+
+.hostnameInUse {
+	margin:10px;
+	color: red;
+	font-weight:bold;
+}
+	
+.hostnameAvailable {
+	margin:10px;
+	color: green;
+	font-weight:bold;	
+}
