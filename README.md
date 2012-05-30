@@ -1,6 +1,6 @@
 IMPULSE
 ==============
-Network resource management and system registration system
+IP Management Program for Use in Local Server Environments
 --------------
 
 ###Dev Team
