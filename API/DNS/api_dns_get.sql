@@ -84,9 +84,17 @@ COMMENT ON FUNCTION "api"."get_dns_zone"(text) IS 'Get detailed dns zone informa
 CREATE OR REPLACE FUNCTION "api"."get_dns_keys"(input_username text) RETURNS SETOF "dns"."key_data" AS $$
 	BEGIN
 		IF input_username IS NULL THEN
+			IF api.get_current_user_level() !~* 'ADMIN' THEN
+				RAISE EXCEPTION 'Permission to get DNS keys denied: You are not admin';
+			END IF;
 			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
 			FROM "dns"."keys");
 		ELSE
+			IF api.get_current_user_level() !~* 'ADMIN' THEN
+				IF input_username != api.get_current_user() THEN
+					RAISE EXCEPTION 'Permission to get DNS keys denied: You are not admin or owner';
+				END IF;
+			END IF;
 			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
 			FROM "dns"."keys" WHERE "owner" = input_username ORDER BY "keyname" ASC);
 		END IF;
@@ -97,6 +105,11 @@ COMMENT ON FUNCTION "api"."get_dns_keys"(text) IS 'Get DNS key data';
 /* API - get_dns_key */
 CREATE OR REPLACE FUNCTION "api"."get_dns_key"(input_keyname text) RETURNS SETOF "dns"."key_data" AS $$
 	BEGIN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF (SELECT "owner" FROM "dns"."keys" WHERE "keyname" = input_keyname) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission to get DNS key denied: You are not admin or owner';
+			END IF;
+		END IF;
 		RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
 		FROM "dns"."keys" WHERE "keyname" = input_keyname);
 	END;
