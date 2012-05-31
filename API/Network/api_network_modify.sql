@@ -10,12 +10,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_switchport"(input_old_system te
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_old_system) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit port % on system % denied. You are not owner',input_old_system, input_old_port;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'port_name|description|type' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -45,12 +47,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_system_switchview"(input_system_name te
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
 		
 		-- Check allowed fields
 		IF input_field !~* 'enable|snmp_ro_community|snmp_rw_community' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -82,6 +86,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_switchport_admin_state"(input_system_na
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit port % on system % denied. You are not owner',input_port_name, input_system_name;
 			END IF;
  		END IF;
