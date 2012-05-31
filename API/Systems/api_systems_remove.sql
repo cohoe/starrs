@@ -86,3 +86,23 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_interface_address"(inet) IS 'delete an interface address';
+
+CREATE OR REPLACE FUNCTION "api"."remove_users_systems"(username text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','Begin api.remove_users_systems');
+		
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied to remove users systems');
+			RAISE EXCEPTION 'Permission denied: Only admins can remove all systems from a user';
+		END IF;
+		
+		-- Perform delete
+		PERFORM api.create_log_entry('API','INFO','Removing all systems for user '||username);
+		DELETE FROM "systems"."systems" WHERE "owner" = username;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','End api.change_username');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_users_systems"(text) IS 'Remove all systems owned by a user';
