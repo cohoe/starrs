@@ -93,6 +93,12 @@ COMMENT ON FUNCTION "api"."get_dhcpd_global_options"() IS 'Get all of the global
 /* API - get_dhcpd_dns_keys */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dns_keys"() RETURNS SETOF "dhcp"."dhcpd_dns_keys" AS $$
 	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied on get_dhcpd_dns_keys: You are not admin.';
+		END IF;
+		
+		-- Return data
 		RETURN QUERY (SELECT DISTINCT "dns"."zones"."keyname","dns"."keys"."key",api.get_site_configuration('DNS_KEY_ENCTYPE') AS "enctype" 
 		FROM "ip"."subnets" 
 		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
