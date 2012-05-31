@@ -70,7 +70,8 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 			-- Check for smaller subnets
 			SELECT COUNT(*) INTO RowCount
 			FROM "ip"."subnets"
-			WHERE NEW."subnet" >> "ip"."subnets"."subnet";
+			WHERE NEW."subnet" >> "ip"."subnets"."subnet"
+			AND OLD."subnet" <> "ip"."subnets"."subnet";
 			IF (RowCount > 0) THEN
 				RAISE EXCEPTION 'A smaller existing subnet was detected. Nested subnets are not supported.';
 			END IF;
