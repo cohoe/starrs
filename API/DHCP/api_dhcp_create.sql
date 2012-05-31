@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create dhcp class denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -46,6 +47,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -73,6 +75,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create dhcp subnet option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -101,11 +104,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, in
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create dhcp range option denied for user %. You are not admin.',api.get_current_user();
 		END IF;
 
 		-- Check if range is marked for DHCP
 		IF (SELECT "use" FROM "ip"."ranges" WHERE "name" = input_range) !~* 'ROAM' THEN
+			PERFORM api.create_log_entry('API','ERROR','Range is not marked for DHCP configuration');
 			RAISE EXCEPTION 'Range % is not marked for DHCP configuration',input_range;
 		END IF;
 
@@ -132,6 +137,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
