@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_subnet"(input_subnet cidr) RETURNS V
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to delete subnet % denied. Not owner',input_subnet;
 			END IF;
 		END IF;
@@ -48,6 +49,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = 
 			(SELECT "subnet" FROM "ip"."ranges" WHERE "name" = input_range)) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to delete range % denied. Not owner',input_name;
 			END IF;
 		END IF;
