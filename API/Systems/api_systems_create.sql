@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -68,6 +69,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
@@ -103,6 +105,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interfaces"."mac" = input_mac) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on interface %. You are not owner.',input_mac;
 			END IF;
 		END IF;
@@ -113,6 +116,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 		END IF;
 
 		IF input_address << cidr(api.get_site_configuration('DYNAMIC_SUBNET')) AND input_config !~* 'dhcp' THEN
+			PERFORM api.create_log_entry('API','ERROR','Specified address is only for dynamic addressing');
 			RAISE EXCEPTION 'Specifified address (%) is only for dynamic DHCP addresses',input_address;
 		END IF;
 
