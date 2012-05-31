@@ -10,16 +10,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_fiel
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_old_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit system % denied. You are not owner',input_old_name;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied - wrong owner');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'system_name|owner|comment|type|os_name' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -51,12 +54,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "mac" = input_old_mac) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit interface % denied. You are not owner',input_old_mac;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'mac|comment|system_name|name' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -94,18 +99,21 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF api.get_interface_address_owner(input_old_address) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner of the system',input_old_address;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'comment|address|config|isprimary|mac|class' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 		
 		-- Check dynamic
 		IF api.ip_is_dynamic(input_old_address) IS TRUE THEN
 			IF input_field ~* 'config|class' THEN
+				PERFORM api.create_log_entry('API','ERROR','Cannot modify the configuration or class of a dynamic address');
 				RAISE EXCEPTION 'Cannot modify the configuration or class of a dynamic address';
 			END IF;
 		END IF;
