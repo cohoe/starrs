@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -59,6 +60,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Validate input
 		IF api.validate_domain(NULL,input_zone) IS FALSE THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid domain');
 			RAISE EXCEPTION 'Invalid domain (%)',input_zone;
 		END IF;
 
@@ -69,6 +71,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create zone % denied for user %. Not admin.',input_zone,api.get_current_user();
 		END IF;
 		
@@ -117,15 +120,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "shared" FROM "dns"."zones" WHERE "zone" = input_zone) IS FALSE
 			AND (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-shared zone');
 				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Validate hostname
 		IF api.validate_domain(input_hostname,input_zone) IS FALSE THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid hostname');
 			RAISE EXCEPTION 'Invalid hostname (%) and domain (%)',input_hostname,input_zone;
 		END IF;
 
@@ -170,9 +176,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -216,9 +224,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone.');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -270,9 +280,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -322,9 +334,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone.');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
@@ -368,9 +382,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
