@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_system"(input_system_name text) RETURNS
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
@@ -42,6 +43,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS V
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interfaces"."mac" = input_mac) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on interface %. You are not owner.',input_mac;
 			END IF;
 		END IF;
@@ -70,6 +72,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) 
 			JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interface_addresses"."address" = input_address) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on interface address %. You are not owner.',input_address;
 			END IF;
 		END IF;
