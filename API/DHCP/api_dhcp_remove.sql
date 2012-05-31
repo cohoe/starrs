@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp class denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -38,6 +39,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -62,6 +64,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp subnet option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -86,6 +89,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_global_option"(input_option text, 
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp global option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
@@ -110,6 +114,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_range_option"(input_range text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp range option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
