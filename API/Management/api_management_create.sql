@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive tex
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied. Only admins can create site directives';
 		END IF;
 
