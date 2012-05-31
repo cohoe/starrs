@@ -262,3 +262,39 @@ CREATE OR REPLACE FUNCTION "api"."dns_reverse_lookup"(inet) RETURNS TEXT AS $$
 	$name  = gethostbyaddr($iaddr, AF_INET);
 	return $name;
 $$ LANGUAGE 'plperlu';
+
+CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text) RETURNS SETOF something AS $$
+	use strict;
+	use warnings;
+	use Net::DNS;
+	use v5.10;
+	use Data::Dumper;
+	
+	my $res = Net::DNS::Resolver->new;
+	
+	my $rr = $res->query('somehost','srv');
+	
+	if(!defined($rr)) {
+		print "Unable to get result for query\n";
+		exit 1;
+	}
+	my @answer = $rr->answer;
+	
+	#print Dumper @answer; exit;
+	
+	foreach my $result (@answer) {
+		&print_data($result);
+	}
+	
+	sub print_data() {
+		my $rr = $_[0];
+		given($rr->type) {
+			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->address,"\n" when (/^A|AAAA$/);
+			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->cname,"\n" when (/^CNAME$/);
+			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->priority,",",$rr->weight,",",$rr->port,",",$rr->target,"\n" when (/^SRV$/);
+			print $rr->nsdname,",",$rr->ttl,",",$rr->type,"\n" when (/^NS$/);
+			print $rr->exchange,",",$rr->ttl,",",$rr->type,",",$rr->preference,"\n" when (/^MS$/);
+			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->char_str_list,"\n" when (/^TXT|SPF$/);
+		}
+	}
+$$ LANGUAGE 'plperlu';
