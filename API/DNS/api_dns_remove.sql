@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_key"(input_keyname text) RETURNS VO
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."keys" WHERE "keyname" = input_keyname) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on key %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_keyname;
 			END IF;
 		END IF;
@@ -44,6 +45,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone"(input_zone text) RETURNS VOID
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on zone %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_zone;
 			END IF;
 		END IF;
@@ -69,6 +71,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet, input_
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS address %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_address;
 			END IF;
 		END IF;
@@ -93,6 +96,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_hostname text, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS MX %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
 			END IF;
 		END IF;
@@ -117,6 +121,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_nameserver"(input_hostname text, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS NS %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
 			END IF;
 		END IF;
@@ -141,6 +146,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_srv"(input_alias text, input_target
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_alias AND "target" = input_target AND "zone" = input_zone AND "type" = 'SRV') != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS SRV %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_alias||'.'||input_zone;
 			END IF;
 		END IF;
@@ -165,6 +171,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_alias AND "target" = input_target AND "zone" = input_zone AND "type" = 'CNAME') != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS CNAME %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_alias||'.'||input_zone;
 			END IF;
 		END IF;
@@ -189,6 +196,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_text"(input_hostname text, input_zo
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "type" = input_type) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS TXT %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
 			END IF;
 		END IF;
