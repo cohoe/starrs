@@ -22,16 +22,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."keys" WHERE "keyname" = input_old_keyname) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned key');
 				RAISE EXCEPTION 'Permission to edit key % denied. You are not owner',input_old_keyname;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'keyname|key|comment|owner' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -66,16 +69,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission to edit zone % denied. You are not owner',input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'zone|forward|keyname|owner|comment|shared' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -112,16 +118,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned address');
 				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner',input_old_address;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'hostname|zone|address|owner|ttl' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -163,16 +172,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned mailserver');
 				RAISE EXCEPTION 'Permission to edit mailserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
 		END IF;
 
 		 -- Check allowed fields
 		IF input_field !~* 'hostname|zone|preference|owner|ttl' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -209,16 +221,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_nameserver"(input_old_hostname text
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."ns" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned nameserver');
 				RAISE EXCEPTION 'Permission to edit nameserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
 		END IF;
 
 		 -- Check allowed fields
 		IF input_field !~* 'hostname|zone|isprimary|owner|ttl' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -260,16 +275,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned SRV');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
 		END IF;
 
 		 -- Check allowed fields
 		IF input_field !~* 'hostname|zone|alias|owner|ttl|extra' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -306,16 +324,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned alias');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
 		END IF;
 
 		 -- Check allowed fields
 		IF input_field !~* 'hostname|zone|alias|owner|ttl' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -352,16 +373,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, inpu
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned TXT');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_hostname,input_old_zone;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
 		END IF;
 
 		 -- Check allowed fields
 		IF input_field !~* 'hostname|zone|text|owner|ttl|type' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
