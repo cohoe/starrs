@@ -52,6 +52,7 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 		-- Check privileges
 		IF api.get_current_user_level() ~* 'PROGRAM|USER' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied. Only admins can create site directives';
 			END IF;
 		END IF;
@@ -79,6 +80,7 @@ CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
 		END IF;
 
@@ -110,6 +112,7 @@ CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VO
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
 		END IF;
 
