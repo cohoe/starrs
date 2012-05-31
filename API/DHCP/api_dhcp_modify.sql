@@ -17,11 +17,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to modify dhcp class denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'class|comment' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
@@ -55,11 +57,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to modify dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'class|option|value' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
@@ -88,11 +92,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to modify dhcp subnet option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'subnet|option|value' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
@@ -121,11 +127,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option te
 
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to modify dhcp global option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'option|value' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
