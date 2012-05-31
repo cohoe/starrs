@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport"(input_port_name text, input
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
@@ -69,6 +70,7 @@ CREATE OR REPLACE FUNCTION "api"."create_switchport_range"(input_prefix text, fi
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
@@ -100,6 +102,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_switchview"(input_system_name te
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
