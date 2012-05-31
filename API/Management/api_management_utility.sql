@@ -205,3 +205,62 @@ CREATE OR REPLACE FUNCTION "api"."exec"(text) RETURNS VOID AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."exec"(text) IS 'Execute a query in a plpgsql context';
+
+/* API - change_username */
+CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_username text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','Begin api.change_username');
+		
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied to change username');
+			RAISE EXCEPTION 'Only admins can change usernames';
+		END IF;
+		
+		-- Perform update
+		UPDATE "dhcp"."class_options" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dhcp"."range_options" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dhcp"."global_options" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dhcp"."classes" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dhcp"."subnet_options" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dhcp"."config_types" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."types" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."ns" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."ns" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."pointers" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."pointers" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."mx" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."mx" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."zones" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."zones" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."keys" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."keys" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."txt" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."txt" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."a" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."a" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "ip"."range_uses" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "ip"."subnets" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "ip"."subnets" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "ip"."ranges" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "ip"."addresses" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "ip"."addresses" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."device_types" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."os_family" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."interface_addresses" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."systems" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "systems"."systems" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."os" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."interfaces" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "systems"."type_family" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "network"."switchports" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "network"."switchport_types" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "management"."configuration" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "management"."log_master" SET "user" = new_username WHERE "user" = old_username;
+		PERFORM api.create_log_entry('API','INFO','Changed user '||old_username||' to '||new_username);
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','End api.change_username');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."change_username"(text, text) IS 'Change all references to an old username to a new one';
