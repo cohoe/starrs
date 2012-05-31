@@ -14,11 +14,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_fi
 
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to modify range (%). Not admin.',input_old_name;
 		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'first_ip|last_ip|comment|use|name|subnet|class' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
@@ -60,16 +62,19 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
 		-- Check privileges		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_old_subnet) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied - not owner');
 				RAISE EXCEPTION 'Permission to edit subnet % denied. You are not owner',input_old_subnet;
 			END IF;
 
 			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
 			END IF;
  		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'subnet|comment|autogen|name|owner|zone|dhcp_enable' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
