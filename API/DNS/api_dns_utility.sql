@@ -321,3 +321,26 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, inpu
        END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone_audit_data"(text,inet) IS 'Perform an audit of IMPULSE zone data against server zone data';
+
+CREATE OR REPLACE FUNCTION "api"."get_dns_zone_serial"(text) RETURNS TEXT AS $$
+	use strict;
+	use warnings;
+	use Net::DNS;
+	
+	# Get the zone
+	my $zone = shift(@_) or die "Unable to get DNS zone to query";
+	
+	# Establish the resolver and make the query
+	my $res = Net::DNS::Resolver->new;
+	my $rr = $res->query($zone,'soa');
+
+	# Check if it actually returned
+	if(!defined($rr)) {
+		die "Unable to find record for zone $zone";
+	}
+	
+	# Spit out the serial
+	my @answer = $rr->answer;
+	return \$answer[0]->serial;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_dns_zone_serial"(text) IS 'Query this hosts resolver for the serial number of the zone.';
