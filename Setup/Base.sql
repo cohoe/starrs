@@ -134,7 +134,6 @@ INSERT INTO "dns"."types" ("type","comment") VALUES
 	('NS','Nameserver'),
 	('MX','Mail Exchange'),
 	('TXT','Text'),
-	('SPF','New Text'),
 	('CNAME','Pointer'),
 	('SRV','Special service');
 	
