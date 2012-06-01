@@ -7,6 +7,7 @@
 	6) remove_dns_srv
 	7) remove_dns_cname
 	8) remove_dns_txt
+	9) remove_dns_soa
 */
 
 /* API - remove_dns_key
@@ -209,3 +210,29 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_text"(input_hostname text, input_zo
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_text"(text, text, text) IS 'remove a dns text record for a host';
+
+/* API - remove_dns_soa
+	1) Check privileges
+	2) Delete soa
+*/
+CREATE OR REPLACE FUNCTION "api"."remove_dns_soa"(input_zone text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dns_soa');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
+				RAISE EXCEPTION 'Permission denied for % (%) on zone %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_soa;
+			END IF;
+		END IF;
+
+		-- Delete soa
+		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dns soa');
+		DELETE FROM "dns"."soa"
+		WHERE "zone" = input_zone;
+
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_soa');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_dns_soa"(text) IS 'Delete existing DNS soa';
