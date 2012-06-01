@@ -12,7 +12,7 @@ IP Management Program for Use in Local Server Environments
 A detailed list of dependency can be found at<br />
 <https://github.com/cohoe/impulse/wiki><br />
 
-cd into DB/Setup file and run<br />
+cd into Setup file and run<br />
 `perl ./Installer.pl`
 
 ###Additionally
