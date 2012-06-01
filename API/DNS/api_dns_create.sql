@@ -7,6 +7,7 @@
 	6) create_dns_srv
 	7) create_dns_cname
 	8) create_dns_txt
+	9) create_dns_soa
 */
 
 /* API - create_dns_key
