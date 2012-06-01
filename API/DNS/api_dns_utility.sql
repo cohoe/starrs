@@ -228,20 +228,6 @@ CREATE OR REPLACE FUNCTION "api"."nslookup"(input_address inet) RETURNS TABLE(fq
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."nslookup"(inet) IS 'Get the DNS name of an IP address in the database';
 
-/* API - dns_audit*/
-CREATE OR REPLACE FUNCTION "api"."dns_audit"(input_subnet CIDR) RETURNS SETOF "dns"."audit_data" AS $$
-	BEGIN
-		RETURN QUERY (
-			SELECT "ip"."addresses"."address","dns"."a"."hostname"||'.'||"dns"."a"."zone","api"."dns_forward_lookup"("dns"."a"."hostname"||'.'||"dns"."a"."zone"),"api"."dns_reverse_lookup"("ip"."addresses"."address")
-			FROM "ip"."addresses"
-			LEFT JOIN "dns"."a"
-			ON "dns"."a"."address" = "ip"."addresses"."address"
-			WHERE "ip"."addresses"."address" << input_subnet
-		);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."dns_audit"(cidr) IS 'Check if your DNS is what you think it is';
-
 CREATE OR REPLACE FUNCTION "api"."dns_forward_lookup"(text) RETURNS INET AS $$
 	use Socket;
 
@@ -263,38 +249,75 @@ CREATE OR REPLACE FUNCTION "api"."dns_reverse_lookup"(inet) RETURNS TEXT AS $$
 	return $name;
 $$ LANGUAGE 'plperlu';
 
-CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text) RETURNS SETOF something AS $$
+CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text, inet) RETURNS SETOF "dns"."zone_audit_data" AS $$
 	use strict;
 	use warnings;
 	use Net::DNS;
 	use v5.10;
 	use Data::Dumper;
 	
+	my $zone = shift(@_) or die "Unable to get zone";
+	my $nameserver = shift(@_) or die "Unable to get nameserver for zone";
+
 	my $res = Net::DNS::Resolver->new;
-	
-	my $rr = $res->query('somehost','srv');
-	
-	if(!defined($rr)) {
-		print "Unable to get result for query\n";
-		exit 1;
-	}
-	my @answer = $rr->answer;
-	
-	#print Dumper @answer; exit;
-	
+	$res->nameservers($nameserver);
+
+	my @answer = $res->axfr($zone);
+
 	foreach my $result (@answer) {
 		&print_data($result);
 	}
-	
+
 	sub print_data() {
 		my $rr = $_[0];
 		given($rr->type) {
-			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->address,"\n" when (/^A|AAAA$/);
-			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->cname,"\n" when (/^CNAME$/);
-			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->priority,",",$rr->weight,",",$rr->port,",",$rr->target,"\n" when (/^SRV$/);
-			print $rr->nsdname,",",$rr->ttl,",",$rr->type,"\n" when (/^NS$/);
-			print $rr->exchange,",",$rr->ttl,",",$rr->type,",",$rr->preference,"\n" when (/^MS$/);
-			print $rr->name,",",$rr->ttl,",",$rr->type,",",$rr->char_str_list,"\n" when (/^TXT|SPF$/);
+			when (/^A|AAAA$/) {
+				return_next({host=>$rr->name, ttl=>$rr->ttl, type=>$rr->type, address=>$rr->address});
+			}
+			when (/^CNAME$/) {
+				return_next({host=>$rr->name,ttl=>$rr->ttl,type=>$rr->type,target=>$rr->cname});
+			}
+			when (/^SRV$/) {
+				return_next({host=>$rr->name,ttl=>$rr->ttl,type=>$rr->type,priority=>$rr->priority,weight=>$rr->weight,port=>$rr->port,target=>$rr->target});
+			}
+			when (/^NS$/) {
+				return_next({host=>$rr->nsdname, ttl=>$rr->ttl, type=>$rr->type});
+			}
+			when (/^MX$/) {
+				return_next({host=>$rr->exchange, ttl=>$rr->ttl, type=>$rr->type, preference=>$rr->preference});
+			}
+			when (/^TXT|SPF$/) {
+				return_next({host=>$rr->name, ttl=>$rr->ttl, type=>$rr->type, text=>$rr->char_str_list});
+			}
 		}
 	}
+	return undef;
 $$ LANGUAGE 'plperlu';
+
+CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, input_nameserver inet) RETURNS SETOF "dns"."zone_audit_data" AS $$
+       BEGIN
+			-- Create a temporary table to store record data in
+            DROP TABLE IF EXISTS "audit";
+            CREATE TEMPORARY TABLE "audit" (
+                   host text, ttl integer, type text, address inet, 
+                   port integer, weight integer, priority integer, 
+                   preference integer, target text, text text);
+			-- Put AXFR data into the table
+            INSERT INTO "audit"
+            (SELECT * FROM "api"."dns_zone_audit"(input_zone, input_nameserver));
+			
+			-- Remove all records that IMPULSE contains
+            DELETE FROM "audit" WHERE ("host","ttl","type","address") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","address" FROM "dns"."a");
+            DELETE FROM "audit" WHERE ("host","ttl","type","target") IN (SELECT "alias"||'.'||"zone" AS "host","ttl","type","hostname"||'.'||"zone" as "target" FROM "dns"."pointers");
+            DELETE FROM "audit" WHERE ("host","ttl","type","preference") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","preference" FROM "dns"."mx");
+            DELETE FROM "audit" WHERE ("host","ttl","type") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type" FROM "dns"."ns");
+            DELETE FROM "audit" WHERE ("host","ttl","type","text") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","text" FROM "dns"."txt");
+			
+			-- DynamicDNS records have TXT data placed by the DHCP server. Don't count those.
+            DELETE FROM "audit" WHERE ("host") IN (SELECT "hostname"||'.'||"zone" AS "host" FROM "api"."get_dhcpd_dynamic_hosts"() WHERE "hostname" IS NOT NULL) AND "type" = 'TXT';
+            
+			-- What's left is data that IMPULSE has no idea of
+            RETURN QUERY (SELECT * FROM "audit");
+       END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_zone_audit_data"(text,inet) IS 'Perform an audit of IMPULSE zone data against server zone data';

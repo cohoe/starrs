@@ -72,6 +72,10 @@ COMMENT ON TYPE "dns"."pointer_data" IS 'All pointer (CNAME,SRV) data';
 CREATE TYPE "dns"."a_data" AS (hostname varchar(63), zone text, address inet, type text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "dns"."a_data" IS 'All address (A/AAAA) data';
 
+/* DNS - zone_data */
+CREATE TYPE "dns"."zone_audit_data" AS (host text, ttl integer, type text, address inet, port integer, weight integer, priority integer, preference integer, target text, text text);
+COMMENT ON TYPE "dns"."zone_audit_data" IS 'All DNS zone data for auditing purposes';
+
 /* Firewall - rule_data */
 CREATE TYPE "firewall"."rule_data" AS (address inet, port integer, transport text, deny boolean, owner text, comment text, source text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "firewall"."rule_data" IS 'Firewall rule data';
