@@ -298,6 +298,9 @@ CREATE TABLE "dns"."soa"(
 "retry" INTEGER NOT NULL DEFAULT 600,
 "expire" INTEGER NOT NULL DEFAULT 172800,
 "minimum" INTEGER NOT NULL DEFAULT 43200,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "soa_pkey" PRIMARY KEY ("zone")
 )
 WITHOUT OIDS;
