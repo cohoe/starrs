@@ -286,7 +286,7 @@ CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text, inet) RETURNS SETOF "dns
 			when (/^MX$/) {
 				return_next({host=>$rr->exchange, ttl=>$rr->ttl, type=>$rr->type, preference=>$rr->preference});
 			}
-			when (/^TXT|SPF$/) {
+			when (/^TXT$/) {
 				return_next({host=>$rr->name, ttl=>$rr->ttl, type=>$rr->type, text=>$rr->char_str_list});
 			}
 			when (/^SOA$/) {
