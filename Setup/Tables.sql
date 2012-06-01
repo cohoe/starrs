@@ -340,7 +340,7 @@ CREATE TABLE "dns"."txt"(
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone"),
-CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^SPF|TXT$')
+CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^TXT$')
 )
 WITHOUT OIDS;
 
