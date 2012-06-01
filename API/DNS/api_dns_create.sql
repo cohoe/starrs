@@ -401,3 +401,39 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_text"(text, text, text, text, integer, text) IS 'create a new dns text record for a host';
+
+/* API - create_dns_soa
+	1) Validate input
+	2) Check privileges
+	3) Create SOA
+*/
+CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl integer, input_contact text, input_serial text, input_refresh integer, input_retry integer, input_expire integer, input_minimum integer) RETURNS SETOF "dns"."soa" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_soa');
+
+		-- Validate input
+		IF api.validate_soa_contact(NULL,input_contact) IS FALSE THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid SOA contact given');
+			RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
+		END IF;
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
+				RAISE EXCEPTION 'Permission to create SOA % denied for user %. Not admin.',input_zone,api.get_current_user();
+			END IF;
+		END IF;
+		
+		-- Create soa
+		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns SOA');
+		INSERT INTO "dns"."soa" ("zone","ttl","contact","serial","refresh","retry","expire","minimum") VALUES
+		(input_zone,input_ttl,input_contact,input_serial,input_refresh,input_retry,input_expire,input_minimum);
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_soa');
+		RETURN QUERY (SELECT "zone","ttl","contact","serial","refresh","retry","expire","minimum","date_created","date_modified","last_modifier"
+		FROM "dns"."soa" WHERE "zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dns_soa"(text, text, boolean, boolean, text, text) IS 'Create a new DNS soa';
