@@ -7,6 +7,7 @@
 	6) modify_dns_srv
 	7) modify_dns_cname
 	8) modify_dns_txt
+	9) modify_dns_soa
 */
 
 /* API - modify_dns_key
@@ -409,3 +410,49 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, inpu
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text, text) IS 'Modify an existing DNS TXT or SPF record';
+
+/* API - modify_dns_soa
+	1) Check privileges
+	2) Check allowed fields
+	3) Validate
+	4) Update record
+*/
+CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_soa');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned soa');
+				RAISE EXCEPTION 'Permission to edit SOA % denied. You are not owner',input_old_zone;
+			END IF;
+ 		END IF;
+
+		-- Check allowed fields
+		IF input_field !~* 'zone|ttl|contact|serial|refresh|retry|expire|minimum' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+		
+		-- Validate
+		IF input_field ~* 'contact' THEN
+			IF api.validate_soa_contact(input_new_value) IS FALSE THEN
+				PERFORM api.create_log_entry('API','ERROR','Invalid SOA contact given');
+				RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
+			END IF;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		EXECUTE 'UPDATE "dns"."soas" SET ' || quote_ident($2) || ' = $3, 
+		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		WHERE "zone" = $1' 
+		USING input_old_zone, input_field, input_new_value;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_soa');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_soa"(text, text, text) IS 'Modify an existing DNS SOA record';
