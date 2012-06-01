@@ -240,7 +240,7 @@ WHERE "argument" = 'input_text'
 AND "specific_name" ~* '^create_dns_txt(_)+([0-9])+$';
 
 UPDATE "documentation"."arguments"
-SET "comment" = 'TXT or SPF (subtle differences)'
+SET "comment" = 'TXT records'
 WHERE "argument" = 'input_type'
 AND "specific_name" ~* '^create_dns_txt(_)+([0-9])+$';
 
@@ -255,7 +255,7 @@ WHERE "argument" = 'input_owner'
 AND "specific_name" ~* '^create_dns_txt(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
-SET "example" = $$SELECT api.create_dns_txt('webserver','example.com','located in a black hole','TXT',NULL,NULL);$$, "comment" = 'Create a new TXT or SPF record', "schema" = 'dns'
+SET "example" = $$SELECT api.create_dns_txt('webserver','example.com','located in a black hole','TXT',NULL,NULL);$$, "comment" = 'Create a new TXT record', "schema" = 'dns'
 WHERE "specific_name" ~* '^create_dns_txt(_)+([0-9])+$';
 
 /* remove_dns_key */
@@ -375,7 +375,7 @@ WHERE "argument" = 'input_type'
 AND "specific_name" ~* '^remove_dns_txt(_)+([0-9])+$';
 
 UPDATE "documentation"."functions"
-SET "example" = $$SELECT api.remove_dns_txt('webserver','example.com','TXT');$$, "comment" = 'Remove a TXT or SPF record', "schema" = 'dns'
+SET "example" = $$SELECT api.remove_dns_txt('webserver','example.com','TXT');$$, "comment" = 'Remove a TXT record', "schema" = 'dns'
 WHERE "specific_name" ~* '^remove_dns_txt(_)+([0-9])+$';
 
 /* get_reverse_domain */
