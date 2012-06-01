@@ -289,6 +289,9 @@ CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text, inet) RETURNS SETOF "dns
 			when (/^TXT|SPF$/) {
 				return_next({host=>$rr->name, ttl=>$rr->ttl, type=>$rr->type, text=>$rr->char_str_list});
 			}
+			when (/^SOA$/) {
+				return_next({host=>$rr->name, target=>$rr->mname, ttl=>$rr->ttl, contact=>$rr->rname, serial=>$rr->serial, refresh=>$rr->refresh, retry=>$rr->retry, expire=>$rr->expire, minimum=>$rr->minimum});
+			}
 		}
 	}
 	return undef;
