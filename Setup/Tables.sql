@@ -289,6 +289,19 @@ CONSTRAINT "zones_pkey" PRIMARY KEY ("zone")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dns"."soa"(
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"contact" TEXT NOT NULL DEFAULT 'hostmaster@'||api.get_site_configuration('DNS_DEFAULT_ZONE'),
+"serial" TEXT NOT NULL DEFAULT '0000000000',
+"refresh" INTEGER NOT NULL DEFAULT 3600,
+"retry" INTEGER NOT NULL DEFAULT 600,
+"expire" INTEGER NOT NULL DEFAULT 172800,
+"minimum" INTEGER NOT NULL DEFAULT 43200,
+CONSTRAINT "soa_pkey" PRIMARY KEY ("zone")
+)
+WITHOUT OIDS;
+
 CREATE TABLE "dns"."keys"(
 "keyname" TEXT NOT NULL,
 "key" TEXT NOT NULL,
@@ -626,6 +639,8 @@ COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunk
 COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
 
 COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
+
+COMMENT ON TALBE "dns"."soa" IS 'SOA records for DNS zones';
 
 COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
 
