@@ -62,7 +62,7 @@ COMMENT ON TYPE "dns"."ns_data" IS 'All NS data';
 
 /* DNS - txt_data */
 CREATE TYPE "dns"."txt_data" AS (hostname varchar(63), zone text, address inet, type text, text text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "dns"."txt_data" IS 'All text (TXT,SPF) data';
+COMMENT ON TYPE "dns"."txt_data" IS 'All text (TXT) data';
 
 /* DNS - pointer_data */
 CREATE TYPE "dns"."pointer_data" AS (alias varchar(63), hostname varchar(63), zone text, address inet, type text, extra text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
