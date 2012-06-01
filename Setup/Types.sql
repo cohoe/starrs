@@ -73,7 +73,7 @@ CREATE TYPE "dns"."a_data" AS (hostname varchar(63), zone text, address inet, ty
 COMMENT ON TYPE "dns"."a_data" IS 'All address (A/AAAA) data';
 
 /* DNS - zone_data */
-CREATE TYPE "dns"."zone_audit_data" AS (host text, ttl integer, type text, address inet, port integer, weight integer, priority integer, preference integer, target text, text text);
+CREATE TYPE "dns"."zone_audit_data" AS (host TEXT, ttl INTEGER, type TEXT, address INET, port INTEGER, weight INTEGER, priority INTEGER, preference INTEGER, target TEXT, text TEXT, contact TEXT, serial TEXT, refresh INTEGER, retry INTEGER, expire INTEGER, minimum INTEGER);
 COMMENT ON TYPE "dns"."zone_audit_data" IS 'All DNS zone data for auditing purposes';
 
 /* Firewall - rule_data */
