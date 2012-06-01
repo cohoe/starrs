@@ -409,7 +409,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, inpu
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_text');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text, text) IS 'Modify an existing DNS TXT or SPF record';
+COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text, text) IS 'Modify an existing DNS TXT record';
 
 /* API - modify_dns_soa
 	1) Check privileges
