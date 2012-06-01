@@ -292,7 +292,7 @@ WITHOUT OIDS;
 CREATE TABLE "dns"."soa"(
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
-"contact" TEXT NOT NULL DEFAULT 'hostmaster@'||api.get_site_configuration('DNS_DEFAULT_ZONE'),
+"contact" TEXT NOT NULL DEFAULT 'hostmaster.'||api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "serial" TEXT NOT NULL DEFAULT '0000000000',
 "refresh" INTEGER NOT NULL DEFAULT 3600,
 "retry" INTEGER NOT NULL DEFAULT 600,
