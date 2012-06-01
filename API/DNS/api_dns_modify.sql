@@ -430,7 +430,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_fie
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'zone|ttl|contact|serial|refresh|retry|expire|minimum' THEN
+		IF input_field !~* 'zone|ttl|nameserver|contact|serial|refresh|retry|expire|minimum' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
