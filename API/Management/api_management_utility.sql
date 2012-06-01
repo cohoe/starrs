@@ -239,6 +239,7 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 		UPDATE "dns"."txt" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "dns"."a" SET "owner" = new_username WHERE "owner" = old_username;
 		UPDATE "dns"."a" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."soa" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "ip"."range_uses" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "ip"."subnets" SET "owner" = new_username WHERE "owner" = old_username;
 		UPDATE "ip"."subnets" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
@@ -264,3 +265,20 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."change_username"(text, text) IS 'Change all references to an old username to a new one';
+
+/* API - validate_soa_contact */
+CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS TEXT AS $$
+	DECLARE
+		BadCrap TEXT;
+	BEGIN
+		BadCrap = regexp_replace(input, E'[a-z0-9\.]*\-*', '', 'gi');
+		IF BadCrap != '' THEN
+			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
+		END IF;
+		IF input = '' THEN
+			RAISE EXCEPTION 'Contact cannot be blank';
+		END IF;
+		RETURN input;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."validate_soa_contact"(text) IS 'Ensure that the SOA contact is properly formatted';
