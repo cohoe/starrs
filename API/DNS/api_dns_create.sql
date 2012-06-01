@@ -408,7 +408,7 @@ COMMENT ON FUNCTION "api"."create_dns_text"(text, text, text, text, integer, tex
 	2) Check privileges
 	3) Create SOA
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl integer, input_contact text, input_serial text, input_refresh integer, input_retry integer, input_expire integer, input_minimum integer) RETURNS SETOF "dns"."soa" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl integer, input_nameserver text, input_contact text, input_serial text, input_refresh integer, input_retry integer, input_expire integer, input_minimum integer) RETURNS SETOF "dns"."soa" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_soa');
 
@@ -428,8 +428,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl int
 		
 		-- Create soa
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns SOA');
-		INSERT INTO "dns"."soa" ("zone","ttl","contact","serial","refresh","retry","expire","minimum") VALUES
-		(input_zone,input_ttl,input_contact,input_serial,input_refresh,input_retry,input_expire,input_minimum);
+		INSERT INTO "dns"."soa" ("zone","ttl","nameserver","contact","serial","refresh","retry","expire","minimum") VALUES
+		(input_zone,input_ttl,input_nameserver,input_contact,input_serial,input_refresh,input_retry,input_expire,input_minimum);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_soa');
