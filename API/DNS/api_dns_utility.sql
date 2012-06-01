@@ -315,6 +315,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, inpu
             DELETE FROM "audit" WHERE ("host","ttl","type","preference") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","preference" FROM "dns"."mx");
             DELETE FROM "audit" WHERE ("host","ttl","type") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type" FROM "dns"."ns");
             DELETE FROM "audit" WHERE ("host","ttl","type","text") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","text" FROM "dns"."txt");
+            DELETE FROM "audit" WHERE ("host","ttl","type","target","contact","serial","refresh","retry","expire","minimum") IN (SELECT "zone" as "host","ttl",'SOA' as "type","nameserver" as "target","contact","serial","refresh","retry","expire","minimum" FROM "dns"."soa");
 			
 			-- DynamicDNS records have TXT data placed by the DHCP server. Don't count those.
             DELETE FROM "audit" WHERE ("host") IN (SELECT "hostname"||'.'||"zone" AS "host" FROM "api"."get_dhcpd_dynamic_hosts"() WHERE "hostname" IS NOT NULL) AND "type" = 'TXT';
