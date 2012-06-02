@@ -115,3 +115,10 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_key"(input_keyname text) RETURNS SETOF
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_key"(text) IS 'Get DNS key data';
+
+CREATE OR REPLACE FUNCTION "api"."get_dns_soa"(input_zone text) RETURNS SETOF "dns"."soa" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "dns"."soa" WHERE "dns"."soa"."zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_soa"(text) IS 'Get the SOA record of a DNS zone';
