@@ -413,7 +413,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl int
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_soa');
 
 		-- Validate input
-		IF api.validate_soa_contact(NULL,input_contact) IS FALSE THEN
+		IF api.validate_soa_contact(input_contact) IS FALSE THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid SOA contact given');
 			RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
 		END IF;
@@ -433,8 +433,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl int
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_soa');
-		RETURN QUERY (SELECT "zone","ttl","contact","serial","refresh","retry","expire","minimum","date_created","date_modified","last_modifier"
+		RETURN QUERY (SELECT "zone","nameserver","ttl","contact","serial","refresh","retry","expire","minimum","date_created","date_modified","last_modifier"
 		FROM "dns"."soa" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_soa"(text, text, boolean, boolean, text, text) IS 'Create a new DNS soa';
+COMMENT ON FUNCTION "api"."create_dns_soa"(text, integer, text, text, text, integer, integer, integer, integer) IS 'Create a new DNS soa';

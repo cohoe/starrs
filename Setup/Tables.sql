@@ -644,7 +644,7 @@ COMMENT ON TABLE "dns"."mx" IS 'Mail servers (MX records)';
 
 COMMENT ON TABLE "dns"."zones" IS 'Authoritative DNS zones';
 
-COMMENT ON TALBE "dns"."soa" IS 'SOA records for DNS zones';
+COMMENT ON TABLE "dns"."soa" IS 'SOA records for DNS zones';
 
 COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
 

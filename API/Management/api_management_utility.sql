@@ -267,7 +267,7 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."change_username"(text, text) IS 'Change all references to an old username to a new one';
 
 /* API - validate_soa_contact */
-CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS BOOLEAN AS $$
 	DECLARE
 		BadCrap TEXT;
 	BEGIN
@@ -278,7 +278,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS TEXT
 		IF input = '' THEN
 			RAISE EXCEPTION 'Contact cannot be blank';
 		END IF;
-		RETURN input;
+		RETURN TRUE;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_soa_contact"(text) IS 'Ensure that the SOA contact is properly formatted';

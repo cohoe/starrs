@@ -446,10 +446,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_fie
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
-		EXECUTE 'UPDATE "dns"."soas" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
-		WHERE "zone" = $1' 
-		USING input_old_zone, input_field, input_new_value;
+		IF input_field ~* 'ttl|refresh|retry|expire|minimum' THEN
+			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "zone" = $1' 
+			USING input_old_zone, input_field, cast(input_new_value as integer);
+		ELSE
+			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "zone" = $1' 
+			USING input_old_zone, input_field, input_new_value;
+		END IF;
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_soa');

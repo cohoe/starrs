@@ -22,3 +22,50 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_system"(text) IS 'renew a system registration for another year';
+
+CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, text, text) RETURNS VOID AS $$
+	use strict;
+	use warnings;
+	use Net::SMTP;
+
+	my $username = shift(@_) or die "Unable to get username";
+	my $system = shift(@_) or die "Unable to get system name";
+	my $domain = shift(@_) or die "Unable to get mail domain";
+
+	my $smtp = Net::SMTP->new("mail.$domain");
+
+	$smtp->mail("impulse\@$domain");
+	$smtp->recipient("$username\@$domain");
+	$smtp->data;
+	$smtp->datasend("From: impulse\@$domain\n");
+	$smtp->datasend("To: $username\@$domain\n");
+	$smtp->datasend("Subject: System Renewal Notification - $system\n");
+	$smtp->datasend("\n");
+	$smtp->datasend("Your system \"$system\" will expire in less than 7 days and will be removed from IMPULSE automatically. You can click https://impulse.$domain/system/renew/$system to renew your system for another year. Alternatively you can navigate to the System view and click the Renew button. If you have any questions, please see your local system administrator.");
+
+	$smtp->datasend;
+	$smtp->quit;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."send_renewal_email"(text, text, text) IS 'Send an email to a user saying their system is about to expire';
+
+CREATE OR REPLACE FUNCTION "api"."notify_expiring_systems"() RETURNS VOID AS $$
+	DECLARE
+		SystemData RECORD;
+	BEGIN
+		FOR SystemData IN (SELECT "owner","system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" <= current_date + interval '7 days') LOOP
+			PERFORM "api"."send_renewal_email"(SystemData.owner, SystemData.system_name, (SELECT "api"."get_site_configuration"('DNS_DEFAULT_ZONE')));
+		END LOOP;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."notify_expiring_systems"() IS 'Notify users of soon-to-expire systems';
+
+CREATE OR REPLACE FUNCTION "api"."remove_expired_systems"() RETURNS VOID AS $$
+	DECLARE
+		SystemData RECORD;
+	BEGIN
+		FOR SystemData IN (SELECT "system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" = current_date) LOOP
+			PERFORM "api"."remove_system"(SystemData.system_name);
+		END LOOP;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_expired_systems"() IS 'Remove all systems that expire today.';
