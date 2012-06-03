@@ -249,7 +249,7 @@ CREATE OR REPLACE FUNCTION "api"."dns_reverse_lookup"(inet) RETURNS TEXT AS $$
 	return $name;
 $$ LANGUAGE 'plperlu';
 
-CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text, inet) RETURNS SETOF "dns"."zone_audit_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."query_axfr"(text, text) RETURNS SETOF "dns"."zone_audit_data" AS $$
 	use strict;
 	use warnings;
 	use Net::DNS;
@@ -290,24 +290,27 @@ CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(text, inet) RETURNS SETOF "dns
 				return_next({host=>$rr->name, ttl=>$rr->ttl, type=>$rr->type, text=>$rr->char_str_list});
 			}
 			when (/^SOA$/) {
-				return_next({host=>$rr->name, target=>$rr->mname, ttl=>$rr->ttl, contact=>$rr->rname, serial=>$rr->serial, refresh=>$rr->refresh, retry=>$rr->retry, expire=>$rr->expire, minimum=>$rr->minimum});
+				return_next({host=>$rr->name, target=>$rr->mname, ttl=>$rr->ttl, contact=>$rr->rname, serial=>$rr->serial, refresh=>$rr->refresh, retry=>$rr->retry, expire=>$rr->expire, minimum=>$rr->minimum, type=>$rr->type});
 			}
 		}
 	}
 	return undef;
 $$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."query_axfr"(text, text) IS 'Query a nameserver for the DNS zone transfer to use for auditing';
 
-CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, input_nameserver inet) RETURNS SETOF "dns"."zone_audit_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(input_zone text) RETURNS SETOF "dns"."zone_audit_data" AS $$
        BEGIN
 			-- Create a temporary table to store record data in
             DROP TABLE IF EXISTS "audit";
             CREATE TEMPORARY TABLE "audit" (
-                   host text, ttl integer, type text, address inet, 
-                   port integer, weight integer, priority integer, 
-                   preference integer, target text, text text);
+			host TEXT, ttl INTEGER, type TEXT, address INET, port INTEGER, weight INTEGER, priority INTEGER, preference INTEGER, target TEXT, text TEXT, contact TEXT, serial TEXT, refresh INTEGER, retry INTEGER, expire INTEGER, minimum INTEGER);
+				   
 			-- Put AXFR data into the table
             INSERT INTO "audit"
-            (SELECT * FROM "api"."dns_zone_audit"(input_zone, input_nameserver));
+            (SELECT * FROM "api"."query_axfr"(input_zone, (SELECT "nameserver" FROM "dns"."soa" WHERE "zone" = input_zone)));
+			
+			-- Update the SOA table with the latest serial
+			PERFORM api.modify_dns_soa(input_zone,'serial',(SELECT "api"."query_zone_serial"(input_zone)));
 			
 			-- Remove all records that IMPULSE contains
             DELETE FROM "audit" WHERE ("host","ttl","type","address") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","address" FROM "dns"."a");
@@ -315,7 +318,8 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, inpu
             DELETE FROM "audit" WHERE ("host","ttl","type","preference") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","preference" FROM "dns"."mx");
             DELETE FROM "audit" WHERE ("host","ttl","type") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type" FROM "dns"."ns");
             DELETE FROM "audit" WHERE ("host","ttl","type","text") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","text" FROM "dns"."txt");
-            DELETE FROM "audit" WHERE ("host","ttl","type","target","contact","serial","refresh","retry","expire","minimum") IN (SELECT "zone" as "host","ttl",'SOA' as "type","nameserver" as "target","contact","serial","refresh","retry","expire","minimum" FROM "dns"."soa");
+            DELETE FROM "audit" WHERE ("host","ttl","type","target","contact","serial","refresh","retry","expire","minimum") IN 
+			(SELECT "zone" as "host","ttl",'SOA'::text as "type","nameserver" as "target","contact","serial","refresh","retry","expire","minimum" FROM "dns"."soa");
 			
 			-- DynamicDNS records have TXT data placed by the DHCP server. Don't count those.
             DELETE FROM "audit" WHERE ("host") IN (SELECT "hostname"||'.'||"zone" AS "host" FROM "api"."get_dhcpd_dynamic_hosts"() WHERE "hostname" IS NOT NULL) AND "type" = 'TXT';
@@ -324,9 +328,9 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_audit_data"(input_zone text, inpu
             RETURN QUERY (SELECT * FROM "audit");
        END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dns_zone_audit_data"(text,inet) IS 'Perform an audit of IMPULSE zone data against server zone data';
+COMMENT ON FUNCTION "api"."dns_zone_audit"(text) IS 'Perform an audit of IMPULSE zone data against server zone data';
 
-CREATE OR REPLACE FUNCTION "api"."get_dns_zone_serial"(text) RETURNS TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."query_zone_serial"(text) RETURNS TEXT AS $$
 	use strict;
 	use warnings;
 	use Net::DNS;
@@ -345,6 +349,6 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_serial"(text) RETURNS TEXT AS $$
 	
 	# Spit out the serial
 	my @answer = $rr->answer;
-	return \$answer[0]->serial;
+	return $answer[0]->serial;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."get_dns_zone_serial"(text) IS 'Query this hosts resolver for the serial number of the zone.';
+COMMENT ON FUNCTION "api"."query_zone_serial"(text) IS 'Query this hosts resolver for the serial number of the zone.';
