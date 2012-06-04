@@ -311,7 +311,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_srv');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_srv"(text, text, text, text) IS 'Modify an existing DNS SRV record';
+COMMENT ON FUNCTION "api"."modify_dns_srv"(text, text, integer, integer, integer, text, text) IS 'Modify an existing DNS SRV record';
 
 /* API - modify_dns_cname
 	1) Check privileges
