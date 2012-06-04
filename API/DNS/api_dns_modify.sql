@@ -1,465 +1,674 @@
-/* api_dns_modify.sql
-	1) modify_dns_key
-	2) modify_dns_zone
-	3) modify_dns_address
-	4) modify_dns_mailserver
-	5) modify_dns_nameserver
-	6) modify_dns_srv
-	7) modify_dns_cname
-	8) modify_dns_txt
-	9) modify_dns_soa
+/* Trigger a_insert 
+	1) Check for zone mismatch
+	2) Autofill type
 */
-
-/* API - modify_dns_key
-	1) Check privileges
-	2) Check allowed fields
-	3) Validate input
-	4) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_key');
-
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."keys" WHERE "keyname" = input_old_keyname) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned key');
-				RAISE EXCEPTION 'Permission to edit key % denied. You are not owner',input_old_keyname;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
- 		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'keyname|key|comment|owner' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		/*
+		-- Check for zone mismatch
+		SELECT COUNT(*) INTO RowCount
+		FROM "ip"."subnets"
+		WHERE "ip"."subnets"."zone" = NEW."zone"
+		AND NEW."address" << "ip"."subnets"."subnet";
+		IF (RowCount < 1) THEN 
+			RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
 		END IF;
-
-		-- Validate input
-		IF input_field ~* 'keyname' THEN 
-			input_new_value := api.validate_nospecial(input_new_value);
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		EXECUTE 'UPDATE "dns"."keys" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
-		WHERE "keyname" = $1' 
-		USING input_old_keyname, input_field, input_new_value;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_key');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_key"(text,text,text) IS 'Modify an existing DNS key';
-
-/* API - modify_dns_zone
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_zone');
-
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
-				RAISE EXCEPTION 'Permission to edit zone % denied. You are not owner',input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
- 		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'zone|forward|keyname|owner|comment|shared' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'forward|shared' THEN
-			EXECUTE 'UPDATE "dns"."zones" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "zone" = $1' 
-			USING input_old_zone, input_field, bool(input_new_value);
-		ELSE
-			EXECUTE 'UPDATE "dns"."zones" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "zone" = $1' 
-			USING input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_zone');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_zone"(text, text, text) IS 'Modify an existing DNS zone';
-
-/* API - modify_dns_address
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_address');
-
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned address');
-				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner',input_old_address;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
- 		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'hostname|zone|address|owner|ttl' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'address' THEN
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_old_zone, input_field, inet(input_new_value);		
-		ELSIF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_old_zone, input_field, cast(input_new_value as int);
-		ELSE
-			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "address" = $1 AND "zone" = $2' 
-			USING input_old_address, input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_address');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_address"(inet,text,text,text) IS 'Modify an existing DNS address';
-
-/* API - modify_dns_mailserver
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_mailserver');
-
-		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned mailserver');
-				RAISE EXCEPTION 'Permission to edit mailserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
-		END IF;
-
-		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|preference|owner|ttl' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'preference|ttl' THEN
-			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2'
-			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
-		ELSE
-			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2'
-			USING input_old_hostname, input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_mailserver');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_mailserver"(text, text, text, text) IS 'Modify an existing DNS MX record';
-
-/* API - modify_dns_nameserver
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_nameserver"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_nameserver');
-
-		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."ns" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned nameserver');
-				RAISE EXCEPTION 'Permission to edit nameserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
-		END IF;
-
-		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|isprimary|owner|ttl' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2'
-			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
-		ELSIF input_field ~* 'isprimary' THEN
-			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2'
-			USING input_old_hostname, input_old_zone, input_field, bool(input_new_value);
-		ELSE
-			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2'
-			USING input_old_hostname, input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_nameserver');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_nameserver"(text, text, text, text) IS 'Modify an existing DNS ns record';
-
-/* API - modify_dns_srv
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_old_zone text, input_old_priority integer, input_old_weight integer, input_old_port integer, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_srv');
-
-		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."srv" WHERE "alias" = input_old_alias AND "zone" = input_old_zone AND "priority" = input_old_priority AND "weight" = input_old_weight AND "port" = input_old_port) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned SRV');
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
-		END IF;
-
-		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|alias|owner|ttl|priority|weight|port' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'ttl|priority|weight|port' THEN
-			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
-			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, cast(input_new_value as int);
-		ELSE
-			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
-			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_srv');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_srv"(text, text, integer, integer, integer, text, text) IS 'Modify an existing DNS SRV record';
-
-/* API - modify_dns_cname
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_cname');
-
-		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."cname" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned alias');
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
-		END IF;
-
-		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|alias|owner|ttl' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2'
-			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int);
-		ELSE
-			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2'
-			USING input_old_alias, input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_cname');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_cname"(text, text, text, text) IS 'Modify an existing DNS CNAME record';
-
-/* API - modify_dns_txt
-	1) Check privileges
-	2) Check allowed fields
-	3) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, input_old_zone text, input_type text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_text');
-
-		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned TXT');
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_hostname,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
-		END IF;
-
-		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|text|owner|ttl|type' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
-		END IF;
-
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2 AND "type" = $3'
-			USING input_old_hostname, input_old_zone, input_type, input_field, cast(input_new_value as int);
-		ELSE
-			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2 AND "type" = $3'
-			USING input_old_hostname, input_old_zone, input_type, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_text');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text, text) IS 'Modify an existing DNS TXT record';
-
-/* API - modify_dns_soa
-	1) Check privileges
-	2) Check allowed fields
-	3) Validate
-	4) Update record
-*/
-CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_soa');
-
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned soa');
-				RAISE EXCEPTION 'Permission to edit SOA % denied. You are not owner',input_old_zone;
-			END IF;
- 		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'zone|ttl|nameserver|contact|serial|refresh|retry|expire|minimum' THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid field');
-			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		*/
+		-- Autofill type
+		IF family(NEW."address") = 4 THEN
+			NEW."type" := 'A';
+		ELSIF family(NEW."address") = 6 THEN
+			NEW."type" := 'AAAA';
 		END IF;
 		
-		-- Validate
-		IF input_field ~* 'contact' THEN
-			IF api.validate_soa_contact(input_new_value) IS FALSE THEN
-				PERFORM api.create_log_entry('API','ERROR','Invalid SOA contact given');
-				RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."a_insert"() IS 'Creating a new A or AAAA record';
+
+/* Trigger a_update 
+	1) New address
+	2) New zone
+*/
+CREATE OR REPLACE FUNCTION "dns"."a_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Address/Zone mismatch
+		IF NEW."address" != OLD."address" THEN
+			SELECT COUNT(*) INTO RowCount
+			FROM "ip"."subnets"
+			WHERE "ip"."subnets"."zone" = NEW."zone"
+			AND NEW."address" << "ip"."subnets"."subnet";
+			IF (RowCount < 1) THEN 
+				RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
+			END IF;
+			
+			-- Autofill Type
+			IF family(NEW."address") = 4 THEN
+				NEW."type" := 'A';
+			ELSIF family(NEW."address") = 6 THEN
+				NEW."type" := 'AAAA';
+			END IF;
+		END IF;
+		
+		-- New zone mismatch
+		IF NEW."zone" != OLD."zone" THEN
+			SELECT COUNT(*) INTO RowCount
+			FROM "ip"."subnets"
+			WHERE "ip"."subnets"."zone" = NEW."zone"
+			AND NEW."address" << "ip"."subnets"."subnet";
+			IF (RowCount < 1) THEN 
+				RAISE EXCEPTION 'IP address and DNS Zone do not match (%, %)',NEW."address",NEW."zone";
 			END IF;
 		END IF;
 
-		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
-
-		IF input_field ~* 'ttl|refresh|retry|expire|minimum' THEN
-			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "zone" = $1' 
-			USING input_old_zone, input_field, cast(input_new_value as integer);
-		ELSE
-			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
-			WHERE "zone" = $1' 
-			USING input_old_zone, input_field, input_new_value;
-		END IF;
-
-		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_soa');
+		RETURN NEW;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_soa"(text, text, text) IS 'Modify an existing DNS SOA record';
+COMMENT ON FUNCTION "dns"."a_update"() IS 'Update an existing A or AAAA record';
+
+/* Trigger - ns_insert 
+	1) Check for primary NS existance
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."ns_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check for existing primary NS for zone
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."ns"
+		WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."isprimary" = TRUE;
+		IF NEW."isprimary" = TRUE AND RowCount > 0 THEN
+			RAISE EXCEPTION 'Primary NS for zone already exists';
+		ELSIF NEW."isprimary" = FALSE AND RowCount = 0 THEN
+			RAISE EXCEPTION 'No primary NS for zone exists, and this is not primary. You must specify a primary NS for a zone';
+		END IF;
+
+		-- Autopopulate address
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."ns_insert"() IS 'Check that there is only one primary NS registered for a given zone';
+
+/* Trigger - ns_update 
+	1) Check for primary NS
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."ns_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check for existing primary NS for zone
+		IF (NEW."isprimary" != OLD."isprimary") OR (NEW."zone" != OLD."zone") THEN
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."ns"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."isprimary" = TRUE;
+			IF NEW."isprimary" = TRUE AND RowCount > 0 THEN
+				RAISE EXCEPTION 'Primary NS for zone already exists';
+			ELSIF NEW."isprimary" = FALSE AND RowCount = 0 THEN
+				RAISE EXCEPTION 'No primary NS for zone exists, and this is not primary. You must specify a primary NS for a zone';
+			END IF;
+		END IF;
+		
+		-- Autopopulate address
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."ns_update"() IS 'Check that the new settings provide for a primary nameserver for the zone';
+
+/* Trigger - mx_insert
+	1) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."mx_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."mx_insert"() IS 'Create new MX record';
+
+/* Trigger - mx_update
+	1) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."mx_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."mx_update"() IS 'Modify a MX record';
+
+/* Trigger - txt_insert
+	1) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."txt_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."txt_insert"() IS 'Create new TXT record';
+
+/* Trigger - txt_update
+	1) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."txt_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."txt_update"() IS 'Modify a TXT record';
+
+/* Trigger - dns_autopopulate_address */
+CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text, input_zone text) RETURNS INET AS $$
+	DECLARE
+		address INET;
+	BEGIN
+		SELECT "dns"."a"."address" INTO address
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = input_hostname
+		AND "dns"."a"."zone" = input_zone LIMIT 1;
+		
+		IF address IS NULL THEN
+			RAISE EXCEPTION 'Unable to find address for given host % and zone %',input_hostname,input_zone;
+		ELSE
+			RETURN address;
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		RevZone TEXT;
+		RevSubnet CIDR;
+	BEGIN
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+			IF NEW."type" ~* '^A|AAAA$' THEN
+				-- Do the forward record first
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
+
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE NEW."address" << "subnet";
+
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE NEW."address" << "subnet";
+
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = NEW."zone" THEN
+					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				END IF;
+
+			ELSEIF NEW."type" ~* '^NS$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV$' THEN	
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."priority"||' '||NEW."weight"||' '||NEW."port"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^CNAME$' THEN
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		ELSE 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+			IF NEW."type" ~* '^NS$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV$' THEN	
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."priority"||' '||NEW."weight"||' '||NEW."port"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^CNAME$' THEN
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT$' THEN
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_insert"() IS 'Add an add directive to the queue';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		RevZone TEXT;
+		RevSubnet CIDR;
+	BEGIN
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			
+			IF NEW."type" ~* '^A|AAAA$' THEN
+				-- Do the forward record first
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
+
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE OLD."address" << "subnet";
+				
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE OLD."address" << "subnet";
+
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = OLD."zone" THEN
+					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+					ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				END IF;
+
+				-- Do the forward record first
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
+
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE NEW."address" << "subnet";
+
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE NEW."address" << "subnet";
+
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = NEW."zone" THEN
+					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+					ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				END IF;
+
+			ELSEIF NEW."type" ~* '^NS$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."priority"||' '||OLD."weight"||' '||OLD."port"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."priority"||' '||NEW."weight"||' '||NEW."port"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^CNAME$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+
+			IF NEW."type" ~* '^NS$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^MX$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||host(NEW."address");
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."priority"||' '||OLD."weight"||' '||OLD."port"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."priority"||' '||NEW."weight"||' '||NEW."port"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^CNAME$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			ELSEIF NEW."type" ~* '^TXT$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				
+				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."text";
+				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_update"() IS 'Add a delete then add directive to the queue';
+
+CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		RevZone TEXT;
+		RevSubnet CIDR;
+	BEGIN
+		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
+	
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+
+			IF OLD."type" ~* '^A|AAAA$' THEN
+				-- Do the forward record first
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+
+				-- Check for errors
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				END IF;	
+
+				-- Get the proper zone for the reverse A record
+				SELECT "zone" INTO RevZone
+				FROM "ip"."subnets" 
+				WHERE OLD."address" << "subnet";
+				
+				-- Get the subnet
+				SELECT "subnet" INTO RevSubnet
+				FROM "ip"."subnets"
+				WHERE OLD."address" << "subnet";
+
+				-- If it is in this domain, add the reverse entry
+				IF RevZone = OLD."zone" THEN
+					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				END IF;
+
+			ELSEIF OLD."type" ~* '^NS$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^MX$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^SRV$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."priority"||' '||OLD."weight"||' '||OLD."port"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^CNAME$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^TXT$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+
+			IF OLD."type" ~* '^NS$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^MX$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^SRV$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."priority"||' '||OLD."weight"||' '||OLD."port"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^CNAME$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF OLD."type" ~* '^TXT$' THEN
+				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			END IF;
+
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		END IF;
+		
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."queue_delete"() IS 'Add a delete directive to the queue';
+
+/* Trigger - srv_insert 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."srv_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+		END IF;
+		
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."cname"
+		WHERE "dns"."cname"."alias" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists as a CNAME',NEW."alias";
+		END IF;
+		
+		-- Autopopulate address
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."srv_insert"() IS 'Check if the alias already exists as an address record';
+
+/* Trigger - srv_update 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."srv_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		IF NEW."alias" != OLD."alias" THEN	
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."a"
+			WHERE "dns"."a"."hostname" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+			
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."cname"
+			WHERE "dns"."cname"."alias" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists as a CNAME',NEW."alias";
+			END IF;
+		END IF;
+		
+		-- Autopopulate address
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."srv_update"() IS 'Check if the new alias already exists as an address record';
+
+/* Trigger - cname_insert 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."cname_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+		END IF;
+		
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."srv"
+		WHERE "dns"."srv"."alias" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists as a SRV',NEW."alias";
+		END IF;
+		
+		-- Autopopulate address
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."cname_insert"() IS 'Check if the alias already exists as an address record';
+
+/* Trigger - cname_update 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."cname_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		IF NEW."alias" != OLD."alias" THEN	
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."a"
+			WHERE "dns"."a"."hostname" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+			
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."srv"
+			WHERE "dns"."srv"."alias" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists as a SRV',NEW."alias";
+			END IF;
+		END IF;
+		
+		-- Autopopulate address
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."cname_update"() IS 'Check if the new alias already exists as an address record';
