@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 	use strict;
 	use warnings;
 	use Data::Validate::Domain qw(is_domain);
-	die("LOLZ");
+	# die("LOLZ");
 
 	# Usage: PERFORM api.validate_domain([hostname OR NULL],[domain OR NULL]);
 
