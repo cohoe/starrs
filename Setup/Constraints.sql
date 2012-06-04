@@ -26,17 +26,17 @@ ALTER TABLE "dhcp"."subnet_options" ADD CONSTRAINT "subnet_option_subnet_option_
 
 COMMENT ON CONSTRAINT "subnet_option_subnet_option_value_key" ON "dhcp"."subnet_options" IS 'No two directives can be the same';
 
-ALTER TABLE "dns"."pointers" ADD CONSTRAINT "pointers_alias_hostname_type_key" UNIQUE ("alias","type","hostname");
+ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_information_key" UNIQUE ("port","weight","priority","alias");
 
-COMMENT ON CONSTRAINT "pointers_alias_hostname_type_key" ON "dns"."pointers" IS 'Each record type can only have a single combination of Alias and Target';
+COMMENT ON CONSTRAINT "srv_alias_information_key" ON "dns"."srv" IS 'No duplicate infomation';
 
-ALTER TABLE "dns"."pointers" ADD CONSTRAINT "pointers_alias_extra_key" UNIQUE ("extra","alias");
+ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_zone_key" UNIQUE ("alias","zone");
 
-COMMENT ON CONSTRAINT "pointers_alias_extra_key" ON "dns"."pointers" IS 'No duplicate infomation';
+COMMENT ON CONSTRAINT "srv_alias_zone_key" ON "dns"."srv" IS 'Cannot have two of the same alises in the same zone';
 
-ALTER TABLE "dns"."pointers" ADD CONSTRAINT "pointers_alias_zone_key" UNIQUE ("alias","zone");
+ALTER TABLE "dns"."cname" ADD CONSTRAINT "cname_alias_zone_key" UNIQUE ("alias","zone");
 
-COMMENT ON CONSTRAINT "pointers_alias_zone_key" ON "dns"."pointers" IS 'Cannot have two of the same alises in the same zone';
+COMMENT ON CONSTRAINT "cname_alias_zone_key" ON "dns"."cname" IS 'Cannot have two of the same alises in the same zone';
 
 ALTER TABLE "dns"."mx" ADD CONSTRAINT "dns_mx_preference_zone_key" UNIQUE ("preference","zone");
 
@@ -106,9 +106,9 @@ ALTER TABLE "firewall"."metahost_members" ADD CONSTRAINT "fk_firewall_metahost_m
 
 ALTER TABLE "systems"."os" ADD CONSTRAINT "fk_systems_os_family" FOREIGN KEY ("family") REFERENCES "systems"."os_family"("family") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
-ALTER TABLE "dns"."pointers" ADD CONSTRAINT "fk_pointers_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "dns"."srv" ADD CONSTRAINT "fk_srv_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "dns"."pointers" ADD CONSTRAINT "fk_pointers_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE "dns"."cname" ADD CONSTRAINT "fk_cname_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "dns"."mx" ADD CONSTRAINT "fk_mx_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
