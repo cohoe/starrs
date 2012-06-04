@@ -557,6 +557,13 @@ CREATE OR REPLACE FUNCTION "dns"."srv_insert"() RETURNS TRIGGER AS $$
 			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
 		END IF;
 		
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."cname"
+		WHERE "dns"."cname"."alias" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists as a CNAME',NEW."alias";
+		END IF;
+		
 		-- Autopopulate address
 		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		
@@ -580,6 +587,13 @@ CREATE OR REPLACE FUNCTION "dns"."srv_update"() RETURNS TRIGGER AS $$
 			WHERE "dns"."a"."hostname" = NEW."alias";
 			IF (RowCount > 0) THEN
 				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+			
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."cname"
+			WHERE "dns"."cname"."alias" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists as a CNAME',NEW."alias";
 			END IF;
 		END IF;
 		
@@ -609,6 +623,13 @@ CREATE OR REPLACE FUNCTION "dns"."cname_insert"() RETURNS TRIGGER AS $$
 			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
 		END IF;
 		
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."srv"
+		WHERE "dns"."srv"."alias" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists as a SRV',NEW."alias";
+		END IF;
+		
 		-- Autopopulate address
 		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
 		
@@ -632,6 +653,13 @@ CREATE OR REPLACE FUNCTION "dns"."cname_update"() RETURNS TRIGGER AS $$
 			WHERE "dns"."a"."hostname" = NEW."alias";
 			IF (RowCount > 0) THEN
 				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+			
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."srv"
+			WHERE "dns"."srv"."alias" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists as a SRV',NEW."alias";
 			END IF;
 		END IF;
 		
