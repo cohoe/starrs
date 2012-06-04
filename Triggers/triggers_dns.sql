@@ -492,13 +492,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 			ELSEIF OLD."type" ~* '^MX$' THEN
 				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||host(OLD."address");
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-			ELSEIF OLD."type" ~* '^SRV|CNAME$' THEN
-				IF OLD."extra" IS NULL THEN
-					DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
-				ELSE	
-					DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname"||'.'||OLD."zone";
-				END IF;
-				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF NEW."type" ~* '^SRV$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."priority"||' '||OLD."weight"||' '||OLD."port"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			ELSEIF NEW."type" ~* '^CNAME$' THEN
+				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."extra"||' '||OLD."hostname"||'.'||OLD."zone";
+				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			ELSEIF OLD."type" ~* '^TXT$' THEN
 				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."text";
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
