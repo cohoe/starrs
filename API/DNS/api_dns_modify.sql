@@ -269,13 +269,13 @@ COMMENT ON FUNCTION "api"."modify_dns_nameserver"(text, text, text, text) IS 'Mo
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_old_zone text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_old_zone text, input_old_priority integer, input_old_weight integer, input_old_port integer, input_field text, input_new_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_srv');
 
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."srv" WHERE "alias" = input_old_alias AND "zone" = input_old_zone AND "priority" = input_old_priority AND "weight" = input_old_weight AND "port" = input_old_port) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned SRV');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
 			END IF;
@@ -287,7 +287,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 		END IF;
 
 		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|alias|owner|ttl|extra' THEN
+		IF input_field !~* 'hostname|zone|alias|owner|ttl|priority|weight|port' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
@@ -295,16 +295,16 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
-		IF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+		IF input_field ~* 'ttl|priority|weight|port' THEN
+			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
-			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int), 'SRV';
+			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
+			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, cast(input_new_value as int);
 		ELSE
-			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
-			USING input_old_alias, input_old_zone, input_field, input_new_value, 'SRV';
+			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
+			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, input_new_value;
 		END IF;
 
 		-- Done
@@ -324,7 +324,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."pointers" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."cname" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned alias');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
 			END IF;
@@ -345,15 +345,15 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		IF input_field ~* 'ttl' THEN
-			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
-			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int), 'CNAME';
+			WHERE "alias" = $1 AND "zone" = $2'
+			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int);
 		ELSE
-			EXECUTE 'UPDATE "dns"."pointers" SET ' || quote_ident($3) || ' = $4,
+			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "alias" = $1 AND "zone" = $2 AND "type" = $5'
-			USING input_old_alias, input_old_zone, input_field, input_new_value, 'CNAME';
+			WHERE "alias" = $1 AND "zone" = $2'
+			USING input_old_alias, input_old_zone, input_field, input_new_value;
 		END IF;
 
 		-- Done
