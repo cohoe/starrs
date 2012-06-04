@@ -176,11 +176,19 @@ COMMENT ON FUNCTION "dns"."txt_update"() IS 'Modify a TXT record';
 
 /* Trigger - dns_autopopulate_address */
 CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text, input_zone text) RETURNS INET AS $$
+	DECLARE
+		address INET;
 	BEGIN
-		RETURN (SELECT "dns"."a"."address"
+		SELECT "dns"."a"."address" INTO address
 		FROM "dns"."a"
 		WHERE "dns"."a"."hostname" = input_hostname
-		AND "dns"."a"."zone" = input_zone LIMIT 1);
+		AND "dns"."a"."zone" = input_zone LIMIT 1;
+		
+		IF address IS NULL THEN
+			RAISE EXCEPTION 'Unable to find address for given host % and zone %',input_hostname,input_zone;
+		ELSE
+			RETURN address;
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
