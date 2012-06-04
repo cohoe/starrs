@@ -227,8 +227,10 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 		UPDATE "dns"."types" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "dns"."ns" SET "owner" = new_username WHERE "owner" = old_username;
 		UPDATE "dns"."ns" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
-		UPDATE "dns"."pointers" SET "owner" = new_username WHERE "owner" = old_username;
-		UPDATE "dns"."pointers" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."srv" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."srv" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+		UPDATE "dns"."cname" SET "owner" = new_username WHERE "owner" = old_username;
+		UPDATE "dns"."cname" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "dns"."mx" SET "owner" = new_username WHERE "owner" = old_username;
 		UPDATE "dns"."mx" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "dns"."zones" SET "owner" = new_username WHERE "owner" = old_username;
