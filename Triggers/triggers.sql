@@ -149,16 +149,28 @@ CREATE TRIGGER "dns_a_delete_queue"
 AFTER DELETE ON "dns"."a"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
 
-CREATE TRIGGER "dns_pointers_insert_queue"
-AFTER INSERT ON "dns"."pointers"
+CREATE TRIGGER "dns_srv_insert_queue"
+AFTER INSERT ON "dns"."srv"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
 
-CREATE TRIGGER "dns_pointers_update_queue"
-AFTER UPDATE ON "dns"."pointers"
+CREATE TRIGGER "dns_srv_update_queue"
+AFTER UPDATE ON "dns"."srv"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
 
-CREATE TRIGGER "dns_pointers_delete_queue"
-AFTER DELETE ON "dns"."pointers"
+CREATE TRIGGER "dns_srv_delete_queue"
+AFTER DELETE ON "dns"."srv"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_cname_insert_queue"
+AFTER INSERT ON "dns"."cname"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_cname_update_queue"
+AFTER UPDATE ON "dns"."cname"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_cname_delete_queue"
+AFTER DELETE ON "dns"."cname"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
 
 CREATE TRIGGER "dns_ns_insert_queue"
