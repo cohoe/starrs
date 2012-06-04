@@ -705,3 +705,5 @@ COMMENT ON TABLE "network"."switchport_macs" IS 'MAC addresses currently on a sw
 COMMENT ON TABLE "network"."switchview" IS 'Connection data for switch enabling';
 
 COMMENT ON TABLE "systems"."type_family" IS 'Family of device types';
+
+COMMENT ON TABLE "dns"."a" IS 'DNS forward address records';
