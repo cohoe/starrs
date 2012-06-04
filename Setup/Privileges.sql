@@ -47,7 +47,6 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."classes" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."systems" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."subnet_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "firewall"."metahost_members" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."pointers" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."mx" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zones" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."keys" TO "impulse_client";
