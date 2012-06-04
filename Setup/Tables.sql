@@ -243,6 +243,7 @@ CREATE TABLE "dns"."cname"(
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
+"type" TEXT NOT NULL DEFAULT 'CNAME',
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "cname_pkey" PRIMARY KEY ("alias","hostname","address","zone")
 )
@@ -260,6 +261,7 @@ CREATE TABLE "dns"."srv"(
 "address" INET NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
+"type" TEXT NOT NULL DEFAULT 'SRV',
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "srv_pkey" PRIMARY KEY ("alias","hostname","address","zone","priority","weight","port")
 )
