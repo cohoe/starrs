@@ -662,12 +662,6 @@ COMMENT ON TABLE "dns"."types" IS 'All DNS record types';
 
 COMMENT ON TABLE "network"."switchport_history" IS 'Log of all switchport activity';
 
-COMMENT ON TABLE "dns"."queue" IS 'Queue all DNS zone changes that need to occur';
-
-COMMENT ON TABLE "firewall"."rule_queue" IS 'Queue all firewall rule changes';
-
-COMMENT ON TABLE "firewall"."default_queue" IS 'Queue all default firewall action changes';
-
 COMMENT ON TABLE "network"."switchport_states" IS 'Switchport control and current state';
 
 COMMENT ON TABLE "network"."switchport_macs" IS 'MAC addresses currently on a switchport';
