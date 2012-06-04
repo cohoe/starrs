@@ -292,8 +292,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new SRV record');
-		INSERT INTO "dns"."pointers" ("alias","hostname","zone","extra","ttl","owner","type") VALUES
-		(input_alias, input_target, input_zone, input_priority || ' ' || input_weight || ' ' || input_port, input_ttl,input_owner,'SRV');
+		INSERT INTO "dns"."srv" ("alias","hostname","zone","priority","weight","port","ttl","owner") VALUES
+		(input_alias, input_target, input_zone, input_priority, input_weight, input_port, input_ttl, input_owner);
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
@@ -346,8 +346,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new CNAME record');
-		INSERT INTO "dns"."pointers" ("alias","hostname","zone","ttl","owner","type") VALUES
-		(input_alias, input_target, input_zone, input_ttl,input_owner,'CNAME');
+		INSERT INTO "dns"."cname" ("alias","hostname","zone","ttl","owner") VALUES
+		(input_alias, input_target, input_zone, input_ttl, input_owner);
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
