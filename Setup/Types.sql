@@ -64,9 +64,13 @@ COMMENT ON TYPE "dns"."ns_data" IS 'All NS data';
 CREATE TYPE "dns"."txt_data" AS (hostname varchar(63), zone text, address inet, type text, text text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "dns"."txt_data" IS 'All text (TXT) data';
 
-/* DNS - pointer_data */
-CREATE TYPE "dns"."pointer_data" AS (alias varchar(63), hostname varchar(63), zone text, address inet, type text, extra text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "dns"."pointer_data" IS 'All pointer (CNAME,SRV) data';
+/* DNS - cname_data */
+CREATE TYPE "dns"."cname_data" AS (alias varchar(63), hostname varchar(63), zone text, address inet, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."cname_data" IS 'All cname record data';
+
+/* DNS - srv_data */
+CREATE TYPE "dns"."srv_data" AS (alias varchar(63), hostname varchar(63), zone text, priority integer, weight integer, port integer, address inet, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
+COMMENT ON TYPE "dns"."srv_data" IS 'All srv record data';
 
 /* DNS - a_data */
 CREATE TYPE "dns"."a_data" AS (hostname varchar(63), zone text, address inet, type text, ttl integer, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
