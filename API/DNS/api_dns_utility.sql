@@ -85,7 +85,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	}
 
 	# Check that service is valid
-	if ($service !~ m/^_\w+$/i)
+	if ($service !~ m/^_[\w-]+$/i)
 	{
 		return "false";
 	}
