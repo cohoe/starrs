@@ -548,36 +548,6 @@ CREATE TABLE "network"."switchport_history"(
 )
 WITHOUT OIDS;
 
-CREATE TABLE "dns"."queue"(
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"directive" TEXT NOT NULL,
-"ttl" INTEGER NOT NULL,
-"target" TEXT NOT NULL,
-"user" TEXT NOT NULL DEFAULT api.get_current_user(),
-"hostname" VARCHAR(63) NOT NULL,
-"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
-"type" TEXT NOT NULL,
-"extra" TEXT
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."rule_queue"(
-"address" INET NOT NULL,
-"port" INTEGER NOT NULL,
-"transport" TEXT NOT NULL,
-"deny" BOOLEAN NOT NULL,
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp,
-"action" TEXT NOT NULL
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."default_queue"(
-"address" INET NOT NULL,
-"deny" BOOLEAN NOT NULL,
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT current_timestamp
-)
-WITHOUT OIDS;
-
 CREATE TABLE "network"."switchport_states"(
 "port_name" TEXT NOT NULL,
 "system_name" TEXT NOT NULL,
