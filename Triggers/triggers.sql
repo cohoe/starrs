@@ -34,6 +34,24 @@ CREATE TRIGGER "dns_pointers_update"
 BEFORE UPDATE ON "dns"."pointers"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."pointers_update"();
 
+/* dns.srv */
+CREATE TRIGGER "dns_srv_insert"
+BEFORE INSERT ON "dns"."srv"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."srv_insert"();
+
+CREATE TRIGGER "dns_srv_update"
+BEFORE UPDATE ON "dns"."srv"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."srv_update"();
+
+/* dns.cname */
+CREATE TRIGGER "dns_cname_insert"
+BEFORE INSERT ON "dns"."cname"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."cname_insert"();
+
+CREATE TRIGGER "dns_cname_update"
+BEFORE UPDATE ON "dns"."cname"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."cname_update"();
+
 /* dns.txt */
 CREATE TRIGGER "dns_txt_insert"
 BEFORE INSERT ON "dns"."txt"
