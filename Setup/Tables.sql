@@ -234,23 +234,6 @@ CONSTRAINT "os_pkey" PRIMARY KEY ("name")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "dns"."pointers"(
-"alias" VARCHAR(63) NOT NULL,
-"extra" TEXT,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"hostname" VARCHAR(63) NOT NULL,
-"address" INET NOT NULL,
-"type" TEXT NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
-"owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
-CONSTRAINT "pointers_pkey" PRIMARY KEY ("alias","hostname","address","zone"),
-CONSTRAINT "dns_pointers_type_check" CHECK ("type" ~ '^CNAME|SRV$')
-)
-WITHOUT OIDS;
-
 CREATE TABLE "dns"."cname"(
 "alias" VARCHAR(63) NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
@@ -666,8 +649,6 @@ COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
 COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
 
 COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
-
-COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
 
 COMMENT ON TABLE "dns"."cname" IS 'CNAME records';
 
