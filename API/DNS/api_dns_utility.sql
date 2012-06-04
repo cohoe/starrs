@@ -209,7 +209,8 @@ CREATE OR REPLACE FUNCTION "api"."check_dns_hostname"(input_hostname text, input
 		RowCount INTEGER := 0;
 	BEGIN
 		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."a" WHERE "hostname" = input_hostname AND "zone" = input_zone);
-		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."pointers" WHERE "alias" = input_hostname AND "zone" = input_zone);
+		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."srv" WHERE "alias" = input_hostname AND "zone" = input_zone);
+		RowCount := RowCount + (SELECT COUNT(*) FROM "dns"."cname" WHERE "alias" = input_hostname AND "zone" = input_zone);
 
 		IF RowCount = 0 THEN
 			RETURN FALSE;
@@ -314,7 +315,8 @@ CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(input_zone text) RETURNS SETOF
 			
 			-- Remove all records that IMPULSE contains
             DELETE FROM "audit" WHERE ("host","ttl","type","address") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","address" FROM "dns"."a");
-            DELETE FROM "audit" WHERE ("host","ttl","type","target") IN (SELECT "alias"||'.'||"zone" AS "host","ttl","type","hostname"||'.'||"zone" as "target" FROM "dns"."pointers");
+            DELETE FROM "audit" WHERE ("host","ttl","type","target","port","weight","priority") IN (SELECT "alias"||'.'||"zone" AS "host","ttl","type","hostname"||'.'||"zone" as "target","port","weight","priority" FROM "dns"."srv");
+	    DELETE FROM "audit" WHERE ("host","ttl","type","target") IN (SELECT "alias"||'.'||"zone" AS "host","ttl","type","hostname"||'.'||"zone" as "target" FROM "dns"."cname");
             DELETE FROM "audit" WHERE ("host","ttl","type","preference") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","preference" FROM "dns"."mx");
             DELETE FROM "audit" WHERE ("host","ttl","type") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type" FROM "dns"."ns");
             DELETE FROM "audit" WHERE ("host","ttl","type","text") IN (SELECT "hostname"||'.'||"zone" AS "host","ttl","type","text" FROM "dns"."txt");
