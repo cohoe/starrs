@@ -251,6 +251,37 @@ CONSTRAINT "dns_pointers_type_check" CHECK ("type" ~ '^CNAME|SRV$')
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dns"."cname"(
+"alias" VARCHAR(63) NOT NULL,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"hostname" VARCHAR(63) NOT NULL,
+"address" INET NOT NULL,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"owner" TEXT NOT NULL,
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+CONSTRAINT "cname_pkey" PRIMARY KEY ("alias","hostname","address","zone"),
+)
+WITHOUT OIDS;
+
+CREATE TABLE "dns"."srv"(
+"alias" VARCHAR(63) NOT NULL,
+"priority" INTEGER NOT NULL DEFAULT 0,
+"weight" INTEGER NOT NULL DEFAULT 0,
+"port" INTEGER NOT NULL,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"hostname" VARCHAR(63) NOT NULL,
+"address" INET NOT NULL,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"owner" TEXT NOT NULL,
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+CONSTRAINT "srv_pkey" PRIMARY KEY ("alias","hostname","address","zone","priority","weight","port"),
+)
+WITHOUT OIDS;
+
 CREATE TABLE "network"."switchport_types"(
 "type" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
@@ -637,6 +668,10 @@ COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your addres
 COMMENT ON TABLE "systems"."os" IS 'Track what primary operating systems are in use on the network.';
 
 COMMENT ON TABLE "dns"."pointers" IS 'CNAMEs and SRV records';
+
+COMMENT ON TABLE "dns"."cname" IS 'CNAME records';
+
+COMMENT ON TABLE "dns"."srv" IS 'SRV records';
 
 COMMENT ON TABLE "network"."switchport_types" IS 'Switchports are uplinks, trunks, access ports, etc.';
 
