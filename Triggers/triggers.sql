@@ -25,15 +25,6 @@ CREATE TRIGGER "dns_ns_update"
 BEFORE UPDATE ON "dns"."ns"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_update"();
 
-/* dns.pointers */
-CREATE TRIGGER "dns_pointers_insert"
-BEFORE INSERT ON "dns"."pointers"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."pointers_insert"();
-
-CREATE TRIGGER "dns_pointers_update"
-BEFORE UPDATE ON "dns"."pointers"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."pointers_update"();
-
 /* dns.srv */
 CREATE TRIGGER "dns_srv_insert"
 BEFORE INSERT ON "dns"."srv"
