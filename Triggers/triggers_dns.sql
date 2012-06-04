@@ -592,3 +592,107 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."queue_delete"() IS 'Add a delete directive to the queue';
+
+/* Trigger - srv_insert 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."srv_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+		END IF;
+		
+		-- Autopopulate address
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."srv_insert"() IS 'Check if the alias already exists as an address record';
+
+/* Trigger - srv_update 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."srv_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		IF NEW."alias" != OLD."alias" THEN	
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."a"
+			WHERE "dns"."a"."hostname" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+		END IF;
+		
+		-- Autopopulate address
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."srv_update"() IS 'Check if the new alias already exists as an address record';
+
+/* Trigger - cname_insert 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."cname_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		SELECT COUNT(*) INTO RowCount
+		FROM "dns"."a"
+		WHERE "dns"."a"."hostname" = NEW."alias";
+		IF (RowCount > 0) THEN
+			RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+		END IF;
+		
+		-- Autopopulate address
+		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."cname_insert"() IS 'Check if the alias already exists as an address record';
+
+/* Trigger - cname_update 
+	1) Check if alias name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."cname_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+	BEGIN
+		-- Check if alias name already exists
+		IF NEW."alias" != OLD."alias" THEN	
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."a"
+			WHERE "dns"."a"."hostname" = NEW."alias";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Alias name (%) already exists',NEW."alias";
+			END IF;
+		END IF;
+		
+		-- Autopopulate address
+		IF NEW."address" != OLD."address" THEN
+			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."cname_update"() IS 'Check if the new alias already exists as an address record';
