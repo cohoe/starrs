@@ -69,6 +69,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."soa" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."srv" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."cname" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_txt" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both
