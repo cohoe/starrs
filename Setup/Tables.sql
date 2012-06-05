@@ -351,12 +351,24 @@ CREATE TABLE "dns"."txt"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"type" TEXT NOT NULL DEFAULT 'TXT',
+"type" TEXT NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone"),
-CONSTRAINT "dns_txt_type_check" CHECK ("type" ~ '^TXT$')
+)
+WITHOUT OIDS;
+
+CREATE TABLE "dns"."zone_txt"(
+"text" TEXT NOT NULL,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+"hostname" VARCHAR(63) NOT NULL,
+"type" TEXT NOT NULL DEFAULT 'TXT',
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","zone"),
 )
 WITHOUT OIDS;
 
@@ -639,6 +651,8 @@ COMMENT ON TABLE "dns"."keys" IS 'Zone keys';
 COMMENT ON TABLE "ip"."addresses" IS 'Master list of all controlled addresses in the application';
 
 COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
+
+COMMENT ON TABLE "dns"."zone_txt" IS 'TXT records for zones';
 
 COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
 
