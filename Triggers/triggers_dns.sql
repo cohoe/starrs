@@ -672,3 +672,83 @@ CREATE OR REPLACE FUNCTION "dns"."cname_update"() RETURNS TRIGGER AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."cname_update"() IS 'Check if the new alias already exists as an address record';
+
+CREATE OR REPLACE FUNCTION "dns"."zone_txt_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+
+	BEGIN
+		IF NEW."hostname" IS NOT NULL THEN
+			-- Check if hostname name already exists as an A
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."a"
+			WHERE "dns"."a"."hostname" = NEW."hostname";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'Hostname (%) already exists',NEW."hostname";
+			END IF;
+			
+			-- Check if hostname name already exists as an SRV
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."srv"
+			WHERE "dns"."srv"."alias" = NEW."hostname";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'hostname (%) already exists as a SRV',NEW."hostname";
+			END IF;
+			
+			-- Check if hostname name already exists as an CNAME
+			SELECT COUNT(*) INTO RowCount
+			FROM "dns"."cname"
+			WHERE "dns"."cname"."alias" = NEW."hostname";
+			IF (RowCount > 0) THEN
+				RAISE EXCEPTION 'hostname (%) already exists as a CNAME',NEW."hostname";
+			END IF;
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."zone_txt_insert"() IS 'Check if the hostname already exists in other tables and insert the zone TXT record';
+
+/* Trigger - zone_txt_update 
+	1) Check if hostname name already exists
+	2) Autopopulate address
+*/
+CREATE OR REPLACE FUNCTION "dns"."zone_txt_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		RowCount INTEGER;
+		DnsRecord TEXT;
+		ReturnCode TEXT;
+	BEGIN
+		-- Check if hostname name already exists
+		IF NEW."hostname" != OLD."hostname" THEN	
+			IF NEW."hostname" IS NOT NULL THEN
+				-- Check if hostname name already exists as an A
+				SELECT COUNT(*) INTO RowCount
+				FROM "dns"."a"
+				WHERE "dns"."a"."hostname" = NEW."hostname";
+				IF (RowCount > 0) THEN
+					RAISE EXCEPTION 'Hostname (%) already exists',NEW."hostname";
+				END IF;
+				
+				-- Check if hostname name already exists as an SRV
+				SELECT COUNT(*) INTO RowCount
+				FROM "dns"."srv"
+				WHERE "dns"."srv"."alias" = NEW."hostname";
+				IF (RowCount > 0) THEN
+					RAISE EXCEPTION 'hostname (%) already exists as a SRV',NEW."hostname";
+				END IF;
+				
+				-- Check if hostname name already exists as an CNAME
+				SELECT COUNT(*) INTO RowCount
+				FROM "dns"."cname"
+				WHERE "dns"."cname"."alias" = NEW."hostname";
+				IF (RowCount > 0) THEN
+					RAISE EXCEPTION 'hostname (%) already exists as a CNAME',NEW."hostname";
+				END IF;
+			END IF;
+		END IF;
+		
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."zone_txt_update"() IS 'Check if the new hostname already exists in other tables and update the zone TXT record';
