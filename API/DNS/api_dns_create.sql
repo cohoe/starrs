@@ -466,7 +466,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new zone_txt record');
-		INSERT INTO "dns"."zone_txt" ("hostname","zone","text","ttl","owner") VALUES
+		INSERT INTO "dns"."zone_txt" ("hostname","zone","text","ttl") VALUES
 		(input_hostname,input_zone,input_text,input_ttl);
 		
 		-- Update TTLs for other null hostname records since they all need to be the same.
