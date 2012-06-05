@@ -120,6 +120,8 @@ ALTER TABLE "dns"."txt" ADD CONSTRAINT "fk_txt_fqdn" FOREIGN KEY ("hostname","ad
 
 ALTER TABLE "dns"."zone_txt" ADD CONSTRAINT "fk_zone_txt_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
+ALTER TALBE "dns"."zone_txt" ADD CONSTRAINT "zone_txt_hostname_zone_text_key" UNIQUE ("hostname","zone","text");
+
 ALTER TABLE "dns"."txt" ADD CONSTRAINT "fk_txt_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "fk_dns_a_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
