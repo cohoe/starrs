@@ -367,13 +367,13 @@ COMMENT ON FUNCTION "api"."modify_dns_cname"(text, text, text, text) IS 'Modify 
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, input_old_zone text, input_type text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input_old_zone text, input_old_text text, input_field text, input_new_value text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_text');
 
 		 -- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone AND "text" = input_old_text) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned TXT');
 				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_hostname,input_old_zone;
 			END IF;
@@ -385,7 +385,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, inpu
 		END IF;
 
 		 -- Check allowed fields
-		IF input_field !~* 'hostname|zone|text|owner|ttl|type' THEN
+		IF input_field !~* 'hostname|zone|text|owner|ttl' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
@@ -396,20 +396,20 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_text"(input_old_hostname text, inpu
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2 AND "type" = $3'
+			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
 			USING input_old_hostname, input_old_zone, input_type, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
 			date_modified = current_timestamp, last_modifier = api.get_current_user()
-			WHERE "hostname" = $1 AND "zone" = $2 AND "type" = $3'
-			USING input_old_hostname, input_old_zone, input_type, input_field, input_new_value;
+			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
+			USING input_old_hostname, input_old_zone, input_old_text, input_field, input_new_value;
 		END IF;
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_text');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dns_text"(text, text, text, text, text) IS 'Modify an existing DNS TXT record';
+COMMENT ON FUNCTION "api"."modify_dns_txt"(text, text, text, text, text) IS 'Modify an existing DNS TXT record';
 
 /* API - modify_dns_soa
 	1) Check privileges
