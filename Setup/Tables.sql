@@ -368,8 +368,7 @@ CREATE TABLE "dns"."zone_txt"(
 "type" TEXT NOT NULL DEFAULT 'TXT',
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
-"address" INET DEFAULT '0.0.0.0',
-CONSTRAINT "zone_txt_pkey" PRIMARY KEY ("text","zone","hostname")
+"address" INET DEFAULT '0.0.0.0'
 )
 WITHOUT OIDS;
 
