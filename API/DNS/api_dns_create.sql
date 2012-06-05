@@ -361,7 +361,7 @@ COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer, text) IS
 	3) Check privileges
 	4) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zone text, input_text text, input_type text, input_ttl integer, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zone text, input_text text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."txt" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_txt');
 
@@ -379,9 +379,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
-		
-		-- Force only one type
-		input_type := 'TXT';
+
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -397,14 +395,16 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new TXT record');
-		INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner","type") VALUES
-		(input_hostname,input_zone,input_text,input_ttl,input_owner,input_type);
+		INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner") VALUES
+		(input_hostname,input_zone,input_text,input_ttl,input_owner);
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
+		RETURN QUERY (SELECT "text","date_modified","date_created","last_modifier","hostname","address","type","ttl","owner","zone"
+			FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_text"(text, text, text, text, integer, text) IS 'create a new dns text record for a host';
+COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, integer, text) IS 'create a new dns TXT record for a host';
 
 /* API - create_dns_soa
 	1) Validate input
