@@ -250,7 +250,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^TXT$' THEN
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				-- For zone TXT records
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				ELSE
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				END IF;
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 
@@ -278,7 +283,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^TXT$' THEN
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				-- For zone TXT records
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				ELSE
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				END IF;
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 
@@ -386,11 +396,20 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
 				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^TXT$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
-				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-				
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
-				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				-- For zone TXT records
+				IF OLD."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				ELSE
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				END IF;
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				ELSE
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				END IF;
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 		ELSE
 			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
@@ -425,11 +444,20 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 				DnsRecord := NEW."alias"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."hostname"||'.'||NEW."zone";
 				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^TXT$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
-				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-				
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
-				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				-- For zone TXT records
+				IF OLD."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				ELSE
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				END IF;
+				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				ELSE
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+				END IF;
+				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 
 			IF ReturnCode != '0' THEN
@@ -499,7 +527,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
 				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			ELSEIF OLD."type" ~* '^TXT$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				-- For zone TXT records
+				IF OLD."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				ELSE
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				END IF;
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			END IF;
 
@@ -527,7 +560,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 				DnsRecord := OLD."alias"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."hostname"||'.'||OLD."zone";
 				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			ELSEIF OLD."type" ~* '^TXT$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				-- For zone TXT records
+				IF OLD."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				ELSE
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+				END IF;
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			END IF;
 
@@ -673,6 +711,10 @@ CREATE OR REPLACE FUNCTION "dns"."cname_update"() RETURNS TRIGGER AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."cname_update"() IS 'Check if the new alias already exists as an address record';
 
+/* Trigger - zone_txt_insert 
+	1) Check if hostname name already exists
+	2) Autopopulate address
+*/
 CREATE OR REPLACE FUNCTION "dns"."zone_txt_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
@@ -716,8 +758,7 @@ COMMENT ON FUNCTION "dns"."zone_txt_insert"() IS 'Check if the hostname already 
 CREATE OR REPLACE FUNCTION "dns"."zone_txt_update"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
-		DnsRecord TEXT;
-		ReturnCode TEXT;
+		
 	BEGIN
 		-- Check if hostname name already exists
 		IF NEW."hostname" != OLD."hostname" THEN	
@@ -752,3 +793,4 @@ CREATE OR REPLACE FUNCTION "dns"."zone_txt_update"() RETURNS TRIGGER AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."zone_txt_update"() IS 'Check if the new hostname already exists in other tables and update the zone TXT record';
+
