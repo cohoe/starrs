@@ -186,17 +186,17 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns cname record for a host';
 
-/* API - remove_dns_text
+/* API - remove_dns_txt
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_text"(input_hostname text, input_zone text, input_type text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zone text, input_text text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_txt');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "type" = input_type) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS TXT %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
 			END IF;
@@ -204,12 +204,12 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_text"(input_hostname text, input_zo
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','remove TXT record');
-		DELETE FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "type" = input_type;
+		DELETE FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text;
 
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_txt');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_text"(text, text, text) IS 'remove a dns text record for a host';
+COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns text record for a host';
 
 /* API - remove_dns_soa
 	1) Check privileges
