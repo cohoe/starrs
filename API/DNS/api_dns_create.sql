@@ -441,3 +441,43 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl int
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_soa"(text, integer, text, text, text, integer, integer, integer, integer) IS 'Create a new DNS soa';
+
+CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, input_zone text, input_text text, input_ttl integer) RETURNS SETOF "dns"."zone_txt" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_zone_txt');
+
+		-- Set zone
+		IF input_zone IS NULL THEN
+			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
+		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
+				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
+			END IF;
+		END IF;
+
+		-- Create record
+		PERFORM api.create_log_entry('API','INFO','create new zone_txt record');
+		INSERT INTO "dns"."zone_txt" ("hostname","zone","text","ttl","owner") VALUES
+		(input_hostname,input_zone,input_text,input_ttl);
+		
+		-- Update TTLs for other null hostname records since they all need to be the same.
+		IF input_hostname IS NULL THEN
+			UPDATE "dns"."zone_txt" SET "ttl" = input_ttl WHERE "hostname" IS NULL AND "zone" = input_zone;
+		END IF;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_zone_txt');
+		RETURN QUERY (SELECT "text","date_modified","date_created","last_modifier","hostname","type","ttl","zone","address"
+			FROM "dns"."zone_txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dns_zone_txt"(text, text, text, integer) IS 'create a new dns zone_txt record for a host';
