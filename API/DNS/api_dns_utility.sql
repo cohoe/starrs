@@ -160,8 +160,10 @@ CREATE OR REPLACE FUNCTION "api"."nsupdate"(zone text, keyname text, key text, s
 
 	# Add a record
 	sub add() {
-		# The record must not exist
-		$update->push(pre => nxrrset($record));
+		# The record must not exist if not an MX
+		if($record !~ m/\sMX\s/) {
+			$update->push(pre => nxrrset($record));
+		}
 
 		# Add the record
 		$update->push(update => rr_add($record));

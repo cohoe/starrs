@@ -42,9 +42,9 @@ ALTER TABLE "dns"."mx" ADD CONSTRAINT "dns_mx_preference_zone_key" UNIQUE ("pref
 
 COMMENT ON CONSTRAINT "dns_mx_preference_zone_key" ON "dns"."mx" IS 'No two MX servers can have the same preference in a domain';
 
-ALTER TABLE "dns"."txt" ADD CONSTRAINT "dns_txt_hostname_type_key" UNIQUE ("hostname","type");
+ALTER TABLE "dns"."txt" ADD CONSTRAINT "dns_txt_hostname_zone_text_key" UNIQUE ("hostname","zone","text");
 
-COMMENT ON CONSTRAINT "dns_txt_hostname_type_key" ON "dns"."txt" IS 'A hostname can have on only one of each type of TXT record';
+COMMENT ON CONSTRAINT "dns_txt_hostname_zone_text_key" ON "dns"."txt" IS 'No duplicate TXT records';
 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "a_hostname_zone_type_key" UNIQUE ("hostname","type","zone");
 

@@ -379,6 +379,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
+		
+		-- Force only one type
+		input_type := 'TXT';
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -394,7 +397,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_text"(input_hostname text, input_zo
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new TXT record');
-		INSERT INTO "dns"."txt" ("alias","hostname","zone","ttl","owner","TYPE") VALUES
+		INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner","type") VALUES
 		(input_hostname,input_zone,input_text,input_ttl,input_owner,input_type);
 		
 		-- Done
