@@ -52,6 +52,15 @@ CREATE TRIGGER "dns_txt_update"
 BEFORE UPDATE ON "dns"."txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_update"();
 
+/* dns.txt */
+CREATE TRIGGER "dns_zone_txt_insert"
+BEFORE INSERT ON "dns"."zone_txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_txt_insert"();
+
+CREATE TRIGGER "dns_zone_txt_update"
+BEFORE UPDATE ON "dns"."zone_txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_txt_update"();
+
 /* firewall.metahost_members */
 CREATE TRIGGER "firewall_metahost_members_insert"
 BEFORE INSERT ON "firewall"."metahost_members"
@@ -207,6 +216,18 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
 
 CREATE TRIGGER "dns_txt_delete_queue"
 AFTER DELETE ON "dns"."txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+
+CREATE TRIGGER "dns_zone_txt_insert_queue"
+AFTER INSERT ON "dns"."zone_txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_zone_txt_update_queue"
+AFTER UPDATE ON "dns"."zone_txt"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_zone_txt_delete_queue"
+AFTER DELETE ON "dns"."zone_txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
 
 CREATE TRIGGER "firewall_defaults_insert"
