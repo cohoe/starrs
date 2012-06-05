@@ -236,3 +236,28 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_soa"(input_zone text) RETURNS VOID 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_soa"(text) IS 'Delete existing DNS soa';
+
+CREATE OR REPLACE FUNCTION "api"."remove_dns_zone_txt"(input_hostname text, input_zone text, input_text text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_zone_txt');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
+				RAISE EXCEPTION 'Permission denied for % (%) on DNS zone_txt %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
+			END IF;
+		END IF;
+
+		-- Remove record
+		PERFORM api.create_log_entry('API','INFO','remove zone_txt record');
+		IF input_hostname IS NULL THEN
+			DELETE FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_zone AND "text" = input_text;
+		ELSE
+			DELETE FROM "dns"."zone_txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text;
+		END IF;
+
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_zone_txt');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_dns_zone_txt"(text, text, text) IS 'remove a dns text record for a host';
