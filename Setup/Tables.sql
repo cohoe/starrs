@@ -351,7 +351,7 @@ CREATE TABLE "dns"."txt"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"type" TEXT NOT NULL,
+"type" TEXT NOT NULL DEFAULT 'TXT',
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
