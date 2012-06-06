@@ -16,15 +16,6 @@ CREATE TRIGGER "dns_mx_update"
 BEFORE UPDATE ON "dns"."mx"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."mx_update"();
 
-/* dns.ns */
-CREATE TRIGGER "dns_ns_insert"
-BEFORE INSERT ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_insert"();
-
-CREATE TRIGGER "dns_ns_update"
-BEFORE UPDATE ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_update"();
-
 /* dns.srv */
 CREATE TRIGGER "dns_srv_insert"
 BEFORE INSERT ON "dns"."srv"
