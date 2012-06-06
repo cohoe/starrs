@@ -116,17 +116,15 @@ CONSTRAINT "ranges_pkey" PRIMARY KEY ("name")
 WITHOUT OIDS;
 
 CREATE TABLE "dns"."ns"(
-"isprimary" BOOLEAN NOT NULL,
+"zone" TEXT NOT NULL,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"type" TEXT NOT NULL DEFAULT 'NS',
+"nameserver" TEXT NOT NULL,
+"address" INET NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"hostname" VARCHAR(63) NOT NULL,
-"address" INET NOT NULL,
-"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
-"owner" TEXT NOT NULL,
-"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
-"type" TEXT NOT NULL,
-CONSTRAINT "ns_pkey" PRIMARY KEY ("isprimary","hostname","address","zone")
+CONSTRAINT "ns_pkey" PRIMARY KEY ("zone","nameserver")
 )
 WITHOUT OIDS;
 
