@@ -232,3 +232,27 @@ FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_update"();
 CREATE TRIGGER "network_switchport_states_update"
 BEFORE UPDATE ON "network"."switchport_states"
 FOR EACH ROW EXECUTE PROCEDURE "network"."switchport_states_update"();
+
+CREATE TRIGGER "dns_zone_a_insert"
+BEFORE INSERT ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_a_insert"();
+
+CREATE TRIGGER "dns_zone_a_update"
+BEFORE UPDATE ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_a_update"();
+
+CREATE TRIGGER "dns_zone_a_delete"
+BEFORE DELETE ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_a_delete"();
+
+CREATE TRIGGER "dns_zone_a_insert_queue"
+AFTER INSERT ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+
+CREATE TRIGGER "dns_zone_a_update_queue"
+AFTER UPDATE ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+
+CREATE TRIGGER "dns_zone_a_delete_queue"
+AFTER DELETE ON "dns"."zone_a"
+FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
