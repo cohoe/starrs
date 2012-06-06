@@ -245,14 +245,38 @@ CREATE OR REPLACE FUNCTION "api"."dns_forward_lookup"(text) RETURNS INET AS $$
 	return $ip_address;
 $$ LANGUAGE 'plperlu';
 
-CREATE OR REPLACE FUNCTION "api"."dns_reverse_lookup"(inet) RETURNS TEXT AS $$
-	use Socket;
+CREATE OR REPLACE FUNCTION "api"."query_address_reverse"(inet) RETURNS TEXT AS $$
+	use strict;
+	use warnings;
+	use Net::DNS;
+	use Net::IP;
+	use Net::IP qw(:PROC);
+	use v5.10;
 
-	my $ip_address = $_[0];
-	my $iaddr = inet_aton("$ip_address"); # or whatever address
-	$name  = gethostbyaddr($iaddr, AF_INET);
-	return $name;
+	# Define some variables
+	my $address = shift(@_) or die "Unable to get address";
+	
+	# Generate the reverse string (d.c.b.a.in-addr.arpa.)
+	my $reverse = new Net::IP ($address)->reverse_ip() or die (Net::IP::Error());
+
+	# Create the resolver
+	my $res = Net::DNS::Resolver->new;
+
+	# Run the query
+	my $rr = $res->query($reverse,'PTR');
+
+	# Check for a response
+	if(!defined($rr)) {
+		return false;
+	}
+
+	# Parse the response
+	my @answer = $rr->answer;
+	foreach my $response(@answer) {
+		return $response->ptrdname;
+	}
 $$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."query_address_reverse"(inet) IS 'Print the forward host of a reverse lookup';
 
 CREATE OR REPLACE FUNCTION "api"."query_axfr"(text, text) RETURNS SETOF "dns"."zone_audit_data" AS $$
 	use strict;
