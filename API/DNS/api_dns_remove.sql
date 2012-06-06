@@ -115,26 +115,26 @@ COMMENT ON FUNCTION "api"."remove_dns_mailserver"(text, text) IS 'Delete an exis
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_nameserver"(input_hostname text, input_zone text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_ns"(input_zone text, input_nameserver text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_ns');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Permission denied for % (%) on DNS NS %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
+				RAISE EXCEPTION 'Permission denied for % (%) on DNS NS %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_nameserver;
 			END IF;
 		END IF;
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','remove NS record');
-		DELETE FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_zone;
+		DELETE FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver;
 
-		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_nameserver');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_ns');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_nameserver"(text, text) IS 'remove a NS record from the zone';
+COMMENT ON FUNCTION "api"."remove_dns_ns"(text, text) IS 'Remove a DNS NS record from the zone';
 
 /* API - remove_dns_srv
 	1) Check privileges
