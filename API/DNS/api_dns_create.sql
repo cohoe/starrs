@@ -475,3 +475,38 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_zone_txt"(text, text, text, integer) IS 'create a new dns zone_txt record for a host';
+
+CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_address inet, input_ttl integer) RETURNS SETOF "dns"."zone_a" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_zone_a');
+
+		-- Set zone
+		IF input_zone IS NULL THEN
+			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
+		END IF;
+		
+		-- Fill TTL
+		IF input_ttl IS NULL THEN
+			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
+				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
+			END IF;
+		END IF;
+
+		-- Create record
+		PERFORM api.create_log_entry('API', 'INFO', 'Creating new zone address record');
+		INSERT INTO "dns"."zone_a" ("zone","address","ttl") VALUES 
+		(input_zone,input_address,input_ttl);
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone_a');
+		RETURN QUERY (SELECT "hostname","zone","type","address","ttl","date_created","date_modified","last_modifier"
+		FROM "dns"."zone_a" WHERE "zone" = input_zone AND "address" = input_address);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dns_zone_a"(text, inet, integer) IS 'create a new zone A or AAAA record';
