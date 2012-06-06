@@ -261,3 +261,24 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone_txt"(input_hostname text, inpu
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_zone_txt"(text, text, text) IS 'remove a dns text record for a host';
+
+CREATE OR REPLACE FUNCTION "api"."remove_dns_zone_a"(input_zone text, input_address inet) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.remove_dns_zone_a');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
+				RAISE EXCEPTION 'Permission denied for % (%) on DNS zone %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_zone;
+			END IF;
+		END IF;
+
+		-- Remove record
+		PERFORM api.create_log_entry('API', 'INFO', 'deleting zone address record');
+		DELETE FROM "dns"."zone_a" WHERE "address" = input_address AND "zone" = input_zone;
+
+		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_zone_a');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_dns_zone_a"(text, inet) IS 'delete a zone A or AAAA record';
