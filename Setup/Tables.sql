@@ -592,6 +592,22 @@ CONSTRAINT "type_family_pkey" PRIMARY KEY ("family")
 )
 WITHOUT OIDS;
 
+CREATE TABLE "dns"."zone_a"(
+"hostname" TEXT DEFAULT NULL,
+"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+"type" TEXT NOT NULL,
+"address" INET NOT NULL,
+"ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "dns_zone_a_pkey" PRIMARY KEY ("zone","type"),
+CONSTRAINT "dns_zone_a_type_check" CHECK ("type" ~ '^A|AAAA$')
+)
+WITHOUT OIDS;
+
+COMMENT ON TABLE "dns"."zone_a" IS 'Zone address records';
+
 COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
 
 COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
