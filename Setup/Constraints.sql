@@ -163,3 +163,9 @@ ALTER TABLE "network"."switchview" ADD CONSTRAINT "fk_switchview_system" FOREIGN
 ALTER TABLE "systems"."device_types" ADD CONSTRAINT "fk_device_types_family" FOREIGN KEY ("family") REFERENCES "systems"."type_family"("family") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."soa" ADD CONSTRAINT "fk_soa_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "dns"."zone_a" ADD CONSTRAINT "fk_dns_zone_a_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "dns"."zone_a" ADD CONSTRAINT "fk_zone_a_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "dns"."zone_a" ADD CONSTRAINT "fk_zone_a_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
