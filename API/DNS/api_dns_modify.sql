@@ -506,3 +506,47 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_txt"(input_old_hostname text, 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_dns_zone_txt"(text, text, text, text, text) IS 'Modify an existing DNS zone_txt record';
+
+CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_a"(input_old_zone text, input_old_address inet, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_zone_a');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
+				RAISE EXCEPTION 'Permission to edit zone % denied. You are not owner',input_old_zone;
+			END IF;
+ 		END IF;
+
+		-- Check allowed fields
+		IF input_field !~* 'zone|address|ttl' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
+
+		IF input_field ~* 'address' THEN
+			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "zone" = $1 AND "address" = $2' 
+			USING input_old_zone, input_old_address, input_field, inet(input_new_value);		
+		ELSIF input_field ~* 'ttl' THEN
+			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "zone" = $1 AND "address" = $2' 
+			USING input_old_zone, input_old_address, input_field, cast(input_new_value as int);
+		ELSE
+			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "zone" = $1 AND "address" = $2' 
+			USING input_old_zone, input_old_address, input_field, input_new_value;
+		END IF;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_zone_a');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_dns_zone_a"(text,inet,text,text) IS 'Modify an existing DNS address';
