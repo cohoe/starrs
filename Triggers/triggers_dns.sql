@@ -70,62 +70,6 @@ CREATE OR REPLACE FUNCTION "dns"."a_update"() RETURNS TRIGGER AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."a_update"() IS 'Update an existing A or AAAA record';
 
-/* Trigger - ns_insert 
-	1) Check for primary NS existance
-	2) Autopopulate address
-*/
-CREATE OR REPLACE FUNCTION "dns"."ns_insert"() RETURNS TRIGGER AS $$
-	DECLARE
-		RowCount INTEGER;
-	BEGIN
-		-- Check for existing primary NS for zone
-		SELECT COUNT(*) INTO RowCount
-		FROM "dns"."ns"
-		WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."isprimary" = TRUE;
-		IF NEW."isprimary" = TRUE AND RowCount > 0 THEN
-			RAISE EXCEPTION 'Primary NS for zone already exists';
-		ELSIF NEW."isprimary" = FALSE AND RowCount = 0 THEN
-			RAISE EXCEPTION 'No primary NS for zone exists, and this is not primary. You must specify a primary NS for a zone';
-		END IF;
-
-		-- Autopopulate address
-		NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
-
-		RETURN NEW;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."ns_insert"() IS 'Check that there is only one primary NS registered for a given zone';
-
-/* Trigger - ns_update 
-	1) Check for primary NS
-	2) Autopopulate address
-*/
-CREATE OR REPLACE FUNCTION "dns"."ns_update"() RETURNS TRIGGER AS $$
-	DECLARE
-		RowCount INTEGER;
-	BEGIN
-		-- Check for existing primary NS for zone
-		IF (NEW."isprimary" != OLD."isprimary") OR (NEW."zone" != OLD."zone") THEN
-			SELECT COUNT(*) INTO RowCount
-			FROM "dns"."ns"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."isprimary" = TRUE;
-			IF NEW."isprimary" = TRUE AND RowCount > 0 THEN
-				RAISE EXCEPTION 'Primary NS for zone already exists';
-			ELSIF NEW."isprimary" = FALSE AND RowCount = 0 THEN
-				RAISE EXCEPTION 'No primary NS for zone exists, and this is not primary. You must specify a primary NS for a zone';
-			END IF;
-		END IF;
-		
-		-- Autopopulate address
-		IF NEW."address" != OLD."address" THEN
-			NEW."address" := dns.dns_autopopulate_address(NEW."hostname",NEW."zone");
-		END IF;
-		
-		RETURN NEW;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "dns"."ns_update"() IS 'Check that the new settings provide for a primary nameserver for the zone';
-
 /* Trigger - mx_insert
 	1) Autopopulate address
 */
@@ -209,7 +153,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 
 			IF NEW."type" ~* '^A|AAAA$' THEN
 				-- Do the forward record first
@@ -238,7 +182,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 				END IF;
 
 			ELSEIF NEW."type" ~* '^NS$' THEN
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^MX$' THEN
 				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||NEW."hostname"||'.'||NEW."zone";
@@ -268,10 +212,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 
 			IF NEW."type" ~* '^NS$' THEN
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^MX$' THEN
 				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."preference"||' '||NEW."hostname"||'.'||NEW."zone";
@@ -318,7 +262,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 			
 			IF NEW."type" ~* '^A|AAAA$' THEN
 				-- Do the forward record first
@@ -372,10 +316,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 				END IF;
 
 			ELSEIF NEW."type" ~* '^NS$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
 				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 				
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
 				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^MX$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||OLD."hostname"||'.'||OLD."zone";
@@ -417,13 +361,13 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 
 			IF NEW."type" ~* '^NS$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
 				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 				
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
 				ReturnCode := Returncode||api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			ELSEIF NEW."type" ~* '^MX$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||OLD."hostname"||'.'||OLD."zone";
@@ -486,7 +430,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
 
 			IF OLD."type" ~* '^A|AAAA$' THEN
 				-- Do the forward record first
@@ -515,7 +459,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 				END IF;
 
 			ELSEIF OLD."type" ~* '^NS$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			ELSEIF OLD."type" ~* '^MX$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||OLD."hostname"||'.'||OLD."zone";
@@ -545,10 +489,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 			FROM "dns"."ns" 
 			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
 			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "isprimary" IS TRUE;
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
 
 			IF OLD."type" ~* '^NS$' THEN
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
 				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			ELSEIF OLD."type" ~* '^MX$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."preference"||' '||OLD."hostname"||'.'||OLD."zone";
