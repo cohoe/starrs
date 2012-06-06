@@ -203,14 +203,9 @@ COMMENT ON FUNCTION "api"."create_dns_mailserver"(text, text, integer, integer, 
 	3) Check privileges
 	4) Create record
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, input_zone text, input_isprimary boolean, input_ttl integer, input_owner text) RETURNS SETOF "dns"."ns_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserver text, input_address inet, input_ttl integer) RETURNS SETOF "dns"."ns" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_nameserver');
-
-		-- Set owner
-		IF input_owner IS NULL THEN
-			input_owner := api.get_current_user();
-		END IF;
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_ns');
 
 		-- Set zone
 		IF input_zone IS NULL THEN
@@ -228,24 +223,23 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_nameserver"(input_hostname text, in
 				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone.');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
-			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
-			END IF;
 		END IF;
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','creating new NS record');
-		INSERT INTO "dns"."ns" ("hostname","zone","isprimary","ttl","owner","type") VALUES
-		(input_hostname,input_zone,input_isprimary,input_ttl,input_owner,'NS');
+		INSERT INTO "dns"."ns" ("zone","ttl","nameserver","address") VALUES
+		(input_zone,input_ttl,input_nameserver,input_address);
+		
+		-- Update TTLs of other zone records since they all need to be the same
+		UPDATE "dns"."ns" SET "ttl" = input_ttl WHERE "zone" = input_zone;
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_nameserver');
-		RETURN QUERY (SELECT "hostname","zone","address","type","isprimary","ttl","owner","date_created","date_modified","last_modifier"
-		FROM "dns"."ns" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "isprimary" = input_isprimary);
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_ns');
+		RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
+			FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_nameserver"(text, text, boolean, integer, text) IS 'create a new NS record for the zone';
+COMMENT ON FUNCTION "api"."create_dns_ns"(text, text, inet, integer) IS 'create a new NS record for a zone';
 
 /* API - create_dns_srv
 	1) Validate input
