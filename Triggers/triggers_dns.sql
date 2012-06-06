@@ -156,29 +156,35 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 
 			IF NEW."type" ~* '^A|AAAA$' THEN
-				-- Do the forward record first
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				--NULL hostname means zone address
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				ELSE
+					-- Do the forward record first
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 
-				-- Check for errors
-				IF ReturnCode != '0' THEN
-					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-				END IF;	
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
 
-				-- Get the proper zone for the reverse A record
-				SELECT "zone" INTO RevZone
-				FROM "ip"."subnets" 
-				WHERE NEW."address" << "subnet";
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE NEW."address" << "subnet";
 
-				-- Get the subnet
-				SELECT "subnet" INTO RevSubnet
-				FROM "ip"."subnets"
-				WHERE NEW."address" << "subnet";
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE NEW."address" << "subnet";
 
-				-- If it is in this domain, add the reverse entry
-				IF RevZone = NEW."zone" THEN
-					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = NEW."zone" THEN
+						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					END IF;
 				END IF;
 
 			ELSEIF NEW."type" ~* '^NS$' THEN
@@ -265,54 +271,63 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
 			
 			IF NEW."type" ~* '^A|AAAA$' THEN
-				-- Do the forward record first
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-				ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-
-				-- Check for errors
-				IF ReturnCode != '0' THEN
-					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-				END IF;	
-
-				-- Get the proper zone for the reverse A record
-				SELECT "zone" INTO RevZone
-				FROM "ip"."subnets" 
-				WHERE OLD."address" << "subnet";
+				--NULL hostname means zone address
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 				
-				-- Get the subnet
-				SELECT "subnet" INTO RevSubnet
-				FROM "ip"."subnets"
-				WHERE OLD."address" << "subnet";
+					DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				ELSE
+					-- Do the forward record first
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := Returncode||api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 
-				-- If it is in this domain, add the reverse entry
-				IF RevZone = OLD."zone" THEN
-					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-					ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
-				END IF;
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
 
-				-- Do the forward record first
-				DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
-				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE OLD."address" << "subnet";
+					
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE OLD."address" << "subnet";
 
-				-- Check for errors
-				IF ReturnCode != '0' THEN
-					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-				END IF;	
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = OLD."zone" THEN
+						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+						ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					END IF;
 
-				-- Get the proper zone for the reverse A record
-				SELECT "zone" INTO RevZone
-				FROM "ip"."subnets" 
-				WHERE NEW."address" << "subnet";
+					-- Do the forward record first
+					DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||host(NEW."address");
+					ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 
-				-- Get the subnet
-				SELECT "subnet" INTO RevSubnet
-				FROM "ip"."subnets"
-				WHERE NEW."address" << "subnet";
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
 
-				-- If it is in this domain, add the reverse entry
-				IF RevZone = NEW."zone" THEN
-					DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
-					ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE NEW."address" << "subnet";
+
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE NEW."address" << "subnet";
+
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = NEW."zone" THEN
+						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
+						ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+					END IF;
 				END IF;
 
 			ELSEIF NEW."type" ~* '^NS$' THEN
@@ -433,29 +448,35 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
 
 			IF OLD."type" ~* '^A|AAAA$' THEN
-				-- Do the forward record first
-				DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
-				ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				--NULL hostname means zone address
+				IF NEW."hostname" IS NULL THEN
+					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+				ELSE
+					-- Do the forward record first
+					DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
+					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 
-				-- Check for errors
-				IF ReturnCode != '0' THEN
-					RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
-				END IF;	
+					-- Check for errors
+					IF ReturnCode != '0' THEN
+						RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+					END IF;	
 
-				-- Get the proper zone for the reverse A record
-				SELECT "zone" INTO RevZone
-				FROM "ip"."subnets" 
-				WHERE OLD."address" << "subnet";
-				
-				-- Get the subnet
-				SELECT "subnet" INTO RevSubnet
-				FROM "ip"."subnets"
-				WHERE OLD."address" << "subnet";
+					-- Get the proper zone for the reverse A record
+					SELECT "zone" INTO RevZone
+					FROM "ip"."subnets" 
+					WHERE OLD."address" << "subnet";
+					
+					-- Get the subnet
+					SELECT "subnet" INTO RevSubnet
+					FROM "ip"."subnets"
+					WHERE OLD."address" << "subnet";
 
-				-- If it is in this domain, add the reverse entry
-				IF RevZone = OLD."zone" THEN
-					DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
-					ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					-- If it is in this domain, add the reverse entry
+					IF RevZone = OLD."zone" THEN
+						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
+						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+					END IF;
 				END IF;
 
 			ELSEIF OLD."type" ~* '^NS$' THEN
@@ -738,3 +759,38 @@ CREATE OR REPLACE FUNCTION "dns"."zone_txt_update"() RETURNS TRIGGER AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."zone_txt_update"() IS 'Check if the new hostname already exists in other tables and update the zone TXT record';
 
+CREATE OR REPLACE FUNCTION "dns"."zone_a_insert"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF family(NEW."address") = 4 THEN
+			NEW."type" = 'A';
+		ELSE
+			NEW."type" = 'AAAA';
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."zone_a_insert"() IS 'Auto-fill the type based on the address family.';
+
+CREATE OR REPLACE FUNCTION "dns"."zone_a_update"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF family(NEW."address") = 4 THEN
+			NEW."type" = 'A';
+		ELSE
+			NEW."type" = 'AAAA';
+		END IF;
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."zone_a_update"() IS 'Auto-fill the type based on the address family.';
+
+CREATE OR REPLACE FUNCTION "dns"."zone_a_delete"() RETURNS TRIGGER AS $$
+	BEGIN
+		IF family(OLD."address") = 4 THEN
+			OLD."type" = 'A';
+		ELSE
+			OLD."type" = 'AAAA';
+		END IF;
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."zone_a_delete"() IS 'Auto-fill the type based on the address family.';
