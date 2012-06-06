@@ -114,7 +114,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_forward_zones"() RETURNS SETOF "dhcp
 		RETURN QUERY (SELECT DISTINCT "ip"."subnets"."zone","dns"."zones"."keyname","address" FROM "ip"."subnets"
 		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
 		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone" 
-		WHERE "isprimary" = TRUE);
+		WHERE "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = "ip"."subnets"."zone"));
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_forward_zones"() IS 'Get all forward zone info for dhcpd';
@@ -125,7 +125,8 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_reverse_zones"() RETURNS SETOF "dhcp
 		RETURN QUERY (SELECT DISTINCT api.get_reverse_domain("subnet") AS "zone","dns"."zones"."keyname","address" FROM "ip"."subnets"
 		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
 		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone" 
-		WHERE "isprimary" = TRUE AND "dhcp_enable" = TRUE AND family("subnet") = 4);
+		WHERE "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = "ip"."subnets"."zone") 
+		AND "dhcp_enable" = TRUE AND family("subnet") = 4);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_reverse_zones"() IS 'Get all reverse zone info for dhcpd';
