@@ -417,19 +417,51 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOI
 			WHERE "dns"."ns"."zone" = input_zone AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = input_zone);
 			
 		FOR AuditData IN (
-			SELECT "audit_data"."address","host" AS "bind-forward", 
-			api.query_address_reverse("audit_data"."address") AS "bind-reverse", 
-			"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-forward", 
-			"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-reverse" 
+			SELECT 
+				"audit_data"."address",
+				"audit_data"."type",
+				"host" AS "bind-forward", 
+				api.query_address_reverse("audit_data"."address") AS "bind-reverse", 
+				"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-forward", 
+				"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-reverse" 
 			FROM api.dns_zone_audit(input_zone) AS "audit_data" 
 			LEFT JOIN "dns"."a" ON "dns"."a"."address" = "audit_data"."address" 
 			WHERE "audit_data"."type" ~* '^A|AAAA$'
 			ORDER BY "audit_data"."address"
 		) LOOP
+			-- Delete the forward
 			DnsRecord := AuditData."bind-forward";
 			ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			IF ReturnCode != '0' THEN
-				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+				RAISE EXCEPTION 'DNS Error: % when deleting forward %',ReturnCode,DnsRecord;
+			END IF;
+			
+			-- Delete the reverse if we control the reverse zone
+			--IF (SELECT api.get_address_range(AuditData."address")) IS NOT NULL THEN
+			--	DnsRecord := api.get_reverse_domain(AuditData."address")||'.';
+			--	ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			--	IF ReturnCode != '0' THEN
+			--		RAISE EXCEPTION 'DNS Error: % when deleting reverse %',ReturnCode,DnsRecord;
+			--	END IF;
+			--END IF;
+			
+			-- If it's static, create the correct one
+			IF (SELECT "config" FROM "systems"."interface_addresses" WHERE "address" = AuditData."address") ~* 'static' AND AuditData."impulse-forward" IS NOT NULL AND AuditData."impulse-reverse" IS NOT NULL THEN
+				-- Forward
+				DnsRecord := AuditData."impulse-forward"||' '||AuditData."ttl"||' '||AuditData."type"||' '||host(AuditData."address");
+				ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				IF ReturnCode != '0' THEN
+					RAISE EXCEPTION 'DNS Error: % when creating forward %',ReturnCode,DnsRecord;
+				END IF;
+				
+				-- Reverse if we control a zone
+				--IF (SELECT api.get_address_range(AuditData."address")) IS NOT NULL THEN
+				--	DnsRecord := api.get_reverse_domain(host(AuditData."address"))||' '||AuditData."ttl"||' PTR '||AuditData."impulse-reverse";
+				--	ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+				--	IF ReturnCode != '0' THEN
+				--		RAISE EXCEPTION 'DNS Error: % when creating reverse %',ReturnCode,DnsRecord;
+				--	END IF;
+				--END IF;
 			END IF;
 		END LOOP;
 		
