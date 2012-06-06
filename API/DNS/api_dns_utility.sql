@@ -391,3 +391,49 @@ CREATE OR REPLACE FUNCTION "api"."query_zone_serial"(text) RETURNS TEXT AS $$
 	return $answer[0]->serial;
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."query_zone_serial"(text) IS 'Query this hosts resolver for the serial number of the zone.';
+
+CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOID AS $$
+	DECLARE
+		AuditData RECORD;
+		DnsKeyName TEXT;
+		DnsKey TEXT;
+		DnsServer INET;
+		DnsRecord TEXT;
+		ReturnCode TEXT;
+		
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.dns_clean_zone_a');
+		
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Non-admin users are not allowed to clean zones');
+			RAISE EXCEPTION 'Non-admin users are not allowed to clean zones';
+		END IF;
+		
+		SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = input_zone AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = input_zone);
+			
+		FOR AuditData IN (
+			SELECT "audit_data"."address","host" AS "bind-forward", 
+			api.query_address_reverse("audit_data"."address") AS "bind-reverse", 
+			"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-forward", 
+			"dns"."a"."hostname"||'.'||"dns"."a"."zone" AS "impulse-reverse" 
+			FROM api.dns_zone_audit(input_zone) AS "audit_data" 
+			LEFT JOIN "dns"."a" ON "dns"."a"."address" = "audit_data"."address" 
+			WHERE "audit_data"."type" ~* '^A|AAAA$'
+			ORDER BY "audit_data"."address"
+		) LOOP
+			DnsRecord := AuditData."bind-forward";
+			ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+			IF ReturnCode != '0' THEN
+				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+			END IF;
+		END LOOP;
+		
+		PERFORM api.create_log_entry('API', 'DEBUG', 'End api.dns_clean_zone_a');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."dns_clean_zone_a"(text) IS 'Erase all non-IMPULSE controlled A records from a zone.';
