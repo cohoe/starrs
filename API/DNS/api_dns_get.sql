@@ -140,3 +140,11 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_zone_txt"(input_zone text) RETURNS SET
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone_txt"(text) IS 'Get all DNS TXT records specifically for a zone';
+
+CREATE OR REPLACE FUNCTION "api"."get_dns_zone_a"(input_zone text) RETURNS SETOF "dns"."zone_a" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "hostname","zone","type","address","ttl","date_created","date_modified","last_modifier"
+		FROM "dns"."zone_a" WHERE "zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dns_zone_a"(text) IS 'Get all DNS address records for a zone';
