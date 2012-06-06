@@ -331,6 +331,8 @@ CREATE OR REPLACE FUNCTION "api"."dns_zone_audit"(input_zone text) RETURNS SETOF
 			
 			-- DynamicDNS records have TXT data placed by the DHCP server. Don't count those.
             DELETE FROM "audit" WHERE ("host") IN (SELECT "hostname"||'.'||"zone" AS "host" FROM "api"."get_dhcpd_dynamic_hosts"() WHERE "hostname" IS NOT NULL) AND "type" = 'TXT';
+		  -- So do DHCP'd records;
+		  DELETE FROM "audit" WHERE ("host") IN (SELECT "hostname"||'.'||"zone" AS "host" FROM "dns"."a" JOIN "systems"."interface_addresses" ON "systems"."interface_addresses"."address" = "dns"."a"."address" WHERE "config"='dhcp') AND "type"='TXT';
             
 			-- What's left is data that IMPULSE has no idea of
             RETURN QUERY (SELECT * FROM "audit");
