@@ -290,6 +290,177 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_delete"() RETURNS TRIGGER AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."ns_query_delete"() IS 'Delete an old NS record from the server';
 
+CREATE OR REPLACE FUNCTION "dns"."txt_query_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF NEW."type" !~* '^TXT$' THEN
+			RAISE EXCEPTION 'Trying to create a non-TXT record in a TXT table!';
+		END IF;
+		
+		-- Create and fire off the update
+		-- For zone TXT records
+		IF NEW."hostname" IS NULL THEN
+			DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+		ELSE
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+		END IF;
+		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing TXT-INSERT %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."txt_query_insert"() IS 'Update the nameserver with a new TXT record';
+
+CREATE OR REPLACE FUNCTION "dns"."txt_query_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF NEW."type" !~* '^TXT$' THEN
+			RAISE EXCEPTION 'Trying to update a non-TXT record in a TXT table!';
+		END IF;
+		
+		-- Delete the record first
+		IF OLD."hostname" IS NULL THEN
+			DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+		ELSE
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+		END IF;
+		ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing TXT-UPDATE-DELETE %',ReturnCode,DnsRecord;
+		END IF;
+	
+		-- Create and fire off the update
+		IF NEW."hostname" IS NULL THEN
+			DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+		ELSE
+			DnsRecord := NEW."hostname"||'.'||NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' "'||NEW."text"||'"';
+		END IF;
+		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing TXT-UPDATE-INSERT %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."txt_query_update"() IS 'Update the nameserver with a new TXT record';
+
+CREATE OR REPLACE FUNCTION "dns"."txt_query_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF OLD."type" !~* '^TXT$' THEN
+			RAISE EXCEPTION 'Trying to delete a non-TXT record in a TXT table!';
+		END IF;
+		
+		-- Create and fire off the update
+		-- For zone TXT records
+		IF OLD."hostname" IS NULL THEN
+			DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+		ELSE
+			DnsRecord := OLD."hostname"||'.'||OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
+		END IF;
+		ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing TXT-DELETE %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."txt_query_delete"() IS 'Delete an old TXT record from the server';
+
 CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		ReturnCode TEXT;
