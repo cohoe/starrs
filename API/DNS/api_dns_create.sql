@@ -116,6 +116,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
+		
+		-- User can only specify TTL if address is static
+		IF (SELECT "config" FROM "systems"."interface_addresses" WHERE "address" = input_address) !~* 'static' AND input_ttl != (SELECT "value"::integer/2 AS "ttl" FROM "dhcp"."subnet_options" WHERE "option"='default-lease-time' AND "subnet" >> input_address) THEN
+			RAISE EXCEPTION 'You can only specify a TTL other than the default if your address is configured statically';
+		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
