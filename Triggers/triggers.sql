@@ -199,27 +199,27 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
 
 CREATE TRIGGER "dns_txt_insert_queue"
 AFTER INSERT ON "dns"."txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_insert"();
 
 CREATE TRIGGER "dns_txt_update_queue"
 AFTER UPDATE ON "dns"."txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_update"();
 
 CREATE TRIGGER "dns_txt_delete_queue"
 AFTER DELETE ON "dns"."txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_delete"();
 
 CREATE TRIGGER "dns_zone_txt_insert_queue"
 AFTER INSERT ON "dns"."zone_txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_insert"();
 
 CREATE TRIGGER "dns_zone_txt_update_queue"
 AFTER UPDATE ON "dns"."zone_txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_update"();
 
 CREATE TRIGGER "dns_zone_txt_delete_queue"
 AFTER DELETE ON "dns"."zone_txt"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_delete"();
 
 CREATE TRIGGER "firewall_defaults_insert"
 AFTER INSERT ON "firewall"."defaults"
