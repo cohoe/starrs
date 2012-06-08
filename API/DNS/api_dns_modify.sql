@@ -134,6 +134,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
+		
+		IF input_field ~* 'ttl' THEN
+			-- User can only specify TTL if address is static
+			IF (SELECT "config" FROM "systems"."interface_addresses" WHERE "address" = input_old_address) !~* 'static' AND input_new_value::integer != (SELECT "value"::integer/2 AS "ttl" FROM "dhcp"."subnet_options" WHERE "option"='default-lease-time' AND "subnet" >> input_old_address) THEN
+				RAISE EXCEPTION 'You can only specify a TTL other than the default if your address is configured statically';
+			END IF;
+		END IF;
 
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
