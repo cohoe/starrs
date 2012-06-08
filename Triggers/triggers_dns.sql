@@ -137,6 +137,159 @@ CREATE OR REPLACE FUNCTION "dns"."dns_autopopulate_address"(input_hostname text,
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "dns"."dns_autopopulate_address"(text, text) IS 'Fill in the address portion of the foreign key relationship';
 
+CREATE OR REPLACE FUNCTION "dns"."ns_query_insert"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF NEW."type" !~* '^NS$' THEN
+			RAISE EXCEPTION 'Trying to create a non-NS record in an NS table!';
+		END IF;
+		
+		-- Create and fire off the update
+		DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
+		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."ns_query_insert"() IS 'Update the nameserver with a new NS record';
+
+CREATE OR REPLACE FUNCTION "dns"."ns_query_update"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF NEW."type" !~* '^NS$' THEN
+			RAISE EXCEPTION 'Trying to create a non-NS record in an NS table!';
+		END IF;
+		
+		-- Delete the record first
+		DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
+		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing NS-UPDATE-DELETE %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Create and fire off the update
+		DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
+		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing NS-UPDATE-INSERT %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN NEW;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."ns_query_update"() IS 'Update the nameserver with a new NS record';
+
+CREATE OR REPLACE FUNCTION "dns"."ns_query_delete"() RETURNS TRIGGER AS $$
+	DECLARE
+		ReturnCode TEXT; -- Return code from the nsupdate function
+		DnsKeyName TEXT; -- The DNS keyname to sign with
+		DnsKey TEXT; -- The DNS key to sign with
+		DnsServer INET; -- The nameserver to send the update to
+		DnsRecord TEXT; -- The formatted string that is the record
+	BEGIN
+		-- If this is a forward zone:
+		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns" 
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+		-- If this is a reverse zone:
+		ELSE
+			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			INTO DnsKeyName, DnsKey, DnsServer
+			FROM "dns"."ns"
+			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
+			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
+			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
+			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
+		END IF;
+		
+		-- Just make sure no-one is forcing a bogus type
+		IF OLD."type" !~* '^NS$' THEN
+			RAISE EXCEPTION 'Trying to create a non-NS record in an NS table!';
+		END IF;
+		
+		-- Create and fire off the update
+		DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
+		ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
+		
+		-- Check for result
+		IF ReturnCode != '0' THEN
+			RAISE EXCEPTION 'DNS Error: % when performing NS-DELETE %',ReturnCode,DnsRecord;
+		END IF;
+		
+		-- Done!
+		RETURN OLD;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "dns"."ns_query_delete"() IS 'Delete an old NS record from the server';
+
 CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		ReturnCode TEXT;
