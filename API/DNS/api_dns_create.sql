@@ -475,8 +475,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_zone_txt');
-		RETURN QUERY (SELECT "text","date_modified","date_created","last_modifier","hostname","type","ttl","zone","address"
+		IF input_hostname IS NULL THEN
+			RETURN QUERY (SELECT "text","date_modified","date_created","last_modifier","hostname","type","ttl","zone","address"
+			FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_zone AND "text" = input_text);
+		ELSE
+			RETURN QUERY (SELECT "text","date_modified","date_created","last_modifier","hostname","type","ttl","zone","address"
 			FROM "dns"."zone_txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_zone_txt"(text, text, text, integer) IS 'create a new dns zone_txt record for a host';
