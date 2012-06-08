@@ -175,15 +175,15 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
 
 CREATE TRIGGER "dns_ns_insert_queue"
 AFTER INSERT ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_insert"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_query_insert"();
 
 CREATE TRIGGER "dns_ns_update_queue"
 AFTER UPDATE ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_update"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_query_update"();
 
 CREATE TRIGGER "dns_ns_delete_queue"
 AFTER DELETE ON "dns"."ns"
-FOR EACH ROW EXECUTE PROCEDURE "dns"."queue_delete"();
+FOR EACH ROW EXECUTE PROCEDURE "dns"."ns_query_delete"();
 
 CREATE TRIGGER "dns_mx_insert_queue"
 AFTER INSERT ON "dns"."mx"
