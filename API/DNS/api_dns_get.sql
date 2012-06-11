@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION "api"."get_dns_mx"(input_address inet) RETURNS SETOF "dns"."mx_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "hostname","zone","address","type","preference","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."mx" WHERE "address" = input_address);
+			FROM "dns"."mx" WHERE "address" = input_address ORDER BY "preference");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_mx"(inet) IS 'Get all data pertanent to DNS MX records for an address';
@@ -11,7 +11,7 @@ COMMENT ON FUNCTION "api"."get_dns_mx"(inet) IS 'Get all data pertanent to DNS M
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone_ns"(input_zone text) RETURNS SETOF "dns"."ns" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
-			FROM "dns"."ns" WHERE "zone" = input_zone);
+			FROM "dns"."ns" WHERE "zone" = input_zone ORDER BY "nameserver");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone_ns"(text) IS 'Get all DNS NS records for a zone';
@@ -20,7 +20,7 @@ COMMENT ON FUNCTION "api"."get_dns_zone_ns"(text) IS 'Get all DNS NS records for
 CREATE OR REPLACE FUNCTION "api"."get_dns_txt"(input_address inet) RETURNS SETOF "dns"."txt_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "hostname","zone","address","type","text","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."txt" WHERE "address" = input_address ORDER BY "hostname" ASC);
+			FROM "dns"."txt" WHERE "address" = input_address ORDER BY "text");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_txt"(inet) IS 'Get all DNS TXT records for an address';
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet, input_zone text
 			FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
 		ELSE
 			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone);
+			FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone ORDER BY "zone");
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -84,7 +84,7 @@ COMMENT ON FUNCTION "api"."get_dns_zones"(text) IS 'Get the available zones to a
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone"(input_zone text) RETURNS SETOF "dns"."zone_data" AS $$
 	BEGIN
 		RETURN QUERY(SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
-		FROM "dns"."zones" WHERE "zone" = input_zone);
+		FROM "dns"."zones" WHERE "zone" = input_zone ORDER BY "zone");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone"(text) IS 'Get detailed dns zone information';
@@ -97,7 +97,8 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_keys"(input_username text) RETURNS SET
 				RAISE EXCEPTION 'Permission to get DNS keys denied: You are not admin';
 			END IF;
 			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."keys");
+			FROM "dns"."keys"
+			ORDER BY "keyname");
 		ELSE
 			IF api.get_current_user_level() !~* 'ADMIN' THEN
 				IF input_username != api.get_current_user() THEN
@@ -144,7 +145,7 @@ COMMENT ON FUNCTION "api"."get_dns_zone_txt"(text) IS 'Get all DNS TXT records s
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone_a"(input_zone text) RETURNS SETOF "dns"."zone_a" AS $$
 	BEGIN
 		RETURN QUERY (SELECT "hostname","zone","type","address","ttl","date_created","date_modified","last_modifier"
-		FROM "dns"."zone_a" WHERE "zone" = input_zone);
+		FROM "dns"."zone_a" WHERE "zone" = input_zone ORDER BY "address");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone_a"(text) IS 'Get all DNS address records for a zone';
