@@ -3,4 +3,4 @@
 DBHOST='impulse.example.com'
 DBUSER='impulse_client'
 
-/usr/bin/psql -h $DBHOST -p 5432 -U $DBUSER -c "SELECT api.initialize('root'); SELECT api.generate_dhcpd_config()" impulse  --no-align --no-readline --quiet --tuples-only 2>/dev/null >/dev/null
+/usr/bin/psql -h $DBHOST -p 5432 -U $DBUSER -c "SELECT api.initialize('root'); SELECT api.generate_dhcpd_config()" impulse  --no-align --no-readline --quiet --tuples-only > /dev/null
