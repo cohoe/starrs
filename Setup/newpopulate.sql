@@ -3,12 +3,6 @@ select api.initialize('root');
 DELETE FROM "management"."configuration" WHERE "option" IS NOT NULL;
 DELETE FROM "dhcp"."class_options" WHERE "option" IS NOT NULL;
 DELETE FROM "dns"."a" WHERE "address" IS NOT NULL;
-DELETE FROM "firewall"."metahost_rules" WHERE "name" IS NOT NULL;
-DELETE FROM "firewall"."metahost_members" WHERE "name" IS NOT NULL;
-DELETE FROM "firewall"."metahost_program_rules" WHERE "name" IS NOT NULL;
-DELETE FROM "firewall"."rules" WHERE "address" IS NOT NULL;
-DELETE FROM "firewall"."program_rules" WHERE "address" IS NOT NULL;
-DELETE FROM "firewall"."metahosts" WHERE "name" IS NOT NULL;	
 DELETE FROM "systems"."interface_addresses" WHERE "address" IS NOT NULL;
 DELETE FROM "ip"."addresses" WHERE "address" IS NOT NULL;
 DELETE FROM "dhcp"."range_options" WHERE "option" IS NOT NULL;
@@ -195,10 +189,6 @@ SELECT api.initialize('root');
 BEGIN;
 SELECT api.create_system('Firewall','root','Firewall','Cisco IOS','Firewall for all out');
 SELECT api.create_interface('Firewall','00:0c:29:69:f1:43','System','Internal access interface');
-SELECT api.create_interface_address('00:0c:29:69:f1:43','10.21.49.253','static',NULL,TRUE,'Main firewall');
-SELECT api.create_interface_address('00:0c:29:69:f1:43','2001:db0::020c:29ff:fe69:f143','autoconf',NULL,TRUE,'Main firewall');
-SELECT api.create_dns_address('10.21.49.253','firewall','impulse.net',NULL,NULL);
-SELECT api.create_dns_address('2001:db0::020c:29ff:fe69:f143','firewall','impulse.net',NULL,NULL);
 COMMIT;
 
 BEGIN;
@@ -240,40 +230,6 @@ SELECT api.create_system('Encom',NULL,'Server','CentOS','Webserver');
 SELECT api.create_interface('Encom','00:0c:29:69:e7:c0','eth0',NULL);
 SELECT api.create_interface_address('00:0c:29:69:e7:c0','10.21.50.4','dhcp',NULL,TRUE,NULL);
 SELECT api.create_dns_address('10.21.50.4','encom','impulse.net',NULL,NULL);
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_metahost('IMP',NULL,'All my machines');
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_metahost_member('10.21.50.1','IMP');
-SELECT api.create_firewall_metahost_member('10.21.50.2','IMP');
-SELECT api.create_firewall_metahost_member('10.21.50.3','IMP');
-SELECT api.create_firewall_metahost_member('10.21.50.4','IMP');
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_metahost_rule('IMP',23,'TCP',FALSE,'Allow telnet');
-SELECT api.create_firewall_metahost_rule('IMP',31337,'TCP',FALSE,'Allow elite');
-SELECT api.create_firewall_metahost_rule('IMP',3389,'TCP',FALSE,'Block Windows RDP');
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_rule('10.21.50.1',585,'UDP',TRUE,NULL,'Block something');
-SELECT api.create_firewall_rule('10.21.50.1',475,'UDP',TRUE,NULL,'Block internal apps');
-SELECT api.create_firewall_rule('10.21.50.4',8080,'TCP',FALSE,NULL,'Allow special web');
-SELECT api.create_firewall_rule('10.21.50.4',53,'TCP',FALSE,NULL,'Allow DNS');
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_rule_program('10.21.50.1','HTTP',FALSE,NULL);
-SELECT api.create_firewall_rule_program('10.21.50.1','HTTPS',FALSE,NULL);
-COMMIT;
-
-BEGIN;
-SELECT api.create_firewall_metahost_rule_program('IMP','SSH',FALSE);
-SELECT api.create_firewall_metahost_rule_program('IMP','LDAP',FALSE);
 COMMIT;
 
 SELECT api.deinitialize();

@@ -20,8 +20,7 @@
     is created, a table is populated with all possible IP addresses within 
     that subnet. All possible in this case means all except a few ones that 
     might cause issues if devices are not programmed well. Better to just 
-    avoid the complications alltogether. After autopopulation, all addresess
-    are given a default firewall action from the site configuration. 
+    avoid the complications alltogether.
     
     IPv6 subnets can take a long time, and as such autoconf addresses are 
     not usually a part of the table. These are created when the 

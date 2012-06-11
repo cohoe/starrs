@@ -80,10 +80,6 @@ COMMENT ON TYPE "dns"."a_data" IS 'All address (A/AAAA) data';
 CREATE TYPE "dns"."zone_audit_data" AS (host TEXT, ttl INTEGER, type TEXT, address INET, port INTEGER, weight INTEGER, priority INTEGER, preference INTEGER, target TEXT, text TEXT, contact TEXT, serial TEXT, refresh INTEGER, retry INTEGER, expire INTEGER, minimum INTEGER);
 COMMENT ON TYPE "dns"."zone_audit_data" IS 'All DNS zone data for auditing purposes';
 
-/* Firewall - rule_data */
-CREATE TYPE "firewall"."rule_data" AS (address inet, port integer, transport text, deny boolean, owner text, comment text, source text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."rule_data" IS 'Firewall rule data';
-
 /* Systems - interface_address_data */
 CREATE TYPE "systems"."interface_address_data" AS (mac macaddr, address inet, family integer, config text, class text, isprimary boolean, comment text, renew_date date, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "systems"."interface_address_data" IS 'Interface address data';
@@ -110,36 +106,8 @@ CREATE TYPE "dhcp"."class_data" AS (class text, comment text, date_created times
 
 CREATE TYPE "ip"."range_data" AS (name text, first_ip inet, last_ip inet, subnet cidr, use varchar(4), class text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 
-CREATE TYPE "firewall"."program_data" AS (name text, port integer, transport text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."program_data" IS 'Firewall Program Data';
-
-CREATE TYPE "firewall"."metahost_data" AS (name text, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."metahost_data" IS 'Firewall metahost data';
-
-CREATE TYPE "firewall"."metahost_member_data" AS (name text, address inet, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."metahost_member_data" IS 'Firewall metahost data';
-
-/* FIREWALL RULES */
-CREATE TYPE "firewall"."standalone_rule_data" AS (address inet, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."standalone_rule_data" IS 'Data for standalone firewall rules';
-
-CREATE TYPE "firewall"."standalone_program_data" AS (address inet, name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."standalone_program_data" IS 'Data for standalone firewall program rules';
-
-CREATE TYPE "firewall"."metahost_standalone_data" AS (name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."metahost_standalone_data"  IS 'Standalone metahost rules data';
-
-CREATE TYPE "firewall"."metahost_program_data" AS (metahost_name text, program_name text, port integer, transport text, deny boolean, comment text, owner text, date_created timestamp, date_modified timestamp, last_modifier text);
-COMMENT ON TYPE "firewall"."metahost_program_data"  IS 'Program based metahost rules data';
-
 CREATE TYPE "ip"."subnet_data" AS (name text, subnet cidr, zone text, owner text, autogen boolean, dhcp_enable boolean, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 COMMENT ON TYPE "ip"."subnet_data" IS 'IP subnet data';
-
-CREATE TYPE "firewall"."address_data" AS (subnet cidr, address inet, isprimary boolean, date_created timestamp, date_modified timestamp, last_modifier text);
-
-CREATE TYPE "firewall"."default_data" AS (address inet, deny boolean);
-
-CREATE TYPE "firewall"."rule_export_data" AS (action text, address inet, port integer, transport text, deny boolean);
 
 CREATE TYPE "dns"."zone_data" AS (zone text, keyname text, forward boolean, shared boolean, owner text, comment text, date_created timestamp, date_modified timestamp, last_modifier text);
 

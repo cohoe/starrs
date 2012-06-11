@@ -1,23 +1,3 @@
-CREATE TABLE "firewall"."metahosts"(
-"name" TEXT NOT NULL,
-"comment" TEXT,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"owner" TEXT NOT NULL,
-CONSTRAINT "metahosts_pkey" PRIMARY KEY ("name")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."transports"(
-"transport" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT DEFAULT api.get_current_user(),
-CONSTRAINT "transports_pkey" PRIMARY KEY ("transport")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "dhcp"."class_options"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
@@ -26,42 +6,6 @@ CREATE TABLE "dhcp"."class_options"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "class" TEXT NOT NULL,
 CONSTRAINT "class_options_pkey" PRIMARY KEY ("option","value","class")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."programs"(
-"port" INTEGER NOT NULL,
-"name" TEXT NOT NULL,
-"transport" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "programs_pkey" PRIMARY KEY ("port")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."defaults"(
-"deny" BOOLEAN NOT NULL DEFAULT bool(api.get_site_configuration('FW_DEFAULT_ACTION')),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"address" INET NOT NULL,
-CONSTRAINT "defaults_pkey" PRIMARY KEY ("address")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."rules"(
-"deny" BOOLEAN NOT NULL,
-"port" INTEGER NOT NULL,
-"comment" TEXT,
-"transport" TEXT NOT NULL,
-"address" INET NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"owner" TEXT NOT NULL,
-"source" TEXT NOT NULL,
-CONSTRAINT "rules_pkey" PRIMARY KEY ("port","transport","address")
 )
 WITHOUT OIDS;
 
@@ -198,16 +142,6 @@ CREATE TABLE "dhcp"."subnet_options"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "subnet" CIDR NOT NULL,
 CONSTRAINT "subnet_options_pkey" PRIMARY KEY ("option","value","subnet")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."metahost_members"(
-"address" INET NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"name" TEXT,
-CONSTRAINT "metahost_members_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
 
@@ -395,18 +329,6 @@ CONSTRAINT "dns_a_hostname" CHECK ("hostname" !~ '_')
 )
 WITHOUT OIDS;
 
-CREATE TABLE "firewall"."addresses"(
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"subnet" CIDR NOT NULL,
-"software_name" TEXT NOT NULL,
-"address" INET,
-"isprimary" BOOLEAN NOT NULL DEFAULT TRUE,
-CONSTRAINT "systems_pkey" PRIMARY KEY ("subnet","isprimary")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "management"."output"(
 "output_id" INTEGER NOT NULL DEFAULT NEXTVAL('"management"."output_id_seq"'),
 "value" TEXT,
@@ -435,19 +357,6 @@ CREATE TABLE "management"."configuration"(
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 CONSTRAINT "configuration_pkey" PRIMARY KEY ("option")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."metahost_rules"(
-"deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"port" INTEGER NOT NULL,
-"comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"transport" TEXT NOT NULL,
-"name" TEXT NOT NULL,
-CONSTRAINT "metahost_rules_pkey" PRIMARY KEY ("port","transport","name")
 )
 WITHOUT OIDS;
 
@@ -502,31 +411,6 @@ CREATE TABLE "documentation"."arguments"(
 "comment" TEXT,
 "position" INTEGER,
 CONSTRAINT "arguments_pkey" PRIMARY KEY ("specific_name","argument")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."program_rules"(
-"deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"port" INTEGER NOT NULL,
-"address" INET NOT NULL,
-"owner" TEXT NOT NULL DEFAULT api.get_current_user(),
-"comment" TEXT,
-CONSTRAINT "program_rules_pkey" PRIMARY KEY ("port","address")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "firewall"."metahost_program_rules"(
-"deny" BOOLEAN NOT NULL DEFAULT TRUE,
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-"name" TEXT NOT NULL,
-"port" INTEGER NOT NULL,
-"comment" TEXT,
-CONSTRAINT "metahost_program_rules_pkey" PRIMARY KEY ("name","port")
 )
 WITHOUT OIDS;
 
@@ -608,17 +492,7 @@ WITHOUT OIDS;
 
 COMMENT ON TABLE "dns"."zone_a" IS 'Zone address records';
 
-COMMENT ON TABLE "firewall"."metahosts" IS 'Groups of addresses with similar firewall rules';
-
-COMMENT ON TABLE "firewall"."transports" IS 'TCP, UDP, or Both';
-
 COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';
-
-COMMENT ON TABLE "firewall"."programs" IS 'Common programs to easily block.';
-
-COMMENT ON TABLE "firewall"."defaults" IS 'Address default action';
-
-COMMENT ON TABLE "firewall"."rules" IS 'The actual rules that get put into the firewall.';
 
 COMMENT ON TABLE "ip"."range_uses" IS 'Ranges are intended for a specific purpose.';
 
@@ -641,8 +515,6 @@ COMMENT ON TABLE "dhcp"."classes" IS 'DHCP classes allow configuration of hosts 
 COMMENT ON TABLE "systems"."systems" IS 'Systems are devices that connect to the network.';
 
 COMMENT ON TABLE "dhcp"."subnet_options" IS 'Options to apply to an entire subnet';
-
-COMMENT ON TABLE "firewall"."metahost_members" IS 'Map addresses to metahosts';
 
 COMMENT ON TABLE "dhcp"."config_types" IS 'List of ways to configure your address';
 
@@ -669,8 +541,6 @@ COMMENT ON TABLE "dns"."txt" IS 'TXT records for hosts';
 COMMENT ON TABLE "dns"."zone_txt" IS 'TXT records for zones';
 
 COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction that occurs in this application.';
-
-COMMENT ON TABLE "firewall"."addresses" IS 'Firewall device IP addresses';
 
 COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
 

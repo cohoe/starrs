@@ -37,7 +37,6 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 		IF NEW."autogen" IS TRUE THEN
 			FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
 				INSERT INTO "ip"."addresses" ("address") VALUES (SubnetAddresses.get_subnet_addresses);
-				INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT);
 			END LOOP;
 		END IF;
 		
@@ -91,7 +90,6 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_update"() RETURNS TRIGGER AS $$
 				DELETE FROM "ip"."addresses" WHERE "ip"."addresses"."address" << OLD."subnet";
 				FOR SubnetAddresses IN SELECT api.get_subnet_addresses(NEW."subnet") LOOP
 					INSERT INTO "ip"."addresses" ("address") VALUES (SubnetAddresses.get_subnet_addresses);
-					INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (SubnetAddresses.get_subnet_addresses, DEFAULT);
 				END LOOP;
 			END IF;
 		END IF;
@@ -140,14 +138,6 @@ CREATE OR REPLACE FUNCTION "ip"."addresses_insert"() RETURNS TRIGGER AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
-		-- Check for existing default action
-		SELECT COUNT(*) INTO RowCount
-		FROM "firewall"."defaults"
-		WHERE "firewall"."defaults"."address" = NEW."address";
-		IF (RowCount >= 1) THEN
-			RAISE EXCEPTION 'Address % is already has a firewall default action?',NEW."address";
-		END IF;
-		
 		-- Done
 		RETURN NEW;
 	END;

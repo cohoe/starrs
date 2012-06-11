@@ -52,28 +52,6 @@ CREATE TRIGGER "dns_zone_txt_update"
 BEFORE UPDATE ON "dns"."zone_txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."zone_txt_update"();
 
-/* firewall.metahost_members */
-CREATE TRIGGER "firewall_metahost_members_insert"
-BEFORE INSERT ON "firewall"."metahost_members"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_members_insert"();
-
-CREATE TRIGGER "firewall_metahost_members_delete"
-BEFORE DELETE ON "firewall"."metahost_members"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_members_delete"();
-
-/* firewall.metahost_rules */
-CREATE TRIGGER "firewall_metahost_rules_insert"
-BEFORE INSERT ON "firewall"."metahost_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_insert"();
-
-CREATE TRIGGER "firewall_metahost_rules_update"
-BEFORE UPDATE ON "firewall"."metahost_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_update"();
-
-CREATE TRIGGER "firewall_metahost_rules_delete"
-BEFORE DELETE ON "firewall"."metahost_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rules_delete"();
-
 /* ip.addresses */
 CREATE TRIGGER "ip_addresses_insert"
 BEFORE INSERT ON "ip"."addresses"
@@ -118,24 +96,6 @@ FOR EACH ROW EXECUTE PROCEDURE "systems"."interface_addresses_insert"();
 CREATE TRIGGER "systems_interface_addresses_update"
 BEFORE UPDATE ON "systems"."interface_addresses"
 FOR EACH ROW EXECUTE PROCEDURE "systems"."interface_addresses_update"();
-
-/* firewall rule programs */
-CREATE TRIGGER "firewall_rule_program_insert"
-BEFORE INSERT ON "firewall"."program_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_insert"();
-
-CREATE TRIGGER "firewall_metahost_rule_program_insert"
-BEFORE INSERT ON "firewall"."metahost_program_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_insert"();
-
-/* firewall rule programs */
-CREATE TRIGGER "firewall_rule_program_delete"
-BEFORE DELETE ON "firewall"."program_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."rule_program_delete"();
-
-CREATE TRIGGER "firewall_metahost_rule_program_delete"
-BEFORE DELETE ON "firewall"."metahost_program_rules"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."metahost_rule_program_delete"();
 
 CREATE TRIGGER "dns_a_insert_queue"
 AFTER INSERT ON "dns"."a"
@@ -220,14 +180,6 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_update"();
 CREATE TRIGGER "dns_zone_txt_delete_queue"
 AFTER DELETE ON "dns"."zone_txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_delete"();
-
-CREATE TRIGGER "firewall_defaults_insert"
-AFTER INSERT ON "firewall"."defaults"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_insert"();
-
-CREATE TRIGGER "firewall_defaults_update"
-AFTER UPDATE ON "firewall"."defaults"
-FOR EACH ROW EXECUTE PROCEDURE "firewall"."defaults_update"();
 
 CREATE TRIGGER "network_switchport_states_update"
 BEFORE UPDATE ON "network"."switchport_states"

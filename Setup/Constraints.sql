@@ -2,10 +2,6 @@ ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "class_options_class_option_va
 
 COMMENT ON CONSTRAINT "class_options_class_option_value_key" ON "dhcp"."class_options" IS 'No two directives can be the same';
 
-ALTER TABLE "firewall"."programs" ADD CONSTRAINT "firewall_programs_name_key" UNIQUE ("name");
-
-COMMENT ON CONSTRAINT "firewall_programs_name_key" ON "firewall"."programs" IS 'Program names must be unique';
-
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "ranges_first_ip_key" UNIQUE ("first_ip");
 
 COMMENT ON CONSTRAINT "ranges_first_ip_key" ON "ip"."ranges" IS 'Unique starting IP''s';
@@ -60,15 +56,6 @@ COMMENT ON CONSTRAINT "interfaces_system_name_name_key" ON "systems"."interfaces
 
 ALTER TABLE "dhcp"."class_options" ADD CONSTRAINT "fk_dhcp_class_options_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "firewall"."programs" ADD CONSTRAINT "fk_firewall_programs_transport" FOREIGN KEY ("transport") REFERENCES "firewall"."transports"("transport") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "firewall"."defaults" ADD CONSTRAINT "fk_defaults_address" FOREIGN KEY ("address") REFERENCES "ip"."addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
-DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "firewall"."rules" ADD CONSTRAINT "fk_firewall_rules_transport" FOREIGN KEY ("transport") REFERENCES "firewall"."transports"("transport") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "firewall"."rules" ADD CONSTRAINT "fk_firewall_rules_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE "ip"."subnets" ADD CONSTRAINT "fk_subnets_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_use" FOREIGN KEY ("use") REFERENCES "ip"."range_uses"("use") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
@@ -98,10 +85,6 @@ ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_systems_systems_os" FOREIGN K
 
 ALTER TABLE "dhcp"."subnet_options" ADD CONSTRAINT "fk_dhcp_subnet_options_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "firewall"."metahost_members" ADD CONSTRAINT "fk_firewall_metahost_members_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE "firewall"."metahost_members" ADD CONSTRAINT "fk_firewall_metahost_members_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE "systems"."os" ADD CONSTRAINT "fk_systems_os_family" FOREIGN KEY ("family") REFERENCES "systems"."os_family"("family") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."srv" ADD CONSTRAINT "fk_srv_fqdn" FOREIGN KEY ("hostname","address","zone") REFERENCES "dns"."a"("hostname","address","zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
@@ -128,29 +111,13 @@ ALTER TABLE "dns"."a" ADD CONSTRAINT "fk_a_zone" FOREIGN KEY ("zone") REFERENCES
 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "fk_a_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
-ALTER TABLE "firewall"."addresses" ADD CONSTRAINT "fk_firewall_systems_subnet" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE "firewall"."addresses" ADD CONSTRAINT "fk_addresses_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "fk_systems_interfaces_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_transport" FOREIGN KEY ("transport") REFERENCES "firewall"."transports"("transport") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "firewall"."metahost_rules" ADD CONSTRAINT "fk_metahost_rules_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "dhcp"."range_options" ADD CONSTRAINT "fk_range_options_name" FOREIGN KEY ("name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "documentation"."rules" ADD CONSTRAINT "fk_rules_specific_name" FOREIGN KEY ("specific_name") REFERENCES "documentation"."functions"("specific_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "documentation"."arguments" ADD CONSTRAINT "fk_arguments_specific_name" FOREIGN KEY ("specific_name") REFERENCES "documentation"."functions"("specific_name") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "firewall"."program_rules" ADD CONSTRAINT "fk_program_rules_port" FOREIGN KEY ("port") REFERENCES "firewall"."programs"("port") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE "firewall"."program_rules" ADD CONSTRAINT "fk_program_rules_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE "firewall"."metahost_program_rules" ADD CONSTRAINT "fk_metahost_program_rules_name" FOREIGN KEY ("name") REFERENCES "firewall"."metahosts"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE "firewall"."metahost_program_rules" ADD CONSTRAINT "fk_metahost_program_rules_port" FOREIGN KEY ("port") REFERENCES "firewall"."programs"("port") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE "network"."switchport_history" ADD CONSTRAINT "fk_switchport_history_system_name_port_name" FOREIGN KEY ("port_name","system_name") REFERENCES "network"."switchports"("port_name","system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 

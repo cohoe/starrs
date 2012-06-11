@@ -10,7 +10,7 @@ my $dbport = 5432;
 my $dbname = "impulse";
 
 my @files = ('create','remove','get','modify','utility');
-my @schemas = ('DHCP','DNS','Firewall','IP','Management','Network','Systems');
+my @schemas = ('DHCP','DNS','IP','Management','Network','Systems');
 
 my $dir = abs_path($0);
 $dir =~ s/Setup\/Installer.pl//;

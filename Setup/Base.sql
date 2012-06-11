@@ -96,35 +96,6 @@ INSERT INTO "dhcp"."config_types"
 	('static',0,'Manually assigned'),
 	('autoconf',6,'Generated via MAC address');
 	
-/* FIREWALL
-Firewall options. This will require its own custom script to get working. This script is outside the scope of this project.
-*/
-
-/*Firewall transports. 
-What to block
-*/
-INSERT INTO "firewall"."transports"
-	("transport") VALUES
-	('TCP'),('UDP'),('BOTH'),('ICMP'),('ICMPv6');
-	
-	
-/* Firewall Programs
-	Common programs for easy use
-*/
-INSERT INTO "firewall"."programs"
-	("name","port","transport") VALUES
-	('SSH',22,'TCP'),
-	('LDAP',389,'TCP'),
-	('HTTP',80,'TCP'),
-	('HTTPS',443,'TCP'),
-	('RDP',3389,'TCP'),
-	('DNS',53,'BOTH');
-
-/* Firewall Software
-	How to format firewall rules
-*/
-INSERT INTO "firewall"."software" ("software_name") VALUES ('Cisco IOS'),('iptables'),('pf');
-
 /* DNS types
 	record types for DNS
 */

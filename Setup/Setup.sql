@@ -1,10 +1,6 @@
 /* Public */
 DROP SCHEMA IF EXISTS "public";
 
-/*Schema firewall*/
-CREATE SCHEMA "firewall";
-COMMENT ON SCHEMA "firewall" IS 'All firewall data controlling access from the outside world';
-
 /*Schema systems*/
 CREATE SCHEMA "systems";
 COMMENT ON SCHEMA "systems" IS 'User machine data for devices on the network';

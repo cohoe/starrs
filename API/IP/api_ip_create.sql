@@ -152,7 +152,6 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
 		FOR RangeAddresses IN SELECT api.get_range_addresses(input_first_ip,input_last_ip) LOOP
 			INSERT INTO "ip"."addresses" ("address","owner") VALUES (RangeAddresses.get_range_addresses,Owner);
-			INSERT INTO "firewall"."defaults" ("address", "deny") VALUES (RangeAddresses.get_range_addresses, DEFAULT);
 		END LOOP;
 
 		-- Done
