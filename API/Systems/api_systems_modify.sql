@@ -143,6 +143,15 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, bool(input_new_value);
+		ELSEIF input_field ~* 'config' THEN
+			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			WHERE "address" = $1' 
+			USING input_old_address, input_field, input_new_value;
+			-- Need to force DNS records to be created
+			IF input_new_value ~* 'static' THEN
+				UPDATE "dns"."a" SET "address" = input_old_address WHERE "address" = input_old_address;
+			END IF;
 		ELSE
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = current_timestamp, last_modifier = api.get_current_user() 
