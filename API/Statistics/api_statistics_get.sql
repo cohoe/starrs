@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION api.get_range_utilization() RETURNS TABLE("name" text
 			ON "ip"."ranges"."name" = api.get_address_range("address") 
 			WHERE api.get_address_range("address") 
 			IN (SELECT "ip"."ranges"."name" FROM "ip"."ranges")
-			GROUP BY api.get_address_range("systems"."interface_addresses"."address"));
+			GROUP BY api.get_address_range("systems"."interface_addresses"."address")
+			ORDER BY "name");
 	END;
 $$ LANGUAGE plpgsql;
 
@@ -19,6 +20,6 @@ CREATE OR REPLACE FUNCTION api.get_subnet_utilization() RETURNS TABLE("subnet" c
 			(SELECT COUNT("systems"."interface_addresses"."address") FROM "systems"."interface_addresses" WHERE "systems"."interface_addresses"."address" << "ip"."subnets"."subnet")::integer as "inuse",
 			((SELECT count("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer - (SELECT count("systems"."interface_addresses"."address") FROM "systems"."interface_addresses" WHERE "systems"."interface_addresses"."address" << "ip"."subnets"."subnet")::integer) AS "free",
 			(SELECT COUNT("ip"."addresses"."address") FROM "ip"."addresses" WHERE "ip"."addresses"."address" << "ip"."subnets"."subnet")::integer AS "total"
-			FROM "ip"."subnets" GROUP BY "ip"."subnets"."subnet");
+			FROM "ip"."subnets" GROUP BY "ip"."subnets"."subnet" ORDER BY "ip"."subnets"."subnet");
 	END;
 $$ LANGUAGE plpgsql;

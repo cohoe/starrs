@@ -267,7 +267,7 @@ COMMENT ON FUNCTION "api"."get_network_switchview_settings"(text) IS 'Get switch
 /* API - get_network_switchport_macs */ 
 CREATE OR REPLACE FUNCTION "api"."get_network_switchport_macs"(input_system_name text, input_port_name text) RETURNS SETOF MACADDR AS $$
 	BEGIN
-		RETURN QUERY (SELECT DISTINCT "mac" FROM "network"."switchport_macs" WHERE "system_name" = input_system_name AND "port_name" = input_port_name);
+		RETURN QUERY (SELECT DISTINCT "mac" FROM "network"."switchport_macs" WHERE "system_name" = input_system_name AND "port_name" = input_port_name ORDER BY "mac");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_network_switchport_macs"(text, text) IS 'Get a list of all mac addresses on a switchport';
@@ -289,6 +289,7 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchport"(input_system_name text
 		ON "network"."switchports"."port_name" = "network"."switchport_states"."port_name" 
 		WHERE "network"."switchports"."system_name" = input_system_name 
 		AND "network"."switchports"."port_name" = input_port_name
+		ORDER BY "network"."switchports"."port_name"
 		);
 	END;
 $$ LANGUAGE 'plpgsql';
