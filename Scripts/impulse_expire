@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DBHOST='impulse.example.com'
+DBUSER='impulse_admin'
+
+/usr/bin/psql -h $DBHOST -U $DBUSER -c "SELECT api.initialize('root'); SELECT api.remove_expired_systems();" impulse --no-align --no-readline --quiet --tuples-only

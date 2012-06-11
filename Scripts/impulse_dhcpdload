@@ -1,0 +1,12 @@
+#!/bin/bash
+
+DBHOST='impulse.example.com'
+DBUSER='impulse_client'
+
+/usr/bin/psql -h $DBHOST -p 5432 -U $DBUSER -c "SELECT api.get_dhcpd_config()" impulse --no-align --no-readline --quiet --tuples-only > /etc/dhcp/dhcpd.conf.staging
+COUNT=`wc -l /etc/dhcp/dhcpd.conf.staging | cut -d ' ' -f 1`
+if [[ $COUNT -gt 10 ]] ; then
+	`cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bak`;
+	`mv /etc/dhcp/dhcpd.conf.staging /etc/dhcp/dhcpd.conf`;
+fi
+/sbin/service dhcpd restart
