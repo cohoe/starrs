@@ -3,7 +3,7 @@
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_field text, input_new_value text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_system');
 
@@ -36,6 +36,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_fiel
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_system');
+		IF input_field ~* 'system_name' THEN
+			RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_new_value);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_old_name);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_system"(text,text,text) IS 'Modify an existing system';
@@ -45,7 +50,7 @@ COMMENT ON FUNCTION "api"."modify_system"(text,text,text) IS 'Modify an existing
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input_field text, input_new_value text) RETURNS SETOF "systems"."interfaces" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_interface');
 
@@ -79,10 +84,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 			WHERE "mac" = $1' 
 			USING input_old_mac, input_field, input_new_value;
 		END IF;
-		
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_interface');
+		IF input_field ~* 'mac' THEN
+			RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = macaddr(input_new_value));
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = input_old_mac);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_interface"(macaddr,text,text) IS 'Modify an existing system interface';
@@ -92,7 +101,7 @@ COMMENT ON FUNCTION "api"."modify_interface"(macaddr,text,text) IS 'Modify an ex
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address inet, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address inet, input_field text, input_new_value text) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_interface_address');
 
@@ -161,6 +170,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_interface_address');
+		IF input_field ~* 'address' THEN
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = inet(input_new_value));
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = input_old_address);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_interface_address"(inet,text,text) IS 'Modify an existing interface address';
