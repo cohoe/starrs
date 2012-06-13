@@ -569,3 +569,9 @@ COMMENT ON TABLE "network"."switchview" IS 'Connection data for switch enabling'
 COMMENT ON TABLE "systems"."type_family" IS 'Family of device types';
 
 COMMENT ON TABLE "dns"."a" IS 'DNS forward address records';
+
+COMMENT ON TABLE "dhcp"."global_options" IS 'Global DHCP options that affect all objects';
+
+COMMENT ON TABLE "dhcp"."range_options" IS 'DHCP options that apply to a specific range';
+
+COMMENT ON TABLE "management"."configuration" IS 'Site specific configuration directives';
