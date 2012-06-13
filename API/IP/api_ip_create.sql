@@ -10,7 +10,7 @@
 	3) Create RDNS zone (since for this purpose you are authoritative for that zone)
 	4) Create new subnet
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text) RETURNS SETOF "ip"."subnet_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text) RETURNS SETOF "ip"."subnets" AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
@@ -53,8 +53,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
-		RETURN QUERY (SELECT "name","subnet","zone","owner","autogen","dhcp_enable","comment","date_created","date_modified","last_modifier"
-		FROM "ip"."subnets" WHERE "subnet" = input_subnet);
+		RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = input_subnet);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean, text, text) IS 'Create/activate a new subnet';
@@ -65,7 +64,7 @@ COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean,
 	2) Validate input
 	3) Create new range (triggers checking to make sure the range is valid
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text) RETURNS SETOF "ip"."range_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text) RETURNS SETOF "ip"."ranges" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
@@ -87,8 +86,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
-		RETURN QUERY (SELECT "name","first_ip","last_ip","subnet","use","class","comment","date_created","date_modified","last_modifier" 
-		FROM "ip"."ranges" WHERE "name" = input_name);
+		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), text, text) IS 'Create a new range of IP addresses';
