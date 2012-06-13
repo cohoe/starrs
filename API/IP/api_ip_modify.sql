@@ -8,7 +8,7 @@
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_field text, input_new_value text) RETURNS SETOF "ip"."ranges" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_ip_range');
 
@@ -46,6 +46,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_fi
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_ip_range');
+		IF input_field ~* 'name' THEN
+			RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_new_value);
+		ELSE
+			RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_old_name);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_ip_range"(text, text, text) IS 'Modify an IP range';
@@ -55,7 +60,7 @@ COMMENT ON FUNCTION "api"."modify_ip_range"(text, text, text) IS 'Modify an IP r
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input_field text, input_new_value text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input_field text, input_new_value text) RETURNS SETOF "ip"."subnets" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_ip_subnet');
 
@@ -100,6 +105,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_ip_subnet');
+		IF input_field ~* 'subnet' THEN
+			RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = cidr(input_new_value));
+		ELSE
+			RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = input_old_subnet);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_ip_subnet"(cidr, text, text) IS 'Modify an IP subnet';
