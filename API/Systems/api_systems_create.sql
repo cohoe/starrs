@@ -146,4 +146,4 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 		PERFORM api.create_dns_address(input_address, lower(regexp_replace(input_system_name,' ','-')), null, null, input_owner);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system_quick"(text, text, macaddr, inet) IS 'Create a barebones system';
+COMMENT ON FUNCTION "api"."create_system_quick"(text, text, macaddr, inet, text) IS 'Create a barebones system';
