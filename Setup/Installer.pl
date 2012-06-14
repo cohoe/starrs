@@ -27,6 +27,10 @@ print "Jumpstarting...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Jumpstart.sql\" postgres");
 print "Setup...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Setup.sql\" $dbname");
+print "Preload...\n";
+system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Preload.sql\" $dbname");
+print "Tables...\n";
+system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Tables.sql\" $dbname");
 print "Types...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Types.sql\" $dbname");
 
@@ -40,10 +44,6 @@ foreach my $schema (@schemas)
 	}
 }
 
-print "Tables...\n";
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Tables.sql\" $dbname");
-print "Fixes...\n";
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Fixes.sql\" $dbname");
 print "Constraints...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Constraints.sql\" $dbname");
 
@@ -57,8 +57,6 @@ foreach my $schema (@schemas)
 print "Triggers...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Triggers\/triggers.sql\" $dbname");
 
-print "Views...\n";
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Views.sql\" $dbname");
 print "Base...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Base.sql\" $dbname");
 print "Privileges...\n";
