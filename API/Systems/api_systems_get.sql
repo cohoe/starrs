@@ -32,7 +32,7 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_address_owner"(input_address ine
 		RETURN (SELECT "owner" FROM "systems"."interface_addresses"
 		JOIN "systems"."interfaces" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
-		WHERE "address" = '10.21.50.1');
+		WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an existing interface address';
