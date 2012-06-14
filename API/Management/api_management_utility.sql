@@ -41,32 +41,6 @@ CREATE OR REPLACE FUNCTION "api"."validate_name"(input text) RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_name"(text) IS 'Allow certain characters for names';
 
-/* API - renew_system
-	1) Check privileges
-	2) Renew system
-*/
-CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
-
-		-- Check privileges
-		IF api.get_current_user_level() ~* 'PROGRAM|USER' THEN
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
-				RAISE EXCEPTION 'Permission denied. Only admins can create site directives';
-			END IF;
-		END IF;
-
-		-- Renew system
-		PERFORM api.create_log_entry('API','INFO','renewing system');
-		UPDATE "systems"."systems" SET "renew_date" = date(current_date + interval '1 year');
-
-		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_system');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."renew_system"(text) IS 'Renew a registered system for the next year';
-
 /* API - lock_process
 	1) Check privileges
 	2) Get current status

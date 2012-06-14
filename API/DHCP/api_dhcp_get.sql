@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_static_hosts"() RETURNS SETOF "dhcp"
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
 		AND NOT "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))
-		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE)
+		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE ORDER BY "zone")
 		OR "dns"."a"."zone" IS NULL) ORDER BY "systems"."systems"."owner");	
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -44,7 +44,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dynamic_hosts"() RETURNS SETOF "dhcp
 		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 		WHERE "systems"."interface_addresses"."config"='dhcp'
 		AND "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))
-		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE)
+		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE ORDER BY "zone")
 		OR "dns"."a"."zone" IS NULL) ORDER BY "systems"."systems"."owner");
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -104,7 +104,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dns_keys"() RETURNS SETOF "dhcp"."dh
 		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
 		JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname" 
 		WHERE "dhcp_enable" = TRUE
-		ORDER BY "ip"."subnets"."zone");
+		ORDER BY "dns"."zones"."keyname","dns"."keys"."key",api.get_site_configuration('DNS_KEY_ENCTYPE'));
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_dns_keys"() IS 'Get all of the dns keys for dhcpd';
@@ -131,7 +131,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_reverse_zones"() RETURNS SETOF "dhcp
 		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone" 
 		WHERE "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = "ip"."subnets"."zone") 
 		AND "dhcp_enable" = TRUE AND family("subnet") = 4
-		ORDER BY "ip"."subnets"."subnet");
+		ORDER BY api.get_reverse_domain("subnet"),"dns"."zones"."keyname","address");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_reverse_zones"() IS 'Get all reverse zone info for dhcpd';
@@ -153,26 +153,26 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_class_options"(text) IS 'Get class options for the dhcpd.conf file';
 
 /* API - get_dhcp_classes*/
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."class_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_classes"() RETURNS SETOF "dhcp"."classes" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" FROM "dhcp"."classes" ORDER BY "class");
+		RETURN QUERY (SELECT * FROM "dhcp"."classes" ORDER BY "class");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_classes"() IS 'Get all DHCP class information';
 
 /* API - get_dhcp_class */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_class"(input_class text) RETURNS SETOF "dhcp"."class_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_class"(input_class text) RETURNS SETOF "dhcp"."classes" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" FROM "dhcp"."classes" WHERE "class" = input_class ORDER BY "class");
+		RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_class ORDER BY "class");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_class"(text) IS 'Get all DHCP class information for a specific class';
 
 /* API - get_dhcp_config_types */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_type_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_types" AS $$
 	BEGIN
 		IF input_family IS NULL THEN
-			RETURN QUERY (SELECT "config","family","comment","date_created","date_modified","last_modifier" FROM "dhcp"."config_types" ORDER BY "config");
+			RETURN QUERY (SELECT * FROM "dhcp"."config_types" ORDER BY "config");
 		ELSE
 			RETURN QUERY (SELECT * FROM "dhcp"."config_types" WHERE "family" = input_family ORDER BY "config");
 		END IF;
@@ -181,36 +181,33 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_config_types"(integer) IS 'Get all DHCP config information';
 
 /* API - get_dhcp_global_options */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_global_options"() RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_global_options"() RETURNS SETOF "dhcp"."global_options" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."global_options" ORDER BY "option");
+		RETURN QUERY (SELECT * FROM "dhcp"."global_options" ORDER BY "option");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_global_options"() IS 'Get all DHCP global option data';
 
 /* API - get_dhcp_class_options */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_class_options"(input_class text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_class_options"(input_class text) RETURNS SETOF "dhcp"."class_options" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
-		FROM "dhcp"."class_options" WHERE "class" = input_class ORDER BY "option");
+		RETURN QUERY (SELECT * FROM "dhcp"."class_options" WHERE "class" = input_class ORDER BY "option");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_class_options"(text) IS 'Get all DHCP class option data';
 
 /* API - get_dhcp_range_options */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_range_options"(input_range text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_range_options"(input_range text) RETURNS SETOF "dhcp"."range_options" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
-		FROM "dhcp"."range_options" WHERE "name" = input_range ORDER BY "option");
+		RETURN QUERY (SELECT * FROM "dhcp"."range_options" WHERE "name" = input_range ORDER BY "option");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_range_options"(text) IS 'Get all DHCP range option data';
 
 /* API - get_dhcp_subnet_options */
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_subnet_options"(input_subnet cidr) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dhcp_subnet_options"(input_subnet cidr) RETURNS SETOF "dhcp"."subnet_options" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" 
-		FROM "dhcp"."subnet_options" WHERE "subnet" = input_subnet ORDER BY "option");
+		RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" WHERE "subnet" = input_subnet ORDER BY "option");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_subnet_options"(cidr) IS 'Get all DHCP subnet option data';
@@ -218,7 +215,6 @@ COMMENT ON FUNCTION "api"."get_dhcp_subnet_options"(cidr) IS 'Get all DHCP subne
 /* API - get_dhcpd_config */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_config"() RETURNS TEXT AS $$
 	BEGIN
-		--DELETE FROM "management"."output" WHERE "output_id" = (SELECT output_id FROM "management"."output" ORDER BY "timestamp" ASC LIMIT 1);
 		RETURN (SELECT "value" FROM "management"."output" WHERE "file"='dhcpd.conf' ORDER BY "timestamp" DESC LIMIT 1);
 	END;
 $$ LANGUAGE 'plpgsql';

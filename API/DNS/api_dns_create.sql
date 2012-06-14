@@ -16,7 +16,7 @@
 	3) Check privileges
 	3) Create new key
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_owner text, input_comment text) RETURNS SETOF "dns"."key_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_owner text, input_comment text) RETURNS SETOF "dns"."keys" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_key');
 
@@ -44,8 +44,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
-		RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
-		FROM "dns"."keys" WHERE "keyname" = input_keyname AND "key" = input_key);
+		RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_keyname AND "key" = input_key);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text, text) IS 'Create new DNS key';
@@ -55,7 +54,7 @@ COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text, text) IS 'Create ne
 	2) Fill in owner
 	3) Create zone (domain)
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean, input_shared boolean, input_owner text, input_comment text) RETURNS SETOF "dns"."zone_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean, input_shared boolean, input_owner text, input_comment text) RETURNS SETOF "dns"."zones" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
 
@@ -83,8 +82,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
-		RETURN QUERY (SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
-		FROM "dns"."zones" WHERE "zone" = input_zone);
+		RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, text) IS 'Create a new DNS zone';
@@ -98,7 +96,7 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 	6) Create record
 	7) Queue dns
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."a_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
@@ -148,8 +146,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
-		RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-		FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
+		RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
@@ -198,8 +195,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_mailserver');
-		RETURN QUERY (SELECT "preference","date_modified","date_created","last_modifier","hostname","address","ttl","owner","zone","type"
-		FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "preference" = input_preference);
+		RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "preference" = input_preference);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_mailserver"(text, text, integer, integer, text) IS 'Create a new mailserver MX record for a zone';
@@ -242,8 +238,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_ns');
-		RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
-		FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver);
+		RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_ns"(text, text, inet, integer) IS 'create a new NS record for a zone';
@@ -298,8 +293,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
-		RETURN QUERY (SELECT * FROM "dns"."srv" 
-		WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "priority" = input_priority AND "weight" = input_weight AND "port" = input_port);
+		RETURN QUERY (SELECT * FROM "dns"."srv" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "priority" = input_priority AND "weight" = input_weight AND "port" = input_port);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dns_srv"(text, text, text, integer, integer, integer, integer, text) IS 'create a new dns srv record for a zone';
