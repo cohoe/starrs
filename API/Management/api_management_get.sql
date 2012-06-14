@@ -5,16 +5,6 @@
 	4) get_site_configuration
 */
 
-/* API - get_current_user */
-CREATE OR REPLACE FUNCTION "api"."get_current_user"() RETURNS TEXT AS $$
-	BEGIN
-		RETURN (SELECT "username"
-		FROM "user_privileges"
-		WHERE "privilege" = 'USERNAME');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_current_user"() IS 'Get the username of the current session';
-
 /* API - get_current_user_level */
 CREATE OR REPLACE FUNCTION "api"."get_current_user_level"() RETURNS TEXT AS $$
 	BEGIN
@@ -127,14 +117,6 @@ CREATE OR REPLACE FUNCTION "api"."get_ldap_user_level"(TEXT) RETURNS TEXT AS $$
 #	}
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_ldap_user_level"(text) IS 'Get the level of access for the authenticated user';
-
-/* API - get_site_configuration */
-CREATE OR REPLACE FUNCTION "api"."get_site_configuration"(input_directive text) RETURNS TEXT AS $$
-	BEGIN		
-		RETURN (SELECT "value" FROM "management"."configuration" WHERE "option" = input_directive);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_site_configuration"(text) IS 'Get a site configuration directive';
 
 CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS TABLE(option text, value text) AS $$
 	BEGIN
