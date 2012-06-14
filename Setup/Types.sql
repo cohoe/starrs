@@ -66,7 +66,7 @@ COMMENT ON TYPE "systems"."os_distribution" IS 'OS distribution statistics';
 
 CREATE TYPE "api"."search_data" AS (system_name text, mac macaddr, address inet, system_owner text, system_last_modifier text, range text, hostname varchar(63), zone text, dns_owner text, dns_last_modifier text);
 
-CREATE TYPE "network"."switchview_data" AS (port text, mac macaddr);
+CREATE TYPE "network"."cam" AS ("mac" MACADDR, "ifname" TEXT, "vlan" INTEGER);
 
 CREATE TYPE "network"."switchport_data" AS (system_name text, port_name text, type text, description text, port_state boolean, admin_state boolean, date_created timestamp, date_modified timestamp, last_modifier text);
 
