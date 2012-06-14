@@ -55,7 +55,7 @@ CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet, input_zone text
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dns_a"(inet) IS 'Get all DNS address records for an address';
+COMMENT ON FUNCTION "api"."get_dns_a"(inet,text) IS 'Get all DNS address records for an address';
 
 /* API - get_record_types */
 CREATE OR REPLACE FUNCTION "api"."get_record_types"() RETURNS SETOF TEXT AS $$
