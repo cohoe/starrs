@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION "api"."get_ip_subnets"(input_username text) RETURNS S
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_ip_subnets"() IS 'Get all IP subnet data';
+COMMENT ON FUNCTION "api"."get_ip_subnets"(text) IS 'Get all IP subnet data';
 
 /* API - get_ip_range_uses */
 CREATE OR REPLACE FUNCTION "api"."get_ip_range_uses"() RETURNS SETOF TEXT AS $$
