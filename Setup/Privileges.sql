@@ -1,7 +1,7 @@
 /* Privileges */
 
-CREATE ROLE "impulse_client";
-CREATE ROLE "impulse_admin";
+DO $$ BEGIN IF (SELECT COUNT("rolname") FROM "pg_roles" WHERE "rolname" = 'impulse_admin') != 1 THEN CREATE ROLE "impulse_admin"; END IF; END $$;
+DO $$ BEGIN IF (SELECT COUNT("rolname") FROM "pg_roles" WHERE "rolname" = 'impulse_client') != 1 THEN CREATE ROLE "impulse_client"; END IF; END $$;
 
 /* Schemas
 	Allow access to the schemas
