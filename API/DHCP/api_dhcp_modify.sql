@@ -11,7 +11,7 @@
 	3) Validate class name
 	4) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."class_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."classes" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_dhcp_class');
 
@@ -43,11 +43,9 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class');
 		IF input_field ~* 'class' THEN
-			RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" 
-			FROM "dhcp"."classes" WHERE "class" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "class","comment","date_created","date_modified","last_modifier" 
-			FROM "dhcp"."classes" WHERE "class" = input_old_class);
+			RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_old_class);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -58,7 +56,7 @@ COMMENT ON FUNCTION "api"."modify_dhcp_class"(text, text, text) IS 'Modify a fie
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."class_options" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_dhcp_class_option');
 
@@ -85,13 +83,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_class_option');
 		IF input_field ~* 'class' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."class_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."class_options" 
 			WHERE "class" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
 		ELSIF input_field ~* 'option' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."class_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."class_options" 
 			WHERE "class" = input_old_class AND "option" = input_new_value AND "value" = input_old_value);
 		ELSE
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."class_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."class_options" 
 			WHERE "class" = input_old_class AND "option" = input_old_option AND "value" = input_new_value);
 		END IF;
 	END;
@@ -103,7 +101,7 @@ COMMENT ON FUNCTION "api"."modify_dhcp_class_option"(text, text, text, text, tex
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet cidr, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet cidr, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."subnet_options" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_dhcp_subnet_option');
 
@@ -130,13 +128,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_subnet_option');
 		IF input_field ~* 'subnet' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."subnet_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" 
 			WHERE "subnet" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
 		ELSIF input_field ~* 'option' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."subnet_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" 
 			WHERE "subnet" = input_old_subnet AND "option" = input_new_value AND "value" = input_old_value);
 		ELSE
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."subnet_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" 
 			WHERE "subnet" = input_old_subnet AND "option" = input_old_option AND "value" = input_new_value);
 		END IF;
 	END;
@@ -149,7 +147,7 @@ COMMENT ON FUNCTION "api"."modify_dhcp_subnet_option"(cidr, text, text, text, te
 	3) Check if range is marked for DHCP
 	4) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text, input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."range_options" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_dhcp_range_option');
 
@@ -184,13 +182,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_range_option');
 		IF input_field ~* 'range' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."range_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
 			WHERE "range" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
 		ELSIF input_field ~* 'option' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."range_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
 			WHERE "range" = input_old_range AND "option" = input_new_value AND "value" = input_old_value);
 		ELSE
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."range_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
 			WHERE "range" = input_old_range AND "option" = input_old_option AND "value" = input_new_value);
 		END IF;
 	END;
@@ -202,7 +200,7 @@ COMMENT ON FUNCTION "api"."modify_dhcp_range_option"(text, text, text, text, tex
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."option_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option text, input_old_value text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."global_options" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_dhcp_global_option');
 
@@ -229,10 +227,10 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option te
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_dhcp_global_option');
 		IF input_field ~* 'option' THEN
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."global_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."global_options" 
 			WHERE "option" = input_new_value AND "value" = input_old_value);
 		ELSE
-			RETURN QUERY (SELECT "option","value","date_created","date_modified","last_modifier" FROM "dhcp"."global_options" 
+			RETURN QUERY (SELECT * FROM "dhcp"."global_options" 
 			WHERE "option" = input_old_option AND "value" = input_new_value);
 		END IF;
 	END;
