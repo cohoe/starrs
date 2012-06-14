@@ -16,7 +16,7 @@
 	3) Validate input
 	4) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_field text, input_new_value text) RETURNS SETOF "dns"."key_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_field text, input_new_value text) RETURNS SETOF "dns"."keys" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_key');
 
@@ -58,8 +58,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
 			FROM "dns"."keys" WHERE "keyname" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."keys" WHERE "keyname" = input_old_keyname);
+			RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_old_keyname);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -70,7 +69,7 @@ COMMENT ON FUNCTION "api"."modify_dns_key"(text,text,text) IS 'Modify an existin
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."zone_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."zones" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_zone');
 
@@ -111,11 +110,9 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_zone');
 		IF input_field ~* 'zone' THEN
-			RETURN QUERY (SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
-			FROM "dns"."zones" WHERE "zone" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "zone","keyname","forward","shared","owner","comment","date_created","date_modified","last_modifier"
-			FROM "dns"."zones" WHERE "zone" = input_old_zone);
+			RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_old_zone);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -126,7 +123,7 @@ COMMENT ON FUNCTION "api"."modify_dns_zone"(text, text, text) IS 'Modify an exis
 	2) Check allowed fields
 	3) Update record
 */
-CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."a_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_dns_address');
 
@@ -179,14 +176,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_address');
 		IF input_field ~* 'address' THEN
-			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."a" WHERE "address" = inet(input_new_value) AND "zone" = input_old_zone);
+			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = inet(input_new_value) AND "zone" = input_old_zone);
 		ELSEIF input_field ~* 'zone' THEN
-			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "hostname","zone","address","type","ttl","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone);
+			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -238,14 +232,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_mailserver');
 		IF input_field ~* 'hostname' THEN
-			RETURN QUERY (SELECT "preference","date_modified","date_created","last_modifier","hostname","address","ttl","owner","zone","type"
-			FROM "dns"."mx" WHERE "hostname" = input_new_value AND "zone" = input_old_zone);
+			RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_new_value AND "zone" = input_old_zone);
 		ELSEIF input_field ~* 'zone' THEN
-			RETURN QUERY (SELECT "preference","date_modified","date_created","last_modifier","hostname","address","ttl","owner","zone","type"
-			FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "preference","date_modified","date_created","last_modifier","hostname","address","ttl","owner","zone","type"
-			FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone);
+			RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -301,14 +292,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_ns"(input_old_zone text, input_old_
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_dns_ns');
 		IF input_field ~* 'input_old_zone' THEN		
-			RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
-			FROM "dns"."ns" WHERE "zone" = input_new_value AND "nameserver" = input_old_nameserver);
+			RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_new_value AND "nameserver" = input_old_nameserver);
 		ELSEIF input_field ~* 'nameserver' THEN
-			RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
-			FROM "dns"."ns" WHERE "zone" = input_old_zone AND "nameserver" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_old_zone AND "nameserver" = input_new_value);
 		ELSE
-			RETURN QUERY (SELECT "zone","ttl","type","nameserver","address","date_created","date_modified","last_modifier"
-			FROM "dns"."ns" WHERE "zone" = input_old_zone AND "nameserver" = input_old_nameserver);
+			RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_old_zone AND "nameserver" = input_old_nameserver);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -642,6 +630,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_a"(input_old_zone text, input_
 		END IF;
 
 		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update record');
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		IF input_field ~* 'address' THEN
