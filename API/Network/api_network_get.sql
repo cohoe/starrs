@@ -1,3 +1,266 @@
+CREATE OR REPLACE FUNCTION "api"."get_switchview_vlans"(inet, text) RETURNS SETOF INTEGER AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+
+	# Define OIDs
+	my $vtpVlanState = ".1.3.6.1.4.1.9.9.46.1.3.1.1.2";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+
+	# Get a list of all data
+	my $vlanList = $session->get_table(-baseoid => $vtpVlanState);
+
+	while ( my ($vlan, $vtpState) = each(%$vlanList)) {
+		$vlan =~ s/$vtpVlanState\.1\.//;
+		return_next($vlan);
+	}
+
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_vlans"(inet, text) IS 'Get a list of all vlans configured on a network device';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_bridgeportid"(inet, text, integer) RETURNS TABLE("camportinstanceid" TEXT, "bridgeportid" INTEGER) AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+
+	# Define OIDs
+	my $dot1dTpFdbPort = ".1.3.6.1.2.1.17.4.3.1.2";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+	my $vlan = shift(@_) or die "Unable to get VLANID";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community\@$vlan",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+
+	# Get a list of all data
+	my $bridgePortList = $session->get_table(-baseoid => $dot1dTpFdbPort);
+
+	# Do something for each item of the list
+	while ( my ($camPortInstanceID, $bridgePortID) = each(%$bridgePortList)) {
+		$camPortInstanceID =~ s/$dot1dTpFdbPort//;
+		return_next({camportinstanceid=>$camPortInstanceID, bridgeportid=>$bridgePortID});
+	}
+
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_bridgeportid"(inet, text, integer) IS 'Get a mapping of CAM instanceIDs and bridgeIDs';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(inet, text, integer) RETURNS TABLE ("camportinstanceid" TEXT, "mac" MACADDR) AS $$
+	#!/usr/bin/perl -w 
+
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+
+	# Define OIDs
+	my $dot1dTpFdbAddress = ".1.3.6.1.2.1.17.4.3.1.1";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+	my $vlan = shift(@_) or die "Unable to get VLANID";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community\@$vlan",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+
+	# Get a list of all data
+	my $camList = $session->get_table(-baseoid => $dot1dTpFdbAddress);
+
+	# Do something for each item of the list
+	while ( my ($camPortInstanceID, $macaddr) = each(%$camList)) {
+		$camPortInstanceID =~ s/$dot1dTpFdbAddress//;
+		
+		# Sometimes there are non-valid MAC addresses in the CAM.
+		if($macaddr =~ m/[0-9a-fA-F]{12}/) {
+			$macaddr = format_raw_mac($macaddr);
+			#print "InstanceID: $camPortInstanceID - MAC: $macaddr\n";
+			return_next({camportinstanceid=>$camPortInstanceID,mac=>$macaddr});
+		}
+	}
+
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+
+	# Subroutine to format a MAC address to something nice
+	sub format_raw_mac() {
+		my $mac = $_[0];
+		# Get rid of the hex identifier
+		$mac =~ s/^0x//;
+
+		# Make groups of two characters
+		$mac =~ s/(.{2})/$1:/gg;
+
+		# Remove the trailing : left by the previous function
+		$mac =~ s/\:$//;
+
+		# Spit it back out
+		return $mac;
+	}
+
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_cam"(inet, text, integer) IS 'Get the CAM/MAC table from a device on a certain VLAN';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_portindex"(inet, text, integer) RETURNS TABLE("bridgeportid" INTEGER, "ifindex" INTEGER) AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+
+	# Define OIDs
+	my $dot1dBasePortIfIndex = ".1.3.6.1.2.1.17.1.4.1.2";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+	my $vlan = shift(@_) or die "Unable to get VLANID";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community\@$vlan",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+
+	# Get a list of all data
+	my $portIndexList = $session->get_table(-baseoid => $dot1dBasePortIfIndex);
+
+	# Do something for each item of the list
+	while ( my ($bridgePortID, $portIndex) = each(%$portIndexList)) {
+		$bridgePortID =~ s/$dot1dBasePortIfIndex\.//;
+		return_next({bridgeportid=>$bridgePortID, ifindex=>$portIndex});
+	}
+
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_portindex"(inet, text, integer) IS 'Get a mapping of port indexes to bridge indexes';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_portnames"(inet, text, integer) RETURNS TABLE("ifindex" INTEGER, "ifname" TEXT) AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+
+	# Define OIDs
+	my $ifName = ".1.3.6.1.2.1.31.1.1.1.1";
+	#my $ifDesc = ".1.3.6.1.2.1.2.2.1.2";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+	my $vlan = shift(@_) or die "Unable to get VLANID";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community\@$vlan",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+
+	# Get a list of all data
+	my $portNameList = $session->get_table(-baseoid => $ifName);
+
+	# Do something for each item of the list
+	while ( my ($portIndex, $portName) = each(%$portNameList)) {
+		$portIndex =~ s/$ifName\.//;
+		return_next({ifindex=>$portIndex, ifname=>$portName});
+	}
+
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+	
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_portnames"(inet, text, integer) IS 'Map ifindexes to port names';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(input_host inet, input_community text) RETURNS SETOF "network"."cam" AS $$
+	DECLARE
+		Vlans RECORD;
+		CamData RECORD;
+	BEGIN
+		FOR Vlans IN (SELECT get_switchview_vlans FROM api.get_switchview_vlans(input_host, input_community) ORDER BY get_switchview_vlans) LOOP
+			FOR CamData IN (
+				SELECT mac,ifname,Vlans.get_switchview_vlans FROM api.get_switchview_cam(input_host,input_community,vlans.get_switchview_vlans) AS "cam"
+				JOIN api.get_switchview_bridgeportid(input_host,input_community,vlans.get_switchview_vlans) AS "bridgeportid"
+				ON bridgeportid.camportinstanceid = cam.camportinstanceid
+				JOIN api.get_switchview_portindex(input_host,input_community,vlans.get_switchview_vlans) AS "portindex"
+				ON bridgeportid.bridgeportid = portindex.bridgeportid
+				JOIN api.get_switchview_portnames(input_host,input_community,vlans.get_switchview_vlans) AS "portnames"
+				ON portindex.ifindex = portnames.ifindex
+			) LOOP
+				RETURN NEXT CamData;
+			END LOOP;
+		END LOOP;
+		RETURN;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_switchview_cam"(inet, text) IS 'Get all CAM data from a particular device';
+
+-------------------------------------------------------------------------------
+---- EVERYTHING ELSE IN THIS IS OLD CODE AND WILL PROBABLY BE REMOVED SOON ----
+-------------------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION "api"."get_network_switchport_view"(inet,text) RETURNS SETOF "network"."switchview_data" AS $$
 	use strict;
 	use warnings;
@@ -28,6 +291,11 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchport_view"(inet,text) RETURN
 		 -hostname => $host,
 		 -community => $community,
 	);
+	
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
 
 	# Get a list of all VLANs
 	my $vlanList = $session->get_table(-baseoid => $vlanList_OID);
