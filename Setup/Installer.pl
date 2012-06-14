@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use Cwd 'abs_path';
 
+# These will ensure the user has the right modules installed
+use Net::IP;
+use Data::Validate::Domain;
+use Net::LDAP;
+use Net::DNS;
+use Net::SNMP;
+use Net::SMTP;
+
 my $dbhost = "localhost";
 my $dbuser = "impulse_admin";
 my $dbport = 5432;
