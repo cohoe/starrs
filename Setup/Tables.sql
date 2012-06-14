@@ -287,7 +287,7 @@ CREATE TABLE "dns"."txt"(
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
-CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone"),
+CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone")
 )
 WITHOUT OIDS;
 
