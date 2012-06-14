@@ -48,7 +48,7 @@ COMMENT ON CONSTRAINT "a_hostname_zone_type_key" ON "dns"."a" IS 'Can only have 
 
 ALTER TABLE "dns"."a" ADD CONSTRAINT "a_address_zone_key" UNIQUE ("address","zone");
 
-COMMENT ON CONSTRAINT "a_address_key" ON "dns"."a" IS 'Addresses in this table must be unique';
+COMMENT ON CONSTRAINT "a_address_zone_key" ON "dns"."a" IS 'Addresses in this table must be unique';
 
 ALTER TABLE "systems"."interfaces" ADD CONSTRAINT "interfaces_system_name_name_key" UNIQUE ("system_name","name");
 
@@ -101,7 +101,7 @@ ALTER TABLE "dns"."txt" ADD CONSTRAINT "fk_txt_fqdn" FOREIGN KEY ("hostname","ad
 
 ALTER TABLE "dns"."zone_txt" ADD CONSTRAINT "fk_zone_txt_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TALBE "dns"."zone_txt" ADD CONSTRAINT "zone_txt_hostname_zone_text_key" UNIQUE ("hostname","zone","text");
+ALTER TABLE "dns"."zone_txt" ADD CONSTRAINT "zone_txt_hostname_zone_text_key" UNIQUE ("hostname","zone","text");
 
 ALTER TABLE "dns"."txt" ADD CONSTRAINT "fk_txt_type" FOREIGN KEY ("type") REFERENCES "dns"."types"("type") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT;
 
