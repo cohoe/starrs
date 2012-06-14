@@ -54,7 +54,7 @@ CREATE TABLE "ip"."ranges"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "name" TEXT NOT NULL,
 "subnet" CIDR,
-"class" TEXT NOT NULL,
+"class" TEXT,
 CONSTRAINT "ranges_pkey" PRIMARY KEY ("name")
 )
 WITHOUT OIDS;
