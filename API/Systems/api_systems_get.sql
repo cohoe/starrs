@@ -38,89 +38,44 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an existing interface address';
 
 /* API - get_system_interface_addresses */
-CREATE OR REPLACE FUNCTION "api"."get_system_interface_addresses"(input_mac macaddr) RETURNS SETOF "systems"."interface_address_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_interface_addresses"(input_mac macaddr) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."interface_addresses" WHERE "mac" = input_mac ORDER BY family(address),address ASC);
+		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "mac" = input_mac ORDER BY family(address),address ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_addresses"(macaddr) IS 'Get all interface addresses on a specified MAC';
 
 /* API - get_system_interfaces */
-CREATE OR REPLACE FUNCTION "api"."get_system_interfaces"(input_system_name text) RETURNS SETOF "systems"."interface_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_interfaces"(input_system_name text) RETURNS SETOF "systems"."interfaces" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "system_name","mac","name","comment","date_created","date_modified","last_modifier"
-			FROM "systems"."interfaces" WHERE "system_name" = input_system_name  ORDER BY mac ASC);
+		RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "system_name" = input_system_name  ORDER BY mac ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interfaces"(text) IS 'Get all interface information on a system';
 
 /* API - get_system_interface_data */
-CREATE OR REPLACE FUNCTION "api"."get_system_interface_data"(input_mac macaddr) RETURNS SETOF "systems"."interface_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_interface_data"(input_mac macaddr) RETURNS SETOF "systems"."interfaces" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "system_name","mac","name","comment","date_created","date_modified","last_modifier"
-			FROM "systems"."interfaces" WHERE "mac" = input_mac);
+		RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = input_mac);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_data"(macaddr) IS 'Get all interface information on a system for a specific interface';
 
 /* API - get_system_data */
-CREATE OR REPLACE FUNCTION "api"."get_system"(input_system_name text) RETURNS SETOF "systems"."system_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system"(input_system_name text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
-		RETURN QUERY (SELECT 
-			"systems"."systems"."system_name",
-			"systems"."systems"."type",
-			"systems"."device_types"."family",
-			"systems"."systems"."os_name",
-			"systems"."systems"."owner",
-			"systems"."systems"."comment",
-			"systems"."systems"."renew_date",
-			"systems"."systems"."date_created",
-			"systems"."systems"."date_modified",
-			"systems"."systems"."last_modifier"
-		FROM "systems"."systems" 
-		JOIN "systems"."device_types" on
-		"systems"."device_types"."type" = "systems"."systems"."type"
-		WHERE "system_name" = input_system_name);
+		RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system"(text) IS 'Get a single system';
 
 /* API - get_systems */
-CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF "systems"."system_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_systems"(input_username text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
 		IF input_username IS NULL THEN
-			RETURN QUERY (SELECT 
-				"systems"."systems"."system_name",
-				"systems"."systems"."type",
-				"systems"."device_types"."family",
-				"systems"."systems"."os_name",
-				"systems"."systems"."owner",
-				"systems"."systems"."comment",
-				"systems"."systems"."renew_date",
-				"systems"."systems"."date_created",
-				"systems"."systems"."date_modified",
-				"systems"."systems"."last_modifier"
-			FROM "systems"."systems" 
-			JOIN "systems"."device_types" on
-			"systems"."device_types"."type" = "systems"."systems"."type"
-			ORDER BY lower("system_name") ASC);
+			RETURN QUERY (SELECT * FROM "systems"."systems" ORDER BY lower("system_name") ASC);
 		ELSE
-			RETURN QUERY (SELECT 
-				"systems"."systems"."system_name",
-				"systems"."systems"."type",
-				"systems"."device_types"."family",
-				"systems"."systems"."os_name",
-				"systems"."systems"."owner",
-				"systems"."systems"."comment",
-				"systems"."systems"."renew_date",
-				"systems"."systems"."date_created",
-				"systems"."systems"."date_modified",
-				"systems"."systems"."last_modifier"
-			FROM "systems"."systems" 
-			JOIN "systems"."device_types" on
-			"systems"."device_types"."type" = "systems"."systems"."type" 
-			WHERE "owner" = input_username 
-			ORDER BY lower("system_name") ASC);
+			RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "owner" = input_username  ORDER BY lower("system_name") ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -171,23 +126,20 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_system"(inet) IS 'Get the name of the system to which the given address is assigned';
 
 /* API - get_system_interface_address */
-CREATE OR REPLACE FUNCTION "api"."get_system_interface_address"(input_address inet) RETURNS SETOF "systems"."interface_address_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_interface_address"(input_address inet) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
-		FROM "systems"."interface_addresses" WHERE "address" = input_address);
+		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_address"(inet) IS 'Get all interface address data for an address';
 
 /* API - get_owned_interface_addresses */
-CREATE OR REPLACE FUNCTION "api"."get_owned_interface_addresses"(input_owner text) RETURNS SETOF "systems"."interface_address_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_owned_interface_addresses"(input_owner text) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
 		IF input_owner IS NULL THEN
-			RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."interface_addresses");
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses");
 		ELSE
-			RETURN QUERY (SELECT "mac","address","family","config","class","isprimary","comment","renew_date","date_created","date_modified","last_modifier"
-			FROM "systems"."interface_addresses" WHERE api.get_interface_address_owner("address") = input_owner);
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE api.get_interface_address_owner("address") = input_owner);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
