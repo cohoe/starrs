@@ -190,7 +190,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_portindex"(inet, text, integer)
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_switchview_portindex"(inet, text, integer) IS 'Get a mapping of port indexes to bridge indexes';
 
-CREATE OR REPLACE FUNCTION "api"."get_switchview_port_names"(inet, text, integer) RETURNS TABLE("ifindex" INTEGER, "ifname" TEXT) AS $$
+CREATE OR REPLACE FUNCTION "api"."get_switchview_port_names"(inet, text) RETURNS TABLE("ifindex" INTEGER, "ifname" TEXT, "ifdesc" TEXT) AS $$
 	use strict;
 	use warnings;
 	use Net::SNMP;
@@ -198,17 +198,17 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_port_names"(inet, text, integer
 
 	# Define OIDs
 	my $ifName = ".1.3.6.1.2.1.31.1.1.1.1";
-	#my $ifDesc = ".1.3.6.1.2.1.2.2.1.2";
+	my $ifDesc = ".1.3.6.1.2.1.2.2.1.2";
 
 	# Needed Variables
 	my $hostname = shift(@_) or die "Unable to get host";
 	my $community = shift(@_) or die "Unable to get READ community";
-	my $vlan = shift(@_) or die "Unable to get VLANID";
+	my %ports;
 
 	# Establish session
 	my ($session,$error) = Net::SNMP->session (
 		-hostname => "$hostname",
-		-community => "$community\@$vlan",
+		-community => "$community",
 	);
 
 	# Check that it did not error
@@ -218,11 +218,19 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_port_names"(inet, text, integer
 
 	# Get a list of all data
 	my $portNameList = $session->get_table(-baseoid => $ifName);
+	my $portDescList = $session->get_table(-baseoid => $ifDesc);
 
 	# Do something for each item of the list
 	while ( my ($portIndex, $portName) = each(%$portNameList)) {
 		$portIndex =~ s/$ifName\.//;
-		return_next({ifindex=>$portIndex, ifname=>$portName});
+		$ports{$portIndex}{'ifName'} = $portName;
+	}
+	while ( my ($portIndex, $portDesc) = each(%$portDescList)) {
+		$portIndex =~ s/$ifDesc\.//;
+		$ports{$portIndex}{'ifDesc'} = $portDesc;
+	}
+	foreach my $key (keys(%ports)) {
+		return_next({ifindex=>$key, ifname=>$ports{$key}{'ifName'}, ifdesc=>$ports{$key}{'ifDesc'}});
 	}
 
 	# Gracefully disconnect
@@ -232,7 +240,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_port_names"(inet, text, integer
 	return undef;
 	
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."get_switchview_port_names"(inet, text, integer) IS 'Map ifindexes to port names';
+COMMENT ON FUNCTION "api"."get_switchview_port_names"(inet, text) IS 'Map ifindexes to port names';
 
 CREATE OR REPLACE FUNCTION "api"."get_switchview_port_descriptions"(inet, text) RETURNS TABLE("ifindex" INTEGER, "ifalias" TEXT) AS $$
 	use strict;
@@ -398,6 +406,79 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(input_host inet, input_com
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_switchview_cam"(inet, text) IS 'Get all CAM data from a particular device';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_neighbors"(inet, text) RETURNS TABLE("localifIndex" INTEGER, "remoteifdesc" TEXT, "remotehostname" TEXT) AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	use Socket;
+	use 5.10.0;
+
+	# Define OIDs
+	my $cdpCacheEntry = "1.3.6.1.4.1.9.9.23.1.2.1.1";
+	my $cdpCacheIfIndex = "1";
+	my $cdpCacheDeviceId = "6";
+	my $cdpCacheDevicePort = "7";
+	my $cdpCachePlatform = "8";
+
+	# Needed Variables
+	my $hostname = shift(@_) or die "Unable to get host";
+	my $community = shift(@_) or die "Unable to get READ community";
+
+	# Data containers
+	my %remoteHosts;
+	my %remotePorts;
+	my %remotePlatforms;
+	my %localPorts;
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$hostname",
+		-community => "$community",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		print $error;
+		exit 1;
+	}
+
+	# Get a list of all data
+	my $neighborList = $session->get_table(-baseoid => $cdpCacheEntry);
+
+	# Do something for each item of the list
+	while ( my ($id, $value) = each(%$neighborList)) {
+		$id=~ s/$cdpCacheEntry\.//;
+		
+		if($id =~ m/^($cdpCacheDeviceId|$cdpCacheDevicePort|$cdpCachePlatform|$cdpCacheIfIndex)\./) {
+			my @cdpEntry = split(/\./,$id);
+
+			given ($cdpEntry[0]) {
+				when(/$cdpCacheDeviceId/) {
+					$remoteHosts{$cdpEntry[1]} = $value;
+				}
+				when(/$cdpCacheDevicePort/) {
+					$remotePorts{$cdpEntry[1]} = $value;
+				}
+				when(/$cdpCachePlatform/) {
+					$remotePlatforms{$cdpEntry[1]} = $value;
+				}
+			}
+		}
+	}
+
+	foreach my $ifIndex (keys(%remoteHosts)) {
+		return_next({localifIndex=>$ifIndex,remoteifdesc=>$remotePorts{$ifIndex}, remotehostname=>$remoteHosts{$ifIndex}});
+	}
+
+	# Gracefully disconnect
+	$session->close();
+
+	# Return
+	return undef;
+
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_switchview_neighbors"(inet, text) IS 'Get the CDP table from a device to see who it is attached to';
 
 -------------------------------------------------------------------------------
 ---- EVERYTHING ELSE IN THIS IS OLD CODE AND WILL PROBABLY BE REMOVED SOON ----
