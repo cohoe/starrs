@@ -1,9 +1,9 @@
 /* API - get_system_types
 	1) Return all available system types
 */
-CREATE OR REPLACE FUNCTION "api"."get_system_types"() RETURNS SETOF TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_types"() RETURNS SETOF "systems"."device_types" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "type" FROM "systems"."device_types" ORDER BY "type" ASC);
+		RETURN QUERY (SELECT * FROM "systems"."device_types" ORDER BY "type");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_types"() IS 'Get a list of all available system types';
