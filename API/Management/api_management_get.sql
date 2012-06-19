@@ -146,3 +146,15 @@ ORDER BY "systems"."interface_addresses"."address","systems"."interfaces"."mac")
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_search_data"() IS 'Get search data to parse';
+
+CREATE OR REPLACE FUNCTION "api"."get_function_counts"(input_schema TEXT) RETURNS TABLE("function" TEXT, calls INTEGER) AS $$
+	BEGIN
+		RETURN QUERY(
+			SELECT "information_schema"."routines"."routine_name"::text,"pg_stat_user_functions"."calls"::integer 
+			FROM "information_schema"."routines" 
+			LEFT JOIN "pg_stat_user_functions" ON "pg_stat_user_functions"."funcname" = "information_schema"."routines"."routine_name" 
+			WHERE "information_schema"."routines"."routine_schema" = input_schema
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_function_counts"(TEXT) IS 'Get statistics on number of calls to each function in a schema';
