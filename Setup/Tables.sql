@@ -22,7 +22,8 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."device_types"(
 "type" TEXT NOT NULL,
 "family" TEXT NOT NULL,
-CONSTRAINT "device_types_pkey" PRIMARY KEY ("type")
+CONSTRAINT "device_types_pkey" PRIMARY KEY ("type"),
+CONSTRAINT "device_types_family_check" CHECK ("family" ~ '^PC|Network$'),
 )
 WITHOUT OIDS;
 
@@ -464,15 +465,6 @@ CONSTRAINT "switchview_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "systems"."type_family"(
-"family" TEXT NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "type_family_pkey" PRIMARY KEY ("family")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "dns"."zone_a"(
 "hostname" TEXT DEFAULT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
@@ -562,8 +554,6 @@ COMMENT ON TABLE "network"."switchport_states" IS 'Switchport control and curren
 COMMENT ON TABLE "network"."switchport_macs" IS 'MAC addresses currently on a switchport';
 
 COMMENT ON TABLE "network"."switchview" IS 'Connection data for switch enabling';
-
-COMMENT ON TABLE "systems"."type_family" IS 'Family of device types';
 
 COMMENT ON TABLE "dns"."a" IS 'DNS forward address records';
 
