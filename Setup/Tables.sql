@@ -383,35 +383,6 @@ CREATE TABLE "dhcp"."lease_log"(
 )
 WITHOUT OIDS;
 
-CREATE TABLE "documentation"."functions"(
-"specific_name" TEXT NOT NULL,
-"definition" TEXT,
-"returns" TEXT,
-"name" TEXT NOT NULL,
-"example" TEXT,
-"comment" TEXT,
-"schema" TEXT,
-CONSTRAINT "functions_pkey" PRIMARY KEY ("specific_name")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "documentation"."rules"(
-"specific_name" TEXT NOT NULL,
-"rule" TEXT NOT NULL,
-CONSTRAINT "rules_pkey" PRIMARY KEY ("specific_name","rule")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "documentation"."arguments"(
-"specific_name" TEXT NOT NULL,
-"argument" TEXT NOT NULL,
-"type" TEXT,
-"comment" TEXT,
-"position" INTEGER,
-CONSTRAINT "arguments_pkey" PRIMARY KEY ("specific_name","argument")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "dhcp"."global_options"(
 "option" TEXT NOT NULL,
 "value" TEXT NOT NULL,
@@ -538,12 +509,6 @@ COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect
 COMMENT ON TABLE "management"."processes" IS 'Process locking control';
 
 COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';
-
-COMMENT ON TABLE "documentation"."functions" IS 'List of all functions to be documented';
-
-COMMENT ON TABLE "documentation"."rules" IS 'Rules for documented functions';
-
-COMMENT ON TABLE "documentation"."arguments" IS 'Argument data for documented functions';
 
 COMMENT ON TABLE "dns"."types" IS 'All DNS record types';
 
