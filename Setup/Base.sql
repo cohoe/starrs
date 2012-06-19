@@ -5,10 +5,6 @@ Useful for collecting metrics on OS usage and device types. Much better than Chu
 */
 
 SELECT api.initialize('root');
-/*
-Device families
-*/
-INSERT INTO "systems"."type_family" ("family") VALUES ('PC'),('Network');
 
 /* Supported System Types
 Lets us see what all is on the network
