@@ -97,7 +97,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(inet, text, integer) RETUR
 	my $vlan = shift(@_) or die "Unable to get VLANID";
 
 	# Subroutine to format a MAC address to something nice
-	sub format_raw_mac() {
+	sub format_raw_mac {
 		my $mac = $_[0];
 		# Get rid of the hex identifier
 		$mac =~ s/^0x//;
