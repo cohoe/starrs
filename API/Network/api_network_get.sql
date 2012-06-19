@@ -384,7 +384,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_port_adminstatus"(inet, text) R
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_switchview_port_adminstatus"(inet, text) IS 'Map ifindexes to port administrative status';
 
-CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(input_host inet, input_community text) RETURNS SETOF "network"."cam" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_host inet, input_community text) RETURNS SETOF "network"."cam" AS $$
 	DECLARE
 		Vlans RECORD;
 		CamData RECORD;
@@ -405,7 +405,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(input_host inet, input_com
 		RETURN;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_switchview_cam"(inet, text) IS 'Get all CAM data from a particular device';
+COMMENT ON FUNCTION "api"."get_switchview_device_cam"(inet, text) IS 'Get all CAM data from a particular device';
 
 CREATE OR REPLACE FUNCTION "api"."get_switchview_neighbors"(inet, text) RETURNS TABLE("localifIndex" INTEGER, "remoteifdesc" TEXT, "remotehostname" TEXT) AS $$
 	use strict;
