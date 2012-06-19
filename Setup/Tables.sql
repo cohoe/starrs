@@ -23,7 +23,7 @@ CREATE TABLE "systems"."device_types"(
 "type" TEXT NOT NULL,
 "family" TEXT NOT NULL,
 CONSTRAINT "device_types_pkey" PRIMARY KEY ("type"),
-CONSTRAINT "device_types_family_check" CHECK ("family" ~ '^PC|Network$'),
+CONSTRAINT "device_types_family_check" CHECK ("family" ~ '^PC|Network$')
 )
 WITHOUT OIDS;
 
