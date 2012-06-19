@@ -96,6 +96,22 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(inet, text, integer) RETUR
 	my $community = shift(@_) or die "Unable to get READ community";
 	my $vlan = shift(@_) or die "Unable to get VLANID";
 
+	# Subroutine to format a MAC address to something nice
+	sub format_raw_mac() {
+		my $mac = $_[0];
+		# Get rid of the hex identifier
+		$mac =~ s/^0x//;
+
+		# Make groups of two characters
+		$mac =~ s/(.{2})/$1:/gg;
+
+		# Remove the trailing : left by the previous function
+		$mac =~ s/\:$//;
+
+		# Spit it back out
+		return $mac;
+	}
+
 	# Establish session
 	my ($session,$error) = Net::SNMP->session (
 		-hostname => "$hostname",
@@ -127,22 +143,6 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_cam"(inet, text, integer) RETUR
 	
 	# Return
 	return undef;
-
-	# Subroutine to format a MAC address to something nice
-	sub format_raw_mac() {
-		my $mac = $_[0];
-		# Get rid of the hex identifier
-		$mac =~ s/^0x//;
-
-		# Make groups of two characters
-		$mac =~ s/(.{2})/$1:/gg;
-
-		# Remove the trailing : left by the previous function
-		$mac =~ s/\:$//;
-
-		# Spit it back out
-		return $mac;
-	}
 
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_switchview_cam"(inet, text, integer) IS 'Get the CAM/MAC table from a device on a certain VLAN';
