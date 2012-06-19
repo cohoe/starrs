@@ -261,7 +261,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
 
 	# add the date to the file
-	my $date = spi_exec_query("SELECT current_timestamp")->{rows}[0]->{now};
+	my $date = spi_exec_query("SELECT localtimestamp(0)")->{rows}[0]->{now};
 	$output .= "\# Generated at $date\n\n";
 
 	# now for the rest of the config file

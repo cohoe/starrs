@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_fiel
 		PERFORM api.create_log_entry('API','INFO','update system');
 
 		EXECUTE 'UPDATE "systems"."systems" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "system_name" = $1' 
 		USING input_old_name, input_field, input_new_value;
 
@@ -75,12 +75,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 
 		IF input_field ~* 'mac' THEN
 			EXECUTE 'UPDATE "systems"."interfaces" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "mac" = $1' 
 			USING input_old_mac, input_field, macaddr(input_new_value);
 		ELSE
 			EXECUTE 'UPDATE "systems"."interfaces" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "mac" = $1' 
 			USING input_old_mac, input_field, input_new_value;
 		END IF;
@@ -139,22 +139,22 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 
 		IF input_field ~* 'mac' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, macaddr(input_new_value);
 		ELSIF input_field ~* 'address' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, inet(input_new_value);
 		ELSIF input_field ~* 'isprimary' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, bool(input_new_value);
 		ELSEIF input_field ~* 'config' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, input_new_value;
 			-- Need to force DNS records to be created
@@ -163,7 +163,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 			END IF;
 		ELSE
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, input_new_value;
 		END IF;

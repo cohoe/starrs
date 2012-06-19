@@ -261,7 +261,7 @@ COMMENT ON FUNCTION "api"."validate_soa_contact"(text) IS 'Ensure that the SOA c
 
 CREATE OR REPLACE FUNCTION "api"."clean_log"() RETURNS VOID AS $$
 	BEGIN
-		DELETE FROM "management"."log_master" WHERE "timestamp" < current_timestamp - interval '1 month';
+		DELETE FROM "management"."log_master" WHERE "timestamp" < localtimestamp(0) - interval '1 month';
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."clean_log"() IS 'Remove all log entries older than a month';

@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dhcp"."classes" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "class" = $1' 
 		USING input_old_class, input_field, input_new_value;	
 
@@ -76,7 +76,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dhcp"."class_options" SET ' || quote_ident($4) || ' = $5, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "class" = $1 AND "option" = $2 AND "value" = $3' 
 		USING input_old_class, input_old_option, input_old_value, input_field, input_new_value;
 
@@ -121,7 +121,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dhcp"."subnet_options" SET ' || quote_ident($4) || ' = $5, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "subnet" = $1 AND "option" = $2 AND "value" = $3' 
 		USING input_old_subnet, input_old_option, input_old_value, input_field, input_new_value;
 
@@ -175,7 +175,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dhcp"."range_options" SET ' || quote_ident($4) || ' = $5, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "range" = $1 AND "option" = $2 AND "value" = $3' 
 		USING input_old_range, input_old_option, input_old_value, input_field, input_new_value;
 
@@ -220,7 +220,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option te
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dhcp"."global_options" SET ' || quote_ident($3) || ' = $4, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "option" = $1 AND "value" = $2' 
 		USING input_old_option, input_old_value, input_field, input_new_value;
 

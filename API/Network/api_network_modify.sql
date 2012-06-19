@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_switchport"(input_old_system te
 		PERFORM api.create_log_entry('API','INFO','update switchport');
 
 		EXECUTE 'UPDATE "network"."switchports" SET ' || quote_ident($3) || ' = $4, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "system_name" = $1 AND "port_name" = $2' 
 		USING input_old_system, input_old_port, input_field, input_new_value;
 

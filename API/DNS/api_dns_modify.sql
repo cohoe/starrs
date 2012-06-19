@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		EXECUTE 'UPDATE "dns"."keys" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = current_timestamp, last_modifier = api.get_current_user() 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 		WHERE "keyname" = $1' 
 		USING input_old_keyname, input_field, input_new_value;
 
@@ -97,12 +97,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 
 		IF input_field ~* 'forward|shared' THEN
 			EXECUTE 'UPDATE "dns"."zones" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1' 
 			USING input_old_zone, input_field, bool(input_new_value);
 		ELSE
 			EXECUTE 'UPDATE "dns"."zones" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1' 
 			USING input_old_zone, input_field, input_new_value;
 		END IF;
@@ -158,17 +158,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 
 		IF input_field ~* 'address' THEN
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_old_zone, input_field, inet(input_new_value);		
 		ELSIF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_old_zone, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1 AND "zone" = $2' 
 			USING input_old_address, input_old_zone, input_field, input_new_value;
 		END IF;
@@ -219,12 +219,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 
 		IF input_field ~* 'preference|ttl' THEN
 			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2'
 			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2'
 			USING input_old_hostname, input_old_zone, input_field, input_new_value;
 		END IF;
@@ -270,7 +270,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_ns"(input_old_zone text, input_old_
 
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "zone" = $1 AND "nameserver" = $2'
 			USING input_old_zone, input_old_nameserver, input_field, cast(input_new_value as int);
 			
@@ -279,12 +279,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_ns"(input_old_zone text, input_old_
 			
 		ELSEIF input_field ~* 'address' THEN
 			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "zone" = $1 AND "nameserver" = $2'
 			USING input_old_zone, input_old_nameserver, input_field, cast(input_new_value as inet);
 		ELSE
 			EXECUTE 'UPDATE "dns"."ns" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "zone" = $1 AND "nameserver" = $2'
 			USING input_old_zone, input_old_nameserver, input_field, input_new_value;
 		END IF;
@@ -335,12 +335,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 
 		IF input_field ~* 'ttl|priority|weight|port' THEN
 			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
 			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
 			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, input_new_value;
 		END IF;
@@ -403,12 +403,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2'
 			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2'
 			USING input_old_alias, input_old_zone, input_field, input_new_value;
 		END IF;
@@ -459,12 +459,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input
 
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
 			USING input_old_hostname, input_old_zone, input_old_text, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
 			USING input_old_hostname, input_old_zone, input_old_text, input_field, input_new_value;
 		END IF;
@@ -521,12 +521,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_fie
 
 		IF input_field ~* 'ttl|refresh|retry|expire|minimum' THEN
 			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1' 
 			USING input_old_zone, input_field, cast(input_new_value as integer);
 		ELSE
 			EXECUTE 'UPDATE "dns"."soa" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1' 
 			USING input_old_zone, input_field, input_new_value;
 		END IF;
@@ -565,7 +565,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_txt"(input_old_hostname text, 
 
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."zone_txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
 			USING input_old_hostname, input_old_zone, input_old_text, input_field, cast(input_new_value as int);
 			
@@ -575,7 +575,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_txt"(input_old_hostname text, 
 			END IF;
 		ELSE
 			EXECUTE 'UPDATE "dns"."zone_txt" SET ' || quote_ident($4) || ' = $5,
-			date_modified = current_timestamp, last_modifier = api.get_current_user()
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2 AND "text" = $3'
 			USING input_old_hostname, input_old_zone, input_old_text, input_field, input_new_value;
 		END IF;
@@ -635,17 +635,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_a"(input_old_zone text, input_
 
 		IF input_field ~* 'address' THEN
 			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1 AND "address" = $2' 
 			USING input_old_zone, input_old_address, input_field, inet(input_new_value);		
 		ELSIF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1 AND "address" = $2' 
 			USING input_old_zone, input_old_address, input_field, cast(input_new_value as int);
 		ELSE
 			EXECUTE 'UPDATE "dns"."zone_a" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1 AND "address" = $2' 
 			USING input_old_zone, input_old_address, input_field, input_new_value;
 		END IF;

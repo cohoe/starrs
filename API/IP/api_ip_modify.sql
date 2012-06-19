@@ -29,17 +29,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_fi
 
 		IF input_field ~* 'first_ip|last_ip' THEN
 			EXECUTE 'UPDATE "ip"."ranges" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "name" = $1' 
 			USING input_old_name, input_field, inet(input_new_value);	
 		ELSIF input_field ~* 'subnet' THEN
 			EXECUTE 'UPDATE "ip"."ranges" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "name" = $1' 
 			USING input_old_name, input_field, cidr(input_new_value);	
 		ELSE
 			EXECUTE 'UPDATE "ip"."ranges" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "name" = $1' 
 			USING input_old_name, input_field, input_new_value;	
 		END IF;
@@ -88,17 +88,17 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
 
 		IF input_field ~* 'dhcp_enable|autogen' THEN
 			EXECUTE 'UPDATE "ip"."subnets" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "subnet" = $1' 
 			USING input_old_subnet, input_field, bool(input_new_value);	
 		ELSIF input_field ~* 'subnet' THEN
 			EXECUTE 'UPDATE "ip"."subnets" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "subnet" = $1' 
 			USING input_old_subnet, input_field, cidr(input_new_value);	
 		ELSE
 			EXECUTE 'UPDATE "ip"."subnets" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = current_timestamp, last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "subnet" = $1' 
 			USING input_old_subnet, input_field, input_new_value;	
 		END IF;
