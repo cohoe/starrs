@@ -13,7 +13,6 @@ GRANT USAGE ON SCHEMA "ip" TO "impulse_client";
 GRANT USAGE ON SCHEMA "management" TO "impulse_client";
 GRANT USAGE ON SCHEMA "network" TO "impulse_client";
 GRANT USAGE ON SCHEMA "systems" TO "impulse_client";
-GRANT USAGE ON SCHEMA "documentation" TO "impulse_client";
 
 /* System Data
 	Clients should never be able to modify these. They are for administrators only (superuser)
