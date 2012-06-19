@@ -62,18 +62,4 @@ system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Base.sql\" $db
 print "Privileges...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Privileges.sql\" $dbname");
 
-print "Documentation...\n";
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"API\/Documentation\/api_documentation_get.sql\" $dbname");
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"API\/Documentation\/api_documentation_utility.sql\" $dbname");
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Document.sql\" $dbname");
-foreach my $schema (@schemas)
-{
-	print "Documentation for $schema\n";
-	$schema = lc($schema);
-	system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"API\/Documentation\/api_documentation_$schema.sql\" $dbname");
-
-}
-print "Documentation for documentation\n";
-system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"API\/Documentation\/api_documentation_documentation.sql\" $dbname");
-
 print "Done!\n";
