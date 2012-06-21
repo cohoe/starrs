@@ -42,9 +42,17 @@ COMMENT ON FUNCTION "api"."get_dns_cname"(inet) IS 'Get all DNS CNAME records fo
 CREATE OR REPLACE FUNCTION "api"."get_dns_a"(input_address inet, input_zone text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		IF input_zone IS NULL THEN
-			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
+			IF input_address IS NULL THEN
+				RETURN QUERY (SELECT * FROM "dns"."a" ORDER BY "address");
+			ELSE
+				RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address ORDER BY "zone" ASC);
+			END IF;
 		ELSE
-			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone ORDER BY "zone");
+			IF input_address IS NULL THEN
+				RETURN QUERY (SELECT * FROM "dns"."a" ORDER BY "address");
+			ELSE
+				RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone ORDER BY "zone");
+			END IF;
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
