@@ -40,7 +40,11 @@ COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner 
 /* API - get_system_interface_addresses */
 CREATE OR REPLACE FUNCTION "api"."get_system_interface_addresses"(input_mac macaddr) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "mac" = input_mac ORDER BY family(address),address ASC);
+		IF input_mac IS NULL THEN
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" ORDER BY family(address),address);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "mac" = input_mac ORDER BY family(address),address ASC);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interface_addresses"(macaddr) IS 'Get all interface addresses on a specified MAC';
