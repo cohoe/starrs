@@ -52,7 +52,11 @@ COMMENT ON FUNCTION "api"."get_system_interface_addresses"(macaddr) IS 'Get all 
 /* API - get_system_interfaces */
 CREATE OR REPLACE FUNCTION "api"."get_system_interfaces"(input_system_name text) RETURNS SETOF "systems"."interfaces" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "system_name" = input_system_name  ORDER BY mac ASC);
+		IF input_system_name IS NULL THEN
+			RETURN QUERY (SELECT * FROM "systems"."interfaces" ORDER BY mac);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "system_name" = input_system_name  ORDER BY mac);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_interfaces"(text) IS 'Get all interface information on a system';
