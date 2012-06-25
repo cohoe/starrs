@@ -163,7 +163,11 @@ COMMENT ON FUNCTION "api"."get_dhcp_classes"() IS 'Get all DHCP class informatio
 /* API - get_dhcp_class */
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_class"(input_class text) RETURNS SETOF "dhcp"."classes" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_class ORDER BY "class");
+		IF input_class IS NULL THEN
+			RETURN QUERY (SELECT * FROM "dhcp"."classes" ORDER BY "class");
+		ELSE
+			RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_class ORDER BY "class");
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_class"(text) IS 'Get all DHCP class information for a specific class';

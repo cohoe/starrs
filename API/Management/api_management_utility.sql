@@ -41,65 +41,6 @@ CREATE OR REPLACE FUNCTION "api"."validate_name"(input text) RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_name"(text) IS 'Allow certain characters for names';
 
-/* API - lock_process
-	1) Check privileges
-	2) Get current status
-	3) Update status
-*/
-CREATE OR REPLACE FUNCTION "api"."lock_process"(input_process text) RETURNS VOID AS $$
-	DECLARE
-		Status BOOLEAN;
-	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.lock_process');
-
-		-- Check privileges
-		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
-			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
-		END IF;
-
-		-- Get current status
-		SELECT "locked" INTO Status
-		FROM "management"."processes"
-		WHERE "management"."processes"."process" = input_process;
-		IF Status IS TRUE THEN
-			RAISE EXCEPTION 'Process is locked';
-		END IF;
-
-		-- Update status
-		PERFORM api.create_log_entry('API','INFO','locking process '||input_process);
-		UPDATE "management"."processes" SET "locked" = TRUE WHERE "management"."processes"."process" = input_process;
-
-		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.lock_process');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."lock_process"(text) IS 'Lock a process for a job';
-
-/* API - unlock_process
-	1) Check privileges
-	2) Update status
-*/
-CREATE OR REPLACE FUNCTION "api"."unlock_process"(input_process text) RETURNS VOID AS $$
-	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.unlock_process');
-
-		-- Check privileges
-		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
-			RAISE EXCEPTION 'Permission denied. Only admins can control processes';
-		END IF;
-
-		-- Update status
-		PERFORM api.create_log_entry('API','INFO','unlocking process '||input_process);
-		UPDATE "management"."processes" SET "locked" = FALSE WHERE "management"."processes"."process" = input_process;
-
-		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.unlock_process');
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."unlock_process"(text) IS 'Unlock a process for a job';
-
 /* API - initialize
 	1) Get level
 	2) Create privilege table
@@ -151,26 +92,6 @@ CREATE OR REPLACE FUNCTION "api"."deinitialize"() RETURNS VOID AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."deinitialize"() IS 'Reset user permissions to activate a new user';
-
-/* API - reset_database */
-CREATE OR REPLACE FUNCTION "api"."reset_database"() RETURNS VOID AS $$
-	DECLARE
-		tables RECORD;
-	BEGIN
-		FOR tables IN (SELECT "table_schema","table_name" 
-		FROM "information_schema"."tables" 
-		WHERE "table_schema" !~* 'information_schema|pg_catalog'
-		AND "table_type" ~* 'BASE TABLE'
-		ORDER BY "table_schema" ASC) LOOP
-			PERFORM (SELECT api.exec('DROP TABLE '||tables.table_schema||'.'||tables.table_name||' CASCADE'));
-		END LOOP;
-	END;
-$$ LANGUAGE 'plpgsql';
-ALTER FUNCTION api.reset_database() OWNER TO impulse_admin;
-GRANT EXECUTE ON FUNCTION api.initialize(text) TO impulse_admin;
-REVOKE ALL PRIVILEGES ON FUNCTION api.reset_database() FROM public;
-
-COMMENT ON FUNCTION "api"."reset_database"() IS 'Drop all tables to reset the database to only functions';
 
 /* API - exec */
 CREATE OR REPLACE FUNCTION "api"."exec"(text) RETURNS VOID AS $$

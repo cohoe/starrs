@@ -171,27 +171,3 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_system"(input_mac macaddr) RETUR
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_system"(macaddr) IS 'Get the system name that a mac address is on';
-
-/* API - get_system_interface_switchport*/
-CREATE OR REPLACE FUNCTION "api"."get_system_interface_switchport"(input_mac macaddr) RETURNS SETOF "network"."switchport_data" AS $$
-	BEGIN
-		RETURN QUERY (
-		SELECT  "network"."switchports"."system_name",
-			"network"."switchports"."port_name",
-			"network"."switchports"."type",
-			"network"."switchports"."description",
-			"network"."switchport_states"."port_state",
-			"network"."switchport_states"."admin_state",
-			"network"."switchports"."date_created",
-			"network"."switchports"."date_modified",
-			"network"."switchports"."last_modifier"
-		FROM "network"."switchports"
-		LEFT JOIN "network"."switchport_states" 
-		ON "network"."switchports"."port_name" = "network"."switchport_states"."port_name" 
-		JOIN "network"."switchport_macs" 
-		ON "network"."switchports"."port_name" = "network"."switchport_macs"."port_name"
-		AND "network"."switchports"."system_name" = "network"."switchport_macs"."system_name"
-		WHERE "network"."switchport_macs"."mac" = input_mac);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_system_interface_switchport"(macaddr) IS 'Get the switchport data that a mac address is on';

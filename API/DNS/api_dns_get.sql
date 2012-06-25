@@ -102,7 +102,11 @@ COMMENT ON FUNCTION "api"."get_dns_zones"(text) IS 'Get the available zones to a
 /* API - get_dns_zone*/
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone"(input_zone text) RETURNS SETOF "dns"."zones" AS $$
 	BEGIN
-		RETURN QUERY(SELECT * FROM "dns"."zones" WHERE "zone" = input_zone ORDER BY "zone");
+		IF input_zone IS NULL THEN
+			RETURN QUERY(SELECT * FROM "dns"."zones" ORDER BY "zone");
+		ELSE
+			RETURN QUERY(SELECT * FROM "dns"."zones" WHERE "zone" = input_zone ORDER BY "zone");
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_zone"(text) IS 'Get detailed dns zone information';
