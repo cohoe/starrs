@@ -85,7 +85,7 @@ COMMENT ON FUNCTION "api"."get_dhcpd_subnet_ranges"(cidr) IS 'Get a list of all 
 /* API - get_dhcpd_global_options */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_global_options"() RETURNS SETOF "dhcp"."dhcpd_global_options" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "option","value" FROM "dhcp"."global_options" ORDER BY "option");
+		RETURN QUERY (SELECT "option","value" FROM "dhcp"."global_options" ORDER BY CASE WHEN "option" = 'option space' THEN 1 ELSE 2 END);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_global_options"() IS 'Get all of the global DHCPD config directives';
