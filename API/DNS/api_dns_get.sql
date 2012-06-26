@@ -11,16 +11,16 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dns_mx"(inet) IS 'Get all data pertanent to DNS MX records for an address';
 
 /* API - get_dns_zone_ns */
-CREATE OR REPLACE FUNCTION "api"."get_dns_zone_ns"(input_zone text) RETURNS SETOF "dns"."ns" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_dns_ns"(input_zone text) RETURNS SETOF "dns"."ns" AS $$
 	BEGIN
-		IF input_address IS NULL THEN
+		IF input_zone IS NULL THEN
 			RETURN QUERY (SELECT * FROM "dns"."ns" ORDER BY "nameserver");
 		ELSE
 			RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_zone ORDER BY "nameserver");
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dns_zone_ns"(text) IS 'Get all DNS NS records for a zone';
+COMMENT ON FUNCTION "api"."get_dns_ns"(text) IS 'Get all DNS NS records for a zone';
 
 /* API - get_dns_text */
 CREATE OR REPLACE FUNCTION "api"."get_dns_txt"(input_address inet) RETURNS SETOF "dns"."txt" AS $$
