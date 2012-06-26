@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION "api"."create_network_snmp"(input_system text, input_
 		-- Match address against system
 		IF(api.get_interface_address_system(input_address) != input_system) THEN
 			RAISE EXCEPTION 'Address % is not a part of the system %',input_address,input_system;
-		END IF;
+		END IF:
 		
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN

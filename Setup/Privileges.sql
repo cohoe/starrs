@@ -22,7 +22,6 @@ GRANT SELECT ON "systems"."device_types" TO "impulse_client";
 GRANT SELECT ON "systems"."os_family" TO "impulse_client";
 GRANT SELECT ON "dhcp"."config_types" TO "impulse_client";
 GRANT SELECT ON "systems"."os" TO "impulse_client";
-GRANT SELECT ON "network"."switchport_types" TO "impulse_client";
 GRANT SELECT ON "dns"."types" TO "impulse_client";
 
 /* User Data
@@ -32,7 +31,6 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."class_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."subnets" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."ranges" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."ns" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchports" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interface_addresses" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."classes" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."systems" TO "impulse_client";
@@ -47,16 +45,13 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interfaces" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."configuration" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."processes" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_states" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_macs" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchview" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."switchport_history" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."soa" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."srv" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."cname" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_txt" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_a" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."snmp" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both

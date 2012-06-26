@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_network_snmp"(input_system text) RETURN
 		
 		-- Create it
 		PERFORM api.create_log_entry('API','INFO','Removing snmp credentials');
-		DELETE FROM "network"."snmp" WHERE "system_name" = input_system;
+		DELETE FROM "network"."snmp" WHERE "system_name" = input_system
 		
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','end api.remove_network_snmp');

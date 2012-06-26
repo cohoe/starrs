@@ -1,0 +1,41 @@
+CREATE OR REPLACE FUNCTION "api"."modify_network_snmp"(input_old_system text, input_field text, input_new_value text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_network_snmp');
+		
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_old_system) != api.get_current_user() THEN
+				PERFORM api.create_log_entry('API','ERROR','Permission denied');
+				RAISE EXCEPTION 'Permission denied: you are not owner';
+			END IF;
+		END IF;
+		
+		-- Check fields
+		IF input_field !~* 'ro_community|rw_community|system_name|address' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+		
+		IF input_field ~* 'address' THEN
+			IF(api.get_interface_address_system(input_new_value::inet) != input_old_system) THEN
+				RAISE EXCEPTION 'Address % is not a part of the system %',input_new_value,input_old_system;
+			END IF;
+		END IF;
+		
+		-- Mod it
+		PERFORM api.create_log_entry('API','INFO','Modifying snmp credentials');
+		IF input_field  ~* 'address' THEN
+			EXECUTE 'UPDATE "network"."snmp" SET ' || quote_ident($2) || ' = $3
+			WHERE "system_name" = $1'
+			USING input_old_system, input_field, input_new_value::inet;
+		ELSE
+			EXECUTE 'UPDATE "network"."snmp" SET ' || quote_ident($2) || ' = $3
+			WHERE "system_name" = $1'
+			USING input_old_system, input_field, input_new_value;
+		END IF;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','end api.modify_network_snmp');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_network_snmp"(text) IS 'Modify credentials for a system';
