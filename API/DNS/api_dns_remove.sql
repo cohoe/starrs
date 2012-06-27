@@ -165,13 +165,13 @@ COMMENT ON FUNCTION "api"."remove_dns_srv"(text, text, integer, integer, integer
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_target text, input_zone text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_zone text) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_cname');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."cname" WHERE "alias" = input_alias AND "target" = input_target AND "zone" = input_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."cname" WHERE "alias" = input_alias AND "zone" = input_zone) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS CNAME %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_alias||'.'||input_zone;
 			END IF;
@@ -179,12 +179,12 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_targ
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','remove CNAME record');
-		DELETE FROM "dns"."cname" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone;
+		DELETE FROM "dns"."cname" WHERE "alias" = input_alias AND "zone" = input_zone;
 
 		PERFORM api.create_log_entry('API','DEBUG','finish api.remove_dns_cname');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text, text) IS 'remove a dns cname record for a host';
+COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text) IS 'remove a dns cname record for a host';
 
 /* API - remove_dns_txt
 	1) Check privileges
