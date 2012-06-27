@@ -773,7 +773,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 
 			IF OLD."type" ~* '^A|AAAA$' THEN
 				--NULL hostname means zone address
-				IF NEW."hostname" IS NULL THEN
+				IF OLD."hostname" IS NULL THEN
 					DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||host(OLD."address");
 					ReturnCode := api.nsupdate(OLD."zone",DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 				ELSE
