@@ -104,7 +104,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_zone text, input_
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','deleting mailserver (MX)');
-		DELETE FROM "dns"."mx" WHERE AND "zone" = input_zone AND "preference" = input_preference;
+		DELETE FROM "dns"."mx" WHERE "zone" = input_zone AND "preference" = input_preference;
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_mailserver');
 	END;
