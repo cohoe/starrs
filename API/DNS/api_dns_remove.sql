@@ -90,13 +90,13 @@ COMMENT ON FUNCTION "api"."remove_dns_address"(inet,text) IS 'delete an A or AAA
 	1) Check privileges
 	2) Remove record
 */
-CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_hostname text, input_zone text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_zone text, input_preference integer) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.remove_dns_mailserver');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone) != api.get_current_user() THEN
+			IF (SELECT "owner" FROM "dns"."mx" WHERE "zone" = input_zone AND "preference" = input_preference) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied for % (%) on DNS MX %. You are not owner.',api.get_current_user(),api.get_current_user_level(),input_hostname||'.'||input_zone;
 			END IF;
@@ -104,12 +104,12 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_hostname text, in
 
 		-- Remove record
 		PERFORM api.create_log_entry('API','INFO','deleting mailserver (MX)');
-		DELETE FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone;
+		DELETE FROM "dns"."mx" WHERE AND "zone" = input_zone AND "preference" = input_preference;
 
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.remove_dns_mailserver');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dns_mailserver"(text, text) IS 'Delete an existing MX record for a zone';
+COMMENT ON FUNCTION "api"."remove_dns_mailserver"(text, integer) IS 'Delete an existing MX record for a zone';
 
 /* API - remove_dns_nameserver
 	1) Check privileges
