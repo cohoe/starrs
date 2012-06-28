@@ -14,13 +14,9 @@ ALTER TABLE "dhcp"."subnet_options" ADD CONSTRAINT "subnet_option_subnet_option_
 
 COMMENT ON CONSTRAINT "subnet_option_subnet_option_value_key" ON "dhcp"."subnet_options" IS 'No two directives can be the same';
 
-ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_information_key" UNIQUE ("port","weight","priority","alias");
+ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_information_key" UNIQUE ("port","weight","priority","alias","zone");
 
 COMMENT ON CONSTRAINT "srv_alias_information_key" ON "dns"."srv" IS 'No duplicate infomation';
-
-ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_zone_key" UNIQUE ("alias","zone");
-
-COMMENT ON CONSTRAINT "srv_alias_zone_key" ON "dns"."srv" IS 'Cannot have two of the same alises in the same zone';
 
 ALTER TABLE "dns"."cname" ADD CONSTRAINT "cname_alias_zone_key" UNIQUE ("alias","zone");
 
