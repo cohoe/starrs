@@ -406,6 +406,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2'
 			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int);
+		ELSEIF input_field ~* 'hostname' THEN
+			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user(), address = (SELECT "address" FROM "dns"."a" WHERE "hostname" = $4 AND "zone" = $2) 
+			WHERE "alias" = $1 AND "zone" = $2'
+			USING input_old_alias, input_old_zone, input_field, input_new_value;
 		ELSE
 			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
