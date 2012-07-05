@@ -149,7 +149,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text) IS 'create a new A or AAAA record';
+COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, boolean, text) IS 'create a new A or AAAA record';
 
 /* API - create_dns_mailserver
 	1) Set owner
