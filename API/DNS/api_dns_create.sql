@@ -96,7 +96,7 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 	6) Create record
 	7) Queue dns
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_reverse boolean, input_owner text) RETURNS SETOF "dns"."a" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_type text, input_reverse boolean, input_owner text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
@@ -113,6 +113,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		-- Fill TTL
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
+		END IF;
+
+		-- Check type
+		IF input_type !~* '^A|AAAA$' THEN
+			RAISE EXCEPTION 'Bad type % given',input_type;
+		END IF;
+
+		-- Validate type
+		IF family(input_address) = 4 AND input_type !~* '^A$' THEN
+			RAISE EXCEPTION 'IPv4 Address/Type mismatch';
+		ELSEIF family(input_address) = 6 AND input_type !~* '^AAAA$' THEN
+			RAISE EXCEPTION 'IPv6 Address/Type mismatch';
 		END IF;
 		
 		-- User can only specify TTL if address is static
@@ -141,15 +153,15 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
-		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner","reverse") VALUES 
-		(input_hostname,input_zone,input_address,input_ttl,input_owner,input_reverse);
+		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","type","owner","reverse") VALUES 
+		(input_hostname,input_zone,input_address,input_ttl,input_type,input_owner,input_reverse);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
 		RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, boolean, text) IS 'create a new A or AAAA record';
+COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text, boolean, text) IS 'create a new A or AAAA record';
 
 /* API - create_dns_mailserver
 	1) Set owner
