@@ -299,6 +299,7 @@ CREATE TABLE "dns"."a"(
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+"reverse" BOOLEAN NOT NULL DEFAULT TRUE,
 CONSTRAINT "a_pkey" PRIMARY KEY ("hostname","address","zone"),
 CONSTRAINT "dns_a_type_check" CHECK ("type" ~ '^A|AAAA$'),
 CONSTRAINT "dns_a_hostname" CHECK ("hostname" !~ '_')

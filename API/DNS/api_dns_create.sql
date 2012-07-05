@@ -96,7 +96,7 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 	6) Create record
 	7) Queue dns
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."a" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_reverse boolean, input_owner text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
 
@@ -141,8 +141,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 
 		-- Create record
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
-		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner") VALUES 
-		(input_hostname,input_zone,input_address,input_ttl,input_owner);
+		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","owner","reverse") VALUES 
+		(input_hostname,input_zone,input_address,input_ttl,input_owner,input_reverse);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');

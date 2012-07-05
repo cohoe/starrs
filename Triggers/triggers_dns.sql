@@ -17,11 +17,6 @@ CREATE OR REPLACE FUNCTION "dns"."a_insert"() RETURNS TRIGGER AS $$
 		END IF;
 		*/
 		-- Autofill type
-		IF family(NEW."address") = 4 THEN
-			NEW."type" := 'A';
-		ELSIF family(NEW."address") = 6 THEN
-			NEW."type" := 'AAAA';
-		END IF;
 		
 		RETURN NEW;
 	END;
@@ -47,11 +42,6 @@ CREATE OR REPLACE FUNCTION "dns"."a_update"() RETURNS TRIGGER AS $$
 			END IF;
 			
 			-- Autofill Type
-			IF family(NEW."address") = 4 THEN
-				NEW."type" := 'A';
-			ELSIF family(NEW."address") = 6 THEN
-				NEW."type" := 'AAAA';
-			END IF;
 		END IF;
 		
 		-- New zone mismatch
@@ -505,7 +495,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 					WHERE NEW."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
-					IF RevZone = NEW."zone" THEN
+					IF RevZone = NEW."zone" AND NEW."reverse" IS TRUE THEN
 						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
 						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 					END IF;
@@ -623,7 +613,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 					WHERE OLD."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
-					IF RevZone = OLD."zone" THEN
+					IF RevZone = OLD."zone" AND OLD."reverse" IS TRUE THEN
 						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
 						ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 					END IF;
@@ -648,7 +638,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 					WHERE NEW."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
-					IF RevZone = NEW."zone" THEN
+					IF RevZone = NEW."zone" AND NEW."reverse" IS TRUE THEN
 						DnsRecord := api.get_reverse_domain(NEW."address")||' '||NEW."ttl"||' PTR '||NEW."hostname"||'.'||NEW."zone"||'.';
 						ReturnCode := Returncode||api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 					END IF;
@@ -797,7 +787,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 					WHERE OLD."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
-					IF RevZone = OLD."zone" THEN
+					IF RevZone = OLD."zone" AND OLD."reverse" IS TRUE THEN
 						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
 						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 					END IF;
