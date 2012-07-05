@@ -134,7 +134,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		SELECT "isprimary" INTO isprim FROM "systems"."interface_addresses" WHERE "address" = input_old_address;
 
 		IF input_field ~* 'mac' THEN
-			SELECT COUNT(*) INTO primcount FROM "systems"."interface_addresses" WHERE "mac" = input_new_value::macaddr AND "isprimary" IS TRUE
+			SELECT COUNT(*) INTO primcount FROM "systems"."interface_addresses" WHERE "mac" = input_new_value::macaddr AND "isprimary" IS TRUE;
 			IF primcount = 0 THEN
 				isprim := TRUE;
 			ELSE
