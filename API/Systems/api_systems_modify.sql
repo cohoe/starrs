@@ -102,6 +102,9 @@ COMMENT ON FUNCTION "api"."modify_interface"(macaddr,text,text) IS 'Modify an ex
 	3) Update record
 */
 CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address inet, input_field text, input_new_value text) RETURNS SETOF "systems"."interface_addresses" AS $$
+	DECLARE
+		isprim BOOLEAN;
+		primcount INTEGER;
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_interface_address');
 
@@ -127,6 +130,18 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 			END IF;
 		END IF;
 
+		-- Check for primary
+		SELECT "isprimary" INTO isprim FROM "systems"."interface_addresses" WHERE "address" = input_old_address;
+
+		IF input_field ~* 'mac' THEN
+			SELECT COUNT(*) INTO primcount FROM "systems"."interface_addresses" WHERE "mac" = input_new_value::macaddr AND "isprimary" IS TRUE
+			IF primcount = 0 THEN
+				isprim := TRUE;
+			ELSE
+				isprim := FALSE;
+			END IF;
+		END IF;
+
 		IF input_field ~* 'address' THEN
 			IF (SELECT "use" FROM "api"."get_ip_range"((SELECT "api"."get_address_range"(input_new_value::inet)))) ~* 'ROAM' THEN
 				PERFORM api.create_log_entry('API','ERROR','Specified new address is contained within Dynamic range');
@@ -139,9 +154,9 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 
 		IF input_field ~* 'mac' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
-			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user(), isprimary = $4 
 			WHERE "address" = $1' 
-			USING input_old_address, input_field, macaddr(input_new_value);
+			USING input_old_address, input_field, macaddr(input_new_value),isprim;
 		ELSIF input_field ~* 'address' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
