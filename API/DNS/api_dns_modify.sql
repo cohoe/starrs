@@ -222,6 +222,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "hostname" = $1 AND "zone" = $2'
 			USING input_old_hostname, input_old_zone, input_field, cast(input_new_value as int);
+		ELSEIF input_field ~* 'hostname' THEN
+			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user(), address = (SELECT "address" FROM "dns"."a" WHERE "hostname" = $4 AND "zone" = $2) 
+			WHERE "hostname" = $1 AND "zone" = $2'
+			USING input_old_hostname, input_old_zone, input_field, input_new_value;
 		ELSE
 			EXECUTE 'UPDATE "dns"."mx" SET ' || quote_ident($3) || ' = $4,
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
@@ -338,6 +343,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
 			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
 			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, cast(input_new_value as int);
+		ELSEIF input_field ~* 'hostname' THEN
+			RAISE EXCEPTION 'test';
+			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user(), address = (SELECT "address" FROM "dns"."a" WHERE "hostname" = $7 AND "zone" = $2) 
+			WHERE "alias" = $1 AND "zone" = $2 AND "priority" = $3 AND "weight" = $4 AND "port" = $5'
+			USING input_old_alias, input_old_zone, input_old_priority, input_old_weight, input_old_port, input_field, input_new_value;
 		ELSE
 			EXECUTE 'UPDATE "dns"."srv" SET ' || quote_ident($6) || ' = $7,
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user()
@@ -407,7 +418,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 			WHERE "alias" = $1 AND "zone" = $2'
 			USING input_old_alias, input_old_zone, input_field, cast(input_new_value as int);
 		ELSEIF input_field ~* 'hostname' THEN
-			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4
+			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user(), address = (SELECT "address" FROM "dns"."a" WHERE "hostname" = $4 AND "zone" = $2) 
 			WHERE "alias" = $1 AND "zone" = $2'
 			USING input_old_alias, input_old_zone, input_field, input_new_value;
