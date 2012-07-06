@@ -169,7 +169,7 @@ COMMENT ON FUNCTION "api"."get_dns_zone_txt"(text) IS 'Get all DNS TXT records s
 
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone_a"(input_zone text) RETURNS SETOF "dns"."zone_a" AS $$
 	BEGIN
-		IF input_address IS NULL THEN
+		IF input_zone IS NULL THEN
 			RETURN QUERY (SELECT * FROM "dns"."zone_a" ORDER BY "address");
 		ELSE
 			RETURN QUERY (SELECT * FROM "dns"."zone_a" WHERE "zone" = input_zone ORDER BY "address");
