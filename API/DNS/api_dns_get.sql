@@ -158,7 +158,7 @@ COMMENT ON FUNCTION "api"."get_dns_soa"(text) IS 'Get the SOA record of a DNS zo
 /* API - get_dns_text */
 CREATE OR REPLACE FUNCTION "api"."get_dns_zone_txt"(input_zone text) RETURNS SETOF "dns"."zone_txt" AS $$
 	BEGIN
-		IF input_address IS NULL THEN
+		IF input_zone IS NULL THEN
 			RETURN QUERY (SELECT * FROM "dns"."zone_txt" ORDER BY "hostname");
 		ELSE
 			RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "zone" = input_zone ORDER BY "hostname" ASC);
