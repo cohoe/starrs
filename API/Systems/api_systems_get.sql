@@ -171,3 +171,10 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_system"(input_mac macaddr) RETUR
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_system"(macaddr) IS 'Get the system name that a mac address is on';
+
+CREATE OR REPLACE FUNCTION "api"."get_platforms"() RETURNS SETOF "systems"."platforms" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "systems"."platforms" ORDER BY CASE WHEN "platform_name" = 'Custom' THEN 1 ELSE 2 END);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_platforms"() IS 'Get information on all system platforms';

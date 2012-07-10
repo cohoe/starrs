@@ -108,6 +108,7 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."systems"(
 "system_name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
+"group" TEXT,
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
@@ -115,6 +116,8 @@ CREATE TABLE "systems"."systems"(
 "os_name" TEXT,
 "last_modifier" TEXT NOT NULL,
 "renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
+"platform_name" TEXT NOT NULL,
+"asset" TEXT,
 CONSTRAINT "systems_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
@@ -407,6 +410,33 @@ CREATE TABLE "network"."snmp"(
 CONSTRAINT "network_snmp_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
+
+CREATE TABLE "systems"."architectures"(
+"architecture" TEXT NOT NULL,
+"comment" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "systems_architecture_pkey" PRIMARY KEY ("architecture")
+)
+WITHOUT OIDS;
+
+COMMENT ON TABLE "systems"."architectures" IS 'The CPU architecture of a platform';
+
+CREATE TABLE "systems"."platforms"(
+"platform_name" TEXT NOT NULL,
+"architecture" TEXT NOT NULL,
+"disk" TEXT NOT NULL,
+"cpu" TEXT NOT NULL,
+"memory" INTEGER NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "systems_platforms_pkey" PRIMARY KEY ("platform_name")
+)
+WITHOUT OIDS;
+
+COMMENT ON TABLE "systems"."platforms" IS 'Platform templates of a system';
 
 COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network systems';
 

@@ -103,4 +103,17 @@ INSERT INTO "dns"."types" ("type","comment") VALUES
 	('TXT','Text'),
 	('CNAME','Pointer'),
 	('SRV','Special service');
+
+/* Architectures */	
+INSERT INTO "systems"."architectures"("architecture","comment") VALUES
+	('i386','Standard x86'),
+	('x86_64','Normal 32/64 Mode'),
+	('ia64','Intel Itanium'),
+	('SPARC','Sun/Oracle'),
+	('ARM','ARM devices'),
+	('PowerPC','PowerPC'),
+	('Other','Other');
 	
+INSERT INTO "systems"."platforms"("platform_name","architecture","disk","cpu","memory") VALUES
+	('Custom','Other','Other','Other','0'),
+	('Dell PowerEdge 1750','i386','2x 18GB','2x Xeon 2.4GHz','2');

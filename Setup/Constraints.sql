@@ -54,6 +54,10 @@ ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ranges_class" FOREIGN KEY ("class")
 
 ALTER TABLE "dns"."ns" ADD CONSTRAINT "fk_dns_ns_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
+ALTER TABLE "systems"."platforms" ADD CONSTRAINT "fk_platforms_architectures_arch" FOREIGN KEY ("architecture") REFERENCES "systems"."architectures"("architecture") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
+
+ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_systems_platform" FOREIGN KEY ("platform_name") REFERENCES "systems"."platforms"("platform_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
+
 ALTER TABLE "systems"."interface_addresses" ADD CONSTRAINT "fk_systems_interfaces_address" FOREIGN KEY ("address") REFERENCES "ip"."addresses"("address") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT
 DEFERRABLE INITIALLY IMMEDIATE;
 

@@ -18,10 +18,6 @@ ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_information_key" UNIQUE ("port
 
 COMMENT ON CONSTRAINT "srv_alias_information_key" ON "dns"."srv" IS 'No duplicate infomation';
 
-ALTER TABLE "dns"."srv" ADD CONSTRAINT "srv_alias_zone_key" UNIQUE ("alias","zone");
-
-COMMENT ON CONSTRAINT "srv_alias_zone_key" ON "dns"."srv" IS 'Cannot have two of the same alises in the same zone';
-
 ALTER TABLE "dns"."cname" ADD CONSTRAINT "cname_alias_zone_key" UNIQUE ("alias","zone");
 
 COMMENT ON CONSTRAINT "cname_alias_zone_key" ON "dns"."cname" IS 'Cannot have two of the same alises in the same zone';
@@ -57,6 +53,8 @@ ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ip_ranges_subnet" FOREIGN KEY ("sub
 ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_ranges_class" FOREIGN KEY ("class") REFERENCES "dhcp"."classes"("class") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
 
 ALTER TABLE "dns"."ns" ADD CONSTRAINT "fk_dns_ns_zone" FOREIGN KEY ("zone") REFERENCES "dns"."zones"("zone") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "systems"."platforms" ADD CONSTRAINT "fk_platforms_architectures_arch" FOREIGN KEY ("architecture") REFERENCES "systems"."architectures"("architecture") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
 
 ALTER TABLE "systems"."interface_addresses" ADD CONSTRAINT "fk_systems_interfaces_address" FOREIGN KEY ("address") REFERENCES "ip"."addresses"("address") MATCH SIMPLE ON UPDATE RESTRICT ON DELETE RESTRICT
 DEFERRABLE INITIALLY IMMEDIATE;
