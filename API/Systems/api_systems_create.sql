@@ -131,3 +131,45 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_system_quick"(text, text, macaddr, inet, text) IS 'Create a barebones system';
+
+CREATE OR REPLACE FUNCTION "api"."create_datacenter"(input_name text, input_comment text) RETURNS SETOF "systems"."datacenters" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_datacenter');
+
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
+			RAISE EXCEPTION 'Permission denied to create datacenter: not admin';
+		END IF;
+		
+		-- Create datacenter
+		PERFORM api.create_log_entry('API','INFO','creating new datacenter');
+		INSERT INTO "systems"."datacenters" ("datacenter","comment") VALUES (input_name,input_comment);
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_datacenter');
+		RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_datacenter"(text, text) IS 'Create a new datacenter';
+
+CREATE OR REPLACE FUNCTION "api"."create_availability_zone"(input_datacenter text, input_zone text, input_comment text) RETURNS SETOF "systems"."availability_zones" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','begin api.create_availability_zone');
+
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
+			RAISE EXCEPTION 'Permission denied to create availability zone: not admin';
+		END IF;
+		
+		-- Create availability_zones
+		PERFORM api.create_log_entry('API','INFO','creating new availability zone');
+		INSERT INTO "systems"."availability_zones" ("datacenter","zone","comment") VALUES (input_datacenter, input_zone, input_comment);
+
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','finish api.create_availability_zone');
+		RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "zone" = input_zone);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_availability_zone"(text, text, text) IS 'Create a new availability zone';

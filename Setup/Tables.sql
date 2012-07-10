@@ -438,6 +438,31 @@ WITHOUT OIDS;
 
 COMMENT ON TABLE "systems"."platforms" IS 'Platform templates of a system';
 
+CREATE TABLE "systems"."datacenters"(
+"datacenter" TEXT NOT NULL,
+"comment" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "systems_datacenter_pkey" PRIMARY KEY ("datacenter")
+)
+WITHOUT OIDS;
+
+COMMENT ON TABLE "systems"."datacenters" IS 'Regional locations for systems';
+
+CREATE TABLE "systems"."availability_zones"(
+"datacenter" TEXT NOT NULL,
+"zone" TEXT NOT NULL,
+"comment" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "systems_az_pkey" PRIMARY KEY ("datacenter","zone")
+)
+WITHOUT OIDS;
+
+COMMENT ON TABLE "systems"."availability_zones" IS 'Availability zones within datacenters';
+
 COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network systems';
 
 COMMENT ON TABLE "dns"."zone_a" IS 'Zone address records';

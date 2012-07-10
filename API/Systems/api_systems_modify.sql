@@ -193,3 +193,78 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_interface_address"(inet,text,text) IS 'Modify an existing interface address';
+
+CREATE OR REPLACE FUNCTION "api"."modify_datacenter"(input_old_name text, input_field text, input_new_value text) RETURNS SETOF "systems"."datacenters" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_datacenter');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
+			RAISE EXCEPTION 'Permission to edit address % denied. You are not admin';
+ 		END IF;
+
+		-- Check allowed fields
+		IF input_field !~* 'datacenter|comment' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+		
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update interface address');
+
+		EXECUTE 'UPDATE "systems"."datacenters" SET ' || quote_ident($2) || ' = $3, 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+		WHERE "datacenter" = $1' 
+		USING input_old_name, input_field, input_new_value;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_datacenter');
+
+		IF input_field ~* 'datacenter' THEN
+			RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_new_value);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_old_name);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_datacenter"(text, text, text) IS 'modify a datacenter';
+
+
+CREATE OR REPLACE FUNCTION "api"."modify_availability_zone"(input_old_datacenter text, input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "systems"."availability_zones" AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.modify_availability_zone');
+
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied');
+			RAISE EXCEPTION 'Permission to edit availability zone denied. You are not admin';
+ 		END IF;
+
+		-- Check allowed fields
+		IF input_field !~* 'datacenter|zone|comment' THEN
+			PERFORM api.create_log_entry('API','ERROR','Invalid field');
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+		
+		-- Update record
+		PERFORM api.create_log_entry('API','INFO','update availability zone');
+
+		EXECUTE 'UPDATE "systems"."availability_zones" SET ' || quote_ident($3) || ' = $4, 
+		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+		WHERE "datacenter" = $1 AND "zone" = $2' 
+		USING input_old_datacenter, input_old_zone, input_field, input_new_value;
+
+		-- Done
+		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.modify_availability_zone');
+
+		IF input_field ~* 'zone' THEN
+			RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_old_datacenter AND "zone" = input_new_value);
+		ELSEIF input_field ~* 'datacenter' THEN
+			RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_new_value AND "zone" = input_old_zone);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_old_datacenter AND "zone" = input_old_zone);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_availability_zone"(text, text, text, text) IS 'modify a availability_zone';

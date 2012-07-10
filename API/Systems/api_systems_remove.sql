@@ -106,3 +106,43 @@ CREATE OR REPLACE FUNCTION "api"."remove_users_systems"(username text) RETURNS V
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_users_systems"(text) IS 'Remove all systems owned by a user';
+
+CREATE OR REPLACE FUNCTION "api"."remove_datacenter"(input_name text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','Begin api.remove_datacenter');
+		
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied to remove datacenter');
+			RAISE EXCEPTION 'Permission denied: Only admins can remove datacenters';
+		END IF;
+		
+		-- Perform delete
+		PERFORM api.create_log_entry('API','INFO','Removing dacenter');
+		DELETE FROM "systems"."datacenters" WHERE "datacenter" = input_name;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','End api.remove_datacenter');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_datacenter"(text) IS 'remove a datacenter';
+
+CREATE OR REPLACE FUNCTION "api"."remove_availability_zone"(input_datacenter text, input_zone text) RETURNS VOID AS $$
+	BEGIN
+		PERFORM api.create_log_entry('API','DEBUG','Begin api.remove_availability_zone');
+		
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			PERFORM api.create_log_entry('API','ERROR','Permission denied to remove availability zone');
+			RAISE EXCEPTION 'Permission denied: Only admins can remove availability_zones';
+		END IF;
+		
+		-- Perform delete
+		PERFORM api.create_log_entry('API','INFO','Removing availability zone');
+		DELETE FROM "systems"."availability_zones" WHERE "datacenter" = input_datacenter AND "zone" = input_zone;
+		
+		-- Done
+		PERFORM api.create_log_entry('API','DEBUG','End api.remove_availability_zone');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_availability_zone"(text, text) IS 'Remove an availability zone';

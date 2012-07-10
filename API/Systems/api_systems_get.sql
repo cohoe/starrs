@@ -178,3 +178,17 @@ CREATE OR REPLACE FUNCTION "api"."get_platforms"() RETURNS SETOF "systems"."plat
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_platforms"() IS 'Get information on all system platforms';
+
+CREATE OR REPLACE FUNCTION "api"."get_datacenters"() RETURNS SETOF "systems"."datacenters" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "systems"."datacenters" ORDER BY CASE WHEN "datacenter" = (SELECT api.get_site_configuration('DEFAULT_DATACENTER')) THEN 1 ELSE 2 END);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_datacenters"() IS 'Get all of the available datacenters';
+
+CREATE OR REPLACE FUNCTION "api"."get_availability_zones"() RETURNS SETOF "systems"."availability_zones" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "systems"."availability_zones" ORDER BY CASE WHEN "zone" = (SELECT api.get_site_configuration('DEFAULT_AVAILABILITY_ZONE')) THEN 1 ELSE 2 END);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_availability_zones"() IS 'Get all of the configured availability zones';
