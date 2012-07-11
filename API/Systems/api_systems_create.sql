@@ -169,7 +169,7 @@ CREATE OR REPLACE FUNCTION "api"."create_availability_zone"(input_datacenter tex
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_availability_zone');
-		RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "zone" = input_zone);
+		RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_datacenter AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_availability_zone"(text, text, text) IS 'Create a new availability zone';
