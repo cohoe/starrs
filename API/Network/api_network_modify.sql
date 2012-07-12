@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_snmp"(input_old_system text, in
 		PERFORM api.create_log_entry('API','DEBUG','end api.modify_network_snmp');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_network_snmp"(text) IS 'Modify credentials for a system';
+COMMENT ON FUNCTION "api"."modify_network_snmp"(text, text, text) IS 'Modify credentials for a system';
 
 /* API - modify_network_switchport
 	1) Check privileges

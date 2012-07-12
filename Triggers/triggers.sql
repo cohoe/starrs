@@ -79,15 +79,6 @@ CREATE TRIGGER "ip_subnets_delete"
 BEFORE DELETE ON "ip"."subnets"
 FOR EACH ROW EXECUTE PROCEDURE "ip"."subnets_delete"();
 
-/* network.switchports */
-CREATE TRIGGER "network_switchports_insert"
-BEFORE INSERT ON "network"."switchports"
-FOR EACH ROW EXECUTE PROCEDURE "network"."switchports_insert"();
-
-CREATE TRIGGER "network_switchports_update"
-BEFORE UPDATE ON "network"."switchports"
-FOR EACH ROW EXECUTE PROCEDURE "network"."switchports_update"();
-
 /* systems.interface_addresses */
 CREATE TRIGGER "systems_interface_addresses_insert"
 BEFORE INSERT ON "systems"."interface_addresses"
@@ -180,10 +171,6 @@ FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_update"();
 CREATE TRIGGER "dns_zone_txt_delete_queue"
 AFTER DELETE ON "dns"."zone_txt"
 FOR EACH ROW EXECUTE PROCEDURE "dns"."txt_query_delete"();
-
-CREATE TRIGGER "network_switchport_states_update"
-BEFORE UPDATE ON "network"."switchport_states"
-FOR EACH ROW EXECUTE PROCEDURE "network"."switchport_states_update"();
 
 CREATE TRIGGER "dns_zone_a_insert"
 BEFORE INSERT ON "dns"."zone_a"

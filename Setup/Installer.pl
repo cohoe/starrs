@@ -13,7 +13,7 @@ use Net::SNMP;
 use Net::SMTP;
 
 my $dbhost = "localhost";
-my $dbuser = "impulse_admin";
+my $dbuser = "postgres";
 my $dbport = 5432;
 my $dbname = "impulse";
 
