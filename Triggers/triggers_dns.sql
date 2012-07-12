@@ -185,22 +185,20 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_update"() RETURNS TRIGGER AS $$
 	BEGIN
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 		-- If this is a reverse zone:
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns"
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
-			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
-			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
 		END IF;
 		
 		-- Just make sure no-one is forcing a bogus type
@@ -242,22 +240,20 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = OLD."zone";
 		-- If this is a reverse zone:
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns"
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
-			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
-			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
 		END IF;
 		
 		-- Just make sure no-one is forcing a bogus type
@@ -290,22 +286,20 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_insert"() RETURNS TRIGGER AS $$
 	BEGIN
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 		-- If this is a reverse zone:
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns"
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
-			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
-			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
 		END IF;
 		
 		-- Just make sure no-one is forcing a bogus type
@@ -343,22 +337,20 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_update"() RETURNS TRIGGER AS $$
 	BEGIN
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 		-- If this is a reverse zone:
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns"
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
-			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
-			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = NEW."zone");
 		END IF;
 		
 		-- Just make sure no-one is forcing a bogus type
@@ -408,22 +400,20 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = OLD."zone";
 		-- If this is a reverse zone:
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","dns"."ns"."address"
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns"
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone"
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."ns"."zone"
-			WHERE "dns"."ns"."nameserver" = "dns"."soa"."nameserver"
-			AND "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."ns"."zone" = (SELECT "ip"."subnets"."zone" FROM "ip"."subnets" WHERE api.get_reverse_domain("subnet") = OLD."zone");
 		END IF;
 		
 		-- Just make sure no-one is forcing a bogus type
@@ -462,12 +452,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 		RevSubnet CIDR;
 	BEGIN
 		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 
 			IF NEW."type" ~* '^A|AAAA$' THEN
 				--NULL hostname means zone address
@@ -527,12 +517,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
 			END IF;
 		ELSE 
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 
 			IF NEW."type" ~* '^NS$' THEN
 				DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
@@ -577,12 +567,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 		RevSubnet CIDR;
 	BEGIN
 		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 			
 			IF NEW."type" ~* '^A|AAAA$' THEN
 				--NULL hostname means zone address
@@ -685,12 +675,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 				ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 			END IF;
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = NEW."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = NEW."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = NEW."zone";
 
 			IF NEW."type" ~* '^NS$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
@@ -754,12 +744,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 	BEGIN
 		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
 	
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = OLD."zone";
 
 			IF OLD."type" ~* '^A|AAAA$' THEN
 				--NULL hostname means zone address
@@ -819,12 +809,12 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 				RAISE EXCEPTION 'DNS Error: % when performing %',ReturnCode,DnsRecord;
 			END IF;
 		ELSE
-			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
+			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
-			FROM "dns"."ns" 
-			JOIN "dns"."zones" ON "dns"."ns"."zone" = "dns"."zones"."zone" 
-			JOIN "dns"."keys" ON "dns"."zones"."keyname" = "dns"."keys"."keyname"
-			WHERE "dns"."ns"."zone" = OLD."zone" AND "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = OLD."zone");
+			FROM "dns"."zones"
+			JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname"
+			JOIN "dns"."soa" ON "dns"."soa"."zone" = "dns"."zones"."zone"
+			WHERE "dns"."zones"."zone" = OLD."zone";
 
 			IF OLD."type" ~* '^NS$' THEN
 				DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' '||OLD."nameserver";
