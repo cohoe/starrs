@@ -116,3 +116,5 @@ ALTER TABLE "dns"."zone_a" ADD CONSTRAINT "fk_zone_a_type" FOREIGN KEY ("type") 
 ALTER TABLE "network"."snmp" ADD CONSTRAINT "fk_snmp_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "network"."snmp" ADD CONSTRAINT "fk_snmp_address" FOREIGN KEY ("address") REFERENCES "systems"."interface_addresses"("address") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_systems_datacenter" FOREIGN KEY ("datacenter") REFERENCES "systems"."datacenters"("datacenter") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;

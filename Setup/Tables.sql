@@ -118,6 +118,7 @@ CREATE TABLE "systems"."systems"(
 "renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
 "platform_name" TEXT NOT NULL,
 "asset" TEXT,
+"datacenter" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_DATACENTER'),
 CONSTRAINT "systems_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
