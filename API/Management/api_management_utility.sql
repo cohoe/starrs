@@ -173,8 +173,8 @@ CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS BOOL
 			RAISE EXCEPTION 'Invalid characters detected in string "%"',input;
 		END IF;
 		IF input = '' THEN
-		END IF;
 			RAISE EXCEPTION 'Contact cannot be blank';
+		END IF;
 		RETURN TRUE;
 	END;
 $$ LANGUAGE 'plpgsql';
