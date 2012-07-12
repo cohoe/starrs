@@ -43,7 +43,6 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."txt" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."a" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interfaces" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."configuration" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."processes" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."soa" TO "impulse_client";

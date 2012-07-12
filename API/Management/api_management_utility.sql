@@ -2,8 +2,6 @@
 	1) validate_nospecial
 	2) validate_name
 	3) renew_system
-	4) lock_process
-	5) unlock_process
 	6) intialize
 	7) deinitialize
 	8) reset_database

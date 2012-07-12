@@ -345,13 +345,6 @@ CONSTRAINT "configuration_pkey" PRIMARY KEY ("option")
 )
 WITHOUT OIDS;
 
-CREATE TABLE "management"."processes"(
-"process" TEXT NOT NULL,
-"locked" BOOLEAN NOT NULL DEFAULT FALSE,
-CONSTRAINT "processes_pkey" PRIMARY KEY ("process")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "dhcp"."range_options"(
 "option" TEXT NOT NULL,
 "name" TEXT,
@@ -360,13 +353,6 @@ CREATE TABLE "dhcp"."range_options"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "value" TEXT NOT NULL,
 CONSTRAINT "range_options_pkey" PRIMARY KEY ("name","option")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "dhcp"."lease_log"(
-"time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"mac" MACADDR NOT NULL,
-"address" INET NOT NULL
 )
 WITHOUT OIDS;
 
@@ -521,10 +507,6 @@ COMMENT ON TABLE "management"."log_master" IS 'Record every single transaction t
 COMMENT ON TABLE "management"."output" IS 'Destination of the output functions rather than write a file to disk.';
 
 COMMENT ON TABLE "systems"."interfaces" IS 'Systems have interfaces that connect to the network. This corresponds to your physical hardware.';
-
-COMMENT ON TABLE "management"."processes" IS 'Process locking control';
-
-COMMENT ON TABLE "dhcp"."lease_log" IS 'Log of DHCP leases for auditing';
 
 COMMENT ON TABLE "dns"."types" IS 'All DNS record types';
 
