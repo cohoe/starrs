@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'zone|forward|keyname|owner|comment|shared' THEN
+		IF input_field !~* 'zone|forward|keyname|owner|comment|shared|ddns' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
@@ -95,7 +95,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
-		IF input_field ~* 'forward|shared' THEN
+		IF input_field ~* 'forward|shared|ddns' THEN
 			EXECUTE 'UPDATE "dns"."zones" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "zone" = $1' 

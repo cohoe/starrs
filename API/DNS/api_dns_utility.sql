@@ -532,3 +532,13 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_ptr"(input_zone text) RETURNS V
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."dns_clean_zone_ptr"(text) IS 'Clean all incorrect pointer records in a reverse zone';
+
+CREATE OR REPLACE FUNCTION "api"."resolve"(text) RETURNS INET AS $$
+	use strict;
+	use warnings;
+	use Socket qw(inet_ntoa);
+	
+	my $hostname = shift() or die "Unable to get name argument";
+	my ($name,$aliases,$addrtype,$length,@addrs) = gethostbyname($hostname);
+	return inet_ntoa($addrs[0]);
+$$ LANGUAGE 'plperlu';

@@ -216,6 +216,7 @@ CREATE TABLE "dns"."zones"(
 "owner" TEXT NOT NULL,
 "comment" TEXT,
 "shared" BOOLEAN NOT NULL DEFAULT FALSE,
+"ddns" BOOLEAN NOT NULL DEFAULT FALSE,
 CONSTRAINT "zones_pkey" PRIMARY KEY ("zone")
 )
 WITHOUT OIDS;
