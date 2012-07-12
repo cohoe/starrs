@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_fi
 		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'first_ip|last_ip|comment|use|name|subnet|class' THEN
+		IF input_field !~* 'first_ip|last_ip|comment|use|name|subnet|class|zone' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;

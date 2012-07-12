@@ -64,7 +64,7 @@ COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean,
 	2) Validate input
 	3) Create new range (triggers checking to make sure the range is valid
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text) RETURNS SETOF "ip"."ranges" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text, input_datacenter text, input_zone text) RETURNS SETOF "ip"."ranges" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
@@ -79,17 +79,22 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		-- Validate input
 		input_name := api.validate_name(input_name);
 
+		-- Match subnet datacenter
+		IF (SELECT "datacenter" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != input_datacenter THEN
+			RAISE EXCEPTION 'Subnet/Datacenter mismatch';
+		END IF;
+
 		-- Create new IP range		
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
-		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment", "class") VALUES 
-		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,input_class);
+		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment", "class", "datacenter", "zone") VALUES 
+		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,input_class,input_datacenter,input_zone);
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), text, text) IS 'Create a new range of IP addresses';
+COMMENT ON FUNCTION "api"."create_ip_range"(text, inet, inet, cidr, varchar(4), text, text, text, text) IS 'Create a new range of IP addresses';
 
 /* API - create_address_range
 	1) Check privileges
