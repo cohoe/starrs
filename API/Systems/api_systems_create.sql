@@ -11,7 +11,7 @@
 	4) Check privileges
 	5) Insert new system
 */
-CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text, input_group text, input_platform text, input_asset text) RETURNS SETOF "systems"."systems" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text, input_group text, input_platform text, input_asset text, input_datacenter text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system');
 
@@ -34,15 +34,15 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 		-- Insert new system
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new system');
 		INSERT INTO "systems"."systems"
-			("system_name","owner","type","os_name","comment","last_modifier","group","platform_name","asset") VALUES
-			(input_system_name,input_owner,input_type,input_os_name,input_comment,api.get_current_user(),input_group,input_platform,input_asset);
+			("system_name","owner","type","os_name","comment","last_modifier","group","platform_name","asset","datacenter") VALUES
+			(input_system_name,input_owner,input_type,input_os_name,input_comment,api.get_current_user(),input_group,input_platform,input_asset,input_datacenter);
 
 		-- Done
 		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system');
 		RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text, text, text, text) IS 'Create a new system';
+COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text, text, text, text, text) IS 'Create a new system';
 
 /* API - create_interface
 	1) Check privileges

@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_fiel
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'system_name|owner|comment|type|os_name|platform_name|asset|group' THEN
+		IF input_field !~* 'system_name|owner|comment|type|os_name|platform_name|asset|group|datacenter' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
