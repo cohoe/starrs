@@ -10,7 +10,7 @@
 	3) Create RDNS zone (since for this purpose you are authoritative for that zone)
 	4) Create new subnet
 */
-CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text) RETURNS SETOF "ip"."subnets" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_name text, input_comment text, input_autogen boolean, input_dhcp boolean, input_zone text, input_owner text, input_datacenter text) RETURNS SETOF "ip"."subnets" AS $$
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
@@ -44,8 +44,8 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 		-- Create new subnet
 		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
-			("subnet","name","comment","autogen","owner","dhcp_enable","zone") VALUES
-			(input_subnet,input_name,input_comment,input_autogen,input_owner,input_dhcp,input_zone);
+			("subnet","name","comment","autogen","owner","dhcp_enable","zone","datacenter") VALUES
+			(input_subnet,input_name,input_comment,input_autogen,input_owner,input_dhcp,input_zone,input_datacenter);
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
@@ -56,7 +56,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 		RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = input_subnet);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean, text, text) IS 'Create/activate a new subnet';
+COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean, text, text, text) IS 'Create/activate a new subnet';
 
 
 /* API - create_ip_range
