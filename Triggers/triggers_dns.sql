@@ -135,6 +135,10 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_insert"() RETURNS TRIGGER AS $$
 		DnsServer INET; -- The nameserver to send the update to
 		DnsRecord TEXT; -- The formatted string that is the record
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key","address" 
@@ -183,6 +187,10 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_update"() RETURNS TRIGGER AS $$
 		DnsServer INET; -- The nameserver to send the update to
 		DnsRecord TEXT; -- The formatted string that is the record
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
@@ -215,6 +223,10 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_update"() RETURNS TRIGGER AS $$
 			RAISE EXCEPTION 'DNS Error: % when performing NS-UPDATE-DELETE %',ReturnCode,DnsRecord;
 		END IF;
 		
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		-- Create and fire off the update
 		DnsRecord := NEW."zone"||' '||NEW."ttl"||' '||NEW."type"||' '||NEW."nameserver";
 		ReturnCode := api.nsupdate(NEW."zone",DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
@@ -238,6 +250,10 @@ CREATE OR REPLACE FUNCTION "dns"."ns_query_delete"() RETURNS TRIGGER AS $$
 		DnsServer INET; -- The nameserver to send the update to
 		DnsRecord TEXT; -- The formatted string that is the record
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
+			RETURN OLD;
+		END IF;
+		
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
@@ -284,6 +300,10 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_insert"() RETURNS TRIGGER AS $$
 		DnsServer INET; -- The nameserver to send the update to
 		DnsRecord TEXT; -- The formatted string that is the record
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = NEW."zone") IS TRUE THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
@@ -358,6 +378,10 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_update"() RETURNS TRIGGER AS $$
 			RAISE EXCEPTION 'Trying to update a non-TXT record in a TXT table!';
 		END IF;
 		
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		-- Delete the record first
 		IF OLD."hostname" IS NULL THEN
 			DnsRecord := OLD."zone"||' '||OLD."ttl"||' '||OLD."type"||' "'||OLD."text"||'"';
@@ -369,6 +393,10 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_update"() RETURNS TRIGGER AS $$
 		-- Check for result
 		IF ReturnCode != '0' THEN
 			RAISE EXCEPTION 'DNS Error: % when performing TXT-UPDATE-DELETE %',ReturnCode,DnsRecord;
+		END IF;
+		
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
 		END IF;
 	
 		-- Create and fire off the update
@@ -398,6 +426,10 @@ CREATE OR REPLACE FUNCTION "dns"."txt_query_delete"() RETURNS TRIGGER AS $$
 		DnsServer INET; -- The nameserver to send the update to
 		DnsRecord TEXT; -- The formatted string that is the record
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
+			RETURN OLD;
+		END IF;
+		
 		-- If this is a forward zone:
 		IF (SELECT "forward" FROM "dns"."zones" WHERE "zone" = OLD."zone") IS TRUE THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
@@ -451,6 +483,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 		RevZone TEXT;
 		RevSubnet CIDR;
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
@@ -566,6 +602,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 		RevZone TEXT;
 		RevSubnet CIDR;
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = NEW."zone") IS FALSE THEN
+			RETURN NEW;
+		END IF;
+		
 		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
@@ -742,6 +782,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 		RevZone TEXT;
 		RevSubnet CIDR;
 	BEGIN
+		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
+			RETURN OLD;
+		END IF;
+		
 		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
 	
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
