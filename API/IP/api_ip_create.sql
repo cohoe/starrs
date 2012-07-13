@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 
 		-- Create RDNS zone
 		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
-		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),(SELECT "keyname" FROM "dns"."zones" WHERE "zone" = input_zone),FALSE,TRUE,input_owner,'Reverse zone for subnet '||text(input_subnet));
+		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),(SELECT "keyname" FROM "dns"."zones" WHERE "zone" = input_zone),FALSE,TRUE,input_owner,'Reverse zone for subnet '||text(input_subnet),(SELECT "ddns" FROM "dns"."zones" WHERE "zone" = input_zone));
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
