@@ -192,7 +192,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert"() RETURNS TRIGGER AS $$
 
 		-- Define lower boundary for range
 		-- Loop through all ranges and find what is near the new range
-		FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" LOOP
+		FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" ORDER BY "last_ip" LOOP
 			IF NEW."first_ip" >= query_result.first_ip AND NEW."first_ip" <= query_result.last_ip THEN
 				RAISE EXCEPTION 'First address out of bounds.';
 			ELSIF NEW."first_ip" > query_result.last_ip THEN
@@ -269,7 +269,7 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_update"() RETURNS TRIGGER AS $$
 
 			-- Define lower boundary for range
 			-- Loop through all ranges and find what is near the new range
-			FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" AND "first_ip" != OLD."first_ip" LOOP
+			FOR query_result IN SELECT "first_ip","last_ip" FROM "ip"."ranges" WHERE "subnet" = NEW."subnet" AND "first_ip" != OLD."first_ip" ORDER BY "last_ip" LOOP
 				-- Check if the new first_ip is contained within the next lower range
 				IF NEW."first_ip" >= query_result.first_ip AND NEW."first_ip" <= query_result.last_ip THEN
 					RAISE EXCEPTION 'First address out of bounds.';
