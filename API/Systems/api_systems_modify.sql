@@ -143,7 +143,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		END IF;
 
 		IF input_field ~* 'address' THEN
-			IF (SELECT "use" FROM "api"."get_ip_range"((SELECT "api"."get_address_range"(input_new_value::inet)))) ~* 'ROAM' THEN
+			IF (SELECT "use" FROM "api"."get_ip_ranges"() WHERE "name" = (SELECT "api"."get_address_range"(input_new_value::inet))) ~* 'ROAM' THEN
 				PERFORM api.create_log_entry('API','ERROR','Specified new address is contained within Dynamic range');
 				RAISE EXCEPTION 'Specified new address (%) is contained within a Dynamic range',input_new_value;
 			END IF;

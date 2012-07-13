@@ -105,7 +105,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			RAISE EXCEPTION 'Specifified address (%) is only for dynamic DHCP addresses',input_address;
 		END IF;
 
-		IF (SELECT "use" FROM "api"."get_ip_range"((SELECT "api"."get_address_range"(input_address)))) ~* 'ROAM' THEN
+		IF (SELECT "use" FROM "api"."get_ip_ranges"() WHERE "name" = (SELECT "api"."get_address_range"(input_address))) ~* 'ROAM' THEN
 			PERFORM api.create_log_entry('API','ERROR','Specified address is contained within Dynamic range');
 			RAISE EXCEPTION 'Specified address (%) is contained within a Dynamic range',input_address;
 		END IF;
