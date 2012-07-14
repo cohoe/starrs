@@ -49,7 +49,7 @@ CREATE TABLE "ip"."ranges"(
 "comment" TEXT,
 "use" VARCHAR(4) NOT NULL,
 "datacenter" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_DATACENTER'),
-"zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_AVAILABILITY_ZONE'),
+"zone" TEXT NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),

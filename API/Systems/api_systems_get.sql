@@ -188,7 +188,7 @@ COMMENT ON FUNCTION "api"."get_datacenters"() IS 'Get all of the available datac
 
 CREATE OR REPLACE FUNCTION "api"."get_availability_zones"() RETURNS SETOF "systems"."availability_zones" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "systems"."availability_zones" ORDER BY CASE WHEN "zone" = (SELECT api.get_site_configuration('DEFAULT_AVAILABILITY_ZONE')) THEN 1 ELSE 2 END);
+		RETURN QUERY (SELECT * FROM "systems"."availability_zones" ORDER BY "zone");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_availability_zones"() IS 'Get all of the configured availability zones';
