@@ -91,7 +91,7 @@ CREATE TABLE "systems"."interface_addresses"(
 "config" TEXT NOT NULL,
 "family" INTEGER NOT NULL,
 "isprimary" BOOLEAN NOT NULL,
-"renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
+"renew_date" DATE NOT NULL DEFAULT date((('now'::text)::date + (api.get_site_configuration('DEFAULT_RENEW_INTERVAL'::text))::interval)),
 "mac" MACADDR,
 "class" TEXT,
 CONSTRAINT "interface_addresses_pkey" PRIMARY KEY ("address")

@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS 
 
 		PERFORM api.create_log_entry('API','INFO','updating system'||input_system_name);
 		UPDATE "systems"."systems"
-		SET "renew_date" = date(current_date + interval '1 year')
+		SET "renew_date" = date(current_date + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')))
 		WHERE "system_name" = input_system_name;
 
 		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_system');
@@ -59,13 +59,16 @@ CREATE OR REPLACE FUNCTION "api"."notify_expiring_systems"() RETURNS VOID AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."notify_expiring_systems"() IS 'Notify users of soon-to-expire systems';
 
-CREATE OR REPLACE FUNCTION "api"."remove_expired_systems"() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."clear_expired_systems"() RETURNS VOID AS $$
 	DECLARE
 		SystemData RECORD;
 	BEGIN
-		FOR SystemData IN (SELECT "system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" = current_date) LOOP
-			PERFORM "api"."remove_system"(SystemData.system_name);
+		--FOR SystemData IN (SELECT "system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" = current_date) LOOP
+		--	PERFORM "api"."remove_system"(SystemData.system_name);
+		--END LOOP;
+		FOR SystemData IN (SELECT "address" FROM "systems"."interface_addresses" WHERE api.get_interface_address_system("address") IN (SELECT "system_name" FROM "systems"."systems" WHERE "renew_date" = current_date)) LOOP
+			PERFORM "api"."remove_interface_address"(SystemData.address);
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_expired_systems"() IS 'Remove all systems that expire today.';
+COMMENT ON FUNCTION "api"."clear_expired_systems"() IS 'Remove all systems that expire today.';
