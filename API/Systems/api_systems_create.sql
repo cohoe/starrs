@@ -122,15 +122,45 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
 
-CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_os_name text, input_mac macaddr, input_address inet, input_owner text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_owner text, input_group text, input_mac macaddr, input_address inet, input_zone text, input_config text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_system(input_system_name, input_owner, 'Desktop', input_os_name, null);
-		PERFORM api.create_interface(input_system_name, input_mac, 'Main Interface', null);
-		PERFORM api.create_interface_address(input_mac, input_address, 'dhcp', null, true, null);
-		PERFORM api.create_dns_address(input_address, lower(regexp_replace(input_system_name,' ','-')), null, null, input_owner);
+		PERFORM api.create_system(
+			input_system_name,
+			input_owner,
+			api.get_site_configuration('DEFAULT_SYSTEM_TYPE'),
+			'Other',
+			null,
+			input_group,
+			api.get_site_configuration('DEFAULT_SYSTEM_PLATFORM'),
+			null,
+			api.get_site_configuration('DEFAULT_DATACENTER')
+		);
+		PERFORM api.create_interface(
+			input_system_name,
+			input_mac,
+			api.get_site_configuration('DEFAULT_INTERFACE_NAME'),
+			null
+		);
+		PERFORM api.create_interface_address(
+			input_mac,
+			input_address,
+			input_config,
+			api.get_site_configuration('DEFAULT_DHCP_CLASS'),
+			TRUE,
+			null
+		);
+		PERFORM api.create_dns_address(
+			input_address,
+			input_system_name,
+			input_zone,
+			null,
+			null,
+			TRUE,
+			input_owner
+		);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system_quick"(text, text, macaddr, inet, text) IS 'Create a barebones system';
+COMMENT ON FUNCTION "api"."create_system_quick"(text, text, text, macaddr, inet, text, text) IS 'Create a full system in one call';
 
 CREATE OR REPLACE FUNCTION "api"."create_datacenter"(input_name text, input_comment text) RETURNS SETOF "systems"."datacenters" AS $$
 	BEGIN
