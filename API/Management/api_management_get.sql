@@ -118,9 +118,9 @@ CREATE OR REPLACE FUNCTION "api"."get_ldap_user_level"(TEXT) RETURNS TEXT AS $$
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_ldap_user_level"(text) IS 'Get the level of access for the authenticated user';
 
-CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS TABLE(option text, value text) AS $$
+CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS SETOF "management"."configuration" AS $$
 	BEGIN
-		RETURN QUERY (SELECT "management"."configuration"."option","management"."configuration"."value" FROM "management"."configuration" ORDER BY "management"."configuration"."option" ASC);
+		RETURN QUERY (SELECT * FROM "management"."configuration" ORDER BY "option" ASC);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration_all"() IS 'Get all site configuration directives';

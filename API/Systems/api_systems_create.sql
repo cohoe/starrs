@@ -145,7 +145,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 			input_mac,
 			input_address,
 			input_config,
-			api.get_site_configuration('DEFAULT_DHCP_CLASS'),
+			api.get_site_configuration('DHCPD_DEFAULT_CLASS'),
 			TRUE,
 			null
 		);

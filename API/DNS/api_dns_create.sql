@@ -115,6 +115,15 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
+		-- Autofill Type
+		IF input_type IS NULL THEN
+			IF family(input_address) = 4 THEN
+				input_type := 'A';
+			ELSEIF family(input_address) = 6 THEN
+				input_type := 'AAAA';
+			END IF;
+		END IF;
+
 		-- Check type
 		IF input_type !~* '^A|AAAA$' THEN
 			RAISE EXCEPTION 'Bad type % given',input_type;
