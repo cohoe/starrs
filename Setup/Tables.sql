@@ -454,26 +454,26 @@ WITHOUT OIDS;
 COMMENT ON TABLE "systems"."availability_zones" IS 'Availability zones within datacenters';
 
 CREATE TABLE "management"."groups"(
-"name" TEXT NOT NULL,
+"group" TEXT NOT NULL,
 "comment" TEXT,
-"privilege" TEXT NOT NULL,
+"privilege" TEXT NOT NULL DEFAULT "USER",
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "management_groups_pkey" PRIMARY KEY ("name")
+CONSTRAINT "management_groups_pkey" PRIMARY KEY ("group")
 )
 WITHOUT OIDS;
 
 COMMENT ON TABLE "management"."groups" IS 'Groups of users with different privilege levels';
 
 CREATE TABLE "management"."group_members"(
-"name" TEXT NOT NULL,
+"group" TEXT NOT NULL,
 "user" TEXT NOT NULL,
 "privilege" TEXT NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "management_group_members_pkey" PRIMARY KEY ("name","user")
+CONSTRAINT "management_group_members_pkey" PRIMARY KEY ("group","user")
 )
 WITHOUT OIDS;
 

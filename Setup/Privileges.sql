@@ -51,6 +51,8 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."cname" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_txt" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_a" TO "impulse_client";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."snmp" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."groups" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."group_members" TO "impulse_client";
 
 /* Special Data
 	Read or Write only, not both

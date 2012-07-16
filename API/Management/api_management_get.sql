@@ -162,3 +162,60 @@ CREATE OR REPLACE FUNCTION "api"."get_function_counts"(input_schema TEXT) RETURN
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_function_counts"(TEXT) IS 'Get statistics on number of calls to each function in a schema';
+
+CREATE OR REPLACE FUNCTION "api"."get_current_user_groups"() RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY(SELECT "group" FROM "management"."group_members" WHERE "user" = api.get_current_user());
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_current_user_groups"() IS 'Get the groups of the current user';
+
+CREATE OR REPLACE FUNCTION "api"."get_group_admins"(input_group text) RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY(SELECT "user" FROM "management"."group_members" WHERE "group" = input_group AND "privilege" = 'ADMIN');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_group_admins"(text) IS 'Get a list of all admins for a group';
+
+CREATE OR REPLACE FUNCTION "api"."get_system_permissions"(input_system_name text) RETURNS TABLE(read boolean, write boolean) AS $$
+	DECLARE
+		read BOOLEAN;
+		write BOOLEAN;
+		sysowner TEXT;
+		sysgroup TEXT;
+	BEGIN
+		SELECT "owner","group" INTO sysowner, sysgroup
+		FROM "systems"."systems"
+		WHERE "system_name" = input_system_name;
+
+		IF sysowner IS NULL THEN
+			RAISE EXCEPTION 'System % not found!',input_system_name;
+		END IF;
+		
+		IF sysgroup IN (SELECT * FROM api.get_current_user_groups()) THEN
+			IF api.get_current_user() IN (SELECT * FROM api.get_group_admins(sysgroup)) THEN
+				read := TRUE;
+				write := TRUE;
+			ELSE
+				read := TRUE;
+				write := FALSE;
+			END IF;
+		ELSE
+			read := TRUE;
+			write := FALSE;
+		END IF;
+
+		IF sysowner = api.get_current_user() THEN
+			read := TRUE;
+			write := TRUE;
+			
+		END IF;
+
+		IF api.get_current_user_level() ~* 'ADMIN' THEN
+			read := TRUE;
+			write := TRUE;
+		END IF;
+		RETURN QUERY (SELECT read, write);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_permissions"(text) IS 'Get the current user permissions on a system';
