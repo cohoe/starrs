@@ -72,3 +72,10 @@ CREATE OR REPLACE FUNCTION "api"."clear_expired_systems"() RETURNS VOID AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."clear_expired_systems"() IS 'Remove all systems that expire today.';
+
+CREATE OR REPLACE FUNCTION "api"."get_default_renew_date"() RETURNS DATE AS $$
+	BEGIN
+		 RETURN date((('now'::text)::date + (api.get_site_configuration('DEFAULT_RENEW_INTERVAL'::text))::interval));
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_default_renew_date"() IS 'Get the default renew date based on the configuration';

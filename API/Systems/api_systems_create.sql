@@ -81,9 +81,14 @@ COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text, text) IS 'Crea
 	2) Fill in class
 	3) Create address
 */
-CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text) RETURNS SETOF "systems"."interface_addresses" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text, input_renew_date date) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address');
+
+		-- Renew
+		IF input_renew_date IS NULL THEN
+			input_renew_date := api.get_default_renew_date();
+		END IF;
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
@@ -92,6 +97,10 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			WHERE "systems"."interfaces"."mac" = input_mac) != api.get_current_user() THEN
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on interface %. You are not owner.',input_mac;
+			END IF;
+
+			IF input_renew_date != api.get_default_renew_date() THEN
+				RAISE EXCEPTION 'Only administrators can specify a different renew date';
 			END IF;
 		END IF;
 
@@ -112,8 +121,8 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 
 		-- Create address
 		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
-		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier","isprimary") VALUES
-		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary);
+		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier","isprimary","renew_date") VALUES
+		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary,input_renew_date);
 
 		-- Done
 		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address');

@@ -114,10 +114,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner of the system',input_old_address;
 			END IF;
+
+			IF input_field ~* 'renew_date' THEN
+				RAISE EXCEPTION 'Only administrators can change renew date';
+			END IF;
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'comment|address|config|isprimary|mac|class' THEN
+		IF input_field !~* 'comment|address|config|isprimary|mac|class|renew_date' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
@@ -167,6 +171,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "address" = $1' 
 			USING input_old_address, input_field, bool(input_new_value);
+		ELSIF input_field ~* 'renew_date' THEN
+			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "address" = $1' 
+			USING input_old_address, input_field, input_new_value::date;
 		ELSEIF input_field ~* 'config' THEN
 			EXECUTE 'UPDATE "systems"."interface_addresses" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
