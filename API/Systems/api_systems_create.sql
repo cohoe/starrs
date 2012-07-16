@@ -129,7 +129,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text) IS 'create a new address on interface from a specified address';
+COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text, date) IS 'create a new address on interface from a specified address';
 
 CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_owner text, input_group text, input_mac macaddr, input_address inet, input_zone text, input_config text) RETURNS VOID AS $$
 	BEGIN
@@ -156,6 +156,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 			input_config,
 			api.get_site_configuration('DHCPD_DEFAULT_CLASS'),
 			TRUE,
+			null,
 			null
 		);
 		PERFORM api.create_dns_address(
