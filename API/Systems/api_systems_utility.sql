@@ -13,9 +13,9 @@ CREATE OR REPLACE FUNCTION "api"."renew_interface_address"(input_address inet) R
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_interface_address');
 
-		PERFORM api.create_log_entry('API','INFO','updating system'||input_system_name);
+		PERFORM api.create_log_entry('API','INFO','updating address'||input_address);
 		UPDATE "systems"."interface_addresses"
-		SET "renew_date" = date(current_date + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')))
+		SET "renew_date" = date("renew_date" + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')::interval))
 		WHERE "address" = input_address;
 
 		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_interface_address');
