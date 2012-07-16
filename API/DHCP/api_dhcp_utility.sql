@@ -77,7 +77,8 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		{
 			$class = $row->{class};
 			$comment = $row->{comment};
-			$output .= "class \"$class\" {\n  # ${comment}\n";
+			$output .= "class \"$class\" {\n";
+			$output .= "  # ${comment}\n" if(defined($comment));
 			$output .= &dhcp_class_options($class);
 			$output .= "}\n\n";
 		}
