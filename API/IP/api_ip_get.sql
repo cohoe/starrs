@@ -120,15 +120,6 @@ CREATE OR REPLACE FUNCTION "api"."get_range_addresses"(INET, INET) RETURNS SETOF
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_range_addresses"(inet,inet) IS 'return a list of all addresses within a given range';
 
-/* API - get_subnet_utilization */
-CREATE OR REPLACE FUNCTION "api"."get_subnet_utilization"(input_subnet cidr) RETURNS NUMERIC AS $$
-	BEGIN
-	RETURN (TRUNC(((SELECT COUNT("address") FROM "systems"."interface_addresses" WHERE "address" << input_subnet)::numeric /
-	(SELECT COUNT("address") FROM "ip"."addresses" WHERE "address" << input_subnet)::numeric) * 100,1));
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_subnet_utilization"(cidr) IS 'Get the percent usage of a subnet';
-
 /* API - get_address_range */
 CREATE OR REPLACE FUNCTION "api"."get_address_range"(input_address inet) RETURNS TEXT AS $$
 	BEGIN
