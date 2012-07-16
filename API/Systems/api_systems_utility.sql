@@ -9,19 +9,19 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_address_owner"(input_address ine
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner of an interface address';
 
-CREATE OR REPLACE FUNCTION "api"."renew_system"(input_system_name text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."renew_interface_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_system');
+		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_interface_address');
 
 		PERFORM api.create_log_entry('API','INFO','updating system'||input_system_name);
-		UPDATE "systems"."systems"
+		UPDATE "systems"."interface_addresses"
 		SET "renew_date" = date(current_date + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')))
-		WHERE "system_name" = input_system_name;
+		WHERE "address" = input_address;
 
-		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_system');
+		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_interface_address');
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."renew_system"(text) IS 'renew a system registration for another year';
+COMMENT ON FUNCTION "api"."renew_interface_address"(inet) IS 'renew an interface address registration for another interval';
 
 CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, text, text) RETURNS VOID AS $$
 	use strict;

@@ -118,7 +118,6 @@ CREATE TABLE "systems"."systems"(
 "type" TEXT,
 "os_name" TEXT,
 "last_modifier" TEXT NOT NULL,
-"renew_date" DATE NOT NULL DEFAULT date(current_date + interval '1 year'),
 "platform_name" TEXT NOT NULL,
 "asset" TEXT,
 "datacenter" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_DATACENTER'),
