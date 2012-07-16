@@ -125,12 +125,14 @@ CREATE OR REPLACE FUNCTION "api"."get_site_configuration_all"() RETURNS SETOF "m
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_site_configuration_all"() IS 'Get all site configuration directives';
 
-CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "api"."search_data" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "management"."search_data" AS $$
 	BEGIN
 		RETURN QUERY (SELECT
 	"systems"."systems"."datacenter",
 	(SELECT "zone" FROM "ip"."ranges" WHERE "name" =  "api"."get_address_range"("systems"."interface_addresses"."address")) AS "availability_zone",
 	"systems"."systems"."system_name",
+	"systems"."systems"."asset",
+	"systems"."systems"."platform_name",
 	"systems"."interfaces"."mac",
 	"systems"."interface_addresses"."address",
 	"systems"."systems"."owner" AS "system_owner",
