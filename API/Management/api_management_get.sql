@@ -219,3 +219,17 @@ CREATE OR REPLACE FUNCTION "api"."get_system_permissions"(input_system_name text
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_permissions"(text) IS 'Get the current user permissions on a system';
+
+CREATE OR REPLACE FUNCTION "api"."get_groups"() RETURNS SETOF "management"."groups" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "management"."groups" ORDER BY "group");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_groups"() IS 'Get all of the configured groups';
+
+CREATE OR REPLACE FUNCTION "api"."get_group_members"(input_group text) RETURNS SETOF "management"."group_members" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "management"."group_members" WHERE "group" = input_group ORDER BY "user");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_group_members"(text) IS 'Get all members of a group';

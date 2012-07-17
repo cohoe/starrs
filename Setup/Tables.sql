@@ -460,6 +460,7 @@ CREATE TABLE "management"."groups"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "management_group_privilege_check" CHECK ("privilege" ~* '^ADMIN|USER|PROGRAM$'),
 CONSTRAINT "management_groups_pkey" PRIMARY KEY ("group")
 )
 WITHOUT OIDS;
@@ -473,6 +474,7 @@ CREATE TABLE "management"."group_members"(
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "management_group_member_privilege_check" CHECK ("privilege" ~* '^ADMIN|USER|PROGRAM$'),
 CONSTRAINT "management_group_members_pkey" PRIMARY KEY ("group","user")
 )
 WITHOUT OIDS;
