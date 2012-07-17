@@ -132,6 +132,7 @@ CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "management".
 	(SELECT "zone" FROM "ip"."ranges" WHERE "name" =  "api"."get_address_range"("systems"."interface_addresses"."address")) AS "availability_zone",
 	"systems"."systems"."system_name",
 	"systems"."systems"."asset",
+	"systems"."systems"."group",
 	"systems"."systems"."platform_name",
 	"systems"."interfaces"."mac",
 	"systems"."interface_addresses"."address",
