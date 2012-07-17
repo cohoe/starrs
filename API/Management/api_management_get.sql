@@ -233,3 +233,18 @@ CREATE OR REPLACE FUNCTION "api"."get_group_members"(input_group text) RETURNS S
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_group_members"(text) IS 'Get all members of a group';
+
+CREATE OR REPLACE FUNCTION "api"."get_local_user_level"(input_user text) RETURNS TEXT AS $$
+	BEGIN
+		IF input_user IN (SELECT "user" FROM api.get_group_members(api.get_site_configuration('DEFAULT_LOCAL_ADMIN_GROUP'))) THEN
+			RETURN 'ADMIN';
+		END IF;
+		
+		IF input_user IN (SELECT "user" FROM api.get_group_members(api.get_site_configuration('DEFAULT_LOCAL_USER_GROUP'))) THEN
+			RETURN 'USER';
+		END IF;
+		
+		RETURN 'NONE';
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_local_user_level"(text) IS 'Get the users privilege level based on local tables';
