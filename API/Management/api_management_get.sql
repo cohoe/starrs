@@ -244,6 +244,14 @@ CREATE OR REPLACE FUNCTION "api"."get_local_user_level"(input_user text) RETURNS
 		IF input_user IN (SELECT "user" FROM api.get_group_members(api.get_site_configuration('DEFAULT_LOCAL_ADMIN_GROUP'))) THEN
 			RETURN 'ADMIN';
 		END IF;
+
+		IF input_user IN (SELECT "user" FROM "management"."group_members" JOIN "management"."groups" ON "management"."groups"."group" = "management"."group_members"."group" WHERE "management"."groups"."privilege" = 'USER') THEN
+			RETURN 'USER';
+		END IF;
+
+		IF input_user IN (SELECT "user" FROM "management"."group_members" JOIN "management"."groups" ON "management"."groups"."group" = "management"."group_members"."group" WHERE "management"."groups"."privilege" = 'PROGRAM') THEN
+			RETURN 'PROGRAM';
+		END IF;
 		
 		IF input_user IN (SELECT "user" FROM api.get_group_members(api.get_site_configuration('DEFAULT_LOCAL_USER_GROUP'))) THEN
 			RETURN 'USER';
