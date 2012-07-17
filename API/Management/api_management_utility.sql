@@ -75,7 +75,7 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		ALTER TABLE "user_privileges" ALTER COLUMN "username" SET DEFAULT api.get_current_user();
 
 		-- Set level
-		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" = Level;
+		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" ~* Level;
 
 		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
 		RETURN 'Greetings '||lower(Level)||'!';
