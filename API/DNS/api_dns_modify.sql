@@ -645,8 +645,14 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_a"(input_old_zone text, input_
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
+		IF input_field ~* 'address' THEN
+			IF input_new_value::inet << api.get_site_configuration('DYNAMIC_SUBNET')::cidr THEN
+				RAISE EXCEPTION 'Zone A cannot be dynamic';
+			END IF;
+		END IF;
+
+
 		-- Update record
-		PERFORM api.create_log_entry('API','INFO','update record');
 		PERFORM api.create_log_entry('API','INFO','update record');
 
 		IF input_field ~* 'address' THEN

@@ -516,6 +516,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_addr
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
+		-- Check dynamic
+		IF input_address << api.get_site_configuration('DYNAMIC_SUBNET')::cidr THEN
+			RAISE EXCEPTION 'Zone A cannot be dynamic';
+		END IF;
+
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
