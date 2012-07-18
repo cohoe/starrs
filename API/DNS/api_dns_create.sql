@@ -129,6 +129,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 			RAISE EXCEPTION 'Bad type % given',input_type;
 		END IF;
 
+		-- Lower
+		input_hostname := lower(input_hostname);
+
 		-- Validate type
 		IF family(input_address) = 4 AND input_type !~* '^A$' THEN
 			RAISE EXCEPTION 'IPv4 Address/Type mismatch';
@@ -197,6 +200,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
+		-- Lower
+		input_hostname := lower(input_hostname);
+
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
@@ -240,6 +246,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
+
+		-- Lower
+		input_nameserver := lower(input_nameserver);
+		input_zone := lower(input_zone);
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -294,6 +304,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		IF input_ttl IS NULL THEN
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
+
+		-- Lower
+		input_target := lower(input_target);
+		input_alias := lower(input_alias);
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -350,6 +364,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
+		-- Lower
+		input_target := lower(input_target);
+		input_alias := lower(input_alias);
+
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
@@ -399,6 +417,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 			input_ttl := api.get_site_configuration('DNS_DEFAULT_TTL');
 		END IF;
 
+		-- Lower
+		input_hostname := lower(input_hostname);
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
@@ -480,6 +500,9 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 		END IF;
+
+		-- Lower
+		input_hostname := lower(input_hostname);
 
 		-- Create record
 		PERFORM api.create_log_entry('API','INFO','create new zone_txt record');

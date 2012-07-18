@@ -153,6 +153,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 			END IF;
 		END IF;
 
+		-- Lower
+		IF input_field ~* 'hostname' THEN
+			input_new_value := lower(input_new_value);
+		END IF;
+
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
@@ -214,6 +219,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
+		-- Lower
+		IF input_field ~* 'hostname' THEN
+			input_new_value := lower(input_new_value);
+		END IF;
+
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
@@ -268,6 +278,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_ns"(input_old_zone text, input_old_
 		IF input_field !~* 'nameserver|zone|ttl|address' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Lower
+		IF input_field ~* 'nameserver' THEN
+			input_new_value := lower(input_new_value);
 		END IF;
 
 		-- Update record
@@ -335,6 +350,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
+		-- Lower
+		IF input_field ~* 'hostname|alias' THEN
+			input_new_value := lower(input_new_value);
+		END IF;
+			
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
@@ -409,6 +429,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
+		-- Lower
+		IF input_field ~* 'hostname|alias' THEN
+			input_new_value := lower(input_new_value);
+		END IF;
+
 		-- Update record
 		PERFORM api.create_log_entry('API','INFO','update record');
 
@@ -468,6 +493,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input
 		IF input_field !~* 'hostname|zone|text|owner|ttl' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Lower
+		IF input_zone ~* 'hostname' THEN
+			input_new_value := lower(input_new_value);
 		END IF;
 
 		-- Update record
@@ -574,6 +604,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_txt"(input_old_hostname text, 
 		IF input_field !~* 'hostname|zone|text|ttl' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		-- Lower
+		IF input_zone ~* 'hostname' THEN
+			input_new_value := lower(input_new_value);
 		END IF;
 
 		-- Update record
