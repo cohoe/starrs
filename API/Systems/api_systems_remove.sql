@@ -146,3 +146,15 @@ CREATE OR REPLACE FUNCTION "api"."remove_availability_zone"(input_datacenter tex
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_availability_zone"(text, text) IS 'Remove an availability zone';
+
+CREATE OR REPLACE FUNCTION "api"."remove_platform"(input_name text) RETURNS VOID AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied: Only admins can remove platforms'; 
+		END IF;
+
+		DELETE FROM "systems"."platforms" WHERE "platform_name" = input_name;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_platform"(text) IS 'Remove a platform';

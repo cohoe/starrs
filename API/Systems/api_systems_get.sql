@@ -192,3 +192,10 @@ CREATE OR REPLACE FUNCTION "api"."get_availability_zones"() RETURNS SETOF "syste
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_availability_zones"() IS 'Get all of the configured availability zones';
+
+CREATE OR REPLACE FUNCTION "api"."get_system_architectures"() RETURNS SETOF "systems"."architectures" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "systems"."architectures" ORDER BY CASE WHEN "architecture" = 'i386' THEN 1 ELSE 2 END);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_architectures"() IS 'Get all the available system architectures';

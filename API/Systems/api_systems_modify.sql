@@ -277,3 +277,36 @@ CREATE OR REPLACE FUNCTION "api"."modify_availability_zone"(input_old_datacenter
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_availability_zone"(text, text, text, text) IS 'modify a availability_zone';
+
+CREATE OR REPLACE FUNCTION "api"."modify_platform"(input_old_name text, input_field text, input_new_value TEXT) RETURNS SETOF "systems"."platforms" AS $$
+	BEGIN
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to edit platform denied. You are not admin';
+ 		END IF;
+
+		-- Check allowed fields
+		IF input_field !~* 'platform_name|architecture|disk|cpu|memory' THEN
+			RAISE EXCEPTION 'Invalid field % specified',input_field;
+		END IF;
+
+		IF input_field ~* 'memory' THEN
+			EXECUTE 'UPDATE "systems"."platforms" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "platform_name" = $1' 
+			USING input_old_name, input_field, input_new_value::integer;
+		ELSE
+			EXECUTE 'UPDATE "systems"."platforms" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "platform_name" = $1' 
+			USING input_old_name, input_field, input_new_value;
+		END IF;
+
+		IF input_field ~* 'platform_name' THEN
+			RETURN QUERY (SELECT * FROM "systems"."platforms" WHERE "platform_name" = input_new_value);
+		ELSE
+			RETURN QUERY (SELECT * FROM "systems"."platforms" WHERE "platform_name" = input_old_name);
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_platform"(text, text, text) IS 'Modify a hardware platform';

@@ -213,3 +213,18 @@ CREATE OR REPLACE FUNCTION "api"."create_availability_zone"(input_datacenter tex
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_availability_zone"(text, text, text) IS 'Create a new availability zone';
+
+CREATE OR REPLACE FUNCTION "api"."create_platform"(input_name text, input_architecture text, input_disk text, input_cpu text, input_memory integer) RETURNS SETOF "systems"."platforms" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied to create platform: not admin';
+		END IF;
+
+		INSERT INTO "systems"."platforms" ("platform_name","architecture","disk","cpu","memory")
+		VALUES (input_name, input_architecture, input_disk, input_cpu, input_memory);
+
+		RETURN QUERY (SELECT * FROM "systems"."platforms" WHERE "platform_name" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_platform"(text, text, text, text, integer) IS 'Create a new hardware platform';
