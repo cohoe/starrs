@@ -176,9 +176,9 @@ COMMENT ON FUNCTION "api"."get_dhcp_class"(text) IS 'Get all DHCP class informat
 CREATE OR REPLACE FUNCTION "api"."get_dhcp_config_types"(input_family integer) RETURNS SETOF "dhcp"."config_types" AS $$
 	BEGIN
 		IF input_family IS NULL THEN
-			RETURN QUERY (SELECT * FROM "dhcp"."config_types" ORDER BY "config");
+			RETURN QUERY (SELECT * FROM "dhcp"."config_types" ORDER BY CASE WHEN "config" = api.get_site_configuration('DEFAULT_CONFIG_TYPE') THEN 1 ELSE 2 END);
 		ELSE
-			RETURN QUERY (SELECT * FROM "dhcp"."config_types" WHERE "family" = input_family ORDER BY "config");
+			RETURN QUERY (SELECT * FROM "dhcp"."config_types" WHERE "family" = input_family ORDER BY CASE WHEN "config" = api.get_site_configuration('DEFAULT_CONFIG_TYPE') THEN 1 ELSE 2 END);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';

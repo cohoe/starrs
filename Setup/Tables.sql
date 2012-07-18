@@ -111,7 +111,7 @@ WITHOUT OIDS;
 CREATE TABLE "systems"."systems"(
 "system_name" TEXT NOT NULL,
 "owner" TEXT NOT NULL,
-"group" TEXT,
+"group" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_LOCAL_USER_GROUP'),
 "comment" TEXT,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
