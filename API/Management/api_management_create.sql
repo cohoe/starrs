@@ -50,6 +50,10 @@ CREATE OR REPLACE FUNCTION "api"."create_group"(input_group text, input_privileg
 			RAISE EXCEPTION 'Permission denied. Only admins can create groups.';
 		END IF;
 
+		IF input_interval IS NULL THEN
+			input_interval := api.get_site_configuration('DEFAULT_RENEW_INTERVAL');
+		END IF;
+
 		INSERT INTO "management"."groups" ("group","privilege","comment","renew_interval") 
 		VALUES (input_group, input_privilege, input_comment, input_interval);
 
