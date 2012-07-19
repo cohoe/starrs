@@ -407,7 +407,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_system text) 
 				ON bridgeportid.camportinstanceid = cam.camportinstanceid
 				JOIN api.get_switchview_portindex(input_host,input_community,vlans.get_switchview_vlans) AS "portindex"
 				ON bridgeportid.bridgeportid = portindex.bridgeportid
-				JOIN api.get_switchview_portnames(input_host,input_community,vlans.get_switchview_vlans) AS "portnames"
+				JOIN api.get_switchview_port_names(input_host,input_community) AS "portnames"
 				ON portindex.ifindex = portnames.ifindex
 			) LOOP
 				RETURN NEXT CamData;
