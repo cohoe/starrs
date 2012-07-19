@@ -483,6 +483,16 @@ COMMENT ON TABLE "management"."group_members" IS 'Map usernames to groups';
 
 COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network systems';
 
+CREATE TABLE "network"."cam_cache"(
+"system_name" TEXT NOT NULL,
+"mac" MACADDR NOT NULL,
+"ifname" TEXT NOT NULL,
+"vlan" INTEGER NOT NULL,
+"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0)
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "network"."cam_cache" IS 'Cache switch data for port mappings';
+
 COMMENT ON TABLE "dns"."zone_a" IS 'Zone address records';
 
 COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';

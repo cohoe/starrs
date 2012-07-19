@@ -384,7 +384,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_port_adminstatus"(inet, text) R
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_switchview_port_adminstatus"(inet, text) IS 'Map ifindexes to port administrative status';
 
-CREATE OR REPLACE FUNCTION "api"."get_system_cam"(input_system text) RETURNS SETOF "network"."cam" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_system text) RETURNS SETOF "network"."cam" AS $$
 	DECLARE
 		Vlans RECORD;
 		CamData RECORD;
@@ -416,7 +416,7 @@ CREATE OR REPLACE FUNCTION "api"."get_system_cam"(input_system text) RETURNS SET
 		RETURN;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_system_cam"(text) IS 'Get all CAM data from a particular device';
+COMMENT ON FUNCTION "api"."get_switchview_device_cam"(text) IS 'Get all CAM data from a particular device';
 
 CREATE OR REPLACE FUNCTION "api"."get_switchview_neighbors"(inet, text) RETURNS TABLE("localifIndex" INTEGER, "remoteifdesc" TEXT, "remotehostname" TEXT) AS $$
 	use strict;
@@ -505,3 +505,24 @@ CREATE OR REPLACE FUNCTION "api"."get_network_snmp"(input_system_name text) RETU
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_network_snmp"(text) IS 'Get SNMP connection information for a system';
+
+CREATE OR REPLACE FUNCTION "api"."get_system_cam"(input_system_name text) RETURNS SETOF "network"."cam_cache" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user THEN
+				RAISE EXCEPTION 'Permission to get CAM denied: You are not owner or admin';
+			END IF;
+		END IF;
+
+		RETURN QUERY (SELECT * FROM "network"."cam_cache" WHERE "system_name" = input_system_name ORDER BY "ifname","vlan","mac");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_cam"(text) IS 'Get the latest CAM data from the cache';
+
+CREATE OR REPLACE FUNCTION "api"."get_interface_switchports"(input_mac macaddr) RETURNS SETOF "network"."cam_cache" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "network"."cam_cache" WHERE "mac" = input_mac);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_interface_switchports"(macaddr) IS 'Get all the cam cache entries for MAC';

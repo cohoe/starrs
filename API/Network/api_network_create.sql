@@ -1,6 +1,11 @@
 CREATE OR REPLACE FUNCTION "api"."create_network_snmp"(input_system text, input_address inet, input_ro text, input_rw text) RETURNS SETOF "network"."snmp" AS $$
 	BEGIN
 		PERFORM api.create_log_entry('API','DEBUG','begin api.create_network_snmp');
+
+		-- Address
+		IF input_address IS NULL THEN
+			input_address := api.get_system_primary_address(input_system);
+		END IF;
 		
 		-- Match address against system
 		IF(api.get_interface_address_system(input_address) != input_system) THEN
