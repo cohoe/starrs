@@ -495,7 +495,7 @@ CREATE OR REPLACE FUNCTION "api"."get_network_snmp"(input_system_name text) RETU
 	BEGIN
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission to get SNMP credentials denied: You are not owner or admin';
 			END IF;
 		END IF;
@@ -510,7 +510,7 @@ CREATE OR REPLACE FUNCTION "api"."get_system_cam"(input_system_name text) RETURN
 	BEGIN
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user THEN
+			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission to get CAM denied: You are not owner or admin';
 			END IF;
 		END IF;
