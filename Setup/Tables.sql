@@ -569,3 +569,18 @@ CONSTRAINT "network_vlans_pkey" PRIMARY KEY ("datacenter","vlan")
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."vlans" IS 'VLANs in the organization';
+
+CREATE TABLE "network"."snmp3"(
+"system_name" TEXT NOT NULL,
+"user" TEXT NOT NULL,
+"auth_encryption" TEXT NOT NULL DEFAULT 'md5',
+"password" TEXT NOT NULL,
+"priv_encryption" TEXT NOT NULL DEFAULT 'aes',
+"priv_password" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "network_snmp3_pkey" PRIMARY KEY ("system_name")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "network"."snmp3" IS 'SNMPv3 credentials for network hosts';
