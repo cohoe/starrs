@@ -526,3 +526,38 @@ CREATE OR REPLACE FUNCTION "api"."get_interface_switchports"(input_mac macaddr) 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_interface_switchports"(macaddr) IS 'Get all the cam cache entries for MAC';
+
+CREATE OR REPLACE FUNCTION "api"."get_switchview_device_switchports"(input_system text) RETURNS SETOF "network"."switchports" AS $$
+	DECLARE
+		system_address INET;
+          system_community TEXT;
+	BEGIN
+		SELECT get_system_primary_address::inet INTO system_address FROM api.get_system_primary_address(input_system);
+          IF system_address IS NULL THEN
+               RAISE EXCEPTION 'Unable to find address for system %',input_system;
+          END IF;
+          SELECT ro_community INTO system_community FROM api.get_network_snmp(input_system);
+          IF system_community IS NULL THEN
+               RAISE EXCEPTION 'Unable to find SNMP settings for system %',input_system;
+          END IF;
+
+		RETURN QUERY (
+			SELECT "ifadminstatus","ifoperstatus","ifname","ifdesc","ifalias"
+			FROM api.get_switchview_port_names(system_address, system_community) AS "namedata"
+			JOIN api.get_switchview_port_adminstatus(system_address, system_community) AS "admindata"
+			ON "admindata"."ifindex" = "namedata"."ifindex"
+			JOIN api.get_switchview_port_operstatus(system_address, system_community) AS "operdata"
+			ON "operdata"."ifindex" = "namedata"."ifindex"
+			JOIN api.get_switchview_port_descriptions(system_address, system_community) AS "descdata"
+			ON "descdata"."ifindex" = "namedata"."ifindex"
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_switchview_device_switchports"(text) IS 'Get data on all switchports on a system';
+
+CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RETURNS SETOF "network"."switchport_cache" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "network"."switchport_cache" WHERE "system_name" = input_system ORDER BY "name");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_system_switchports"(text) IS 'Get the most recent cached switchport data';

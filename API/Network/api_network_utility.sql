@@ -83,3 +83,20 @@ CREATE OR REPLACE FUNCTION "api"."reload_cam"(input_system_name text) RETURNS VO
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."reload_cam"(text) IS 'Reload the cam cache for a system';
+
+CREATE OR REPLACE FUNCTION "api"."reload_switchports"(input_system text) RETURNS VOID AS $$
+	BEGIN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+               IF api.get_current_user() != (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system) THEN
+                    RAISE EXCEPTION 'Permission denied: Not owner';
+               END IF;
+          END IF;
+		
+		INSERT INTO "network"."switchport_cache" (
+			SELECT input_system,*,localtimestamp(0)
+			FROM api.get_switchview_device_switchports(input_system)
+		);
+		DELETE FROM "network"."switchport_cache" WHERE "system_name" = input_system AND "timestamp" != localtimestamp(0);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."reload_switchports"(text) IS 'Reload the switchport cache for a system';
