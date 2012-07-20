@@ -39,6 +39,7 @@ CREATE TABLE "ip"."subnets"(
 "zone" TEXT DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
 "dhcp_enable" BOOLEAN NOT NULL DEFAULT FALSE,
 "datacenter" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_DATACENTER'),
+"vlan" INTEGER NOT NULL,
 CONSTRAINT "subnets_pkey" PRIMARY KEY ("subnet")
 )
 WITHOUT OIDS;

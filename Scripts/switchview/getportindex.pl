@@ -23,7 +23,7 @@ getopts('h:c:v:s',\%options);
 
 # Check that required CLI options were given
 if(defined($options{h}) && defined($options{c}) && defined($options{v})) {
-	$hostname = gethostbyaddr(inet_aton($options{h}),AF_INET);
+	$hostname = $options{h};
 	$community = $options{c};
 	$vlan = $options{v};
 }

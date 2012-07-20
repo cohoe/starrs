@@ -78,7 +78,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'subnet|comment|autogen|name|owner|zone|dhcp_enable|datacenter' THEN
+		IF input_field !~* 'subnet|comment|autogen|name|owner|zone|dhcp_enable|datacenter|vlan' THEN
 			PERFORM api.create_log_entry('API','ERROR','Invalid field');
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
@@ -96,6 +96,11 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "subnet" = $1' 
 			USING input_old_subnet, input_field, cidr(input_new_value);	
+		ELSIF input_field ~* 'vlan' THEN
+			EXECUTE 'UPDATE "ip"."subnets" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "subnet" = $1' 
+			USING input_old_subnet, input_field, input_new_value::integer;	
 		ELSE
 			EXECUTE 'UPDATE "ip"."subnets" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
