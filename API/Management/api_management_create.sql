@@ -44,19 +44,23 @@ CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive tex
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_site_configuration"(text, text) IS 'Create a new site configuration directive';
 
-CREATE OR REPLACE FUNCTION "api"."create_group"(input_group text, input_privilege text, input_comment text) RETURNS SETOF "management"."groups" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_group"(input_group text, input_privilege text, input_comment text, input_interval interval) RETURNS SETOF "management"."groups" AS $$
 	BEGIN
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			RAISE EXCEPTION 'Permission denied. Only admins can create groups.';
 		END IF;
 
-		INSERT INTO "management"."groups" ("group","privilege","comment") 
-		VALUES (input_group, input_privilege, input_comment);
+		IF input_interval IS NULL THEN
+			input_interval := api.get_site_configuration('DEFAULT_RENEW_INTERVAL');
+		END IF;
+
+		INSERT INTO "management"."groups" ("group","privilege","comment","renew_interval") 
+		VALUES (input_group, input_privilege, input_comment, input_interval);
 
 		RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" = input_group);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_group"(text, text, text) IS 'Create a user group';
+COMMENT ON FUNCTION "api"."create_group"(text, text, text, interval) IS 'Create a user group';
 
 CREATE OR REPLACE FUNCTION "api"."create_group_member"(input_group text, input_user text, input_privilege text) RETURNS SETOF "management"."group_members" AS $$
 	BEGIN

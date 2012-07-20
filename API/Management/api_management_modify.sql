@@ -32,14 +32,21 @@ CREATE OR REPLACE FUNCTION "api"."modify_group"(input_old_group text, input_fiel
 			RAISE EXCEPTION 'Permission denied. Only admins can modify groups';
 		END IF;
 
-		IF input_field !~* 'group|privilege' THEN
+		IF input_field !~* 'group|privilege|renew_interval' THEN
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
-		EXECUTE 'UPDATE "management"."groups" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
-		WHERE "group" = $1' 
-		USING input_old_group, input_field, input_new_value;
+		IF input_field ~* 'renew_interval' THEN
+			EXECUTE 'UPDATE "management"."groups" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "group" = $1' 
+			USING input_old_group, input_field, input_new_value::interval;
+		ELSE
+			EXECUTE 'UPDATE "management"."groups" SET ' || quote_ident($2) || ' = $3, 
+			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
+			WHERE "group" = $1' 
+			USING input_old_group, input_field, input_new_value;
+		END IF;
 
 		IF input_field ~* 'group' THEN
 			RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" = input_new_value);
