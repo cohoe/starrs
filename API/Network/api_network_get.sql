@@ -1,43 +1,3 @@
-CREATE OR REPLACE FUNCTION "api"."get_switchview_vlans"(inet, text) RETURNS SETOF INTEGER AS $$
-	use strict;
-	use warnings;
-	use Net::SNMP;
-	use Socket;
-
-	# Define OIDs
-	my $vtpVlanState = ".1.3.6.1.4.1.9.9.46.1.3.1.1.2";
-
-	# Needed Variables
-	my $hostname = shift(@_) or die "Unable to get host";
-	my $community = shift(@_) or die "Unable to get READ community";
-
-	# Establish session
-	my ($session,$error) = Net::SNMP->session (
-		-hostname => "$hostname",
-		-community => "$community",
-	);
-
-	# Check that it did not error
-	if (!defined($session)) {
-		die $error;
-	}
-
-	# Get a list of all data
-	my $vlanList = $session->get_table(-baseoid => $vtpVlanState);
-
-	while ( my ($vlan, $vtpState) = each(%$vlanList)) {
-		$vlan =~ s/$vtpVlanState\.1\.//;
-		return_next($vlan);
-	}
-
-	# Gracefully disconnect
-	$session->close();
-	
-	# Return
-	return undef;
-$$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."get_switchview_vlans"(inet, text) IS 'Get a list of all vlans configured on a network device';
-
 CREATE OR REPLACE FUNCTION "api"."get_switchview_bridgeportid"(inet, text, integer) RETURNS TABLE("camportinstanceid" TEXT, "bridgeportid" INTEGER) AS $$
 	use strict;
 	use warnings;
@@ -159,12 +119,12 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_portindex"(inet, text, integer)
 	# Needed Variables
 	my $hostname = shift(@_) or die "Unable to get host";
 	my $community = shift(@_) or die "Unable to get READ community";
-	my $vlan = shift(@_) or die "Unable to get VLANID";
+	my $vlan = shift(@_) or die "Unable to get VLAN";
 
 	# Establish session
 	my ($session,$error) = Net::SNMP->session (
 		-hostname => "$hostname",
-		-community => "$community\@$vlan",
+		-community => "$community\@$vlan"
 	);
 
 	# Check that it did not error
@@ -561,3 +521,14 @@ CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RET
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_switchports"(text) IS 'Get the most recent cached switchport data';
+
+CREATE OR REPLACE FUNCTION "api"."get_vlans"(input_datacenter text) RETURNS SETOF "network"."vlans" AS $$
+     BEGIN
+          IF input_datacenter IS NULL THEN
+               RETURN QUERY (SELECT * FROM "network"."vlans" ORDER BY "datacenter","vlan");
+          ELSE
+               RETURN QUERY (SELECT * FROM "network"."vlans" WHERE "datacenter" = input_datacenter ORDER BY "vlan");
+          END IF;
+     END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_vlans"(text) IS 'Get all or a systems vlans';

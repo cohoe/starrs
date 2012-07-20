@@ -555,3 +555,16 @@ COMMENT ON TABLE "dhcp"."global_options" IS 'Global DHCP options that affect all
 COMMENT ON TABLE "dhcp"."range_options" IS 'DHCP options that apply to a specific range';
 
 COMMENT ON TABLE "management"."configuration" IS 'Site specific configuration directives';
+
+CREATE TABLE "network"."vlans" (
+"datacenter" TEXT NOT NULL,
+"vlan" INTEGER NOT NULL,
+"name" TEXT NOT NULL,
+"comment" TEXT,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "network_vlans_pkey" PRIMARY KEY ("datacenter","vlan")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "network"."vlans" IS 'VLANs in the organization';

@@ -31,3 +31,17 @@ CREATE OR REPLACE FUNCTION "api"."create_network_snmp"(input_system text, input_
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_network_snmp"(text, inet, text, text) IS 'Create a set of credentials for a system';
+
+CREATE OR REPLACE FUNCTION "api"."create_vlan"(input_datacenter text, input_vlan integer, input_name text, input_comment text) RETURNS SETOF "network"."vlans" AS $$
+     BEGIN
+          IF api.get_current_user_level() !~* 'ADMIN' THEN
+               RAISE EXCEPTION 'Only admins can create VLANs';
+          END IF;
+
+          INSERT INTO "network"."vlans" ("datacenter","vlan","name","comment")
+          VALUES (input_datacenter, input_vlan, input_name, input_comment);
+
+          RETURN QUERY (SELECT * FROM "network"."vlans" WHERE "datacenter" = input_datacenter AND "vlan" = input_vlan);
+     END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_vlan"(text, integer, text, text) IS 'Create a VLAN';
