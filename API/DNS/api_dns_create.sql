@@ -18,8 +18,6 @@
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key text, input_owner text, input_comment text) RETURNS SETOF "dns"."keys" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_key');
-
 		-- Validate input
 		input_keyname := api.validate_nospecial(input_keyname);
 
@@ -31,19 +29,16 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create new key
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns key');
 		INSERT INTO "dns"."keys"
 		("keyname","key","comment","owner") VALUES
 		(input_keyname,input_key,input_comment,input_owner);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_key');
 		RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_keyname AND "key" = input_key);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -56,11 +51,8 @@ COMMENT ON FUNCTION "api"."create_dns_key"(text, text, text, text) IS 'Create ne
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keyname text, input_forward boolean, input_shared boolean, input_owner text, input_comment text, input_ddns boolean) RETURNS SETOF "dns"."zones" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_zone');
-
 		-- Validate input
 		IF api.validate_domain(NULL,input_zone) IS FALSE THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid domain');
 			RAISE EXCEPTION 'Invalid domain (%)',input_zone;
 		END IF;
 
@@ -71,17 +63,14 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to create zone % denied for user %. Not admin.',input_zone,api.get_current_user();
 		END IF;
 		
 		-- Create zone
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns zone');
 		INSERT INTO "dns"."zones" ("zone","keyname","forward","comment","owner","shared","ddns") VALUES
 		(input_zone,input_keyname,input_forward,input_comment,input_owner,input_shared,input_ddns);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone');
 		RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -98,8 +87,6 @@ COMMENT ON FUNCTION "api"."create_dns_zone"(text, text, boolean, boolean, text, 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_hostname text, input_zone text, input_ttl integer, input_type text, input_reverse boolean, input_owner text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_address');
-
 		-- Set owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
@@ -148,28 +135,23 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "shared" FROM "dns"."zones" WHERE "zone" = input_zone) IS FALSE
 			AND (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-shared zone');
 				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Validate hostname
 		IF api.validate_domain(input_hostname,input_zone) IS FALSE THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid hostname');
 			RAISE EXCEPTION 'Invalid hostname (%) and domain (%)',input_hostname,input_zone;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address record');
 		INSERT INTO "dns"."a" ("hostname","zone","address","ttl","type","owner","reverse") VALUES 
 		(input_hostname,input_zone,input_address,input_ttl,input_type,input_owner,input_reverse);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_address');
 		RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -183,8 +165,6 @@ COMMENT ON FUNCTION "api"."create_dns_address"(inet, text, text, integer, text, 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, input_zone text, input_preference integer, input_ttl integer, input_owner text) RETURNS SETOF "dns"."mx" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_mailserver');
-
 		-- Set owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
@@ -206,22 +186,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','creating new mailserver (MX)');
 		INSERT INTO "dns"."mx" ("hostname","zone","preference","ttl","owner","type") VALUES
 		(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_mailserver');
 		RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "preference" = input_preference);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -235,8 +211,6 @@ COMMENT ON FUNCTION "api"."create_dns_mailserver"(text, text, integer, integer, 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserver text, input_address inet, input_ttl integer) RETURNS SETOF "dns"."ns" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_ns');
-
 		-- Set zone
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
@@ -254,13 +228,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone.');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','creating new NS record');
 		INSERT INTO "dns"."ns" ("zone","ttl","nameserver","address") VALUES
 		(input_zone,input_ttl,input_nameserver,input_address);
 		
@@ -268,7 +240,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 		UPDATE "dns"."ns" SET "ttl" = input_ttl WHERE "zone" = input_zone;
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_ns');
 		RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -283,8 +254,6 @@ COMMENT ON FUNCTION "api"."create_dns_ns"(text, text, inet, integer) IS 'create 
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target text, input_zone text, input_priority integer, input_weight integer, input_port integer, input_ttl integer, input_owner text) RETURNS SETOF "dns"."srv" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_srv');
-
 		-- Validate input
 		IF api.validate_srv(input_alias) IS FALSE THEN
 			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
@@ -312,22 +281,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','create new SRV record');
 		INSERT INTO "dns"."srv" ("alias","hostname","zone","priority","weight","port","ttl","owner") VALUES
 		(input_alias, input_target, input_zone, input_priority, input_weight, input_port, input_ttl, input_owner);
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_srv');
 		RETURN QUERY (SELECT * FROM "dns"."srv" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "priority" = input_priority AND "weight" = input_weight AND "port" = input_port);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -342,8 +307,6 @@ COMMENT ON FUNCTION "api"."create_dns_srv"(text, text, text, integer, integer, i
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_target text, input_zone text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."cname" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_cname');
-
 		-- Validate input
 		IF api.validate_domain(input_alias,NULL) IS FALSE THEN
 			RAISE EXCEPTION 'Invalid alias (%)',input_alias;
@@ -371,22 +334,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone.');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','create new CNAME record');
 		INSERT INTO "dns"."cname" ("alias","hostname","zone","ttl","owner") VALUES
 		(input_alias, input_target, input_zone, input_ttl, input_owner);
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_cname');
 		RETURN QUERY (SELECT * FROM "dns"."cname" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -400,8 +359,6 @@ COMMENT ON FUNCTION "api"."create_dns_cname"(text, text, text, integer, text) IS
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zone text, input_text text, input_ttl integer, input_owner text) RETURNS SETOF "dns"."txt" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_txt');
-
 		-- Set owner
 		IF input_owner IS NULL THEN
 			input_owner := api.get_current_user();
@@ -423,22 +380,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','create new TXT record');
 		INSERT INTO "dns"."txt" ("hostname","zone","text","ttl","owner") VALUES
 		(input_hostname,input_zone,input_text,input_ttl,input_owner);
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_txt');
 		RETURN QUERY (SELECT * FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -451,29 +404,23 @@ COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, integer, text) IS '
 */
 CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl integer, input_nameserver text, input_contact text, input_serial text, input_refresh integer, input_retry integer, input_expire integer, input_minimum integer) RETURNS SETOF "dns"."soa" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_dns_soa');
-
 		-- Validate input
 		IF api.validate_soa_contact(input_contact) IS FALSE THEN
-			PERFORM api.create_log_entry('API','ERROR','Invalid SOA contact given');
 			RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
 		END IF;
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to create SOA % denied for user %. Not admin.',input_zone,api.get_current_user();
 			END IF;
 		END IF;
 		
 		-- Create soa
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new dns SOA');
 		INSERT INTO "dns"."soa" ("zone","ttl","nameserver","contact","serial","refresh","retry","expire","minimum") VALUES
 		(input_zone,input_ttl,input_nameserver,input_contact,input_serial,input_refresh,input_retry,input_expire,input_minimum);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_soa');
 		RETURN QUERY (SELECT * FROM "dns"."soa" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -481,8 +428,6 @@ COMMENT ON FUNCTION "api"."create_dns_soa"(text, integer, text, text, text, inte
 
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, input_zone text, input_text text, input_ttl integer) RETURNS SETOF "dns"."zone_txt" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_dns_zone_txt');
-
 		-- Set zone
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
@@ -496,7 +441,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
 		END IF;
@@ -505,7 +449,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 		input_hostname := lower(input_hostname);
 
 		-- Create record
-		PERFORM api.create_log_entry('API','INFO','create new zone_txt record');
 		INSERT INTO "dns"."zone_txt" ("hostname","zone","text","ttl") VALUES
 		(input_hostname,input_zone,input_text,input_ttl);
 		
@@ -515,7 +458,6 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 		END IF;
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_dns_zone_txt');
 		IF input_hostname IS NULL THEN
 			RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_zone AND "text" = input_text);
 		ELSE
@@ -527,8 +469,6 @@ COMMENT ON FUNCTION "api"."create_dns_zone_txt"(text, text, text, integer) IS 'c
 
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_address inet, input_ttl integer) RETURNS SETOF "dns"."zone_a" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_dns_zone_a');
-
 		-- Set zone
 		IF input_zone IS NULL THEN
 			input_zone := api.get_site_configuration('DNS_DEFAULT_ZONE');
@@ -547,18 +487,15 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_addr
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied on non-owned zone');
 				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
 			END IF;
 		END IF;
 
 		-- Create record
-		PERFORM api.create_log_entry('API', 'INFO', 'Creating new zone address record');
 		INSERT INTO "dns"."zone_a" ("zone","address","ttl") VALUES 
 		(input_zone,input_address,input_ttl);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','Finish api.create_dns_zone_a');
 		RETURN QUERY (SELECT * FROM "dns"."zone_a" WHERE "zone" = input_zone AND "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';

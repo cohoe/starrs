@@ -424,10 +424,8 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOI
 		ReturnCode TEXT;
 		
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.dns_clean_zone_a');
 		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Non-admin users are not allowed to clean zones');
 			RAISE EXCEPTION 'Non-admin users are not allowed to clean zones';
 		END IF;
 		
@@ -451,7 +449,6 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOI
 		) LOOP
 			-- Delete the forward
 			DnsRecord := AuditData."bind-forward";
-			PERFORM api.create_log_entry('API', 'DEBUG', 'api.dns_clean_zone_a deleting '||DnsRecord);
 			ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			IF ReturnCode != '0' THEN
 				RAISE EXCEPTION 'DNS Error: % when deleting forward %',ReturnCode,DnsRecord;
@@ -461,7 +458,6 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOI
 			IF (SELECT "config" FROM "systems"."interface_addresses" WHERE "address" = AuditData."address") ~* 'static' AND AuditData."impulse-forward" IS NOT NULL THEN
 				-- Forward
 				DnsRecord := AuditData."impulse-forward"||' '||AuditData."ttl"||' '||AuditData."type"||' '||host(AuditData."address");
-				PERFORM api.create_log_entry('API', 'DEBUG', 'api.dns_clean_zone_a creating '||DnsRecord);
 				ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 				IF ReturnCode != '0' THEN
 					RAISE EXCEPTION 'DNS Error: % when creating forward %',ReturnCode,DnsRecord;
@@ -469,7 +465,6 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_a"(input_zone text) RETURNS VOI
 			END IF;
 		END LOOP;
 		
-		PERFORM api.create_log_entry('API', 'DEBUG', 'End api.dns_clean_zone_a');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."dns_clean_zone_a"(text) IS 'Erase all non-IMPULSE controlled A records from a zone.';
@@ -484,10 +479,8 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_ptr"(input_zone text) RETURNS V
 		ReturnCode TEXT;
 		
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.dns_clean_zone_ptr');
 		
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Non-admin users are not allowed to clean zones');
 			RAISE EXCEPTION 'Non-admin users are not allowed to clean zones';
 		END IF;
 		
@@ -512,7 +505,6 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_ptr"(input_zone text) RETURNS V
 			WHERE "audit_data"."type"='PTR'
 		) LOOP
 			DnsRecord := AuditData."host";
-			PERFORM api.create_log_entry('API', 'DEBUG', 'api.dns_clean_zone_ptr deleting '||DnsRecord);
 			ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 			IF ReturnCode != '0' THEN
 				RAISE EXCEPTION 'DNS Error: % when deleting reverse %',ReturnCode,DnsRecord;
@@ -520,14 +512,12 @@ CREATE OR REPLACE FUNCTION "api"."dns_clean_zone_ptr"(input_zone text) RETURNS V
 			
 			IF (SELECT "config" FROM "systems"."interface_addresses" WHERE api.get_reverse_domain("address") = AuditData."host") ~* 'static' AND AuditData."impulse-reverse" IS NOT NULL THEN
 				DnsRecord := AuditData."host"||' '||AuditData."ttl"||' '||AuditData."type"||' '||AuditData."impulse-reverse";
-				PERFORM api.create_log_entry('API', 'DEBUG', 'api.dns_clean_zone_ptr creating '||DnsRecord);
 				ReturnCode := api.nsupdate(input_zone,DnsKeyName,DnsKey,DnsServer,'ADD',DnsRecord);
 				IF ReturnCode != '0' THEN
 					RAISE EXCEPTION 'DNS Error: % when creating reverse %',ReturnCode,DnsRecord;
 				END IF;
 			END IF;
 			
-			PERFORM api.create_log_entry('API', 'DEBUG', 'End api.dns_clean_zone_ptr');
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';

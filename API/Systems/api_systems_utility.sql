@@ -11,14 +11,10 @@ COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner 
 
 CREATE OR REPLACE FUNCTION "api"."renew_interface_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.renew_interface_address');
-
-		PERFORM api.create_log_entry('API','INFO','updating address'||input_address);
 		UPDATE "systems"."interface_addresses"
 		SET "renew_date" = date("renew_date" + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')::interval))
 		WHERE "address" = input_address;
 
-		PERFORM api.create_log_entry('API','DEBUG','finish api.renew_interface_address');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_interface_address"(inet) IS 'renew an interface address registration for another interval';
@@ -66,7 +62,7 @@ CREATE OR REPLACE FUNCTION "api"."clear_expired_systems"() RETURNS VOID AS $$
 		--FOR SystemData IN (SELECT "system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" = current_date) LOOP
 		--	PERFORM "api"."remove_system"(SystemData.system_name);
 		--END LOOP;
-		FOR SystemData IN (SELECT "address" FROM "systems"."interface_addresses" WHERE api.get_interface_address_system("address") IN (SELECT "system_name" FROM "systems"."systems" WHERE "renew_date" = current_date)) LOOP
+		FOR SystemData IN (SELECT "address" FROM "systems"."interface_addresses" WHERE "address" IN (SELECT "address" FROM "systems"."interface_addresses" WHERE "renew_date" = current_date)) LOOP
 			PERFORM "api"."remove_interface_address"(SystemData.address);
 		END LOOP;
 	END;

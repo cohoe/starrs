@@ -11,20 +11,15 @@
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class');
-
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp class denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Remove class
-		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class');
 		DELETE FROM "dhcp"."classes" WHERE "class" = input_class;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete an existing DHCP class';
@@ -35,21 +30,16 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete an existing DHCP 
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_class_option');
-
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp class option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Remove class option		
-		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp class option');
 		DELETE FROM "dhcp"."class_options"
 		WHERE "class" = input_class AND "option" = input_option AND "value" = input_value;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_class_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delete an existing DHCP class option';
@@ -60,21 +50,17 @@ COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delet
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_subnet_option');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp subnet option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Delete subnet option		
-		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp subnet option');
 		DELETE FROM "dhcp"."subnet_options"
 		WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_subnet_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete an existing DHCP subnet option';
@@ -85,21 +71,17 @@ COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Dele
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_global_option"(input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_global_option');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp global option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Delete global option		
-		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp global option');
 		DELETE FROM "dhcp"."global_options"
 		WHERE "option" = input_option AND "value" = input_value;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_global_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_global_option"(text, text) IS 'Delete an existing DHCP global option';
@@ -110,21 +92,16 @@ COMMENT ON FUNCTION "api"."remove_dhcp_global_option"(text, text) IS 'Delete an 
 */
 CREATE OR REPLACE FUNCTION "api"."remove_dhcp_range_option"(input_range text, input_option text, input_value text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.remove_dhcp_range_option');
-
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission to remove dhcp range option denied for %. Not admin.',api.get_current_user();
 		END IF;
 
 		-- Remove range option		
-		PERFORM api.create_log_entry('API', 'INFO', 'Deleting dhcp range option');
 		DELETE FROM "dhcp"."range_options"
 		WHERE "name" = input_range AND "option" = input_option;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.remove_dhcp_range_option');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_range_option"(text, text, text) IS 'Delete an existing DHCP range option';

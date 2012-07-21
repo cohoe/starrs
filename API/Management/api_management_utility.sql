@@ -77,7 +77,6 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		-- Set level
 		UPDATE "user_privileges" SET "allow" = TRUE WHERE "privilege" ~* Level;
 
-		PERFORM api.create_log_entry('API','INFO','User "'||input_username||'" ('||Level||') has successfully initialized.');
 		RETURN 'Greetings '||lower(Level)||'!';
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -102,11 +101,9 @@ COMMENT ON FUNCTION "api"."exec"(text) IS 'Execute a query in a plpgsql context'
 /* API - change_username */
 CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_username text) RETURNS VOID AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','Begin api.change_username');
 		
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied to change username');
 			RAISE EXCEPTION 'Only admins can change usernames';
 		END IF;
 		
@@ -156,7 +153,6 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 		PERFORM api.create_log_entry('API','INFO','Changed user '||old_username||' to '||new_username);
 		
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','End api.change_username');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."change_username"(text, text) IS 'Change all references to an old username to a new one';

@@ -14,8 +14,6 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 	DECLARE
 		RowCount INTEGER;
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_subnet');
-
 		-- Validate input
 		input_name := api.validate_name(input_name);
 
@@ -32,27 +30,22 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF input_dhcp IS TRUE THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission to create DHCP-enabled subnet % denied for user %',input_subnet,api.get_current_user();
 			END IF;
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied - wrong owner');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Create new subnet
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new subnet');
 		INSERT INTO "ip"."subnets" 
 			("subnet","name","comment","autogen","owner","dhcp_enable","zone","datacenter","vlan") VALUES
 			(input_subnet,input_name,input_comment,input_autogen,input_owner,input_dhcp,input_zone,input_datacenter,input_vlan);
 
 		-- Create RDNS zone
-		PERFORM api.create_log_entry('API','INFO','creating reverse zone for subnet');
 		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),(SELECT "keyname" FROM "dns"."zones" WHERE "zone" = input_zone),FALSE,TRUE,input_owner,'Reverse zone for subnet '||text(input_subnet),(SELECT "ddns" FROM "dns"."zones" WHERE "zone" = input_zone));
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_subnet');
 		RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = input_subnet);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -66,12 +59,10 @@ COMMENT ON FUNCTION "api"."create_ip_subnet"(cidr, text, text, boolean, boolean,
 */
 CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_ip inet, input_last_ip inet, input_subnet cidr, input_use varchar(4), input_class text, input_comment text, input_datacenter text, input_zone text) RETURNS SETOF "ip"."ranges" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_ip_range');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner',input_subnet;
 			END IF;
 		END IF;
@@ -85,12 +76,10 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		END IF;
 
 		-- Create new IP range		
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
 		INSERT INTO "ip"."ranges" ("name", "first_ip", "last_ip", "subnet", "use", "comment", "class", "datacenter", "zone") VALUES 
 		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,input_class,input_datacenter,input_zone);
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_ip_range');
 		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -110,12 +99,10 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		Owner TEXT;
 		RangeAddresses RECORD;
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Begin api.create_address_range');
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "ip"."subnets" WHERE "subnet" = input_subnet) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on subnet %. You are not owner',input_subnet;
 			END IF;
 		END IF;
@@ -125,24 +112,20 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		FROM "ip"."subnets"
 		WHERE "ip"."subnets"."subnet" = input_subnet;
 		IF (RowCount < 1) THEN
-			PERFORM api.create_log_entry('API','ERROR','Subnet does not exist');
 			RAISE EXCEPTION 'Subnet (%) does not exist.',input_subnet;
 		END IF;
 
 		-- Check if addresses are within subnet
 		IF NOT input_first_ip << input_subnet THEN
-			PERFORM api.create_log_entry('API','ERROR','First address not within subnet');
 			RAISE EXCEPTION 'First address (%) not within subnet (%)',input_first_ip,input_subnet;
 		END IF;
 
 		IF NOT input_last_ip << input_subnet THEN
-			PERFORM api.create_log_entry('API','ERROR','Last address not within subnet');
 			RAISE EXCEPTION 'Last address (%) not within subnet (%)',input_last_ip,input_subnet;
 		END IF;
 
 		-- Check if autogen'd
 		IF (SELECT "autogen" FROM "ip"."subnets" WHERE "ip"."subnets"."subnet" = input_subnet LIMIT 1) IS TRUE THEN
-			PERFORM api.create_log_entry('API','ERROR','Cannot create new addresses');
 			RAISE EXCEPTION 'Subnet (%) addresses were autogenerated. Cannot create new addresses.',input_subnet;
 		END IF;
 
@@ -152,13 +135,11 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		WHERE "ip"."subnets"."subnet" = input_subnet;
 
 		-- Create addresses
-		PERFORM api.create_log_entry('API', 'INFO', 'creating new range');
 		FOR RangeAddresses IN SELECT api.get_range_addresses(input_first_ip,input_last_ip) LOOP
 			INSERT INTO "ip"."addresses" ("address","owner") VALUES (RangeAddresses.get_range_addresses,Owner);
 		END LOOP;
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'Finish api.create_address_range');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_address_range"(inet, inet, cidr) IS 'Create a range of addresses from a non-autogened subnet (intended for DHCPv6)';

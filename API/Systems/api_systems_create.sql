@@ -13,8 +13,6 @@
 */
 CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_owner text, input_type text, input_os_name text, input_comment text, input_group text, input_platform text, input_asset text, input_datacenter text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_system');
-
 		-- Validate input
 		input_system_name := api.validate_name(input_system_name);
 
@@ -26,19 +24,16 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF input_owner != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
 		-- Insert new system
-		PERFORM api.create_log_entry('API', 'INFO', 'Creating new system');
 		INSERT INTO "systems"."systems"
 			("system_name","owner","type","os_name","comment","last_modifier","group","platform_name","asset","datacenter") VALUES
 			(input_system_name,input_owner,input_type,input_os_name,input_comment,api.get_current_user(),input_group,input_platform,input_asset,input_datacenter);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_system');
 		RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -50,12 +45,10 @@ COMMENT ON FUNCTION "api"."create_system"(text, text, text, text, text, text, te
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, input_mac macaddr, input_name text, input_comment text) RETURNS SETOF "systems"."interfaces" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_interface');
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system_name) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on system %. You are not owner.',input_system_name;
 			END IF;
 		END IF;
@@ -64,13 +57,11 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		input_name := api.validate_name(input_name);
 
 		-- Create interface
-		PERFORM api.create_log_entry('API','INFO','creating new interface');
 		INSERT INTO "systems"."interfaces"
 		("system_name","mac","comment","last_modifier","name") VALUES
 		(input_system_name,input_mac,input_comment,api.get_current_user(),input_name);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_interface');
 		RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = input_mac);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -83,8 +74,6 @@ COMMENT ON FUNCTION "api"."create_interface"(text, macaddr, text, text) IS 'Crea
 */
 CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, input_address inet, input_config text, input_class text, input_isprimary boolean, input_comment text, input_renew_date date) RETURNS SETOF "systems"."interface_addresses" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API', 'DEBUG', 'begin api.create_interface_address');
-
 		-- Renew
 		IF input_renew_date IS NULL THEN
 			input_renew_date := api.get_default_renew_date();
@@ -95,7 +84,6 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 			IF (SELECT "owner" FROM "systems"."interfaces" 
 			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interfaces"."mac" = input_mac) != api.get_current_user() THEN
-				PERFORM api.create_log_entry('API','ERROR','Permission denied');
 				RAISE EXCEPTION 'Permission denied on interface %. You are not owner.',input_mac;
 			END IF;
 
@@ -110,22 +98,18 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 		END IF;
 
 		IF input_address << cidr(api.get_site_configuration('DYNAMIC_SUBNET')) AND input_config !~* 'dhcp' THEN
-			PERFORM api.create_log_entry('API','ERROR','Specified address is only for dynamic addressing');
 			RAISE EXCEPTION 'Specifified address (%) is only for dynamic DHCP addresses',input_address;
 		END IF;
 
 		IF (SELECT "use" FROM "api"."get_ip_ranges"() WHERE "name" = (SELECT "api"."get_address_range"(input_address))) ~* 'ROAM' THEN
-			PERFORM api.create_log_entry('API','ERROR','Specified address is contained within Dynamic range');
 			RAISE EXCEPTION 'Specified address (%) is contained within a Dynamic range',input_address;
 		END IF;
 
 		-- Create address
-		PERFORM api.create_log_entry('API', 'INFO', 'Creating new address');
 		INSERT INTO "systems"."interface_addresses" ("mac","address","config","class","comment","last_modifier","isprimary","renew_date") VALUES
 		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary,input_renew_date);
 
 		-- Done
-		PERFORM api.create_log_entry('API', 'DEBUG', 'finish api.create_interface_address');
 		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -174,20 +158,15 @@ COMMENT ON FUNCTION "api"."create_system_quick"(text, text, text, macaddr, inet,
 
 CREATE OR REPLACE FUNCTION "api"."create_datacenter"(input_name text, input_comment text) RETURNS SETOF "systems"."datacenters" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_datacenter');
-
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied to create datacenter: not admin';
 		END IF;
 		
 		-- Create datacenter
-		PERFORM api.create_log_entry('API','INFO','creating new datacenter');
 		INSERT INTO "systems"."datacenters" ("datacenter","comment") VALUES (input_name,input_comment);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_datacenter');
 		RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -195,20 +174,15 @@ COMMENT ON FUNCTION "api"."create_datacenter"(text, text) IS 'Create a new datac
 
 CREATE OR REPLACE FUNCTION "api"."create_availability_zone"(input_datacenter text, input_zone text, input_comment text) RETURNS SETOF "systems"."availability_zones" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_availability_zone');
-
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied to create availability zone: not admin';
 		END IF;
 		
 		-- Create availability_zones
-		PERFORM api.create_log_entry('API','INFO','creating new availability zone');
 		INSERT INTO "systems"."availability_zones" ("datacenter","zone","comment") VALUES (input_datacenter, input_zone, input_comment);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_availability_zone');
 		RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_datacenter AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';

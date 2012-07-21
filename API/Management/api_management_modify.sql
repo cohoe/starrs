@@ -8,7 +8,6 @@
 */
 CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive text, input_value text) RETURNS SETOF "management"."configuration" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.modify_site_configuration');
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
@@ -16,11 +15,9 @@ CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive tex
 		END IF;
 
 		-- Create directive
-		PERFORM api.create_log_entry('API','INFO','modifying directive');
 		UPDATE "management"."configuration" SET "value" = input_value WHERE "option" = input_directive;
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.modify_site_configuration');
 		RETURN QUERY (SELECT * FROM "management"."configuration" WHERE "option" = input_directive AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';

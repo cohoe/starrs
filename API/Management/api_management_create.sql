@@ -25,20 +25,16 @@ COMMENT ON FUNCTION "api"."create_log_entry"(text, text, text) IS 'Function to i
 */
 CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive text, input_value text) RETURNS SETOF "management"."configuration" AS $$
 	BEGIN
-		PERFORM api.create_log_entry('API','DEBUG','begin api.create_site_configuration');
 
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			PERFORM api.create_log_entry('API','ERROR','Permission denied');
 			RAISE EXCEPTION 'Permission denied. Only admins can create site directives';
 		END IF;
 
 		-- Create directive
-		PERFORM api.create_log_entry('API','INFO','creating directive');
 		INSERT INTO "management"."configuration" VALUES (input_directive, input_value);
 
 		-- Done
-		PERFORM api.create_log_entry('API','DEBUG','finish api.create_site_configuration');
 		RETURN QUERY (SELECT * FROM "management"."configuration" WHERE "option" = input_directive AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';

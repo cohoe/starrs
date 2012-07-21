@@ -37,7 +37,6 @@ CREATE OR REPLACE FUNCTION "api"."get_address_from_range"(input_range_name text)
 
 		-- Check if range was full (AddressToUse will be NULL)
 		IF AddressToUse IS NULL THEN
-			PERFORM api.create_log_entry('IP', 'ERROR', 'range full');
 			RAISE EXCEPTION 'All addresses in range % are in use',input_range_name;
 		END IF;
 
