@@ -1,2 +1,0 @@
-psql:/opt/impulse/API/IP/api_ip_get.sql:206: ERROR:  cannot change return type of existing function
-HINT:  Use DROP FUNCTION first.

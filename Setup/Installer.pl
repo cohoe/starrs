@@ -33,6 +33,8 @@ print "Tables...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Tables.sql\" $dbname");
 print "Types...\n";
 system("psql -h $dbhost -p $dbport -U $dbuser -f \"$dir\"\"Setup\/Types.sql\" $dbname");
+print "Privileged functions...\n";
+system("psql -h $dbhost -p $dbport -U postgres -f \"$dir\"\"API\/plperl.sql\" $dbname");
 
 foreach my $schema (@schemas)
 {

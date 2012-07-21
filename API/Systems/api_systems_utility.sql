@@ -19,30 +19,6 @@ CREATE OR REPLACE FUNCTION "api"."renew_interface_address"(input_address inet) R
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_interface_address"(inet) IS 'renew an interface address registration for another interval';
 
-CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, text, text) RETURNS VOID AS $$
-	use strict;
-	use warnings;
-	use Net::SMTP;
-
-	my $username = shift(@_) or die "Unable to get username";
-	my $system = shift(@_) or die "Unable to get system name";
-	my $domain = shift(@_) or die "Unable to get mail domain";
-
-	my $smtp = Net::SMTP->new("mail.$domain");
-
-	$smtp->mail("impulse\@$domain");
-	$smtp->recipient("$username\@$domain");
-	$smtp->data;
-	$smtp->datasend("From: impulse\@$domain\n");
-	$smtp->datasend("To: $username\@$domain\n");
-	$smtp->datasend("Subject: System Renewal Notification - $system\n");
-	$smtp->datasend("\n");
-	$smtp->datasend("Your system \"$system\" will expire in less than 7 days and will be removed from IMPULSE automatically. You can click https://impulse.$domain/system/renew/$system to renew your system for another year. Alternatively you can navigate to the System view and click the Renew button. If you have any questions, please see your local system administrator.");
-
-	$smtp->datasend;
-	$smtp->quit;
-$$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."send_renewal_email"(text, text, text) IS 'Send an email to a user saying their system is about to expire';
 
 CREATE OR REPLACE FUNCTION "api"."notify_expiring_systems"() RETURNS VOID AS $$
 	DECLARE
