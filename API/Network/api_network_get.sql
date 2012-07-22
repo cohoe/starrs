@@ -96,9 +96,9 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_device_switchports"(input_syste
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_switchview_device_switchports"(text) IS 'Get data on all switchports on a system';
 
-CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RETURNS SETOF "network"."switchport_cache" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RETURNS SETOF "network"."switchports" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "network"."switchport_cache" WHERE "system_name" = input_system ORDER BY "name");
+		RETURN QUERY (SELECT * FROM "network"."switchports" WHERE "system_name" = input_system ORDER BY "name");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_switchports"(text) IS 'Get the most recent cached switchport data';

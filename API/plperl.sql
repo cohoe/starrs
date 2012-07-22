@@ -1345,8 +1345,115 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, text, text) RETURNS 
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."send_renewal_email"(text, text, text) IS 'Send an email to a user saying their system is about to expire';
 
+CREATE OR REPLACE FUNCTION "api"."get_network_switchports"(text) RETURNS SETOF INTEGER AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	
+	# Input parameters
+	my $systemName = shift(@_);
+	
+	# Connection Details
+	my $snmpInfo = spi_exec_query("SELECT ro_community,address FROM network.snmp WHERE system_name = '$systemName'");
+	my $host = $snmpInfo->{rows}[0]->{address};
+	my $community = $snmpInfo->{rows}[0]->{ro_community};
+	
+	# OIDs
+	my $OID_ifName = ".1.3.6.1.2.1.31.1.1.1.1";
 
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$host",
+		-community => "$community",
+	);
 
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+	
+	# Data
+	my $ifList = $session->get_table(-baseoid => $OID_ifName);
+	
+	# Check for errors
+	if(!defined($ifList)) {
+		die $session->error();
+	}
+	
+	# Deal with results
+	while ( my ($ifIndex, $ifName) = each(%$ifList)) {
+		$ifIndex =~ s/$OID_ifName\.//;
+		return_next($ifIndex);
+	}
+	
+	# Gracefully disconnect
+	$session->close();
+	
+	# Return
+	return undef;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_network_switchports"(text) IS 'Get a list of all switchport indexes on a system';
 
+REATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS SETOF "network"."switchports" AS $$
+	use strict;
+	use warnings;
+	use Net::SNMP;
+	
+	# Input parameters
+	my $systemName = shift(@_);
+	my $ifIndex = shift(@_);
+	
+	# Connection Details
+	my $snmpInfo = spi_exec_query("SELECT ro_community,address FROM network.snmp WHERE system_name = '$systemName'");
+	my $host = $snmpInfo->{rows}[0]->{address};
+	my $community = $snmpInfo->{rows}[0]->{ro_community};
+	
+	# Date
+	my $date = spi_exec_query("SELECT localtimestamp(0)");
+	$date = $date->{rows}[0]->{timestamp};
+	my $user = spi_exec_query("SELECT api.get_current_user()");
+	$user = $user->{rows}[0]->{get_current_user};
+	
+	# OIDs
+	my $OID_ifName = ".1.3.6.1.2.1.31.1.1.1.1.$ifIndex";
+	my $OID_ifDesc = ".1.3.6.1.2.1.2.2.1.2.$ifIndex";
+	my $OID_ifAlias = ".1.3.6.1.2.1.31.1.1.1.18.$ifIndex";
+	my $OID_ifOperStatus = ".1.3.6.1.2.1.2.2.1.8.$ifIndex";
+	my $OID_ifAdminStatus = ".1.3.6.1.2.1.2.2.1.7.$ifIndex";
+
+	# Establish session
+	my ($session,$error) = Net::SNMP->session (
+		-hostname => "$host",
+		-community => "$community",
+	);
+
+	# Check that it did not error
+	if (!defined($session)) {
+		die $error;
+	}
+	
+	# Data
+	my $result = $session->get_request(
+		-varbindlist => [ $OID_ifName, $OID_ifDesc, $OID_ifAlias, $OID_ifOperStatus, $OID_ifAdminStatus ]
+	);
+	
+	# Check for errors
+	if(!defined($result)) {
+		die $session->error();
+	}
+	
+	# Gracefully disconnect
+	$session->close();
+	
+	# Deal with results
+	if($result->{$OID_ifAlias} eq 'noSuchInstance') { $result->{$OID_ifAlias} = undef; }
+	if($result->{$OID_ifOperStatus}-1 == 0) { $result->{$OID_ifOperStatus} = 1; } else { $result->{$OID_ifOperStatus} = 0; }
+	if($result->{$OID_ifAdminStatus}-1 == 0) { $result->{$OID_ifAdminStatus} = 1; } else { $result->{$OID_ifAdminStatus} = 0; }
+	
+	# Return
+	return_next({system_name=>$systemName, name=>$result->{$OID_ifName}, desc=>$result->{$OID_ifDesc}, ifindex=>$ifIndex, alias=>$result->{$OID_ifAlias}, admin_state=>$result->{$OID_ifAdminStatus}, oper_state=>$result->{$OID_ifOperStatus}, date_created=>$date, date_modified=>$date, last_modifier=>$user});
+	return undef;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."get_network_switchport"(text, integer) IS 'Get information on a specific switchport';
 
 -- vim: set filetype=perl:
