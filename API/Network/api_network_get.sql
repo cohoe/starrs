@@ -14,12 +14,12 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_system text) 
 			RAISE EXCEPTION 'Unable to find SNMP settings for system %',input_system;
 		END IF;
 
-		FOR Vlans IN (SELECT get_switchview_vlans FROM api.get_switchview_vlans(input_host, input_community) ORDER BY get_switchview_vlans) LOOP
+		FOR Vlans IN (SELECT "vlan" FROM "network"."switchports" WHERE "system_name" = input_system AND "vlan" IS NOT NULL GROUP BY "vlan" ORDER BY "vlan") LOOP
 			FOR CamData IN (
-				SELECT mac,ifname,Vlans.get_switchview_vlans FROM api.get_switchview_cam(input_host,input_community,vlans.get_switchview_vlans) AS "cam"
-				JOIN api.get_switchview_bridgeportid(input_host,input_community,vlans.get_switchview_vlans) AS "bridgeportid"
+				SELECT mac,ifname,Vlans.vlan FROM api.get_switchview_cam(input_host,input_community,vlans.vlan) AS "cam"
+				JOIN api.get_switchview_bridgeportid(input_host,input_community,vlans.vlan) AS "bridgeportid"
 				ON bridgeportid.camportinstanceid = cam.camportinstanceid
-				JOIN api.get_switchview_portindex(input_host,input_community,vlans.get_switchview_vlans) AS "portindex"
+				JOIN api.get_switchview_portindex(input_host,input_community,vlans.vlan) AS "portindex"
 				ON bridgeportid.bridgeportid = portindex.bridgeportid
 				JOIN api.get_switchview_port_names(input_host,input_community) AS "portnames"
 				ON portindex.ifindex = portnames.ifindex

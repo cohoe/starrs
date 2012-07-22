@@ -19,6 +19,12 @@ CREATE OR REPLACE FUNCTION "api"."reload_network_switchports"(input_system text)
 	DECLARE
 		IfList RECORD;
 	BEGIN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			IF api.get_current_user() != (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system) THEN
+				RAISE EXCEPTION 'Permission denied: Not owner';
+			END IF;
+		END IF;
+
 		DELETE FROM "network"."switchports" WHERE "system_name" = input_system;
 		FOR IfList IN (SELECT * FROM api.get_network_switchports(input_system) ORDER BY get_network_switchports) LOOP
 			INSERT INTO "network"."switchports" SELECT * FROM api.get_network_switchport(input_system, IfList.get_network_switchports);

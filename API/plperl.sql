@@ -1394,7 +1394,7 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchports"(text) RETURNS SETOF I
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_network_switchports"(text) IS 'Get a list of all switchport indexes on a system';
 
-REATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS SETOF "network"."switchports" AS $$
+CREATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS SETOF "network"."switchports" AS $$
 	use strict;
 	use warnings;
 	use Net::SNMP;
@@ -1420,6 +1420,7 @@ REATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS 
 	my $OID_ifAlias = ".1.3.6.1.2.1.31.1.1.1.18.$ifIndex";
 	my $OID_ifOperStatus = ".1.3.6.1.2.1.2.2.1.8.$ifIndex";
 	my $OID_ifAdminStatus = ".1.3.6.1.2.1.2.2.1.7.$ifIndex";
+	my $OID_vmVlan = ".1.3.6.1.4.1.9.9.68.1.2.2.1.2.$ifIndex";
 
 	# Establish session
 	my ($session,$error) = Net::SNMP->session (
@@ -1441,17 +1442,22 @@ REATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS 
 	if(!defined($result)) {
 		die $session->error();
 	}
+
+	my $vlanResult = $session->get_request(
+		-varbindlist => [ $OID_vmVlan ]
+	);
 	
 	# Gracefully disconnect
 	$session->close();
 	
 	# Deal with results
+	if(!$vlanResult->{$OID_vmVlan}) { $result->{$OID_vmVlan} = undef; } else { $result->{$OID_vmVlan} = $vlanResult->{$OID_vmVlan}; }
 	if($result->{$OID_ifAlias} eq 'noSuchInstance') { $result->{$OID_ifAlias} = undef; }
 	if($result->{$OID_ifOperStatus}-1 == 0) { $result->{$OID_ifOperStatus} = 1; } else { $result->{$OID_ifOperStatus} = 0; }
 	if($result->{$OID_ifAdminStatus}-1 == 0) { $result->{$OID_ifAdminStatus} = 1; } else { $result->{$OID_ifAdminStatus} = 0; }
 	
 	# Return
-	return_next({system_name=>$systemName, name=>$result->{$OID_ifName}, desc=>$result->{$OID_ifDesc}, ifindex=>$ifIndex, alias=>$result->{$OID_ifAlias}, admin_state=>$result->{$OID_ifAdminStatus}, oper_state=>$result->{$OID_ifOperStatus}, date_created=>$date, date_modified=>$date, last_modifier=>$user});
+	return_next({system_name=>$systemName, name=>$result->{$OID_ifName}, desc=>$result->{$OID_ifDesc}, ifindex=>$ifIndex, alias=>$result->{$OID_ifAlias}, admin_state=>$result->{$OID_ifAdminStatus}, oper_state=>$result->{$OID_ifOperStatus}, vlan=>$result->{$OID_vmVlan},date_created=>$date, date_modified=>$date, last_modifier=>$user});
 	return undef;
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_network_switchport"(text, integer) IS 'Get information on a specific switchport';
