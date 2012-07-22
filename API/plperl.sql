@@ -1349,8 +1349,4 @@ COMMENT ON FUNCTION "api"."send_renewal_email"(text, text, text) IS 'Send an ema
 
 
 
-
-
-
-
 -- vim: set filetype=perl:

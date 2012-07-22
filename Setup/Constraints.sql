@@ -130,3 +130,7 @@ ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_system_group" FOREIGN KEY ("g
 ALTER TABLE "network"."vlans" ADD CONSTRAINT "fk_network_vlan_datacenter" FOREIGN KEY ("datacenter") REFERENCES "systems"."datacenters"("datacenter") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "ip"."subnets" ADD CONSTRAINT "fk_subnet_vlans" FOREIGN KEY ("datacenter","vlan") REFERENCES "network"."vlans"("datacenter","vlan") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "network"."switchports" ADD CONSTRAINT "fk_switchport_system_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "network"."switchport_vlans" ADD CONSTRAINT "fk_switchport_vlan_system" FOREIGN KEY ("system_name","ifindex") REFERENCES "network"."switchports"("system_name","ifindex") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
