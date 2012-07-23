@@ -488,7 +488,7 @@ COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network system
 CREATE TABLE "network"."cam_cache"(
 "system_name" TEXT NOT NULL,
 "mac" MACADDR NOT NULL,
-"ifname" TEXT NOT NULL,
+"ifindex" INTEGER NOT NULL,
 "vlan" INTEGER NOT NULL,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
@@ -586,21 +586,3 @@ CONSTRAINT "network_snmp3_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."snmp3" IS 'SNMPv3 credentials for network hosts';
-
-CREATE TABLE "network"."switchports" (
-"system_name" TEXT NOT NULL,
-"name" TEXT NOT NULL,
-"desc" TEXT NOT NULL,
-"ifindex" INTEGER NOT NULL,
-"alias" TEXT,
-"trunk" BOOLEAN,
-"admin_state" BOOLEAN,
-"oper_state" BOOLEAN,
-"vlan" INTEGER,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "network_switchports_pkey" PRIMARY KEY ("system_name","ifindex")
-)
-WITHOUT OIDS;
-COMMENT ON TABLE "network"."switchports" IS 'Switchports on a network device';

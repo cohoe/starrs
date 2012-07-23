@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_system text) 
 			RAISE EXCEPTION 'Unable to find SNMP settings for system %',input_system;
 		END IF;
 
-		FOR Vlans IN (SELECT "vlan" FROM "network"."switchports" WHERE "system_name" = input_system AND "vlan" IS NOT NULL GROUP BY "vlan" ORDER BY "vlan") LOOP
+		FOR Vlans IN (SELECT "vlan" FROM "network"."vlans" WHERE "datacenter" = (SELECT "datacenter" FROM "systems"."systems" WHERE "system_name" = input_system) AND "vlan" IS NOT NULL GROUP BY "vlan" ORDER BY "vlan") LOOP
 			FOR CamData IN (
 				SELECT mac,portindex.ifindex,Vlans.vlan FROM api.get_switchview_cam(input_host,input_community,vlans.vlan) AS "cam"
 				JOIN api.get_switchview_bridgeportid(input_host,input_community,vlans.vlan) AS "bridgeportid"
@@ -95,8 +95,16 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_switchview_device_switchports"(text) IS 'Get data on all switchports on a system';
 
 CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RETURNS SETOF "network"."switchports" AS $$
+	DECLARE
+		IfIndexes RECORD;
+		Ints network.switchports%rowtype;
 	BEGIN
-		RETURN QUERY (SELECT * FROM "network"."switchports" WHERE "system_name" = input_system ORDER BY "ifindex");
+		FOR IfIndexes IN (SELECT * FROM api.get_network_switchports(input_system) ORDER BY get_network_switchports) LOOP
+			--RETURN NEXT api.get_network_switchport(input_system, IfIndexes.get_network_switchports);
+			SELECT * FROM api.get_network_switchport(input_system, IfIndexes.get_network_switchports) INTO Ints;
+			RETURN NEXT Ints;
+		END LOOP;
+		RETURN;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_switchports"(text) IS 'Get the most recent cached switchport data';

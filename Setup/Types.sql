@@ -67,3 +67,5 @@ COMMENT ON TYPE "systems"."os_distribution" IS 'OS distribution statistics';
 CREATE TYPE "management"."search_data" AS (datacenter text, availability_zone text, system_name text, asset text, "group" text, platform text, mac macaddr, address inet, system_owner text, system_last_modifier text, range text, hostname varchar(63), zone text, dns_owner text, dns_last_modifier text);
 
 CREATE TYPE "network"."cam" AS ("mac" MACADDR, "ifindex" INTEGER, "vlan" INTEGER);
+
+CREATE TYPE "network"."switchports" AS ("system_name" TEXT, "name" TEXT, "desc" TEXT, "ifindex" INTEGER, "alias" TEXT, "admin_state" BOOLEAN, "oper_state" BOOLEAN, "date_created" TIMESTAMP WITHOUT TIME ZONE, "date_modified" TIMESTAMP WITHOUT TIME ZONE, "last_modifier" TEXT, "vlan" INTEGER);
