@@ -31,19 +31,19 @@ CREATE OR REPLACE FUNCTION "api"."notify_expiring_addresses"() RETURNS VOID AS $
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."notify_expiring_addresses"() IS 'Notify users of soon-to-expire addresses';
 
-CREATE OR REPLACE FUNCTION "api"."clear_expired_systems"() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."clear_expired_addresses"() RETURNS VOID AS $$
 	DECLARE
 		SystemData RECORD;
 	BEGIN
 		--FOR SystemData IN (SELECT "system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" = current_date) LOOP
 		--	PERFORM "api"."remove_system"(SystemData.system_name);
 		--END LOOP;
-		FOR SystemData IN (SELECT "address" FROM "systems"."interface_addresses" WHERE "address" IN (SELECT "address" FROM "systems"."interface_addresses" WHERE "renew_date" = current_date)) LOOP
+		FOR SystemData IN (SELECT "address" FROM "systems"."interface_addresses" WHERE "renew_date" <= current_date) LOOP
 			PERFORM "api"."remove_interface_address"(SystemData.address);
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."clear_expired_systems"() IS 'Remove all systems that expire today.';
+COMMENT ON FUNCTION "api"."clear_expired_addresses"() IS 'Remove all expired addresses.';
 
 CREATE OR REPLACE FUNCTION "api"."get_default_renew_date"(input_system TEXT) RETURNS DATE AS $$
 	BEGIN

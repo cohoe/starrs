@@ -76,7 +76,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 	BEGIN
 		-- Renew
 		IF input_renew_date IS NULL THEN
-			input_renew_date := api.get_default_renew_date();
+			input_renew_date := api.get_default_renew_date((SELECT "system_name" FROM "systems"."interfaces" WHERE "mac" = input_mac));
 		END IF;
 
 		-- Check privileges
