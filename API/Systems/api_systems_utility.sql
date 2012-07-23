@@ -20,16 +20,16 @@ $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."renew_interface_address"(inet) IS 'renew an interface address registration for another interval';
 
 
-CREATE OR REPLACE FUNCTION "api"."notify_expiring_systems"() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."notify_expiring_addresses"() RETURNS VOID AS $$
 	DECLARE
 		SystemData RECORD;
 	BEGIN
-		FOR SystemData IN (SELECT "owner","system_name" FROM "systems"."systems" WHERE "systems"."systems"."renew_date" <= current_date + interval '7 days') LOOP
-			PERFORM "api"."send_renewal_email"(SystemData.owner, SystemData.system_name, (SELECT "api"."get_site_configuration"('DNS_DEFAULT_ZONE')));
+		FOR SystemData IN (SELECT api.get_interface_address_owner("address") AS "owner","address","renew_date" FROM "systems"."interface_addresses") LOOP
+			PERFORM "api"."send_renewal_email"(SystemData.owner, SystemData.address, (SELECT "api"."get_site_configuration"('EMAIL_DOMAIN')), (SELECT api.get_site_configuration('URL')));
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."notify_expiring_systems"() IS 'Notify users of soon-to-expire systems';
+COMMENT ON FUNCTION "api"."notify_expiring_addresses"() IS 'Notify users of soon-to-expire addresses';
 
 CREATE OR REPLACE FUNCTION "api"."clear_expired_systems"() RETURNS VOID AS $$
 	DECLARE

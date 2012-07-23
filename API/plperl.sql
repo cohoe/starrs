@@ -1320,30 +1320,32 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_switchport_admin_state"(input_a
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."modify_network_switchport_admin_state"(inet, text, text, boolean) IS 'Modify the admin state of a network switchport';
 
-CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, text, text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, text) RETURNS VOID AS $$
 	use strict;
 	use warnings;
 	use Net::SMTP;
 
 	my $username = shift(@_) or die "Unable to get username";
-	my $system = shift(@_) or die "Unable to get system name";
+	my $address = shift(@_) or die "Unable to get address";
 	my $domain = shift(@_) or die "Unable to get mail domain";
+	my $url = shift(@_) or die "Unable to get URL";
+	my $mailserver = shift(@_) or die "Unable to get mailserver";
 
-	my $smtp = Net::SMTP->new("mail.$domain");
+	my $smtp = Net::SMTP->new($mailserver);
 
-	$smtp->mail("impulse\@$domain");
+	$smtp->mail("impulse-noreply\@$domain");
 	$smtp->recipient("$username\@$domain");
 	$smtp->data;
 	$smtp->datasend("From: impulse\@$domain\n");
 	$smtp->datasend("To: $username\@$domain\n");
-	$smtp->datasend("Subject: System Renewal Notification - $system\n");
+	$smtp->datasend("Subject: STARRS Renewal Notification - $address\n");
 	$smtp->datasend("\n");
-	$smtp->datasend("Your system \"$system\" will expire in less than 7 days and will be removed from IMPULSE automatically. You can click https://impulse.$domain/system/renew/$system to renew your system for another year. Alternatively you can navigate to the System view and click the Renew button. If you have any questions, please see your local system administrator.");
+	$smtp->datasend("Your registered address $address will expire in less than 7 days and may be removed from STARRS automatically. You can click $url/addresses/viewrenew to renew your address(s). Alternatively you can navigate to the Interface Address view and click the Renew button. If you have any questions, please see your local system administrator.");
 
 	$smtp->datasend;
 	$smtp->quit;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."send_renewal_email"(text, text, text) IS 'Send an email to a user saying their system is about to expire';
+COMMENT ON FUNCTION "api"."send_renewal_email"(text, inet, text, text, text) IS 'Send an email to a user saying their address is about to expire';
 
 CREATE OR REPLACE FUNCTION "api"."get_network_switchports"(text) RETURNS SETOF INTEGER AS $$
 	use strict;
