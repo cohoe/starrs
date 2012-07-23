@@ -1333,10 +1333,10 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 
 	my $smtp = Net::SMTP->new($mailserver);
 
-	$smtp->mail("impulse-noreply\@$domain");
+	$smtp->mail("starrs-noreply\@$domain");
 	$smtp->recipient("$username\@$domain");
 	$smtp->data;
-	$smtp->datasend("From: impulse\@$domain\n");
+	$smtp->datasend("From: starrs-noreply\@$domain\n");
 	$smtp->datasend("To: $username\@$domain\n");
 	$smtp->datasend("Subject: STARRS Renewal Notification - $address\n");
 	$smtp->datasend("\n");
