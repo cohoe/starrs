@@ -490,7 +490,9 @@ CREATE TABLE "network"."cam_cache"(
 "mac" MACADDR NOT NULL,
 "ifname" TEXT NOT NULL,
 "vlan" INTEGER NOT NULL,
-"timestamp" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0)
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user()
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."cam_cache" IS 'Cache switch data for port mappings';
@@ -594,6 +596,7 @@ CREATE TABLE "network"."switchports" (
 "trunk" BOOLEAN,
 "admin_state" BOOLEAN,
 "oper_state" BOOLEAN,
+"vlan" INTEGER,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
@@ -601,15 +604,3 @@ CONSTRAINT "network_switchports_pkey" PRIMARY KEY ("system_name","ifindex")
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."switchports" IS 'Switchports on a network device';
-
-CREATE TABLE "network"."switchport_vlans"(
-"system_name" TEXT NOT NULL,
-"ifindex" INTEGER NOT NULL,
-"vlan" INTEGER NOT NULL DEFAULT 1,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "network_switchport_vlans_pkey" PRIMARY KEY ("system_name","ifindex","vlan")
-)
-WITHOUT OIDS;
-COMMENT ON TABLE "network"."switchport_vlans" IS 'VLANs assigned to a switchport';

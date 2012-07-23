@@ -16,13 +16,11 @@ CREATE OR REPLACE FUNCTION "api"."get_switchview_device_cam"(input_system text) 
 
 		FOR Vlans IN (SELECT "vlan" FROM "network"."switchports" WHERE "system_name" = input_system AND "vlan" IS NOT NULL GROUP BY "vlan" ORDER BY "vlan") LOOP
 			FOR CamData IN (
-				SELECT mac,ifname,Vlans.vlan FROM api.get_switchview_cam(input_host,input_community,vlans.vlan) AS "cam"
+				SELECT mac,portindex.ifindex,Vlans.vlan FROM api.get_switchview_cam(input_host,input_community,vlans.vlan) AS "cam"
 				JOIN api.get_switchview_bridgeportid(input_host,input_community,vlans.vlan) AS "bridgeportid"
 				ON bridgeportid.camportinstanceid = cam.camportinstanceid
 				JOIN api.get_switchview_portindex(input_host,input_community,vlans.vlan) AS "portindex"
 				ON bridgeportid.bridgeportid = portindex.bridgeportid
-				JOIN api.get_switchview_port_names(input_host,input_community) AS "portnames"
-				ON portindex.ifindex = portnames.ifindex
 			) LOOP
 				RETURN NEXT CamData;
 			END LOOP;
@@ -56,7 +54,7 @@ CREATE OR REPLACE FUNCTION "api"."get_system_cam"(input_system_name text) RETURN
 			END IF;
 		END IF;
 
-		RETURN QUERY (SELECT * FROM "network"."cam_cache" WHERE "system_name" = input_system_name ORDER BY "ifname","vlan","mac");
+		RETURN QUERY (SELECT * FROM "network"."cam_cache" WHERE "system_name" = input_system_name ORDER BY "vlan","ifindex","mac");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_cam"(text) IS 'Get the latest CAM data from the cache';
@@ -98,7 +96,7 @@ COMMENT ON FUNCTION "api"."get_switchview_device_switchports"(text) IS 'Get data
 
 CREATE OR REPLACE FUNCTION "api"."get_system_switchports"(input_system text) RETURNS SETOF "network"."switchports" AS $$
 	BEGIN
-		RETURN QUERY (SELECT * FROM "network"."switchports" WHERE "system_name" = input_system ORDER BY "name");
+		RETURN QUERY (SELECT * FROM "network"."switchports" WHERE "system_name" = input_system ORDER BY "ifindex");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_system_switchports"(text) IS 'Get the most recent cached switchport data';

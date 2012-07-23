@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION "api"."reload_cam"(input_system_name text) RETURNS VO
 			END IF;
 		END IF;
 
-		INSERT INTO "network"."cam_cache" (
-			SELECT input_system_name,*,localtimestamp(0)
+		INSERT INTO "network"."cam_cache" ("system_name","mac","vlan","timestamp","ifindex") (
+			SELECT input_system_name,mac,vlan,localtimestamp(0),ifindex
 			FROM api.get_switchview_device_cam(input_system_name)
 		);
 		DELETE FROM "network"."cam_cache" WHERE "system_name" = input_system_name AND "timestamp" != localtimestamp(0);

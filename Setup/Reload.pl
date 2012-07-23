@@ -29,6 +29,8 @@ FROM pg_proc INNER JOIN pg_namespace ns ON (pg_proc.pronamespace = ns.oid)
 WHERE ns.nspname = 'api'  order by proname\" --no-align --no-readline --quiet --tuples-only > $dir/Setup/apilist.sql");
 system("psql -h $dbhost -p $dbport -U $dbuser $dbname -f $dir/Setup/apilist.sql");
 
+print "Privileged...";
+system("psql -h $dbhost -p $dbport -U postgres $dbname -f $dir/API/plperl.sql");
 foreach my $schema (@schemas)
 {
 	foreach my $file (@files)
