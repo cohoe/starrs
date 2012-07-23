@@ -136,6 +136,10 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 			END IF;
 		END IF;
 
+		IF input_field ~* 'renew_date' AND input_new_value IS NULL THEN
+			input_new_value := api.get_default_renew_date(api.get_interface_address_system(input_old_address));
+		END IF;
+
 		-- Update record
 
 		IF input_field ~* 'mac' THEN
