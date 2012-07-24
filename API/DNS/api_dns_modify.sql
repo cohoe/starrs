@@ -110,15 +110,9 @@ COMMENT ON FUNCTION "api"."modify_dns_zone"(text, text, text) IS 'Modify an exis
 CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."a" AS $$
 	BEGIN
 		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."a" WHERE "address" = input_old_address AND "zone" = input_old_zone) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner',input_old_address;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
- 		END IF;
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
+		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'hostname|zone|address|owner|ttl' THEN
@@ -176,13 +170,12 @@ COMMENT ON FUNCTION "api"."modify_dns_address"(inet,text,text,text) IS 'Modify a
 CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text, input_old_zone text, input_field text, input_new_value text) RETURNS SETOF "dns"."mx" AS $$
 	BEGIN
 		 -- Check privileges
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
+		END IF;
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."mx" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit mailserver (%.%) denied. You are not owner',input_old_address,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
+			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_old_zone) != api.get_current_user() THEN
+				RAISE EXCEPTION 'Permission denied';
 			END IF;
 		END IF;
 
@@ -293,14 +286,8 @@ COMMENT ON FUNCTION "api"."modify_dns_ns"(text, text, text, text) IS 'Modify an 
 CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_old_zone text, input_old_priority integer, input_old_weight integer, input_old_port integer, input_field text, input_new_value text) RETURNS SETOF "dns"."srv" AS $$
 	BEGIN
 		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."srv" WHERE "alias" = input_old_alias AND "zone" = input_old_zone AND "priority" = input_old_priority AND "weight" = input_old_weight AND "port" = input_old_port) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
 		END IF;
 
 		 -- Check allowed fields
@@ -365,14 +352,8 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 	BEGIN
 
 		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."cname" WHERE "alias" = input_old_alias AND "zone" = input_old_zone) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_alias,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
 		END IF;
 
 		 -- Check allowed fields
@@ -423,14 +404,8 @@ COMMENT ON FUNCTION "api"."modify_dns_cname"(text, text, text, text) IS 'Modify 
 CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input_old_zone text, input_old_text text, input_field text, input_new_value text) RETURNS SETOF "dns"."txt" AS $$
 	BEGIN
 		 -- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone AND "text" = input_old_text) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit alias (%.%) denied. You are not owner',input_old_hostname,input_old_zone;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
 		END IF;
 
 		 -- Check allowed fields

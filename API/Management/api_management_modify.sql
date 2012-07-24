@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_group"(input_old_group text, input_fiel
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_group"(text, text, text) IS 'Alter a group';
 
-CREATE OR REPLACE FUNCTION "api"."modify_group_member"(input_old_group text, input_old_user text, input_field text, input_new_value text) RETURNS SETOF "management"."groups" AS $$
+CREATE OR REPLACE FUNCTION "api"."modify_group_member"(input_old_group text, input_old_user text, input_field text, input_new_value text) RETURNS SETOF "management"."group_members" AS $$
 	BEGIN
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF api.get_current_user() NOT IN (SELECT * FROM api.get_group_admins(input_old_group)) THEN

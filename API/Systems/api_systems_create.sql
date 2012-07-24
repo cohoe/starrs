@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 				RAISE EXCEPTION 'Permission denied on interface %. You are not owner.',input_mac;
 			END IF;
 
-			IF input_renew_date != api.get_default_renew_date() THEN
+			IF input_renew_date != api.get_default_renew_date((SELECT "system_name" FROM "systems"."interfaces" WHERE "mac" = input_mac)) THEN
 				RAISE EXCEPTION 'Only administrators can specify a different renew date';
 			END IF;
 		END IF;

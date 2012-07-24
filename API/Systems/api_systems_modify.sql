@@ -6,15 +6,9 @@
 CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_field text, input_new_value text) RETURNS SETOF "systems"."systems" AS $$
 	BEGIN
 		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_old_name) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit system % denied. You are not owner',input_old_name;
-			END IF;
-
-			IF input_field ~* 'owner' AND input_new_value != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_new_value;
-			END IF;
- 		END IF;
+		IF (SELECT "write" FROM api.get_system_permissions(input_old_name)) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
+		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'system_name|owner|comment|type|os_name|platform_name|asset|group|datacenter' THEN
@@ -47,13 +41,9 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 	BEGIN
 
 		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "systems"."interfaces" 
-			JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
-			WHERE "mac" = input_old_mac) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit interface % denied. You are not owner',input_old_mac;
-			END IF;
- 		END IF;
+		IF (SELECT "write" FROM api.get_system_permissions((SELECT "system_name" FROM "systems"."interfaces" WHERE "mac" = input_old_mac))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
+		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'mac|comment|system_name|name' THEN
@@ -66,6 +56,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 			EXECUTE 'UPDATE "systems"."interfaces" SET ' || quote_ident($2) || ' = $3, 
 			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
 			WHERE "mac" = $1' 
+			H
 			USING input_old_mac, input_field, macaddr(input_new_value);
 		ELSE
 			EXECUTE 'UPDATE "systems"."interfaces" SET ' || quote_ident($2) || ' = $3, 
@@ -95,16 +86,10 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		primcount INTEGER;
 	BEGIN
 
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF api.get_interface_address_owner(input_old_address) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission to edit address % denied. You are not owner of the system',input_old_address;
-			END IF;
-
-			IF input_field ~* 'renew_date' THEN
-				RAISE EXCEPTION 'Only administrators can change renew date';
-			END IF;
- 		END IF;
+		-- Check privilegesinput_old_name
+		IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_old_address))) IS FALSE THEN
+			RAISE EXCEPTION 'Permission denied';
+		END IF;
 
 		-- Check allowed fields
 		IF input_field !~* 'comment|address|config|isprimary|mac|class|renew_date' THEN
