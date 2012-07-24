@@ -457,7 +457,7 @@ COMMENT ON TABLE "systems"."availability_zones" IS 'Availability zones within da
 CREATE TABLE "management"."groups"(
 "group" TEXT NOT NULL,
 "comment" TEXT,
-"privilege" TEXT NOT NULL DEFAULT "USER",
+"privilege" TEXT NOT NULL DEFAULT 'USER',
 "renew_interval" INTERVAL NOT NULL DEFAULT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')::interval,
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),

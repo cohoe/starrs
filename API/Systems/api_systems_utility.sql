@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION "api"."notify_expiring_addresses"() RETURNS VOID AS $
 	DECLARE
 		SystemData RECORD;
 	BEGIN
-		FOR SystemData IN (SELECT api.get_interface_address_owner("address") AS "owner","address","renew_date" FROM "systems"."interface_addresses" WHERE "renew_date" <= current_date + '7 days'::interval) LOOP
+		FOR SystemData IN (SELECT api.get_interface_address_owner("address") AS "owner","address","renew_date" FROM "systems"."interface_addresses" WHERE "renew_date" <= current_date + api.get_site_configuration('EMAIL_NOTIFICATION_INTERVAL')::interval) LOOP
 			PERFORM "api"."send_renewal_email"(SystemData.owner, SystemData.address, (SELECT "api"."get_site_configuration"('EMAIL_DOMAIN')), (SELECT api.get_site_configuration('URL')),(SELECT api.get_site_configuration('MAIL_HOST')));
 		END LOOP;
 	END;

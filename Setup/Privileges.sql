@@ -1,63 +1,65 @@
 /* Privileges */
 
-DO $$ BEGIN IF (SELECT COUNT("rolname") FROM "pg_roles" WHERE "rolname" = 'impulse_admin') != 1 THEN CREATE ROLE "impulse_admin"; END IF; END $$;
-DO $$ BEGIN IF (SELECT COUNT("rolname") FROM "pg_roles" WHERE "rolname" = 'impulse_client') != 1 THEN CREATE ROLE "impulse_client"; END IF; END $$;
-
 /* Schemas
 	Allow access to the schemas
 */
-GRANT USAGE ON SCHEMA "api" TO "impulse_client";
-GRANT USAGE ON SCHEMA "dhcp" TO "impulse_client";
-GRANT USAGE ON SCHEMA "dns" TO "impulse_client";
-GRANT USAGE ON SCHEMA "ip" TO "impulse_client";
-GRANT USAGE ON SCHEMA "management" TO "impulse_client";
-GRANT USAGE ON SCHEMA "network" TO "impulse_client";
-GRANT USAGE ON SCHEMA "systems" TO "impulse_client";
+GRANT USAGE ON SCHEMA "api" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "dhcp" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "dns" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "ip" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "management" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "network" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "systems" TO "STARRSCLIENTUSER";
 
 /* System Data
 	Clients should never be able to modify these. They are for administrators only (superuser)
 */
-GRANT SELECT ON "ip"."range_uses" TO "impulse_client";
-GRANT SELECT ON "systems"."device_types" TO "impulse_client";
-GRANT SELECT ON "systems"."os_family" TO "impulse_client";
-GRANT SELECT ON "dhcp"."config_types" TO "impulse_client";
-GRANT SELECT ON "systems"."os" TO "impulse_client";
-GRANT SELECT ON "dns"."types" TO "impulse_client";
+GRANT SELECT ON "ip"."range_uses" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "systems"."device_types" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "systems"."os_family" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "dhcp"."config_types" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "systems"."os" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "dns"."types" TO "STARRSCLIENTUSER";
+GRANT SELECT ON "systems"."architectures" TO "STARRSCLIENTUSER";
 
 /* User Data
 	This is all the stuff that clients can (depending on user permission level) modify
 */
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."class_options" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."subnets" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."ranges" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."ns" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interface_addresses" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."classes" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."systems" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."subnet_options" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."mx" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zones" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."keys" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."addresses" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."txt" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."a" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interfaces" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."configuration" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."soa" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."srv" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."cname" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_txt" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_a" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."snmp" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."groups" TO "impulse_client";
-GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."group_members" TO "impulse_client";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."class_options" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."subnets" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."ranges" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."ns" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interface_addresses" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."classes" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."systems" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."subnet_options" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."mx" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zones" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."keys" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "ip"."addresses" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."txt" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."a" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."interfaces" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."configuration" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."global_options" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dhcp"."range_options" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."soa" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."srv" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."cname" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_txt" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "dns"."zone_a" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."snmp" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."groups" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "management"."group_members" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."datacenters" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."availability_zones" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."platforms" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."vlans" TO "STARRSCLIENTUSER";
 
 /* Special Data
 	Read or Write only, not both
 */
-GRANT SELECT,INSERT ON "management"."log_master" TO "impulse_client";
-GRANT SELECT,INSERT ON "management"."output" TO "impulse_client";
+GRANT SELECT,INSERT ON "management"."log_master" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT ON "management"."output" TO "STARRSCLIENTUSER";
 
-GRANT USAGE,SELECT ON SEQUENCE "management"."output_id_seq" TO "impulse_client";
+GRANT USAGE,SELECT ON SEQUENCE "management"."output_id_seq" TO "STARRSCLIENTUSER";

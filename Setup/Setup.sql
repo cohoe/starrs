@@ -1,6 +1,3 @@
-/* Public */
-DROP SCHEMA IF EXISTS "public";
-
 /*Schema systems*/
 CREATE SCHEMA "systems";
 COMMENT ON SCHEMA "systems" IS 'User machine data for devices on the network';
@@ -35,8 +32,5 @@ COMMENT ON SEQUENCE "management"."output_id_seq" IS 'Identifier for all output r
 
 /*Language plperl*/
 CREATE LANGUAGE "plperl";
-
-/*Language plperlu*/
-CREATE LANGUAGE "plperlu";
 
 set search_path TO "api";
