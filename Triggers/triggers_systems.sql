@@ -63,21 +63,20 @@ CREATE OR REPLACE FUNCTION "systems"."interface_addresses_insert"() RETURNS TRIG
 		END IF;
 		
 		-- IPv6 Autoconfiguration
-		IF NEW."family" = 6 AND NEW."config" ~* 'autoconf' THEN
-			SELECT COUNT(*) INTO RowCount
-			FROM "ip"."addresses"
-			WHERE "ip"."addresses"."address" = NEW."address";
-			IF (RowCount > 0) THEN
-				RAISE EXCEPTION 'Existing address (%) detected. Cannot continue.',NEW."address";
-			END IF;
-			
+		IF NEW."family" = 6 AND NEW."config" ~* 'autoconf|static' THEN
 			SELECT "systems"."systems"."owner" INTO Owner
 			FROM "systems"."interfaces"
 			JOIN "systems"."systems" ON
 			"systems"."systems"."system_name" = "systems"."interfaces"."system_name"
 			WHERE "systems"."interfaces"."mac" = NEW."mac";
 
-			INSERT INTO "ip"."addresses" ("address","owner") VALUES (NEW."address",Owner);
+			SELECT COUNT(*) INTO RowCount
+			FROM "ip"."addresses"
+			WHERE "ip"."addresses"."address" = NEW."address";
+			IF (RowCount = 0) THEN
+				INSERT INTO "ip"."addresses" ("address","owner") VALUES (NEW."address",Owner);
+			END IF;
+			
 		END IF;
 
 		RETURN NEW;
