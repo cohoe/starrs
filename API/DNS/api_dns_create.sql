@@ -402,13 +402,8 @@ COMMENT ON FUNCTION "api"."create_dns_txt"(text, text, text, integer, text) IS '
 	2) Check privileges
 	3) Create SOA
 */
-CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl integer, input_nameserver text, input_contact text, input_serial text, input_refresh integer, input_retry integer, input_expire integer, input_minimum integer) RETURNS SETOF "dns"."soa" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text) RETURNS SETOF "dns"."soa" AS $$
 	BEGIN
-		-- Validate input
-		IF api.validate_soa_contact(input_contact) IS FALSE THEN
-			RAISE EXCEPTION 'Invalid SOA contact given (%)',input_contact;
-		END IF;
-
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
@@ -417,14 +412,13 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text, input_ttl int
 		END IF;
 		
 		-- Create soa
-		INSERT INTO "dns"."soa" ("zone","ttl","nameserver","contact","serial","refresh","retry","expire","minimum") VALUES
-		(input_zone,input_ttl,input_nameserver,input_contact,input_serial,input_refresh,input_retry,input_expire,input_minimum);
+		INSERT INTO "dns"."soa" SELECT * FROM api.query_dns_soa(input_zone);
 
 		-- Done
 		RETURN QUERY (SELECT * FROM "dns"."soa" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dns_soa"(text, integer, text, text, text, integer, integer, integer, integer) IS 'Create a new DNS soa';
+COMMENT ON FUNCTION "api"."create_dns_soa"(text) IS 'Create a new DNS soa';
 
 CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, input_zone text, input_text text, input_ttl integer) RETURNS SETOF "dns"."zone_txt" AS $$
 	BEGIN

@@ -601,6 +601,36 @@ CREATE OR REPLACE FUNCTION "api"."query_zone_serial"(text) RETURNS TEXT AS $$
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."query_zone_serial"(text) IS 'Query this hosts resolver for the serial number of the zone.';
 
+CREATE OR REPLACE FUNCTION "api"."query_dns_soa"(text) RETURNS SETOF "dns"."soa" AS $$
+	use strict;
+	use warnings;
+	use Net::DNS;
+	
+	# Get the zone
+	my $zone = shift(@_) or die "Unable to get DNS zone to query";
+
+	# Date
+	my $date = spi_exec_query("SELECT localtimestamp(0)");
+	$date = $date->{rows}[0]->{timestamp};
+	my $user = spi_exec_query("SELECT api.get_current_user()");
+	$user = $user->{rows}[0]->{get_current_user};
+	
+	# Establish the resolver and make the query
+	my $res = Net::DNS::Resolver->new;
+	my $rr = $res->query($zone,'soa');
+
+	# Check if it actually returned
+	if(!defined($rr)) {
+		die "Unable to find record for zone $zone";
+	}
+	
+	# Spit out the serial
+	my @answer = $rr->answer;
+	return_next({zone=>$zone, nameserver=>$answer[0]->mname, ttl=>$answer[0]->ttl, contact=>$answer[0]->rname, serial=>$answer[0]->serial, refresh=>$answer[0]->refresh, retry=>$answer[0]->retry, expire=>$answer[0]->expire, minimum=>$answer[0]->minimum, date_created=>$date, date_modified=>$date, last_modifier=>$user});
+	return undef;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."query_dns_soa"(text) IS 'Use the hosts resolver to query and create an SOA';
+
 CREATE OR REPLACE FUNCTION "api"."resolve"(text) RETURNS INET AS $$
 	use strict;
 	use warnings;
