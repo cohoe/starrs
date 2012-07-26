@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "management".
 	"systems"."systems"."platform_name",
 	"systems"."interfaces"."mac",
 	"systems"."interface_addresses"."address",
+	"systems"."interface_addresses"."config",
 	"systems"."systems"."owner" AS "system_owner",
 	"systems"."systems"."last_modifier" AS "system_last_modifier",
 	"api"."get_address_range"("systems"."interface_addresses"."address") AS "range",
