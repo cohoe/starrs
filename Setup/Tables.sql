@@ -93,8 +93,8 @@ CREATE TABLE "systems"."interface_addresses"(
 "family" INTEGER NOT NULL,
 "isprimary" BOOLEAN NOT NULL,
 "renew_date" DATE NOT NULL DEFAULT date((('now'::text)::date + (api.get_site_configuration('DEFAULT_RENEW_INTERVAL'::text))::interval)),
-"mac" MACADDR,
-"class" TEXT,
+"mac" MACADDR NOT NULL,
+"class" TEXT NOT NULL,
 CONSTRAINT "interface_addresses_pkey" PRIMARY KEY ("address")
 )
 WITHOUT OIDS;
