@@ -401,6 +401,7 @@ CREATE TABLE "network"."snmp"(
 CONSTRAINT "network_snmp_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
+COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network systems';
 
 CREATE TABLE "systems"."architectures"(
 "architecture" TEXT NOT NULL,
@@ -483,7 +484,6 @@ WITHOUT OIDS;
 
 COMMENT ON TABLE "management"."group_members" IS 'Map usernames to groups';
 
-COMMENT ON TABLE "network"."snmp" IS 'SNMP community settings for network systems';
 
 CREATE TABLE "network"."cam_cache"(
 "system_name" TEXT NOT NULL,
