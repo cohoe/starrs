@@ -160,3 +160,15 @@ CREATE OR REPLACE FUNCTION "api"."get_local_user_level"(input_user text) RETURNS
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_local_user_level"(text) IS 'Get the users privilege level based on local tables';
+
+CREATE OR REPLACE FUNCTION "api"."get_user_email"(input_user TEXT) RETURNS TEXT AS $$
+	BEGIN
+		IF api.get_site_configuration('USER_PRIVILEGE_SOURCE') ~* '^ad$' THEN
+			RETURN api.get_ad_user_email(input_user);
+		ELSE
+			RETURN input_user||'@'||api.get_site_configuration('EMAIL_DOMAIN');
+		END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_user_email"(text) IS 'Get the email address of a user';
+
