@@ -52,6 +52,8 @@ CREATE OR REPLACE FUNCTION "api"."initialize"(input_username text) RETURNS TEXT 
 		-- Get level
 		IF api.get_site_configuration('USER_PRIVILEGE_SOURCE') ~* 'ldap' THEN
 			SELECT api.get_ldap_user_level(input_username) INTO Level;
+		ELSEIF api.get_site_configuration('USER_PRIVILEGE_SOURCE') ~* 'ad' THEN
+			SELECT api.get_ad_user_level(input_username) INTO Level;
 		ELSE
 			SELECT api.get_local_user_level(input_username) INTO Level;
 		END IF;

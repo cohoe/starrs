@@ -1496,4 +1496,63 @@ CREATE OR REPLACE FUNCTION "api"."get_network_switchport"(text, integer) RETURNS
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_network_switchport"(text, integer) IS 'Get information on a specific switchport';
 
+CREATE OR REPLACE FUNCTION "api"."get_ad_user_level"(TEXT) RETURNS TEXT AS $$
+	#!/usr/bin/perl
+	
+	use strict;
+	use warnings;
+	use Net::LDAPS;
+	use Data::Dumper;
+	
+	my $uri = spi_exec_query("SELECT api.get_site_configuration('AD_URI')")->{rows}[0]->{"get_site_configuration"};
+	my $binddn = spi_exec_query("SELECT api.get_site_configuration('AD_BINDDN')")->{rows}[0]->{"get_site_configuration"};
+	my $password = spi_exec_query("SELECT api.get_site_configuration('AD_PASSWORD')")->{rows}[0]->{"get_site_configuration"};
+	my $identifier= spi_exec_query("SELECT api.get_site_configuration('AD_IDENTIFIER')")->{rows}[0]->{"get_site_configuration"};
+	my $admin_filter = spi_exec_query("SELECT api.get_site_configuration('AD_ADMIN_FILTER')")->{rows}[0]->{"get_site_configuration"};
+	my $admin_basedn = spi_exec_query("SELECT api.get_site_configuration('AD_ADMIN_BASEDN')")->{rows}[0]->{"get_site_configuration"};
+	my $program_filter = spi_exec_query("SELECT api.get_site_configuration('AD_PROGRAM_FILTER')")->{rows}[0]->{"get_site_configuration"};
+	my $program_basedn = spi_exec_query("SELECT api.get_site_configuration('AD_PROGRAM_BASEDN')")->{rows}[0]->{"get_site_configuration"};
+	my $user_filter = spi_exec_query("SELECT api.get_site_configuration('AD_USER_FILTER')")->{rows}[0]->{"get_site_configuration"};
+	my $user_basedn = spi_exec_query("SELECT api.get_site_configuration('AD_USER_BASEDN')")->{rows}[0]->{"get_site_configuration"};
+	my $username = shift(@_) or die "Unable to get username\n";
+	
+	my $status = "NONE";
+	my $user_dn;
+	
+	# Set up the server connection
+	my $srv = Net::LDAPS->new ($uri) or die "Could not connect to LDAP server ($uri)\n";
+	my $mesg = $srv->bind($binddn,password=>$password) or die "Could not bind to LDAP server at $uri\n";
+	
+	# Get the users DN
+	my $user_dn_query = $srv->search(filter=>"($identifier=$username)");
+	my $user_result = $user_dn_query->pop_entry();
+	if($user_result) {
+	        $user_dn = $user_result->dn;
+	} else {
+	        die "Unable to identify user \"$username\"\n";
+	}
+	
+	# Get the User group members
+	my $user_query = $srv->search(filter=>"($user_filter)",base=>"$user_basedn");
+	foreach my $user_user_entries ($user_query->entries) {
+	        if(grep $user_dn eq $_, $user_user_entries->get_value("member")) {
+	                $status = "USER";
+	        }
+	}
+	
+	# Get the Admin group members
+	my $admin_query = $srv->search(filter=>"($admin_filter)",base=>"$admin_basedn");
+	foreach my $admin_user_entries ($admin_query->entries) {
+	        if(grep $user_dn eq $_, $admin_user_entries->get_value("member")) {
+	                $status = "ADMIN";
+	        }
+	}
+	
+	# Unbind from the server
+	$srv->unbind;
+	
+	return $status;
+$$ LANGUAGE 'plperlu';
+COMMENT ON FNCTION "api"."get_ad_user_level"(TEXT) IS 'Get a users level from Active Directory';
+
 -- vim: set filetype=perl:
