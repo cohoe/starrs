@@ -241,6 +241,7 @@ WITHOUT OIDS;
 CREATE TABLE "dns"."keys"(
 "keyname" TEXT NOT NULL,
 "key" TEXT NOT NULL,
+"enctype" TEXT NOT NULL,
 "date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),

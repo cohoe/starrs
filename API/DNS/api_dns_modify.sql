@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
  		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'keyname|key|comment|owner' THEN
+		IF input_field !~* 'keyname|key|comment|owner|enctype' THEN
 			RAISE EXCEPTION 'Invalid field % specified',input_field;
 		END IF;
 
@@ -47,8 +47,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 
 		-- Done
 		IF input_field ~* 'keyname' THEN
-			RETURN QUERY (SELECT "keyname","key","comment","owner","date_created","date_modified","last_modifier"
-			FROM "dns"."keys" WHERE "keyname" = input_new_value);
+			RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_new_value);
 		ELSE
 			RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_old_keyname);
 		END IF;

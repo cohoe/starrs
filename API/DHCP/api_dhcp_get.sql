@@ -99,12 +99,12 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dns_keys"() RETURNS SETOF "dhcp"."dh
 		END IF;
 		
 		-- Return data
-		RETURN QUERY (SELECT DISTINCT "dns"."zones"."keyname","dns"."keys"."key",api.get_site_configuration('DNS_KEY_ENCTYPE') AS "enctype" 
+		RETURN QUERY (SELECT DISTINCT "dns"."zones"."keyname","dns"."keys"."key","dns"."keys"."enctype" 
 		FROM "ip"."subnets" 
 		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone" 
 		JOIN "dns"."keys" ON "dns"."keys"."keyname" = "dns"."zones"."keyname" 
 		WHERE "dhcp_enable" = TRUE
-		ORDER BY "dns"."zones"."keyname","dns"."keys"."key",api.get_site_configuration('DNS_KEY_ENCTYPE'));
+		ORDER BY "dns"."zones"."keyname","dns"."keys"."key","dns"."keys"."enctype");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_dns_keys"() IS 'Get all of the dns keys for dhcpd';
