@@ -145,7 +145,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 		);
 		PERFORM api.create_dns_address(
 			input_address,
-			input_system_name,
+			lower(regexp_replace(input_system_name,' ','-')),
 			input_zone,
 			null,
 			null,
