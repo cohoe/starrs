@@ -10,6 +10,7 @@ GRANT USAGE ON SCHEMA "ip" TO "STARRSCLIENTUSER";
 GRANT USAGE ON SCHEMA "management" TO "STARRSCLIENTUSER";
 GRANT USAGE ON SCHEMA "network" TO "STARRSCLIENTUSER";
 GRANT USAGE ON SCHEMA "systems" TO "STARRSCLIENTUSER";
+GRANT USAGE ON SCHEMA "libvirt" TO "STARRSCLIENTUSER";
 
 /* System Data
 	Clients should never be able to modify these. They are for administrators only (superuser)
@@ -56,6 +57,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."availability_zones" TO "STARRSCL
 GRANT SELECT,INSERT,UPDATE,DELETE ON "systems"."platforms" TO "STARRSCLIENTUSER";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."vlans" TO "STARRSCLIENTUSER";
 GRANT SELECT,INSERT,UPDATE,DELETE ON "network"."cam_cache" TO "STARRSCLIENTUSER";
+GRANT SELECT,INSERT,UPDATE,DELETE ON "libvirt"."hosts" TO "STARRSCLIENTUSER";
 
 /* Special Data
 	Read or Write only, not both

@@ -18,19 +18,22 @@ my $dbadminuser = "starrs_admin";
 my $dbadminpass = "adminpass";
 my $dbclientuser = "starrs_client";
 my $dbclientpass = "clientpass";
+my $sample = "yes";
 
 my $dbhost = "localhost";
 my $dbport = 5432;
 my $dbname = "starrs";
 
 my @files = ('create','remove','get','modify','utility');
-my @schemas = ('DHCP','DNS','IP','Management','Network','Systems');
+my @schemas = ('DHCP','DNS','IP','Management','Network','Systems','Libvirt');
 
 my $dir = abs_path($0);
 $dir =~ s/Setup\/Installer.pl//;
 
 my $sed = "sed -e 's/STARRSADMINUSER/$dbadminuser/g' -e 's/STARRSCLIENTUSER/$dbclientuser/g' -e 's/STARRSDBNAME/$dbname/g' -e 's/STARRSADMINPASSWORD/$dbadminpass/g' -e 's/STARRSCLIENTPASSWORD/$dbclientpass/g'";
 
+print "Stopping HTTPD...";
+system("service httpd stop");
 print "Jumpstarting ($dbsuperuser)...\n";
 system("$sed \"$dir\"\"Setup\/Jumpstart.sql\" | psql -h $dbhost -p $dbport -U $dbsuperuser");
 print "Setup...\n";
@@ -41,8 +44,10 @@ print "Tables...\n";
 system("psql -h $dbhost -p $dbport -U $dbadminuser -f \"$dir\"\"Setup\/Tables.sql\" $dbname");
 print "Types...\n";
 system("psql -h $dbhost -p $dbport -U $dbadminuser -f \"$dir\"\"Setup\/Types.sql\" $dbname");
-print "Privileged functions ($dbsuperuser)...\n";
+print "Privileged Perl functions ($dbsuperuser)...\n";
 system("psql -h $dbhost -p $dbport -U postgres -f \"$dir\"\"API\/plperl.sql\" $dbname");
+print "Privileged Python functions ($dbsuperuser)...\n";
+system("psql -h $dbhost -p $dbport -U postgres -f \"$dir\"\"API\/plpython.sql\" $dbname");
 
 foreach my $schema (@schemas)
 {
@@ -72,4 +77,11 @@ system("psql -h $dbhost -p $dbport -U $dbadminuser -f \"$dir\"\"Setup\/Base.sql\
 print "Privileges...\n";
 system("$sed \"$dir\"\"Setup\/Privileges.sql\" | psql -h $dbhost -p $dbport -U $dbadminuser $dbname");
 
+if($sample eq "yes") {
+	print "Sample...\n";
+	system("psql -h $dbhost -p $dbport -U $dbadminuser -f \"$dir\"\"Setup\/Sample.sql\" $dbname");
+}
+
 print "Done!\n";
+print "Starting HTTPD...\n";
+system("service httpd start");

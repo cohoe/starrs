@@ -130,3 +130,5 @@ ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_system_group" FOREIGN KEY ("g
 ALTER TABLE "network"."vlans" ADD CONSTRAINT "fk_network_vlan_datacenter" FOREIGN KEY ("datacenter") REFERENCES "systems"."datacenters"("datacenter") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "ip"."subnets" ADD CONSTRAINT "fk_subnet_vlans" FOREIGN KEY ("datacenter","vlan") REFERENCES "network"."vlans"("datacenter","vlan") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "libvirt"."hosts" ADD CONSTRAINT "fk_libvirt_host_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;

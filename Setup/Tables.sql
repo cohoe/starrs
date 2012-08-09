@@ -587,3 +587,15 @@ CONSTRAINT "network_snmp3_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."snmp3" IS 'SNMPv3 credentials for network hosts';
+
+CREATE TABLE "libvirt"."hosts"(
+"system_name" TEXT NOT NULL,
+"uri" TEXT NOT NULL,
+"password" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "libvirt_hosts_pkey" PRIMARY KEY ("system_name")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "libvirt"."hosts" IS 'VM hosts';
