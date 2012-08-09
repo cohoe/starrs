@@ -174,6 +174,11 @@ CREATE OR REPLACE FUNCTION "ip"."ranges_insert"() RETURNS TRIGGER AS $$
 		IF NEW."first_ip" >= NEW."last_ip" THEN
 			RAISE EXCEPTION 'First address is larger or equal to last address.';
 		END IF;
+
+		-- IPv6
+		IF family(NEW."subnet") = 6 THEN
+			INSERT INTO "ip"."addresses" ("address") (SELECT * FROM "api"."get_range_addresses"(NEW."first_ip", NEW."last_ip") AS "potential" WHERE "potential" NOT IN (SELECT "address" FROM "ip"."addresses" WHERE "ip"."addresses"."address" << NEW."subnet"));
+		END IF;
 		
 		-- Check address existance
 		SELECT COUNT(*) INTO RowCount
