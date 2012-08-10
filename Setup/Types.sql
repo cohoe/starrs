@@ -69,3 +69,5 @@ CREATE TYPE "management"."search_data" AS (datacenter text, availability_zone te
 CREATE TYPE "network"."cam" AS ("mac" MACADDR, "ifindex" INTEGER, "vlan" INTEGER);
 
 CREATE TYPE "network"."switchports" AS ("system_name" TEXT, "name" TEXT, "desc" TEXT, "ifindex" INTEGER, "alias" TEXT, "admin_state" BOOLEAN, "oper_state" BOOLEAN, "date_created" TIMESTAMP WITHOUT TIME ZONE, "date_modified" TIMESTAMP WITHOUT TIME ZONE, "last_modifier" TEXT, "vlan" INTEGER);
+
+CREATE TYPE "libvirt"."domains" AS ("host_name" TEXT, "domain_name" TEXT, "date_created" TIMESTAMP WITHOUT TIME ZONE, "date_modified" TIMESTAMP WITHOUT TIME ZONE, "last_modifier" TEXT);

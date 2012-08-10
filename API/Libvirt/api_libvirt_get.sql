@@ -29,10 +29,13 @@ CREATE OR REPLACE FUNCTION "api"."get_hosts"(input_user text) RETURNS SETOF "lib
 			IF api.get_current_user_level() !~* 'ADMIN' THEN
 				RAISE EXCEPTION 'Only admins can view all VM hosts';
 			END IF;
-
 			RETURN QUERY (SELECT * FROM "libvirt"."hosts" ORDER BY "system_name");
 		ELSE
-			RETURN QUERY (SELECT * FROM "libvirt"."hosts" WHERE api.get_system_owner("system_name") = input_user ORDER BY "system_name");
+			IF api.get_current_user_level() !~* 'ADMIN' THEN
+				RETURN QUERY (SELECT * FROM "libvirt"."hosts" WHERE api.get_system_owner("system_name") = input_user ORDER BY "system_name");
+			ELSE
+				RETURN QUERY (SELECT * FROM "libvirt"."hosts" ORDER BY "system_name");
+			END IF;
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
