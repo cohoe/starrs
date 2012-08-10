@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION "api"."get_host_domains"(input_system text) RETURNS S
 		HostData RECORD;
 	BEGIN
 		SELECT * INTO HostData FROM "libvirt"."hosts" WHERE "system_name" = input_system;
-		RETURN QUERY (SELECT input_system AS "host_name",get_libvirt_domains AS "domain_name",localtimestamp(0) AS "date_created", localtimestamp(0) AS "date_modified", api.get_current_user() AS "last_modifier" FROM api.get_libvirt_domains(HostData.uri, HostData.password));
+		RETURN QUERY (SELECT input_system AS "host_name","domain","state","definition",localtimestamp(0) AS "date_created", localtimestamp(0) AS "date_modified", api.get_current_user() AS "last_modifier" FROM api.get_libvirt_domains(HostData.uri, HostData.password));
 	END;
 $$ LANGUAGE 'plpgsql';
 

@@ -1,6 +1,9 @@
 CREATE LANGUAGE 'plpython2u';
 
-CREATE OR REPLACE FUNCTION "api"."get_libvirt_domains"(sysuri text, syspassword text) RETURNS SETOF TEXT AS $$
+CREATE TYPE "libvirt"."domain_data" AS ("domain" TEXT, "state" TEXT, "definition" TEXT);
+
+DROP FUNCTION api.get_libvirt_domains(text, text);
+CREATE OR REPLACE FUNCTION "api"."get_libvirt_domains"(sysuri text, syspassword text) RETURNS SETOF "libvirt"."domain_data" AS $$
 	#!/usr/bin/python
 
 	import libvirt
@@ -27,13 +30,23 @@ CREATE OR REPLACE FUNCTION "api"."get_libvirt_domains"(sysuri text, syspassword 
 	if conn == None:
 		sys.exit("Unable to connect")
 	
-	domNames = []
+	state_names = { libvirt.VIR_DOMAIN_RUNNING  : "running",
+		libvirt.VIR_DOMAIN_BLOCKED  : "idle",
+		libvirt.VIR_DOMAIN_PAUSED   : "paused",
+		libvirt.VIR_DOMAIN_SHUTDOWN : "in shutdown",
+		libvirt.VIR_DOMAIN_SHUTOFF  : "shut off",
+		libvirt.VIR_DOMAIN_CRASHED  : "crashed",
+		libvirt.VIR_DOMAIN_NOSTATE  : "no state" }
+
+	domNames = ()
 	for domID in conn.listDomainsID():
 		domain = conn.lookupByID(domID)
-		domNames.append(domain.name())
-	
-	domNames += conn.listDefinedDomains()
+		domNames += ([domain.name(), state_names[domain.info()[0]], domain.XMLDesc(0)],)
 
+	for dom in conn.listDefinedDomains():
+		domain = conn.lookupByName(dom)
+		domNames += ([domain.name(), state_names[domain.info()[0]], domain.XMLDesc(0)],)
+	
 	conn.close()
 	return domNames
 $$ LANGUAGE 'plpython2u';
