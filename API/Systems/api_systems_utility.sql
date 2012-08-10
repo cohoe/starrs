@@ -12,7 +12,7 @@ COMMENT ON FUNCTION "api"."get_interface_address_owner"(inet) IS 'Get the owner 
 CREATE OR REPLACE FUNCTION "api"."renew_interface_address"(input_address inet) RETURNS VOID AS $$
 	BEGIN
 		UPDATE "systems"."interface_addresses"
-		SET "renew_date" = date("renew_date" + (SELECT api.get_site_configuration('DEFAULT_RENEW_INTERVAL')::interval))
+		SET "renew_date" = date(('now'::text)::date + (SELECT "renew_interval" FROM "management"."groups" JOIN "systems"."systems" ON "systems"."systems"."group" = "management"."groups"."group" WHERE "system_name" = api.get_interface_address_system(input_address)))
 		WHERE "address" = input_address;
 
 	END;
