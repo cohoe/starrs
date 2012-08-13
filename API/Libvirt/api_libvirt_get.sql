@@ -49,3 +49,10 @@ CREATE OR REPLACE FUNCTION "api"."get_hosts"(input_user text) RETURNS SETOF "lib
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_hosts"(text) IS 'Get all VM hosts';
+
+CREATE OR REPLACE FUNCTION "api"."get_libvirt_platform"(input_name text) RETURNS SETOF "libvirt"."platforms" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "libvirt"."platforms" WHERE "platform_name" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_libvirt_platform"(text) IS 'Get a libvirt platform';

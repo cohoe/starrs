@@ -42,3 +42,16 @@ CREATE OR REPLACE FUNCTION "api"."add_libvirt_domain"(input_host text, input_dom
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."add_libvirt_domain"(text, text) IS 'Assign a VM to a host';
+
+CREATE OR REPLACE FUNCTION "api"."create_libvirt_platform"(input_name text, input_definition text) RETURNS SETOF "libvirt"."platforms" AS $$
+	BEGIN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied: Not admin!';
+		END IF;
+
+		INSERT INTO "libvirt"."platforms" ("platform_name","definition") VALUES (input_name, input_definition);
+		
+		RETURN QUERY (SELECT * FROM "libvirt"."platforms" WHERE "platform_name" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_libvirt_platform"(text, text) IS 'Store a definition of a libvirt platform';

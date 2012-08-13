@@ -599,3 +599,14 @@ CONSTRAINT "libvirt_hosts_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
 COMMENT ON TABLE "libvirt"."hosts" IS 'VM hosts';
+
+CREATE TABLE "libvirt"."platforms"(
+"platform_name" TEXT NOT NULL,
+"definition" TEXT NOT NULL,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "libvirt_platforms_name_pkey" PRIMARY KEY ("platform_name")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "libvirt"."platforms" IS 'Libvirt definitions for VM platforms';

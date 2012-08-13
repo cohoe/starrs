@@ -24,3 +24,14 @@ CREATE OR REPLACE FUNCTION "api"."remove_libvirt_domain"(input_host text, input_
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_libvirt_domain"(text, text) IS 'Remove a libvirt domain';
+
+CREATE OR REPLACE FUNCTION "api"."remove_libvirt_platform"(input_name text) RETURNS VOID AS $$
+	BEGIN
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Only admins can remove VM hosts';
+		END IF;
+
+		DELETE FROM "libvirt"."platforms" WHERE "platform_name" = input_name;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_libvirt_platform"(text) IS 'Remove libvirt platform';
