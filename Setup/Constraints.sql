@@ -134,3 +134,5 @@ ALTER TABLE "ip"."subnets" ADD CONSTRAINT "fk_subnet_vlans" FOREIGN KEY ("datace
 ALTER TABLE "libvirt"."hosts" ADD CONSTRAINT "fk_libvirt_host_name" FOREIGN KEY ("system_name") REFERENCES "systems"."systems"("system_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "libvirt"."platforms" ADD CONSTRAINT "fk_libvirt_platform_name" FOREIGN KEY ("platform_name") REFERENCES "systems"."platforms"("platform_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE "dhcp"."network_subnets" ADD CONSTRAINT "fk_dhcp_network_subnets" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
