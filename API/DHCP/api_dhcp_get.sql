@@ -223,3 +223,17 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_config"() RETURNS TEXT AS $$
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_config"() IS 'Get the latest DHCPD configuration file';
+
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_networks"() RETURNS SETOF TEXT AS $$
+	BEGIN
+		RETURN QUERY (SELECT "name" FROM "dhcp"."networks" ORDER BY "name");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_shared_networks"() IS 'Get DHCPD shared networks';
+
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_network_subnets"(input_name text) RETURNS SETOF CIDR AS $$
+	BEGIN
+		RETURN QUERY (SELECT "subnet" FROM "dhcp"."network_subnets" WHERE "name" = input_name ORDER BY "subnet");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd_shared_network_subnets"(text) IS 'Get the subnets for DHCPD';
