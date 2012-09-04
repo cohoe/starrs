@@ -122,3 +122,31 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_global_option"(text, text) IS 'Create a new DHCP global option';
+
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_network"(input_name text) RETURNS SETOF "dhcp"."networks" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission to create dhcp network denied for user %. You are not admin.',api.get_current_user();
+		END IF;
+
+		INSERT INTO "dhcp"."networks" ("name") VALUES (input_name);
+
+		RETURN QUERY (SELECT * FROM "dhcp"."networks" WHERE "name" = input_name);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dhcp_network"(text) IS 'Create a DHCP network';
+
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_network_subnet"(input_name text, input_subnet cidr) RETURNS SETOF "dhcp"."network_subnets" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission to create dhcp network subnet denied for user %. You are not admin.',api.get_current_user();
+		END IF;
+
+		INSERT INTO "dhcp"."network_subnets" ("name","subnet") VALUES (input_name, input_subnet);
+
+		RETURN QUERY (SELECT * FROM "dhcp"."network_subnets" WHERE "name" = input_name AND "subnet" = input_subnet);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_dhcp_network_subnet"(text, cidr) IS 'Assign a subnet to a network';

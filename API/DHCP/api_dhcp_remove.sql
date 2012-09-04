@@ -105,3 +105,27 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_range_option"(input_range text, in
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_range_option"(text, text, text) IS 'Delete an existing DHCP range option';
+
+CREATE OR REPLACE FUNCTION "api"."remove_dhcp_network"(input_name text) RETURNS VOID AS $$
+	BEGIN
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to remove dhcp network denied for %. Not admin.',api.get_current_user();
+		END IF;
+
+		DELETE FROM "dhcp"."networks" WHERE "name" = input_name;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_dhcp_network"(text) IS 'Remove a dhcp network';
+
+CREATE OR REPLACE FUNCTION "api"."remove_dhcp_network_subnet"(input_name text, input_subnet cidr) RETURNS VOID AS $$
+	BEGIN
+		-- Check privileges
+		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			RAISE EXCEPTION 'Permission to remove dhcp network subnet denied for %. Not admin.',api.get_current_user();
+		END IF;
+
+		DELETE FROM "dhcp"."network_subnets" WHERE "name" = input_name AND "subnet" = input_subnet;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_dhcp_network_subnet"(text, cidr) IS 'Remove a dhcp network subnet';
