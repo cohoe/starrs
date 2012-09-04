@@ -123,14 +123,14 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_global_option"(text, text) IS 'Create a new DHCP global option';
 
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_network"(input_name text) RETURNS SETOF "dhcp"."networks" AS $$
+CREATE OR REPLACE FUNCTION "api"."create_dhcp_network"(input_name text, input_comment text) RETURNS SETOF "dhcp"."networks" AS $$
 	BEGIN
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			RAISE EXCEPTION 'Permission to create dhcp network denied for user %. You are not admin.',api.get_current_user();
 		END IF;
 
-		INSERT INTO "dhcp"."networks" ("name") VALUES (input_name);
+		INSERT INTO "dhcp"."networks" ("name", "comment") VALUES (input_name, input_comment);
 
 		RETURN QUERY (SELECT * FROM "dhcp"."networks" WHERE "name" = input_name);
 	END;

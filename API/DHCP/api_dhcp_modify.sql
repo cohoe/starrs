@@ -208,7 +208,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_network"(input_old_name text, inpu
 		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'name' THEN
+		IF input_field !~* 'name|comment' THEN
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 		
