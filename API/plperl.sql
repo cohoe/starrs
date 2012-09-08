@@ -1,7 +1,7 @@
 CREATE LANGUAGE 'plperlu';
 
 /* API - generate_dhcpd_config*/
-CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config_test"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
 	use strict;
 	use warnings;
@@ -102,20 +102,30 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		return $output;
 	}# end &dhcp_class_options
 
-	## Shared networks
-	#sub shared_networks
-	#{
-	#	my $network = spi_exec_query("SELECT api.get_site_configuration('NETWORK_NAME')");
-	#	my $output = "shared-network " . $network->{rows}[0]->{get_site_configuration}. " {\n";
-	#	$output .= &subnets;
-	#	$output .= "}\n";
-	#	return $output;
-	#}
+	# Shared networks
+	sub shared_networks
+	{
+		my $networks = spi_query("SELECT get_dhcpd_shared_networks FROM api.get_dhcpd_shared_networks()");
+		my ($network, $row, $output);
+		
+		while (defined($row = spi_fetchrow($networks)))
+		{
+			$network = $row->{get_dhcpd_shared_networks};
+			$output .= "shared-network " . $network . " {\n\n";
+			$output .= &subnets($network);
+			$output .= "}\n\n";
+		}
+		return $output;
+	}
 	
 	# Subnets (for shared networks)
 	sub subnets
 	{
-		my $subnets = spi_query("SELECT get_dhcpd_subnets, netmask(get_dhcpd_subnets) FROM api.get_dhcpd_subnets()");
+		my $shared_net = $_[0];
+		# COHOE: THIS QUERY STRING IS QUITE VERBOSE, I HOPE YOU ARE HAPPY
+		my $query = "select get_dhcpd_shared_network_subnets as subnets, netmask(get_dhcpd_shared_network_subnets) ";
+		$query .= "from api.get_dhcpd_shared_network_subnets('$shared_net')";
+		my $subnets = spi_query($query);
 		
 		# $subnet = ip + netmask in slash notation; i.e. 10.21.49.0/24
 		# $net = only the network address; i.e. 10.21.49.0
@@ -124,11 +134,11 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		
 		while (defined($row = spi_fetchrow($subnets)))
 		{
-			$subnet = $row->{get_dhcpd_subnets};
+			$subnet = $row->{subnets};
 			$net = substr($subnet, 0, index($subnet, "/"));
 			$mask = $row->{netmask};
-			$output .= "subnet $net netmask $mask {\n  ";
-			$output .= "authoritative;";
+			$output .= "  subnet $net netmask $mask {\n  ";
+			$output .= "  authoritative;";
 			my $subnet_option = &subnet_options($subnet);
 			if(defined($subnet_option))
 			{
@@ -139,7 +149,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			{
 			   $output .= $subnet_range;
 			}
-			$output .= "\n}\n";
+			$output .= "\n  }\n\n";
 		}
 		return $output;
 	}
@@ -273,13 +283,13 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	$output .= &forward_zones() . "\n";
 	$output .= &reverse_zones() . "\n";
 	$output .= &dhcp_classes() . "\n";
-	$output .= &subnets() . "\n";
+	$output .= &shared_networks() . "\n";
 	$output .= &hosts() . "\n";
 
 	$output .= "\# End dhcpd configuration file";
 
 	# finally, store the config in the db, so we can get it back later.
-	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf',now())");
+	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf.tmp',now())");
 
 	#log our success with the api logging tool.
 	spi_exec_query("SELECT api.create_log_entry('API','INFO','Successfully generated dhcpd.conf')");
