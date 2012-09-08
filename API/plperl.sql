@@ -289,7 +289,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config_test"() RETURNS VOID AS 
 	$output .= "\# End dhcpd configuration file";
 
 	# finally, store the config in the db, so we can get it back later.
-	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf.tmp',now())");
+	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf',now())");
 
 	#log our success with the api logging tool.
 	spi_exec_query("SELECT api.create_log_entry('API','INFO','Successfully generated dhcpd.conf')");
