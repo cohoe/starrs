@@ -106,14 +106,18 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	sub shared_networks
 	{
 		my $networks = spi_query("SELECT get_dhcpd_shared_networks FROM api.get_dhcpd_shared_networks()");
-		my ($network, $row, $output);
+		my ($network, $row, $output, $subnets);
 		
 		while (defined($row = spi_fetchrow($networks)))
 		{
 			$network = $row->{get_dhcpd_shared_networks};
-			$output .= "shared-network " . $network . " {\n\n";
-			$output .= &subnets($network);
-			$output .= "}\n\n";
+			$subnets = &subnets($network);
+			if ($subnets)
+			{
+				$output .= "shared-network " . $network . " {\n\n";
+				$output .= $subnets;
+				$output .= "}\n\n";
+			}
 		}
 		return $output;
 	}
