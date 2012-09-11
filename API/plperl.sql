@@ -1,7 +1,7 @@
 CREATE LANGUAGE 'plperlu';
 
 /* API - generate_dhcpd_config*/
-CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config_test"() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	# Script written by Anthony Gargiulo
 	use strict;
 	use warnings;
