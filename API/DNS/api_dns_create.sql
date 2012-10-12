@@ -132,13 +132,18 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		END IF;
 
 		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "shared" FROM "dns"."zones" WHERE "zone" = input_zone) IS FALSE
-			AND (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
+	     IF api.get_current_user_level !~* 'ADMIN' THEN
+			-- Shared zone
+		     IF (SELECT "shared" FROM "dns"."zones" WHERE "zone" = input_zone) IS FALSE THEN
+			 	RAISE EXCEPTION 'Zone is not shared and you are not admin';
 			END IF;
+	   		-- You own the system
+			IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system(input_address))) IS FALSE THEN
+				RAISE EXCEPTION 'Permission denied';
+			END IF;
+	   		-- You specified another owner
 			IF input_owner != api.get_current_user() THEN
-				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
+				RAISE EXCEPTION 'Only admins can define a different owner (%).',input_owner;
 			END IF;
 		END IF;
 
@@ -185,9 +190,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
+	   		-- You specified a different owner
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
@@ -227,6 +234,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
@@ -280,9 +288,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
+	   		-- You specified another owner
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
@@ -333,12 +343,14 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
-				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
-			END IF;
+			-- You specified another owner
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
+	   		-- You own the system
+               IF (SELECT "write" FROM api.get_system_permissions(api.get_interface_address_system((SELECT "address" FROM "dns"."a" WHERE "hostname" = input_target AND "zone" = input_zone)))) IS FALSE THEN
+	               RAISE EXCEPTION 'Permission denied';
+               END IF;
 		END IF;
 
 		-- Create record
@@ -379,9 +391,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
+	   		-- You specified a different owner
 			IF input_owner != api.get_current_user() THEN
 				RAISE EXCEPTION 'Only administrators can define a different owner (%).',input_owner;
 			END IF;
@@ -434,6 +448,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'Permission denied on zone %. You are not owner.',input_zone;
 			END IF;
@@ -480,6 +495,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_addr
 
 		-- Check privileges
 		IF (api.get_current_user_level() !~* 'ADMIN') THEN
+			-- You own the zone
 			IF (SELECT "owner" FROM "dns"."zones" WHERE "zone" = input_zone) != api.get_current_user() THEN
 				RAISE EXCEPTION 'DNS zone % is not shared and you are not owner. Permission denied.',input_zone;
 			END IF;

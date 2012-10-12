@@ -487,7 +487,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_insert"() RETURNS TRIGGER AS $$
 			RETURN NEW;
 		END IF;
 		
-		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static|autoconf' THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
 			FROM "dns"."zones"
@@ -606,7 +606,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_update"() RETURNS TRIGGER AS $$
 			RETURN NEW;
 		END IF;
 		
-		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static' THEN
+		IF (SELECT "config" FROM api.get_system_interface_address(NEW."address")) ~* 'static|autoconf' THEN
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer
 			FROM "dns"."zones"
@@ -785,8 +785,10 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 		IF (SELECT "ddns" FROM "dns"."zones" WHERE "dns"."zones"."zone" = OLD."zone") IS FALSE THEN
 			RETURN OLD;
 		END IF;
-		
-		IF (SELECT "config" FROM api.get_system_interface_address(OLD."address")) ~* 'static' THEN
+
+	     -- This needs cleaned up a lot. See github bug #211 for more details. This fix works but is
+		-- not exactly great.
+		IF true THEN
 	
 			SELECT "dns"."keys"."keyname","dns"."keys"."key",api.resolve("dns"."soa"."nameserver")
 			INTO DnsKeyName, DnsKey, DnsServer

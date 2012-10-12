@@ -11,7 +11,12 @@ CREATE OR REPLACE FUNCTION "api"."create_network_snmp"(input_system text, input_
 		IF(api.get_interface_address_system(input_address) != input_system) THEN
 			RAISE EXCEPTION 'Address % is not a part of the system %',input_address,input_system;
 		END IF;
-		
+
+	  	-- Don't allow dynamic IPs
+		IF input_address << api.get_site_configuration('DYNAMIC_SUBNET')::cidr THEN
+			RAISE EXCEPTION 'System address cannot be dynamic';
+	 	END IF;
+
 		-- Check privileges
 		IF api.get_current_user_level() !~* 'ADMIN' THEN
 			IF (SELECT "owner" FROM "systems"."systems" WHERE "system_name" = input_system) != api.get_current_user() THEN

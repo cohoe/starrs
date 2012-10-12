@@ -20,6 +20,10 @@ CREATE OR REPLACE FUNCTION "api"."modify_network_snmp"(input_old_system text, in
 			IF(api.get_interface_address_system(input_new_value::inet) != input_old_system) THEN
 				RAISE EXCEPTION 'Address % is not a part of the system %',input_new_value,input_old_system;
 			END IF;
+
+	   		IF input_new_value::inet << api.get_site_configuration('DYNAMIC_SUBNET')::cidr THEN
+				RAISE EXCEPTION 'System address cannot be dynamic';
+	          END IF;
 		END IF;
 		
 		-- Mod it
