@@ -132,7 +132,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		END IF;
 
 		-- Check privileges
-	     IF api.get_current_user_level !~* 'ADMIN' THEN
+	     IF api.get_current_user_level() !~* 'ADMIN' THEN
 			-- Shared zone
 		     IF (SELECT "shared" FROM "dns"."zones" WHERE "zone" = input_zone) IS FALSE THEN
 			 	RAISE EXCEPTION 'Zone is not shared and you are not admin';
