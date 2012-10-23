@@ -824,7 +824,7 @@ CREATE OR REPLACE FUNCTION "dns"."queue_delete"() RETURNS TRIGGER AS $$
 					WHERE OLD."address" << "subnet";
 
 					-- If it is in this domain, add the reverse entry
-					IF RevZone = OLD."zone" AND OLD."reverse" IS TRUE AND OLD."address" !<< api.get_site_configuration('DYNAMIC_SUBNET') THEN
+					IF RevZone = OLD."zone" AND OLD."reverse" IS TRUE AND NOT OLD."address" << api.get_site_configuration('DYNAMIC_SUBNET')::cidr THEN
 						DnsRecord := api.get_reverse_domain(OLD."address")||' '||OLD."ttl"||' PTR '||OLD."hostname"||'.'||OLD."zone"||'.';
 						ReturnCode := api.nsupdate(api.get_reverse_domain(RevSubnet),DnsKeyName,DnsKey,DnsServer,'DELETE',DnsRecord);
 					END IF;
