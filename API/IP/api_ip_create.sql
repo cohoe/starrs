@@ -143,3 +143,21 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_address_range"(inet, inet, cidr) IS 'Create a range of addresses from a non-autogened subnet (intended for DHCPv6)';
+
+CREATE OR REPLACE FUNCTION "api"."create_range_group"(input_range text, input_group text) RETURNS SETOF "ip"."range_groups" AS $$
+	BEGIN
+		-- Privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Only admins can assign range resources to groups';
+		END IF;
+
+		-- Create
+		INSERT INTO "ip"."range_groups" ("range_name","group_name") VALUES (input_range, input_group);
+
+		-- Return
+		RETURN QUERY (SELECT * FROM "ip"."range_groups" WHERE "group_name" = input_group AND "range_name" = input_range); 
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."create_range_group"(text, text) IS 'Assign a range to a group';
+
+

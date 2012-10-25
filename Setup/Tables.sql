@@ -630,3 +630,15 @@ CREATE TABLE "dhcp"."network_subnets"(
 CONSTRAINT "dhcp_network_name_subnet" PRIMARY KEY ("name","subnet")
 )
 WITHOUT OIDS;
+
+CREATE TABLE "ip"."range_groups"(
+"range_name" TEXT,
+"group_name" TEXT,
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+CONSTRAINT "ip_range_group_pkey" PRIMARY KEY ("range_name","group_name")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "ip"."range_groups" IS 'Associate ranges to groups of users';
+

@@ -123,3 +123,32 @@ CREATE OR REPLACE FUNCTION api.get_subnet_utilization(input_subnet cidr) RETURNS
 	END;
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION api.get_subnet_utilization(cidr) IS 'Get statistics on subnet utilization';
+
+CREATE OR REPLACE FUNCTION "api"."get_group_ranges"(input_group text) RETURNS SETOF "ip"."ranges" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" IN (SELECT "range_name" FROM "ip"."range_groups" WHERE "group_name" = input_group) ORDER BY "name");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_group_ranges"(text) IS 'Get group range information';
+
+CREATE OR REPLACE FUNCTION "api"."get_user_ranges"(input_user text) RETURNS SETOF "ip"."ranges" AS $$
+	DECLARE
+		UserGroups RECORD;
+		GroupRanges RECORD;
+		RangeData RECORD;
+	BEGIN
+		IF api.get_current_user_level() ~* 'ADMIN' THEN
+			RETURN QUERY (SELECT * FROM "ip"."ranges" ORDER BY "name");
+		END IF;
+
+		FOR UserGroups IN (SELECT "group" FROM "management"."group_members" WHERE "user" = input_user) LOOP
+			FOR RangeData IN (SELECT * FROM api.get_group_ranges(UserGroups."group")) LOOP
+				RETURN NEXT RangeData;
+			END LOOP;
+		END LOOP;
+
+		RETURN;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+

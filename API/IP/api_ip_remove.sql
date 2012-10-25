@@ -52,3 +52,18 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP range';
+
+CREATE OR REPLACE FUNCTION "api"."remove_range_group"(input_range text, input_group text) RETURNS VOID AS $$
+	BEGIN
+		-- Privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Only admins can assign range resources to groups';
+		END IF;
+
+		-- Remove
+		DELETE FROM "ip"."range_groups" WHERE "range_name" = input_range AND "group_name" = input_group;
+
+		-- Done
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_range_group"(text, text) IS 'Remove a range group';

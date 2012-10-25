@@ -1,7 +1,0 @@
-#!/bin/bash
-
-DBHOST='impulse.example.com'
-DBUSER='impulse_admin'
-
-
-/usr/bin/psql -h $DBHOST -U $DBUSER -c "DELETE FROM management.output WHERE file='dhcpd.conf'" impulse --no-align --no-readline --quiet --tuples-only
