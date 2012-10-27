@@ -404,6 +404,13 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 			input_new_value := lower(input_new_value);
 		END IF;
 
+		-- Check for in use
+		IF input_field ~* 'alias' THEN
+			IF (SELECT api.check_dns_hostname(input_new_value, input_zone)) IS TRUE THEN
+				RAISE EXCEPTION 'Record with this hostname and zone already exists';
+			END IF;
+		END IF;
+
 		-- Update record
 		IF input_field ~* 'ttl' THEN
 			EXECUTE 'UPDATE "dns"."cname" SET ' || quote_ident($3) || ' = $4,

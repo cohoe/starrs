@@ -353,6 +353,11 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
                END IF;
 		END IF;
 
+		-- Check for in use
+		IF (SELECT api.check_dns_hostname(input_alias, input_zone)) IS TRUE THEN
+			RAISE EXCEPTION 'Record with this hostname and zone already exists';
+		END IF;
+
 		-- Create record
 		INSERT INTO "dns"."cname" ("alias","hostname","zone","ttl","owner") VALUES
 		(input_alias, input_target, input_zone, input_ttl, input_owner);
