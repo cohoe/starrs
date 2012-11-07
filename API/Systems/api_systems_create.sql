@@ -115,7 +115,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_interface_address"(macaddr, inet, text, text, boolean, text, date) IS 'create a new address on interface from a specified address';
 
-CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_owner text, input_group text, input_mac macaddr, input_address inet, input_zone text, input_config text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, input_owner text, input_group text, input_mac macaddr, input_address inet, input_zone text, input_config text, input_dns BOOLEAN) RETURNS VOID AS $$
 	BEGIN
 		PERFORM api.create_system(
 			input_system_name,
@@ -143,15 +143,17 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 			null,
 			null
 		);
-		PERFORM api.create_dns_address(
-			input_address,
-			lower(regexp_replace(input_system_name,' ','-')),
-			input_zone,
-			null,
-			null,
-			TRUE,
-			input_owner
-		);
+		IF input_dns IS TRUE THEN
+			PERFORM api.create_dns_address(
+				input_address,
+				lower(regexp_replace(input_system_name,' ','-')),
+				input_zone,
+				null,
+				null,
+				TRUE,
+				input_owner
+			);
+		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_system_quick"(text, text, text, macaddr, inet, text, text) IS 'Create a full system in one call';

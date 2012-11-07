@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_group"(input_old_group text, input_fiel
 			RAISE EXCEPTION 'Permission denied. Only admins can modify groups';
 		END IF;
 
-		IF input_field !~* 'group|privilege|renew_interval' THEN
+		IF input_field !~* 'group|privilege|renew_interval|comment' THEN
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 
