@@ -17,6 +17,7 @@ SELECT api.create_site_configuration('EMAIL_DOMAIN','example.com');
 SELECT api.create_site_configuration('EMAIL_NOTIFICATION_INTERVAL','7 days');
 SELECT api.create_site_configuration('USER_PRIVILEGE_SOURCE','local');
 SELECT api.create_site_configuration('WEB_URL','https://starrs.example.com');
+SELECT api.create_site_configuration('SYSLOG_FACILITY','local0');
 
 SELECT api.create_group('Administrators','ADMIN','Admin users','10 years');
 SELECT api.create_group('Users','USER','Regular users','1 year');
@@ -49,3 +50,4 @@ SELECT api.create_ip_range('Servers','10.0.49.1','10.0.49.200','10.0.49.0/24','U
 SELECT api.create_ip_range('Servers IPv6','2001:49::1','2001:49::255','2001:49::/64','UREG','default','Server registrations','Rochester','Corp');
 SELECT api.create_ip_range('Users','10.0.50.1','10.0.50.200','10.0.50.0/24','UREG','default','User registrations','Rochester','Corp');
 SELECT api.create_ip_range('Users IPv6','2001:50::1','2001:50::255','2001:50::/64','UREG','default','Server registrations','Rochester','Corp');
+

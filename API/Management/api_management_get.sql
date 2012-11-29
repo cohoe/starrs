@@ -172,3 +172,12 @@ CREATE OR REPLACE FUNCTION "api"."get_user_email"(input_user TEXT) RETURNS TEXT 
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_user_email"(text) IS 'Get the email address of a user';
 
+CREATE OR REPLACE FUNCTION "api"."get_user_groups"(input_user text) RETURNS SETOF "management"."groups" AS $$
+	BEGIN
+		RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" IN (
+		SELECT "group" FROM "management"."group_members" WHERE "user" = input_user)
+		ORDER BY "group"
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_user_groups"(text) IS 'Get all of the groups that a user belongs to';
