@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_key"(input_keyname text, input_key 
 		(input_keyname,input_key,input_enctype,input_comment,input_owner);
 
 		-- Done
+		PERFORM api.syslog('create_dns_key:"'||input_keyname||'"');
 		RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_keyname AND "key" = input_key);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -71,6 +72,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone"(input_zone text, input_keynam
 		(input_zone,input_keyname,input_forward,input_comment,input_owner,input_shared,input_ddns);
 
 		-- Done
+		PERFORM api.syslog('create_dns_zone:"'||input_zone||'"');
 		RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -157,6 +159,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_address"(input_address inet, input_
 		(input_hostname,input_zone,input_address,input_ttl,input_type,input_owner,input_reverse);
 
 		-- Done
+		PERFORM api.syslog('create_dns_address:"'||input_address||'","'||input_hostname||'","'||input_zone||'"');
 		RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = input_address AND "hostname" = input_hostname AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -205,6 +208,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_mailserver"(input_hostname text, in
 		(input_hostname,input_zone,input_preference,input_ttl,input_owner,'MX');
 		
 		-- Done
+		PERFORM api.syslog('create_dns_mailserver:"'||input_hostname||'","'||input_zone||'","'||input_preference||'"');
 		RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "preference" = input_preference);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -248,6 +252,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_ns"(input_zone text, input_nameserv
 		UPDATE "dns"."ns" SET "ttl" = input_ttl WHERE "zone" = input_zone;
 		
 		-- Done
+		PERFORM api.syslog('create_dns_ns:"'||input_nameserver||'"');
 		RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -303,6 +308,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_srv"(input_alias text, input_target
 		(input_alias, input_target, input_zone, input_priority, input_weight, input_port, input_ttl, input_owner);
 		
 		-- Done
+		PERFORM api.syslog('create_dns_srv:"'||input_alias||'","'||input_target||'","'||input_zone||'","'||input_priority||'","'||input_weight||'","'||input_port||'","'||input_ttl||'"');
 		RETURN QUERY (SELECT * FROM "dns"."srv" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone AND "priority" = input_priority AND "weight" = input_weight AND "port" = input_port);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -363,6 +369,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_cname"(input_alias text, input_targ
 		(input_alias, input_target, input_zone, input_ttl, input_owner);
 		
 		-- Done
+		PERFORM api.syslog('create_dns_cname:"'||input_alias||'","'||input_target||'","'||input_zone||'"');
 		RETURN QUERY (SELECT * FROM "dns"."cname" WHERE "alias" = input_alias AND "hostname" = input_target AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -411,6 +418,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_txt"(input_hostname text, input_zon
 		(input_hostname,input_zone,input_text,input_ttl,input_owner);
 		
 		-- Done
+		PERFORM api.syslog('create_dns_txt:"'||input_hostname||'","'||input_zone||'","'||input_text||'"');
 		RETURN QUERY (SELECT * FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -434,6 +442,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_soa"(input_zone text) RETURNS SETOF
 		INSERT INTO "dns"."soa" SELECT * FROM api.query_dns_soa(input_zone);
 
 		-- Done
+		PERFORM api.syslog('create_dns_soa:"'||input_zone||'"');
 		RETURN QUERY (SELECT * FROM "dns"."soa" WHERE "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -473,8 +482,10 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_txt"(input_hostname text, inpu
 		
 		-- Done
 		IF input_hostname IS NULL THEN
+			PERFORM api.syslog('create_dns_zone_txt:"'||input_zone||'","'||input_text||'","'||input_ttl);
 			RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_zone AND "text" = input_text);
 		ELSE
+			PERFORM api.syslog('create_dns_zone_txt:"'||input_hostname||'","'||input_zone||'","'||input_text||'","'||input_ttl);
 			RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text);
 		END IF;
 	END;
@@ -511,6 +522,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dns_zone_a"(input_zone text, input_addr
 		(input_zone,input_address,input_ttl);
 
 		-- Done
+		PERFORM api.syslog('create_dns_zone_a:"'||input_zone||'","'||input_address||'"');
 		RETURN QUERY (SELECT * FROM "dns"."zone_a" WHERE "zone" = input_zone AND "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';

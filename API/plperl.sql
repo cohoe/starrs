@@ -1608,20 +1608,22 @@ CREATE OR REPLACE FUNCTION "api"."get_ad_user_email"(TEXT) RETURNS TEXT AS $$
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."get_ad_user_email"(TEXT) IS 'Get a users email address from Active Directory';
 
-CREATE OR REPLACE FUNCTION "api"."syslog"(input_severity text, input_message text) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION "api"."syslog"(input_message text) RETURNS VOID AS $$
 	#!/usr/bin/perl
 	use strict;
 	use warnings;
 	use Sys::Syslog qw( :DEFAULT setlogsock);
 
-	my $sev = shift(@_) or die "Unable to get severity";
-	my $msg = shift(@_) or die "Unable to get message";
+	#my $sev = shift(@_) or die "Unable to get severity";
+	my $sev = "info";
+	my $msg = shift(@_) or die "Unable to get message.";
 	my $facility = spi_exec_query("SELECT api.get_site_configuration('SYSLOG_FACILITY')")->{rows}[0]->{"get_site_configuration"};
+	my $user= spi_exec_query("SELECT api.get_current_user()")->{rows}[0]->{"get_current_user"};
 	setlogsock('unix');
 	openlog("STARRS",'',$facility);
-	syslog($sev, $msg);
+	syslog($sev, "$user $msg");
 	closelog;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."syslog"(text,text) IS 'Log to syslog';
+COMMENT ON FUNCTION "api"."syslog"(text) IS 'Log to syslog';
 
 -- vim: set filetype=perl:

@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class"(input_class text, input_com
 		INSERT INTO "dhcp"."classes" ("class","comment") VALUES (input_class,input_comment);
 
 		-- Done
+		PERFORM api.syslog('create_dhcp_class:"'||input_class||'"');
 		RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_class);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -48,6 +49,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_class_option"(input_class text, in
 		(input_class,input_option,input_value);
 
 		-- Done
+		PERFORM api.syslog('create_dhcp_class_option:"'||input_class||'","'||input_option||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "dhcp"."class_options" WHERE "class" = input_class AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -70,6 +72,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_subnet_option"(input_subnet cidr, 
 		(input_subnet,input_option,input_value);
 
 		-- Done
+		PERFORM api.syslog('create_dhcp_subnet_option:"'||input_subnet||'","'||input_option||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -97,6 +100,7 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_range_option"(input_range text, in
 		VALUES (input_range, input_option, input_value, api.get_current_user());
 
 		-- Done
+		PERFORM api.syslog('create_dhcp_range_option:"'||input_range||'","'||input_option||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "dhcp"."range_options" WHERE "name" = input_range AND "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -118,35 +122,8 @@ CREATE OR REPLACE FUNCTION "api"."create_dhcp_global_option"(input_option text, 
 		("option","value") VALUES (input_option,input_value);
 
 		-- Done
+		PERFORM api.syslog('create_dhcp_global_option:"'||input_option||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "dhcp"."global_options" WHERE "option" = input_option AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_dhcp_global_option"(text, text) IS 'Create a new DHCP global option';
-
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_network"(input_name text, input_comment text) RETURNS SETOF "dhcp"."networks" AS $$
-	BEGIN
-		-- Check privileges
-		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			RAISE EXCEPTION 'Permission to create dhcp network denied for user %. You are not admin.',api.get_current_user();
-		END IF;
-
-		INSERT INTO "dhcp"."networks" ("name", "comment") VALUES (input_name, input_comment);
-
-		RETURN QUERY (SELECT * FROM "dhcp"."networks" WHERE "name" = input_name);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dhcp_network"(text) IS 'Create a DHCP network';
-
-CREATE OR REPLACE FUNCTION "api"."create_dhcp_network_subnet"(input_name text, input_subnet cidr) RETURNS SETOF "dhcp"."network_subnets" AS $$
-	BEGIN
-		-- Check privileges
-		IF api.get_current_user_level() !~* 'ADMIN' THEN
-			RAISE EXCEPTION 'Permission to create dhcp network subnet denied for user %. You are not admin.',api.get_current_user();
-		END IF;
-
-		INSERT INTO "dhcp"."network_subnets" ("name","subnet") VALUES (input_name, input_subnet);
-
-		RETURN QUERY (SELECT * FROM "dhcp"."network_subnets" WHERE "name" = input_name AND "subnet" = input_subnet);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_dhcp_network_subnet"(text, cidr) IS 'Assign a subnet to a network';

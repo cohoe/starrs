@@ -46,6 +46,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_key"(input_old_keyname text, input_
 		USING input_old_keyname, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_key:"'||input_old_keyname||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'keyname' THEN
 			RETURN QUERY (SELECT * FROM "dns"."keys" WHERE "keyname" = input_new_value);
 		ELSE
@@ -92,6 +93,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_zone:"'||input_old_zone||'","'||input_field||'","'||input_new_value'"');
 		IF input_field ~* 'zone' THEN
 			RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_new_value);
 		ELSE
@@ -166,6 +168,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_address"(input_old_address inet, in
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_address:"'||input_old_address||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'address' THEN
 			RETURN QUERY (SELECT * FROM "dns"."a" WHERE "address" = inet(input_new_value) AND "zone" = input_old_zone);
 		ELSEIF input_field ~* 'zone' THEN
@@ -226,6 +229,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_mailserver"(input_old_hostname text
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_mailserver:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'hostname' THEN
 			RETURN QUERY (SELECT * FROM "dns"."mx" WHERE "hostname" = input_new_value AND "zone" = input_old_zone);
 		ELSEIF input_field ~* 'zone' THEN
@@ -285,6 +289,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_ns"(input_old_zone text, input_old_
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_ns:"'||input_old_zone||'","'||input_old_nameserver||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'input_old_zone' THEN		
 			RETURN QUERY (SELECT * FROM "dns"."ns" WHERE "zone" = input_new_value AND "nameserver" = input_old_nameserver);
 		ELSEIF input_field ~* 'nameserver' THEN
@@ -345,6 +350,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_srv"(input_old_alias text, input_ol
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_srv:"'||input_old_alias||'","'||input_old_zone||'","'||input_old_priority||'","'||input_old_weight||'","'||input_old_port||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'alias' THEN
 			RETURN QUERY (SELECT * FROM "dns"."srv" 
 			WHERE "alias" = input_new_value AND "zone" = input_old_zone AND "priority" = input_old_priority AND "weight" = input_old_weight AND "port" = input_old_port);
@@ -430,6 +436,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_cname"(input_old_alias text, input_
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_cname:"'||input_old_alias||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'alias' THEN
 			RETURN QUERY (SELECT * FROM "dns"."cname" WHERE "alias" = input_new_value AND "zone" = input_old_zone);
 		ELSEIF input_field ~* 'zone' THEN
@@ -484,6 +491,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_old_text||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'hostname' THEN
 			RETURN QUERY (SELECT * FROM "dns"."txt" WHERE "hostname" = input_new_value AND "zone" = input_old_zone AND "text" = input_old_text);
 		ELSEIF input_field ~* 'zone' THEN
@@ -539,6 +547,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_soa"(input_old_zone text, input_fie
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_soa:"'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'zone' THEN
 			RETURN QUERY (SELECT * FROM "dns"."soa" WHERE "zone" = input_new_value);
 		ELSE
@@ -588,26 +597,34 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_txt"(input_old_hostname text, 
 		-- Done
 		IF input_field ~* 'hostname' THEN
 			IF input_new_value IS NULL THEN
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_old_zone AND "text" = input_old_text);
 			ELSE
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" = input_new_value AND "zone" = input_old_zone AND "text" = input_old_text);
 			END IF;
 		ELSEIF input_field ~* 'zone' THEN
 			IF input_old_hostname IS NULL THEN
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_new_value AND "text" = input_old_text);
 			ELSE
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" = input_old_hostname AND "zone" = input_new_value AND "text" = input_old_text);
 			END IF;
 		ELSEIF input_field ~* 'text' THEN
 			IF input_old_hostname IS NULL THEN
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_old_zone AND "text" = input_new_value);
 			ELSE
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone AND "text" = input_new_value);
 			END IF;
 		ELSE
 			IF input_old_hostname IS NULL THEN
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_old_zone AND "text" = input_old_text);
 			ELSE
+				PERFORM api.syslog('modify_dns_zone_txt:"'||input_old_hostname||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 				RETURN QUERY (SELECT * FROM "dns"."zone_txt" WHERE "hostname" = input_old_hostname AND "zone" = input_old_zone AND "text" = input_old_text);
 			END IF;
 		END IF;
@@ -655,6 +672,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone_a"(input_old_zone text, input_
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_dns_zone_a:"'||input_old_zone||'","'||input_old_address||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'zone' THEN
 			RETURN QUERY (SELECT * FROM "dns"."zone_a" WHERE "zone" = input_new_value AND "address" = input_old_address);
 		ELSEIF input_field ~* 'address' THEN

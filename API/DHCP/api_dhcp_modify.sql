@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class"(input_old_class text, input
 		USING input_old_class, input_field, input_new_value;	
 
 		-- Done
+		PERFORM api.syslog('modify_dhcp_class:"'||input_old_class||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'class' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."classes" WHERE "class" = input_new_value);
 		ELSE
@@ -68,6 +69,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_class_option"(input_old_class text
 		USING input_old_class, input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_dhcp_class_option:"'||input_old_class||'","'||input_old_option||'","'||input_old_value||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'class' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."class_options" 
 			WHERE "class" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
@@ -106,6 +108,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_subnet_option"(input_old_subnet ci
 		USING input_old_subnet, input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_dhcp_subnet_option:"'||input_old_subnet||'","'||input_old_option||'","'||input_old_value||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'subnet' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."subnet_options" 
 			WHERE "subnet" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
@@ -152,6 +155,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text
 		USING input_old_range, input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_dhcp_range_option:"'||input_old_range||'","'||input_old_option||'","'||input_old_value||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'range' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
 			WHERE "range" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
@@ -190,6 +194,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option te
 		USING input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_dhcp_global_option:"'||input_old_option||'","'||input_old_value||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'option' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."global_options" 
 			WHERE "option" = input_new_value AND "value" = input_old_value);
@@ -200,58 +205,3 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_global_option"(input_old_option te
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_dhcp_global_option"(text, text, text, text) IS 'Modify a field of a DHCP global option';
-
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_network"(input_old_name text, input_field text, input_new_value text) RETURNS SETOF "dhcp"."networks" AS $$
-	BEGIN
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			RAISE EXCEPTION 'Permission to modify dhcp network denied for %. Not admin.',api.get_current_user();
-		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'name|comment' THEN
-			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
-		END IF;
-		
-		-- Update record
-		EXECUTE 'UPDATE "dhcp"."networks" SET ' || quote_ident($2) || ' = $3, 
-		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
-		WHERE "name" = $1' 
-		USING input_old_name, input_field, input_new_value;
-
-		RETURN QUERY (SELECT * FROM "dhcp"."networks" WHERE "name" = input_new_value);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dhcp_network"(text, text, text) IS 'Modify a DHCP network';
-
-CREATE OR REPLACE FUNCTION "api"."modify_dhcp_network_subnet"(input_old_name text, input_old_subnet cidr, input_field text, input_new_value text) RETURNS SETOF "dhcp"."network_subnets" AS $$
-	BEGIN
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			RAISE EXCEPTION 'Permission to modify dhcp network subnet denied for %. Not admin.',api.get_current_user();
-		END IF;
-
-		-- Check allowed fields
-		IF input_field !~* 'name|subnet' THEN
-			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
-		END IF;
-		
-		-- Update record
-		IF input_field ~* 'subnet' THEN
-			EXECUTE 'UPDATE "dhcp"."network_subnets" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
-			WHERE "name" = $1 AND "subnet" = $2' 
-			USING input_old_name, input_old_subnet, input_field, input_new_value::cidr;
-		ELSE
-			EXECUTE 'UPDATE "dhcp"."network_subnets" SET ' || quote_ident($3) || ' = $4, 
-			date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
-			WHERE "name" = $1 AND "subnet" = $2' 
-			USING input_old_name, input_old_subnet, input_field, input_new_value;
-		END IF;
-
-		IF input_field ~* 'name' THEN
-			RETURN QUERY (SELECT * FROM "dhcp"."network_subnets" WHERE "subnet" = input_old_subnet AND "name" = input_new_value);
-		ELSE
-			RETURN QUERY (SELECT * FROM "dhcp"."network_subnets" WHERE "subnet" = input_new_value::cidr AND "name" = input_old_name);
-		END IF;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."modify_dhcp_network_subnet"(text, cidr, text, text) IS 'Modify a dhcp network subnet';

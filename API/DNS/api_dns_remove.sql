@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_key"(input_keyname text) RETURNS VO
 		-- Remove key		
 		DELETE FROM "dns"."keys" WHERE "keyname" = input_keyname;
 
+		PERFORM api.syslog('remove_dns_key:"'||input_keyname||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_key"(text) IS 'Delete existing DNS key';
@@ -47,6 +48,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone"(input_zone text) RETURNS VOID
 		DELETE FROM "dns"."zones"
 		WHERE "zone" = input_zone;
 
+		PERFORM api.syslog('remove_dns_zone:"'||input_zone||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_zone"(text) IS 'Delete existing DNS zone';
@@ -67,6 +69,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_address"(input_address inet, input_
 		-- Remove record
 		DELETE FROM "dns"."a" WHERE "address" = input_address AND "zone" = input_zone;
 
+		PERFORM api.syslog('remove_dns_address:"'||input_address||'","'||input_zone||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_address"(inet,text) IS 'delete an A or AAAA record';
@@ -88,6 +91,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_mailserver"(input_zone text, input_
 		-- Remove record
 		DELETE FROM "dns"."mx" WHERE "zone" = input_zone AND "preference" = input_preference;
 
+		PERFORM api.syslog('remove_dns_mailserver:"'||input_zone||'","'||input_preference||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_mailserver"(text, integer) IS 'Delete an existing MX record for a zone';
@@ -108,6 +112,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_ns"(input_zone text, input_nameserv
 
 		-- Remove record
 		DELETE FROM "dns"."ns" WHERE "zone" = input_zone AND "nameserver" = input_nameserver;
+
+		PERFORM api.syslog('remove_dns_ns:"'||input_zone||'","'||input_nameserver||'"');
 
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -130,6 +136,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_srv"(input_alias text, input_zone t
 		-- Remove record
 		DELETE FROM "dns"."srv" WHERE "alias" = input_alias AND "zone" = input_zone AND "priority" = input_priority AND "weight" = input_weight AND "port" = input_port;
 
+		PERFORM api.syslog('remove_dns_srv:"'||input_alias||'","'||input_zone||'","'||input_priority||'","'||input_weight||'","'||input_port||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_srv"(text, text, integer, integer, integer) IS 'remove a dns srv record';
@@ -151,6 +158,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_cname"(input_alias text, input_zone
 		-- Remove record
 		DELETE FROM "dns"."cname" WHERE "alias" = input_alias AND "zone" = input_zone;
 
+		PERFORM api.syslog('remove_dns_cname:"'||input_alias||'","'||input_zone||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_cname"(text, text) IS 'remove a dns cname record for a host';
@@ -172,6 +180,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_txt"(input_hostname text, input_zon
 		-- Remove record
 		DELETE FROM "dns"."txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text;
 
+		PERFORM api.syslog('remove_dns_txt:"'||input_hostname||'","'||input_zone||'","'||input_text||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_txt"(text, text, text) IS 'remove a dns text record for a host';
@@ -194,6 +203,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_soa"(input_zone text) RETURNS VOID 
 		DELETE FROM "dns"."soa"
 		WHERE "zone" = input_zone;
 
+		PERFORM api.syslog('remove_dns_soa:"'||input_zone||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_soa"(text) IS 'Delete existing DNS soa';
@@ -210,8 +220,10 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone_txt"(input_hostname text, inpu
 
 		-- Remove record
 		IF input_hostname IS NULL THEN
+			PERFORM api.syslog('remove_dns_zone_txt:"'||input_zone||'","'||input_text||'"');
 			DELETE FROM "dns"."zone_txt" WHERE "hostname" IS NULL AND "zone" = input_zone AND "text" = input_text;
 		ELSE
+			PERFORM api.syslog('remove_dns_zone_txt:"'||input_hostname||'","'||input_zone||'","'||input_text||'"');
 			DELETE FROM "dns"."zone_txt" WHERE "hostname" = input_hostname AND "zone" = input_zone AND "text" = input_text;
 		END IF;
 
@@ -232,6 +244,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dns_zone_a"(input_zone text, input_addr
 		-- Remove record
 		DELETE FROM "dns"."zone_a" WHERE "address" = input_address AND "zone" = input_zone;
 
+		PERFORM api.syslog('remove_dns_zone_a:"'||input_zone||'","'||input_address||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dns_zone_a"(text, inet) IS 'delete a zone A or AAAA record';

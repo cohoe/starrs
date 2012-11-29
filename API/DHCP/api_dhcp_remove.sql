@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class"(input_class text) RETURNS V
 		DELETE FROM "dhcp"."classes" WHERE "class" = input_class;
 
 		-- Done
+		PERFORM api.syslog('remove_dhcp_class:"'||input_class||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class"(text) IS 'Delete an existing DHCP class';
@@ -40,6 +41,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_class_option"(input_class text, in
 		WHERE "class" = input_class AND "option" = input_option AND "value" = input_value;
 
 		-- Done
+		PERFORM api.syslog('remove_dhcp_class_option:"'||input_class||'","'||input_option||'","'||input_value||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_class_option"(text, text, text) IS 'Delete an existing DHCP class option';
@@ -61,6 +63,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_subnet_option"(input_subnet cidr, 
 		WHERE "subnet" = input_subnet AND "option" = input_option AND "value" = input_value;
 
 		-- Done
+		PERFORM api.syslog('remove_dhcp_subnet_option:"'||input_subnet||'","'||input_option||'","'||input_value||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_subnet_option"(cidr, text, text) IS 'Delete an existing DHCP subnet option';
@@ -82,6 +85,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_global_option"(input_option text, 
 		WHERE "option" = input_option AND "value" = input_value;
 
 		-- Done
+		PERFORM api.syslog('remove_dhcp_global_option:"'||input_option||'","'||input_value||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_global_option"(text, text) IS 'Delete an existing DHCP global option';
@@ -102,30 +106,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_dhcp_range_option"(input_range text, in
 		WHERE "name" = input_range AND "option" = input_option;
 
 		-- Done
+		PERFORM api.syslog('remove_dhcp_range_option:"'||input_range||'","'||input_option||'","'||input_value||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_dhcp_range_option"(text, text, text) IS 'Delete an existing DHCP range option';
-
-CREATE OR REPLACE FUNCTION "api"."remove_dhcp_network"(input_name text) RETURNS VOID AS $$
-	BEGIN
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			RAISE EXCEPTION 'Permission to remove dhcp network denied for %. Not admin.',api.get_current_user();
-		END IF;
-
-		DELETE FROM "dhcp"."networks" WHERE "name" = input_name;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dhcp_network"(text) IS 'Remove a dhcp network';
-
-CREATE OR REPLACE FUNCTION "api"."remove_dhcp_network_subnet"(input_name text, input_subnet cidr) RETURNS VOID AS $$
-	BEGIN
-		-- Check privileges
-		IF (api.get_current_user_level() !~* 'ADMIN') THEN
-			RAISE EXCEPTION 'Permission to remove dhcp network subnet denied for %. Not admin.',api.get_current_user();
-		END IF;
-
-		DELETE FROM "dhcp"."network_subnets" WHERE "name" = input_name AND "subnet" = input_subnet;
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."remove_dhcp_network_subnet"(text, cidr) IS 'Remove a dhcp network subnet';
