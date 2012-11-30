@@ -39,6 +39,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_range"(input_old_name text, input_fi
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_ip_range:"'||input_old_name||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'name' THEN
 			RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_new_value);
 		ELSE
@@ -95,6 +96,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_ip_subnet"(input_old_subnet cidr, input
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_ip_subnet:"'||input_old_name||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'subnet' THEN
 			RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = cidr(input_new_value));
 		ELSE

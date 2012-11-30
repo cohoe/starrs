@@ -46,6 +46,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_subnet"(input_subnet cidr, input_nam
 		PERFORM api.create_dns_zone(api.get_reverse_domain(input_subnet),(SELECT "keyname" FROM "dns"."zones" WHERE "zone" = input_zone),FALSE,TRUE,input_owner,'Reverse zone for subnet '||text(input_subnet),(SELECT "ddns" FROM "dns"."zones" WHERE "zone" = input_zone));
 
 		-- Done
+		PERFORM api.syslog('create_ip_subnet:"'||input_subnet||'"');
 		RETURN QUERY (SELECT * FROM "ip"."subnets" WHERE "subnet" = input_subnet);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -80,6 +81,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,input_class,input_datacenter,input_zone);
 
 		-- Done
+		PERFORM api.syslog('create_ip_range:"'||input_range||'"');
 		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -140,6 +142,8 @@ CREATE OR REPLACE FUNCTION "api"."create_address_range"(input_first_ip inet, inp
 		END LOOP;
 
 		-- Done
+		PERFORM api.syslog('create_address_range:"'||input_first_ip||'","'||input_last_ip||'","'||input_subnet||'"');
+		PERFORM api.syslog('WARNING! Potential deprecated function in use!');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."create_address_range"(inet, inet, cidr) IS 'Create a range of addresses from a non-autogened subnet (intended for DHCPv6)';
@@ -155,6 +159,7 @@ CREATE OR REPLACE FUNCTION "api"."create_range_group"(input_range text, input_gr
 		INSERT INTO "ip"."range_groups" ("range_name","group_name") VALUES (input_range, input_group);
 
 		-- Return
+		PERFORM api.syslog('create_range_group:"'||input_range||'","'||input_group||'"');
 		RETURN QUERY (SELECT * FROM "ip"."range_groups" WHERE "group_name" = input_group AND "range_name" = input_range); 
 	END;
 $$ LANGUAGE 'plpgsql';

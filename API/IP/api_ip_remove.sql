@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_subnet"(input_subnet cidr) RETURNS V
 		DELETE FROM "ip"."subnets" WHERE "subnet" = input_subnet;
 
 		-- Done
+		PERFORM api.syslog('remove_ip_subnet:"'||input_subnet||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_subnet"(cidr) IS 'Delete/deactivate an existing subnet';
@@ -49,6 +50,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID
 		DELETE FROM "ip"."ranges" WHERE "name" = input_name;
 
 		-- Done
+		PERFORM api.syslog('remove_ip_range:"'||input_range||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP range';
@@ -64,6 +66,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_range_group"(input_range text, input_gr
 		DELETE FROM "ip"."range_groups" WHERE "range_name" = input_range AND "group_name" = input_group;
 
 		-- Done
+		PERFORM api.syslog('remove_range_group:"'||input_range||'","'||input_group||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_range_group"(text, text) IS 'Remove a range group';

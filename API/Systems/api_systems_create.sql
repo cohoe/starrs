@@ -34,6 +34,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system"(input_system_name text, input_o
 			(input_system_name,input_owner,input_type,input_os_name,input_comment,api.get_current_user(),input_group,input_platform,input_asset,input_datacenter);
 
 		-- Done
+		PERFORM api.syslog('create_system:"'||input_system_name||'"');
 		RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_system_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -62,6 +63,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface"(input_system_name text, inpu
 		(input_system_name,input_mac,input_comment,api.get_current_user(),input_name);
 
 		-- Done
+		PERFORM api.syslog('create_interface:"'||input_mac||'"');
 		RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = input_mac);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -110,6 +112,7 @@ CREATE OR REPLACE FUNCTION "api"."create_interface_address"(input_mac macaddr, i
 		(input_mac,input_address,input_config,input_class,input_comment,api.get_current_user(),input_isprimary,input_renew_date);
 
 		-- Done
+		PERFORM api.syslog('create_interface_address:"'||input_address||'"');
 		RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = input_address);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -169,6 +172,7 @@ CREATE OR REPLACE FUNCTION "api"."create_datacenter"(input_name text, input_comm
 		INSERT INTO "systems"."datacenters" ("datacenter","comment") VALUES (input_name,input_comment);
 
 		-- Done
+		PERFORM api.syslog('create_datacenter:"'||input_name||'"');
 		RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -185,6 +189,7 @@ CREATE OR REPLACE FUNCTION "api"."create_availability_zone"(input_datacenter tex
 		INSERT INTO "systems"."availability_zones" ("datacenter","zone","comment") VALUES (input_datacenter, input_zone, input_comment);
 
 		-- Done
+		PERFORM api.syslog('create_availability_zone:"'||input_datacenter||'","'||input_zone||'"');	
 		RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_datacenter AND "zone" = input_zone);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -200,6 +205,7 @@ CREATE OR REPLACE FUNCTION "api"."create_platform"(input_name text, input_archit
 		INSERT INTO "systems"."platforms" ("platform_name","architecture","disk","cpu","memory")
 		VALUES (input_name, input_architecture, input_disk, input_cpu, input_memory);
 
+		PERFORM api.syslog('create_platform:"'||input_name||'"');
 		RETURN QUERY (SELECT * FROM "systems"."platforms" WHERE "platform_name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';

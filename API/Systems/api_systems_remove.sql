@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_system"(input_system_name text) RETURNS
 		DELETE FROM "systems"."systems" WHERE "system_name" = input_system_name;
 
 		-- Done
+		PERFORM api.syslog('remove_system:"'||input_system_name||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_system"(text) IS 'Delete an existing system';
@@ -45,6 +46,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface"(input_mac macaddr) RETURNS V
 		DELETE FROM "systems"."interfaces" WHERE "mac" = input_mac;
 
 		-- Done
+		PERFORM api.syslog('remove_interface:"'||input_mac||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_interface"(macaddr) IS 'delete an interface based on MAC address';
@@ -70,6 +72,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_interface_address"(input_address inet) 
 		DELETE FROM "systems"."interface_addresses" WHERE "address" = input_address;
 
 		-- Done
+		PERFORM api.syslog('remove_interface_address:"'||input_address||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_interface_address"(inet) IS 'delete an interface address';
@@ -86,6 +89,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_users_systems"(username text) RETURNS V
 		DELETE FROM "systems"."systems" WHERE "owner" = username;
 		
 		-- Done
+		PERFORM api.syslog('remove_users_systems:"'||username||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_users_systems"(text) IS 'Remove all systems owned by a user';
@@ -102,6 +106,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_datacenter"(input_name text) RETURNS VO
 		DELETE FROM "systems"."datacenters" WHERE "datacenter" = input_name;
 		
 		-- Done
+		PERFORM api.syslog('remove_datacenter:"'||input_name||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_datacenter"(text) IS 'remove a datacenter';
@@ -118,6 +123,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_availability_zone"(input_datacenter tex
 		DELETE FROM "systems"."availability_zones" WHERE "datacenter" = input_datacenter AND "zone" = input_zone;
 		
 		-- Done
+		PERFORM api.syslog('remove_availability_zone:"'||input_datacenter||'","'||input_zone||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_availability_zone"(text, text) IS 'Remove an availability zone';

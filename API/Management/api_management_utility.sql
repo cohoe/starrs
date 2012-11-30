@@ -158,7 +158,7 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 		UPDATE "management"."group_members" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "network"."cam_cache" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "network"."vlans" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
-		PERFORM api.create_log_entry('API','INFO','Changed user '||old_username||' to '||new_username);
+		PERFORM api.syslog('changed user "'||old_username||'" to "'||new_username);
 		
 		-- Done
 	END;
@@ -181,10 +181,3 @@ CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS BOOL
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_soa_contact"(text) IS 'Ensure that the SOA contact is properly formatted';
-
-CREATE OR REPLACE FUNCTION "api"."clean_log"() RETURNS VOID AS $$
-	BEGIN
-		DELETE FROM "management"."log_master" WHERE "timestamp" < localtimestamp(0) - interval '1 month';
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."clean_log"() IS 'Remove all log entries older than a month';

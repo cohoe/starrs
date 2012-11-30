@@ -110,3 +110,6 @@ INSERT INTO "systems"."architectures"("architecture","comment") VALUES
 INSERT INTO "systems"."platforms"("platform_name","architecture","disk","cpu","memory") VALUES
 	('Custom','Other','Other','Other','0'),
 	('Dell PowerEdge 1750','i386','2x 18GB','2x Xeon 2.4GHz','2');
+
+INSERT INTO "management"."configuration"("option","value") VALUES
+	('SYSLOG_FACILITY','user');

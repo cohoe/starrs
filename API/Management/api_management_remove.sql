@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_site_configuration"(input_directive tex
 		DELETE FROM "management"."configuration" WHERE "option" = input_directive;
 
 		-- Done
+		PERFORM api.syslog('remove_site_configuration:"'||input_directive||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_site_configuration"(text) IS 'Remove a site configuration directive';
@@ -28,6 +29,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_group"(input_group text) RETURNS VOID A
 		END IF;
 
 		DELETE FROM "management"."groups" WHERE "group" = input_group;
+
+		PERFORM api.syslog('remove_group:"'||input_group||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_group"(text) IS 'Remove a group';
@@ -41,6 +44,8 @@ CREATE OR REPLACE FUNCTION "api"."remove_group_member"(input_group text, input_u
 		END IF;
 
 		DELETE FROM "management"."group_members" WHERE "group" = input_group AND "user" = input_user;
+
+		PERFORM api.syslog('remove_group_member:"'||input_group||'","'||input_user||'"');	
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_group_member"(text, text) IS 'Remove a group member';

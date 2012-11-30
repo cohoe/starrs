@@ -1,23 +1,6 @@
 /* api_management_create.sql
-	1) create_log_entry
 	2) create_site_configuration
 */
-
-/* API - create_log_entry
- 	1) Create log entry
-*/
-CREATE OR REPLACE FUNCTION "api"."create_log_entry"(input_source text, input_severity text, input_message text) RETURNS SETOF "management"."log_master" AS $$
-	BEGIN
-		-- Create log entry
-		INSERT INTO "management"."log_master"
-		("source","user","severity","message") VALUES
-		(input_source,api.get_current_user(),input_severity,input_message);
-		
-		-- Done
-		RETURN QUERY(SELECT localtimestamp(0),api.get_current_user(),input_message,input_source,input_severity);
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_log_entry"(text, text, text) IS 'Function to insert a log entry';
 
 /* API - create_site_configuration
 	1) Check privileges
@@ -35,6 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."create_site_configuration"(input_directive tex
 		INSERT INTO "management"."configuration" VALUES (input_directive, input_value);
 
 		-- Done
+		PERFORM api.syslog('create_site_configuration:"'||input_directive||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "management"."configuration" WHERE "option" = input_directive AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -53,6 +37,7 @@ CREATE OR REPLACE FUNCTION "api"."create_group"(input_group text, input_privileg
 		INSERT INTO "management"."groups" ("group","privilege","comment","renew_interval") 
 		VALUES (input_group, input_privilege, input_comment, input_interval);
 
+		PERFORM api.syslog('create_group:"'||input_group||'","'||input_privilege||'","'||input_interval||'"');
 		RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" = input_group);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -69,6 +54,7 @@ CREATE OR REPLACE FUNCTION "api"."create_group_member"(input_group text, input_u
 		INSERT INTO "management"."group_members" ("group","user","privilege") 
 		VALUES (input_group, input_user, input_privilege);
 	
+		PERFORM api.syslog('create_group_member:"'||input_group||'","'||input_user||'","'||input_privilege||'"');
 		RETURN QUERY (SELECT * FROM "management"."group_members" WHERE "group" = input_group AND "user" = input_user);
 	END;
 $$ LANGUAGE 'plpgsql';

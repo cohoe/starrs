@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_system"(input_old_name text, input_fiel
 		USING input_old_name, input_field, input_new_value;
 
 		-- Done
+		PERFORM api.syslog('modify_system:"'||input_old_name||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'system_name' THEN
 			RETURN QUERY (SELECT * FROM "systems"."systems" WHERE "system_name" = input_new_value);
 		ELSE
@@ -66,6 +67,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface"(input_old_mac macaddr, input
 		END IF;
 
 		-- Done
+		PERFORM api.syslog('modify_interface:"'||input_old_mac||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'mac' THEN
 			RETURN QUERY (SELECT * FROM "systems"."interfaces" WHERE "mac" = macaddr(input_new_value));
 		ELSE
@@ -164,6 +166,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_interface_address"(input_old_address in
 		END IF;
 		
 		-- Done
+		PERFORM api.syslog('modify_interface_address:"'||input_old_address||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'address' THEN
 			RETURN QUERY (SELECT * FROM "systems"."interface_addresses" WHERE "address" = inet(input_new_value));
 		ELSE
@@ -195,6 +198,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_datacenter"(input_old_name text, input_
 
 		-- Done
 
+		PERFORM api.syslog('modify_datacenter:"'||input_old_name||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'datacenter' THEN
 			RETURN QUERY (SELECT * FROM "systems"."datacenters" WHERE "datacenter" = input_new_value);
 		ELSE
@@ -227,6 +231,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_availability_zone"(input_old_datacenter
 
 		-- Done
 
+		PERFORM api.syslog('modify_availability_zone:"'||input_old_datacenter||'","'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'zone' THEN
 			RETURN QUERY (SELECT * FROM "systems"."availability_zones" WHERE "datacenter" = input_old_datacenter AND "zone" = input_new_value);
 		ELSEIF input_field ~* 'datacenter' THEN
@@ -262,6 +267,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_platform"(input_old_name text, input_fi
 			USING input_old_name, input_field, input_new_value;
 		END IF;
 
+		PERFORM api.syslog('modify_platform:"'||input_old_name||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'platform_name' THEN
 			RETURN QUERY (SELECT * FROM "systems"."platforms" WHERE "platform_name" = input_new_value);
 		ELSE

@@ -296,7 +296,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	spi_exec_query("INSERT INTO management.output (value,file,timestamp) VALUES (\$\$".$output."\$\$,'dhcpd.conf',now())");
 
 	#log our success with the api logging tool.
-	spi_exec_query("SELECT api.create_log_entry('API','INFO','Successfully generated dhcpd.conf')");
+	spi_exec_query("SELECT api.syslog('successfully generated dhcpd.conf')");
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."generate_dhcpd_config"() IS 'Generate the config file for the dhcpd server, and store it in the db';
 

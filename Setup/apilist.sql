@@ -27,7 +27,6 @@ DROP FUNCTION api.create_interface(text, macaddr, text, text);
 DROP FUNCTION api.create_interface_address(macaddr, inet, text, text, boolean, text, date);
 DROP FUNCTION api.create_ip_range(text, inet, inet, cidr, character varying, text, text, text, text);
 DROP FUNCTION api.create_ip_subnet(cidr, text, text, boolean, boolean, text, text, text, integer);
-DROP FUNCTION api.create_log_entry(text, text, text);
 DROP FUNCTION api.create_network_snmp(text, inet, text, text);
 DROP FUNCTION api.create_platform(text, text, text, text, integer);
 DROP FUNCTION api.create_site_configuration(text, text);

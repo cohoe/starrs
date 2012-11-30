@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_site_configuration"(input_directive tex
 		UPDATE "management"."configuration" SET "value" = input_value WHERE "option" = input_directive;
 
 		-- Done
+		PERFORM api.syslog('modify_site_configuration:"'||input_directive||'","'||input_value||'"');
 		RETURN QUERY (SELECT * FROM "management"."configuration" WHERE "option" = input_directive AND "value" = input_value);
 	END;
 $$ LANGUAGE 'plpgsql';
@@ -45,6 +46,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_group"(input_old_group text, input_fiel
 			USING input_old_group, input_field, input_new_value;
 		END IF;
 
+		PERFORM api.syslog('modify_group:"'||input_old_group||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'group' THEN
 			RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" = input_new_value);
 		ELSE
@@ -71,6 +73,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_group_member"(input_old_group text, inp
 		WHERE "group" = $1 AND "user" = $2' 
 		USING input_old_group, input_old_user, input_field, input_new_value;
 
+		PERFORM api.syslog('modify_group_member:"'||input_old_group||'","'||input_old_user||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'group' THEN
 			RETURN QUERY (SELECT * FROM "management"."group_members" WHERE "group" = input_new_value AND "user" = input_old_user);
 		ELSEIF input_field ~* 'user' THEN
