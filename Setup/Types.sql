@@ -64,7 +64,7 @@ COMMENT ON TYPE "systems"."os_family_distribution" IS 'OS distribution statistic
 CREATE TYPE "systems"."os_distribution" AS (name text, count integer, percentage integer);
 COMMENT ON TYPE "systems"."os_distribution" IS 'OS distribution statistics';
 
-CREATE TYPE "management"."search_data" AS (datacenter text, availability_zone text, system_name text, asset text, "group" text, platform text, mac macaddr, address inet, config text, system_owner text, system_last_modifier text, range text, hostname varchar(63), zone text, dns_owner text, dns_last_modifier text);
+CREATE TYPE "management"."search_data" AS (datacenter text, availability_zone text, system_name text, asset text, "group" text, platform text, mac macaddr, address inet, config text, system_owner text, system_last_modifier text, range text, hostname varchar(63), cname_alias varchar(63), srv_alias varchar(63), zone text, dns_owner text, dns_last_modifier text);
 
 CREATE TYPE "network"."cam" AS ("mac" MACADDR, "ifindex" INTEGER, "vlan" INTEGER);
 

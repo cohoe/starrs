@@ -39,6 +39,8 @@ CREATE OR REPLACE FUNCTION "api"."get_search_data"() RETURNS SETOF "management".
 	"systems"."systems"."last_modifier" AS "system_last_modifier",
 	"api"."get_address_range"("systems"."interface_addresses"."address") AS "range",
 	"dns"."a"."hostname",
+	"dns"."cname"."alias",
+	"dns"."srv"."alias",
 	"dns"."a"."zone",
 	"dns"."a"."owner" AS "dns_owner",
 	"dns"."a"."last_modifier" AS "dns_last_modifier"
@@ -46,6 +48,8 @@ FROM 	"systems"."systems"
 LEFT JOIN	"systems"."interfaces" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
 LEFT JOIN	"systems"."interface_addresses" ON "systems"."interface_addresses"."mac" = "systems"."interfaces"."mac"
 LEFT JOIN	"dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
+LEFT JOIN	"dns"."cname" ON "dns"."cname"."address" = "systems"."interface_addresses"."address"
+LEFT JOIN	"dns"."srv" ON "dns"."srv"."address" = "systems"."interface_addresses"."address"
 ORDER BY "systems"."interface_addresses"."address","systems"."interfaces"."mac");
 	END;
 $$ LANGUAGE 'plpgsql';
