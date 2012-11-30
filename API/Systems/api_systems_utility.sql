@@ -25,7 +25,8 @@ CREATE OR REPLACE FUNCTION "api"."notify_expiring_addresses"() RETURNS VOID AS $
 		SystemData RECORD;
 	BEGIN
 		FOR SystemData IN (SELECT api.get_interface_address_owner("address") AS "owner","address","renew_date" FROM "systems"."interface_addresses" WHERE "renew_date" <= current_date + api.get_site_configuration('EMAIL_NOTIFICATION_INTERVAL')::interval) LOOP
-			PERFORM "api"."send_renewal_email"(api.get_user_email(SystemData.owner), SystemData.address, (SELECT "api"."get_site_configuration"('EMAIL_DOMAIN')), (SELECT api.get_site_configuration('WEB_URL')),(SELECT api.get_site_configuration('MAIL_HOST')));
+			PERFORM "api"."send_renewal_email"(api.get_user_email(SystemData.owner), SystemData.address, api.get_interface_address_system(SystemData.address), (SELECT "api"."get_site_configuration"('EMAIL_DOMAIN')), (SELECT api.get_site_configuration('WEB_URL')),(SELECT api.get_site_configuration('MAIL_HOST')));
+			PERFORM api.syslog('notified '||api.get_user_email(SystemData.owner)||' of expiring address: '||SystemData.address);
 		END LOOP;
 	END;
 $$ LANGUAGE 'plpgsql';
