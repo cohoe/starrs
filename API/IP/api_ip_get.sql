@@ -137,9 +137,9 @@ CREATE OR REPLACE FUNCTION "api"."get_user_ranges"(input_user text) RETURNS SETO
 		GroupRanges RECORD;
 		RangeData RECORD;
 	BEGIN
-		IF api.get_current_user_level() ~* 'ADMIN' THEN
-			RETURN QUERY (SELECT * FROM "ip"."ranges" ORDER BY "name");
-		END IF;
+		--IF api.get_current_user_level() ~* 'ADMIN' THEN
+		--	RETURN QUERY (SELECT * FROM "ip"."ranges" ORDER BY "name");
+		--END IF;
 
 		FOR UserGroups IN (SELECT "group" FROM "management"."group_members" WHERE "user" = input_user) LOOP
 			FOR RangeData IN (SELECT * FROM api.get_group_ranges(UserGroups."group")) LOOP
