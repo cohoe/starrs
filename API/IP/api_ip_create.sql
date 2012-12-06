@@ -81,7 +81,7 @@ CREATE OR REPLACE FUNCTION "api"."create_ip_range"(input_name text, input_first_
 		(input_name,input_first_ip,input_last_ip,input_subnet,input_use,input_comment,input_class,input_datacenter,input_zone);
 
 		-- Done
-		PERFORM api.syslog('create_ip_range:"'||input_range||'"');
+		PERFORM api.syslog('create_ip_range:"'||input_name||'"');
 		RETURN QUERY (SELECT * FROM "ip"."ranges" WHERE "name" = input_name);
 	END;
 $$ LANGUAGE 'plpgsql';
