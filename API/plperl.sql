@@ -1627,4 +1627,26 @@ CREATE OR REPLACE FUNCTION "api"."syslog"(input_message text) RETURNS VOID AS $$
 $$ LANGUAGE 'plperlu';
 COMMENT ON FUNCTION "api"."syslog"(text) IS 'Log to syslog';
 
+CREATE OR REPLACE FUNCTION "api"."ping"(inet) RETURNS BOOLEAN AS $$
+	#! /usr/bin/perl
+	use strict;
+	use warnings;
+	use Net::IP qw(ip_get_version);
+
+	my $res = 1;
+
+	if (ip_get_version($_[0]) == 6) {
+		   $res = system("ping6 -W 1 -c 1 $_[0] > /dev/null");
+	} else {
+		    $res = system("ping -W 1 -c 1 $_[0] > /dev/null");
+	}
+
+	if($res == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+$$ LANGUAGE 'plperlu';
+COMMENT ON FUNCTION "api"."ping"(inet) IS 'See if a host is up on the network';
+
 -- vim: set filetype=perl:
