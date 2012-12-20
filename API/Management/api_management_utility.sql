@@ -154,6 +154,7 @@ CREATE OR REPLACE FUNCTION "api"."change_username"(old_username text, new_userna
 		UPDATE "systems"."platforms" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "systems"."datacenters" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "systems"."availability_zones" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
+	     UPDATE "management"."group_members" SET "user" = new_username WHERE "user" = old_username;
 		UPDATE "management"."groups" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "management"."group_members" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
 		UPDATE "network"."cam_cache" SET "last_modifier" = new_username WHERE "last_modifier" = old_username;
