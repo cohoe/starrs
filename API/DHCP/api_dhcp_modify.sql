@@ -137,12 +137,12 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text
 		END IF;
 
 		-- Check allowed fields
-		IF input_field !~* 'range|option|value' THEN
+		IF input_field !~* 'name|option|value' THEN
 			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
 		END IF;
 		
 		-- Check if range is marked for DHCP
-		IF input_field ~* 'range' THEN
+		IF input_field ~* 'name' THEN
 			IF (SELECT "use" FROM "ip"."ranges" WHERE "name" = input_new_value) !~* 'ROAM' THEN
 				RAISE EXCEPTION 'Range % is not marked for DHCP configuration',input_new_value;
 			END IF;
@@ -151,20 +151,20 @@ CREATE OR REPLACE FUNCTION "api"."modify_dhcp_range_option"(input_old_range text
 		-- Update record
 		EXECUTE 'UPDATE "dhcp"."range_options" SET ' || quote_ident($4) || ' = $5, 
 		date_modified = localtimestamp(0), last_modifier = api.get_current_user() 
-		WHERE "range" = $1 AND "option" = $2 AND "value" = $3' 
+		WHERE "name" = $1 AND "option" = $2 AND "value" = $3' 
 		USING input_old_range, input_old_option, input_old_value, input_field, input_new_value;
 
 		-- Done
 		PERFORM api.syslog('modify_dhcp_range_option:"'||input_old_range||'","'||input_old_option||'","'||input_old_value||'","'||input_field||'","'||input_new_value||'"');
-		IF input_field ~* 'range' THEN
+		IF input_field ~* 'name' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
-			WHERE "range" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
+			WHERE "name" = input_new_value AND "option" = input_old_option AND "value" = input_old_value);
 		ELSIF input_field ~* 'option' THEN
 			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
-			WHERE "range" = input_old_range AND "option" = input_new_value AND "value" = input_old_value);
+			WHERE "name" = input_old_range AND "option" = input_new_value AND "value" = input_old_value);
 		ELSE
 			RETURN QUERY (SELECT * FROM "dhcp"."range_options" 
-			WHERE "range" = input_old_range AND "option" = input_old_option AND "value" = input_new_value);
+			WHERE "name" = input_old_range AND "option" = input_old_option AND "value" = input_new_value);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
