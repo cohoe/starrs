@@ -151,4 +151,19 @@ CREATE OR REPLACE FUNCTION "api"."get_user_ranges"(input_user text) RETURNS SETO
 	END;
 $$ LANGUAGE 'plpgsql';
 
-
+CREATE OR REPLACE FUNCTION "api"."get_range_top_users"(input_name text) RETURNS TABLE ("user" text, "count" integer) AS $$
+	BEGIN
+		RETURN QUERY(
+			 SELECT 
+			 	api.get_interface_address_owner(address),
+			 	count(api.get_interface_address_owner(address))::integer
+			 FROM
+			 	systems.interface_addresses
+			 WHERE api.get_address_range(address) = input_name
+			 GROUP BY api.get_interface_address_owner(address)
+			 ORDER BY count(api.get_interface_address_owner(address))
+			 DESC limit 10
+		);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_range_top_users"(text) IS 'Get the top 10 users of range addresses';
