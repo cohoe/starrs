@@ -611,26 +611,6 @@ CONSTRAINT "libvirt_platforms_name_pkey" PRIMARY KEY ("platform_name")
 WITHOUT OIDS;
 COMMENT ON TABLE "libvirt"."platforms" IS 'Libvirt definitions for VM platforms';
 
-CREATE TABLE "dhcp"."networks"(
-"name" TEXT NOT NULL,
-"comment" TEXT,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "dhcp_network_name" PRIMARY KEY ("name")
-)
-WITHOUT OIDS;
-
-CREATE TABLE "dhcp"."network_subnets"(
-"name" TEXT NOT NULL,
-"subnet" CIDR NOT NULL,
-"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
-"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
-CONSTRAINT "dhcp_network_name_subnet" PRIMARY KEY ("name","subnet")
-)
-WITHOUT OIDS;
-
 CREATE TABLE "ip"."range_groups"(
 "range_name" TEXT,
 "group_name" TEXT,

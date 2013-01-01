@@ -135,8 +135,6 @@ ALTER TABLE "libvirt"."hosts" ADD CONSTRAINT "fk_libvirt_host_name" FOREIGN KEY 
 
 ALTER TABLE "libvirt"."platforms" ADD CONSTRAINT "fk_libvirt_platform_name" FOREIGN KEY ("platform_name") REFERENCES "systems"."platforms"("platform_name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "dhcp"."network_subnets" ADD CONSTRAINT "fk_dhcp_network_subnets" FOREIGN KEY ("subnet") REFERENCES "ip"."subnets"("subnet") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
-
 ALTER TABLE "ip"."range_groups" ADD CONSTRAINT "fk_range_group_name" FOREIGN KEY ("group_name") REFERENCES "management"."groups"("group") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE "ip"."range_groups" ADD CONSTRAINT "fk_range_name" FOREIGN KEY ("range_name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;

@@ -226,14 +226,14 @@ COMMENT ON FUNCTION "api"."get_dhcpd_config"() IS 'Get the latest DHCPD configur
 
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_networks"() RETURNS SETOF TEXT AS $$
 	BEGIN
-		RETURN QUERY (SELECT "name" FROM "dhcp"."networks" ORDER BY "name");
+	   	RETURN QUERY (SELECT "name" FROM "network"."vlans" WHERE "datacenter" = api.get_site_configuration('DEFAULT_DATACENTER') ORDER BY "name");
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_shared_networks"() IS 'Get DHCPD shared networks';
 
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_network_subnets"(input_name text) RETURNS SETOF CIDR AS $$
 	BEGIN
-		RETURN QUERY (SELECT "subnet" FROM "dhcp"."network_subnets" WHERE "name" = input_name ORDER BY "subnet");
+	   	RETURN QUERY (SELECT "subnet" FROM "network"."vlans" JOIN "ip"."subnets" ON "network"."vlans"."vlan" = "ip"."subnets"."vlan" WHERE "network"."vlans"."name" = input_name AND "dhcp_enable" IS TRUE);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_shared_network_subnets"(text) IS 'Get the subnets for DHCPD';
@@ -244,10 +244,3 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcp_networks"() RETURNS SETOF "dhcp"."net
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcp_networks"() IS 'Get DHCP networks';
-
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_network_subnets"(input_name text) RETURNS SETOF "dhcp"."network_subnets" AS $$
-	BEGIN
-		RETURN QUERY (SELECT * FROM "dhcp"."network_subnets" WHERE "name" = input_name ORDER BY "subnet");
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcp_network_subnets"(text) IS 'Get DHCP network subnets';
