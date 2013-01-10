@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."create_system_quick"(text, text, text, macaddr, inet, text, text) IS 'Create a full system in one call';
+COMMENT ON FUNCTION "api"."create_system_quick"(text, text, text, macaddr, inet, text, text, boolean) IS 'Create a full system in one call';
 
 CREATE OR REPLACE FUNCTION "api"."create_datacenter"(input_name text, input_comment text) RETURNS SETOF "systems"."datacenters" AS $$
 	BEGIN

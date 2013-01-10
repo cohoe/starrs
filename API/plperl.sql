@@ -1394,7 +1394,7 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 	$smtp->datasend;
 	$smtp->quit;
 $$ LANGUAGE 'plperlu';
-COMMENT ON FUNCTION "api"."send_renewal_email"(text, inet, text, text, text) IS 'Send an email to a user saying their address is about to expire';
+COMMENT ON FUNCTION "api"."send_renewal_email"(text, inet, text, text, text, text) IS 'Send an email to a user saying their address is about to expire';
 
 CREATE OR REPLACE FUNCTION "api"."get_network_switchports"(text) RETURNS SETOF INTEGER AS $$
 	use strict;

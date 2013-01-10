@@ -237,10 +237,3 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_network_subnets"(input_name t
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_shared_network_subnets"(text) IS 'Get the subnets for DHCPD';
-
-CREATE OR REPLACE FUNCTION "api"."get_dhcp_networks"() RETURNS SETOF "dhcp"."networks" AS $$
-	BEGIN
-		RETURN QUERY (SELECT * FROM "dhcp"."networks" ORDER BY "name");
-	END;
-$$ LANGUAGE 'plpgsql';
-COMMENT ON FUNCTION "api"."get_dhcp_networks"() IS 'Get DHCP networks';
