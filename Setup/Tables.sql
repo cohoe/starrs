@@ -498,6 +498,22 @@ CREATE TABLE "network"."cam_cache"(
 WITHOUT OIDS;
 COMMENT ON TABLE "network"."cam_cache" IS 'Cache switch data for port mappings';
 
+CREATE TABLE "management"."group_settings" (
+"group" TEXT NOT NULL,
+"privilege" TEXT NOT NULL DEFAULT 'USER',
+"provider" TEXT NOT NULL,
+"hostname" TEXT,
+"id" TEXT,
+"username" TEXT,
+"password" TEXT,
+"date_modified" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"date_created" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT localtimestamp(0),
+"last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
+PRIMARY KEY ("group")
+)
+WITHOUT OIDS;
+COMMENT ON TABLE "management"."group_settings" IS 'Authentication and provider settings for groups';
+
 COMMENT ON TABLE "dns"."zone_a" IS 'Zone address records';
 
 COMMENT ON TABLE "dhcp"."class_options" IS 'Options to apply to a specific DHCP class (like Netbooting)';

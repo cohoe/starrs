@@ -185,3 +185,16 @@ CREATE OR REPLACE FUNCTION "api"."get_user_groups"(input_user text) RETURNS SETO
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_user_groups"(text) IS 'Get all of the groups that a user belongs to';
+
+CREATE OR REPLACE FUNCTION "api"."get_group_settings"(input_group text) RETURNS SETOF "management"."group_settings" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can view group provider settings';
+		END IF;
+
+		-- return
+		RETURN QUERY (SELECT * FROM "management"."group_settings" WHERE "group" = input_group);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_group_settings"(text) IS 'Get group settings';

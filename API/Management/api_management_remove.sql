@@ -49,3 +49,17 @@ CREATE OR REPLACE FUNCTION "api"."remove_group_member"(input_group text, input_u
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_group_member"(text, text) IS 'Remove a group member';
+
+CREATE OR REPLACE FUNCTION "api"."remove_group_settings"(input_group text) RETURNS VOID AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can remove group provider settings';
+		END IF;
+
+		DELETE FROM "management"."group_settings" WHERE "group" = input_group;
+
+		PERFORM api.syslog('remove_group_settings:"'||input_group||'"');
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."remove_group_settings"(text) IS 'remove group authentication providers';

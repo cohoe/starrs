@@ -182,3 +182,40 @@ CREATE OR REPLACE FUNCTION "api"."validate_soa_contact"(input text) RETURNS BOOL
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."validate_soa_contact"(text) IS 'Ensure that the SOA contact is properly formatted';
+
+CREATE OR REPLACE FUNCTION "api"."reload_group_members"(input_group text) RETURNS SETOF "management"."group_members" AS $$
+	DECLARE
+		MemberData RECORD;
+		ReloadData RECORD;
+		Settings RECORD;
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can reload group members';
+		END IF;
+
+		SELECT * INTO Settings FROM api.get_group_settings(input_group);
+
+		IF Settings."provider" !~* 'ldap|vcloud|ad' THEN
+			RAISE EXCEPTION 'Cannot reload local group';
+		END IF;
+
+		IF Settings."provider" IS NULL THEN
+			RAISE EXCEPTION 'Cannot reload group with no provider: %',input_group;
+		END IF;
+
+		FOR MemberData IN (SELECT * FROM api.get_group_members(input_group)) LOOP
+			PERFORM api.remove_group_member(input_group, MemberData."user");
+		END LOOP;
+
+		IF Settings."provider" ~* 'LDAP' THEN
+			FOR ReloadData IN (SELECT * FROM api.get_ldap_group_members(Settings."hostname", Settings."id", Settings."username", Settings."password")) LOOP
+				PERFORM api.create_group_member(input_group, ReloadData.get_ldap_group_members, Settings."privilege");
+			END LOOP;
+		END IF;
+
+		PERFORM api.syslog('reload_group_members:"'||input_group||'"');
+		RETURN QUERY (SELECT * FROM api.get_group_members(input_group));
+		
+	END;
+$$ LANGUAGE 'plpgsql';

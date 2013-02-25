@@ -84,3 +84,29 @@ CREATE OR REPLACE FUNCTION "api"."modify_group_member"(input_old_group text, inp
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."modify_group_member"(text, text, text, text) IS 'Modify a group member';
+
+CREATE OR REPLACE FUNCTION "api"."modify_group_settings"(input_old_group text, input_field text, input_new_value text) RETURNS SETOF "management"."group_settings" AS $$
+	BEGIN
+		-- Check privileges
+		IF api.get_current_user_level() !~* 'ADMIN' THEN
+			RAISE EXCEPTION 'Permission denied. Only admins can create group provider settings';
+		END IF;
+
+		IF input_field !~* 'group|provider|id|hostname|username|password|privilege' THEN
+			RAISE EXCEPTION 'Invalid field specified (%)',input_field;
+		END IF;
+
+          EXECUTE 'UPDATE "management"."group_settings" SET ' || quote_ident($2) || ' = $3,
+          date_modified = localtimestamp(0), last_modifier = api.get_current_user()
+          WHERE "group" = $1'
+          USING input_old_group, input_field, input_new_value;
+
+          PERFORM api.syslog('modify_group_settings:"'||input_old_group||'","'||input_field||'","'||input_new_value||'"');
+          IF input_field ~* 'group' THEN
+               RETURN QUERY (SELECT * FROM "management"."group_settings" WHERE "group" = input_new_value);
+          ELSE
+               RETURN QUERY (SELECT * FROM "management"."group_settings" WHERE "group" = input_old_group);
+          END IF;
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."modify_group_settings"(text, text, text) IS 'Modify group authentication and provider settings';

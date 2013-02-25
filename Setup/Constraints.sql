@@ -139,4 +139,4 @@ ALTER TABLE "ip"."range_groups" ADD CONSTRAINT "fk_range_group_name" FOREIGN KEY
 
 ALTER TABLE "ip"."range_groups" ADD CONSTRAINT "fk_range_name" FOREIGN KEY ("range_name") REFERENCES "ip"."ranges"("name") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-
+ALTER TABLE "management"."group_settings" ADD CONSTRAINT "fk_group_settings_group" FOREIGN KEY ("group") REFERENCES "management"."groups"("group") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
