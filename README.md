@@ -10,7 +10,7 @@ IP Management Program for Use in Local Server Environments
 
 ###Setup
 A detailed list of dependency can be found at<br />
-<https://github.com/cohoe/impulse/wiki><br />
+<https://github.com/cohoe/starrs/wiki><br />
 
 cd into Setup file and run<br />
 `perl ./Installer.pl`
