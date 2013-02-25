@@ -1683,4 +1683,34 @@ CREATE OR REPLACE FUNCTION "api"."get_ldap_group_members"(text, text, text, text
 
 $$ LANGUAGE 'plperlu';
 
+CREATE OR REPLACE FUNCTION "api"."get_vcloud_group_members"(text, text, text, text) RETURNS SETOF TEXT AS $$
+        use strict;
+        use warnings;
+        use VMware::vCloud;
+        use Data::Dumper;
+
+        # Connection Information
+        my $hostname = $_[0] or die "Unable to get hostname";
+        my $org = $_[1] or die "Unable to get organization";
+        my $username = $_[2] or die "Unable to get username";
+        my $password = $_[3] or die "Unable to get password";
+
+        # Create Connection
+        my $vcd = new VMware::vCloud ( $hostname, $username, $password, $org );
+
+		# Make sure we got an organization
+        if(!$vcd->{raw_login_data}->{Org}->{$org}->{href}) { die "Unable to find organization: \"$org\"\n"; }
+		
+		# Get the UUID of the organization from its URL
+        my $org_uuid = (split /\//, $vcd->{raw_login_data}->{Org}->{$org}->{href})[-1];
+		
+		# Calculate the admin URL of the org
+        my $adm_org = $vcd->{api}->org_get( $vcd->{api}->{url_base} . "/admin/org/$org_uuid" );
+		
+		# Get the array of usernames
+        my @users = keys %{$adm_org->{Users}[0]->{UserReference}};
+
+        return \@users;
+$$ LANGUAGE 'plperlu';
+
 -- vim: set filetype=perl:
