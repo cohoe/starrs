@@ -213,6 +213,12 @@ CREATE OR REPLACE FUNCTION "api"."reload_group_members"(input_group text) RETURN
 				PERFORM api.create_group_member(input_group, ReloadData.get_ldap_group_members, Settings."privilege");
 			END LOOP;
 		END IF;
+		
+		IF Settings."provider" ~* 'vcloud' THEN
+			FOR ReloadData IN (SELECT * FROM api.get_vcloud_group_members(Settings."hostname", Settings."id", Settings."username", Settings."password")) LOOP
+				PERFORM api.create_group_member(input_group, ReloadData.get_vcloud_group_members, Settings."privilege");
+			END LOOP;
+        END IF;
 
 		PERFORM api.syslog('reload_group_members:"'||input_group||'"');
 		RETURN QUERY (SELECT * FROM api.get_group_members(input_group));
