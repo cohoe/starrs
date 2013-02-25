@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DBHOST='impulse.example.com'
+DBUSER='impulse_admin'
+
+/usr/bin/psql -h $DBHOST -U $DBUSER -c "DO \$\$ DECLARE Groups RECORD; BEGIN PERFORM api.initialize('root'); FOR Groups IN (SELECT \"group\" FROM \"management\".\"groups\") LOOP BEGIN PERFORM api.reload_group_members(Groups.\"group\"); EXCEPTION WHEN raise_exception THEN END; END LOOP; END; \$\$;" impulse --no-align --no-readline --quiet --tuples-only

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "management"."group_settings" CASCADE;
+--DROP TABLE IF EXISTS "management"."group_settings" CASCADE;
 DROP FUNCTION IF EXISTS "api"."remove_group_settings"(text);
 
 CREATE TABLE "management"."group_settings" (
@@ -163,8 +163,12 @@ CREATE OR REPLACE FUNCTION "api"."reload_group_members"(input_group text) RETURN
 
 		SELECT * INTO Settings FROM api.get_group_settings(input_group);
 
-		IF (Settings."provider") !~* 'ldap|vcloud|ad' THEN
+		IF Settings."provider" !~* 'ldap|vcloud|ad' THEN
 			RAISE EXCEPTION 'Cannot reload local group';
+		END IF;
+
+		IF Settings."provider" IS NULL THEN
+			RAISE EXCEPTION 'Cannot reload group with no provider: %',input_group;
 		END IF;
 
 		FOR MemberData IN (SELECT * FROM api.get_group_members(input_group)) LOOP
