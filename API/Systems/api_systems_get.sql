@@ -160,7 +160,7 @@ CREATE OR REPLACE FUNCTION "api"."get_system_primary_address"(input_system_name 
 		JOIN "systems"."interfaces" ON "systems"."interfaces"."system_name" = "systems"."systems"."system_name"
 		JOIN "systems"."interface_addresses" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
 		WHERE "isprimary" = TRUE AND "systems"."systems"."system_name" = input_system_name
-		ORDER BY "systems"."interface"."mac" DESC LIMIT 1);
+		ORDER BY "systems"."interfaces"."mac" DESC LIMIT 1);
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION  "api"."get_system_primary_address"(text) IS 'Get the primary address of a system';
