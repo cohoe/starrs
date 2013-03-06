@@ -12,8 +12,8 @@ use Cwd 'abs_path';
 #use Net::SNMP;
 #use Net::SMTP;
 
-my $dbhost = "localhost";
-my $dbuser = "postgres";
+my $dbhost = "db.csh.rit.edu";
+my $dbuser = "impulse_admin";
 my $dbport = 5432;
 my $dbname = "impulse";
 
