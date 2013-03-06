@@ -93,7 +93,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_zone"(input_old_zone text, input_fi
 		END IF;
 
 		-- Done
-		PERFORM api.syslog('modify_dns_zone:"'||input_old_zone||'","'||input_field||'","'||input_new_value'"');
+		PERFORM api.syslog('modify_dns_zone:"'||input_old_zone||'","'||input_field||'","'||input_new_value||'"');
 		IF input_field ~* 'zone' THEN
 			RETURN QUERY (SELECT * FROM "dns"."zones" WHERE "zone" = input_new_value);
 		ELSE
