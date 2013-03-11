@@ -50,7 +50,7 @@ CREATE OR REPLACE FUNCTION "api"."remove_ip_range"(input_name text) RETURNS VOID
 		DELETE FROM "ip"."ranges" WHERE "name" = input_name;
 
 		-- Done
-		PERFORM api.syslog('remove_ip_range:"'||input_range||'"');
+		PERFORM api.syslog('remove_ip_range:"'||input_name||'"');
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."remove_ip_range"(text) IS 'Delete an existing IP range';
