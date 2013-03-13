@@ -90,9 +90,9 @@ COMMENT ON FUNCTION "api"."get_record_types"() IS 'Get all of the valid DNS type
 CREATE OR REPLACE FUNCTION "api"."get_dns_zones"(input_username text) RETURNS SETOF "dns"."zones" AS $$
 	BEGIN
 		IF input_username IS NULL THEN
-			RETURN QUERY(SELECT * FROM "dns"."zones" ORDER BY "forward" DESC, "zone" ASC);
+			 RETURN QUERY(SELECT * FROM "dns"."zones" ORDER BY CASE WHEN "zone" = (SELECT api.get_site_configuration('DNS_DEFAULT_ZONE')) THEN 1 ELSE 2 END, "forward" DESC, "zone" ASC);
 		ELSE
-			RETURN QUERY(SELECT * FROM "dns"."zones" WHERE "shared" = TRUE OR "owner" = input_username ORDER BY "forward" DESC, "zone" ASC);
+			 RETURN QUERY(SELECT * FROM "dns"."zones" WHERE "shared" = TRUE OR "owner" = input_username ORDER BY CASE WHEN "zone" = (SELECT api.get_site_configuration('DNS_DEFAULT_ZONE')) THEN 1 ELSE 2 END, "forward" DESC, "zone" ASC);
 		END IF;
 	END;
 $$ LANGUAGE 'plpgsql';
