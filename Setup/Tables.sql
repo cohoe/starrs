@@ -122,6 +122,7 @@ CREATE TABLE "systems"."systems"(
 "platform_name" TEXT NOT NULL,
 "asset" TEXT,
 "datacenter" TEXT NOT NULL DEFAULT api.get_site_configuration('DEFAULT_DATACENTER'),
+"location" TEXT,
 CONSTRAINT "systems_pkey" PRIMARY KEY ("system_name")
 )
 WITHOUT OIDS;
