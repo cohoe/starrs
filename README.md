@@ -1,6 +1,6 @@
-IMPULSE
+STARRS
 ==============
-IP Management Program for Use in Local Server Environments
+System Technology Accounting and Resource Registration Solution
 --------------
 
 ###Dev Team
