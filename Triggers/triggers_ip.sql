@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION "ip"."subnets_insert"() RETURNS TRIGGER AS $$
 		SELECT COUNT(*) INTO RowCount
 		FROM "ip"."subnets"
 		WHERE NEW."subnet" << "ip"."subnets"."subnet";
-		IF (RowCount > 0) THEN
+		IF (RowCount > 1) THEN
 			RAISE EXCEPTION 'A larger existing subnet was detected. Nested subnets are not supported.';
 		END IF;
 
