@@ -167,3 +167,30 @@ CREATE OR REPLACE FUNCTION "api"."get_range_top_users"(input_name text) RETURNS 
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_range_top_users"(text) IS 'Get the top 10 users of range addresses';
+
+-- Adapted from functions written by Stephen Clark of NetWolves from the PostgreSQL community forums
+CREATE OR REPLACE FUNCTION "api"."get_ip_mask_bits"(input_subnet inet) RETURNS INTEGER AS $$
+    DECLARE
+        t1 TEXT;
+        t2 TEXT;
+        t3 TEXT;
+        t4 TEXT;
+        i BIGINT;
+        n INTEGER;
+    BEGIN
+        IF family(input_subnet) != 4 THEN
+            RAISE EXCEPTION 'Can only get mask bits of an IPv4 address';
+        END IF;
+
+        t1 := SPLIT_PART(HOST(input_subnet), '.',1);
+        t2 := SPLIT_PART(HOST(input_subnet), '.',2);
+        t3 := SPLIT_PART(HOST(input_subnet), '.',3);
+        t4 := SPLIT_PART(HOST(input_subnet), '.',4);
+        i := (t1::BIGINT << 24) + (t2::BIGINT << 16) +
+                (t3::BIGINT << 8) + t4::BIGINT;
+        n := (32-log(2, 4294967296 - i ))::integer;
+
+        RETURN n;
+    END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_ip_mask_bits"(inet) IS 'Get the number of bits in a subnet mask';
