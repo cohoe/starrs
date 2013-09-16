@@ -129,7 +129,8 @@ CREATE OR REPLACE FUNCTION "api"."create_system_quick"(input_system_name text, i
 			input_group,
 			api.get_site_configuration('DEFAULT_SYSTEM_PLATFORM'),
 			null,
-			api.get_site_configuration('DEFAULT_DATACENTER')
+			api.get_site_configuration('DEFAULT_DATACENTER'),
+            null
 		);
 		PERFORM api.create_interface(
 			input_system_name,

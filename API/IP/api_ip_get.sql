@@ -131,6 +131,12 @@ CREATE OR REPLACE FUNCTION "api"."get_group_ranges"(input_group text) RETURNS SE
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_group_ranges"(text) IS 'Get group range information';
 
+CREATE OR REPLACE FUNCTION "api"."get_range_groups"(input_name text) RETURNS SETOF "management"."groups" AS $$
+    BEGIN
+        RETURN QUERY (SELECT * FROM "management"."groups" WHERE "group" IN (SELECT "group_name" FROM "ip"."range_groups" WHERE "range_name" = input_name) ORDER BY "group");
+    END;
+$$ LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION "api"."get_user_ranges"(input_user text) RETURNS SETOF "ip"."ranges" AS $$
 	DECLARE
 		UserGroups RECORD;
