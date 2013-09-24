@@ -125,7 +125,7 @@ ALTER TABLE "ip"."ranges" ADD CONSTRAINT "fk_range_zone" FOREIGN KEY("datacenter
 
 ALTER TABLE "management"."group_members" ADD CONSTRAINT "fk_management_group_members" FOREIGN KEY("group") REFERENCES "management"."groups"("group") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_system_group" FOREIGN KEY ("group") REFERENCES "management"."groups"("group") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "systems"."systems" ADD CONSTRAINT "fk_system_group" FOREIGN KEY ("group") REFERENCES "management"."groups"("group") MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT;
 
 ALTER TABLE "network"."vlans" ADD CONSTRAINT "fk_network_vlan_datacenter" FOREIGN KEY ("datacenter") REFERENCES "systems"."datacenters"("datacenter") MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;
 
