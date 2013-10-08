@@ -1385,6 +1385,7 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 	$smtp->mail("starrs-noreply\@$domain");
 	$smtp->recipient("$email");
 	$smtp->data;
+	$smtp->datasend("Date: " . strftime("%a, %d %b %Y %H:%M:%S %z", localtime) . "\n"); 
 	$smtp->datasend("From: starrs-noreply\@$domain\n");
 	$smtp->datasend("To: $email\n");
 	$smtp->datasend("Subject: STARRS Renewal Notification - $address\n");
