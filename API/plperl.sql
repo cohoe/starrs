@@ -1684,10 +1684,10 @@ CREATE OR REPLACE FUNCTION "api"."get_ldap_group_members"(text, text, text, text
 
 $$ LANGUAGE 'plperlu';
 
-CREATE OR REPLACE FUNCTION "api"."get_vbutt_group_members"(text, text, text, text) RETURNS SETOF TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_vcloud_group_members"(text, text, text, text) RETURNS SETOF TEXT AS $$
         use strict;
         use warnings;
-        use VMware::vButt;
+        use VMware::vCloud;
         use Data::Dumper;
 
         # Connection Information
@@ -1697,7 +1697,7 @@ CREATE OR REPLACE FUNCTION "api"."get_vbutt_group_members"(text, text, text, tex
         my $password = $_[3] or die "Unable to get password";
 
         # Create Connection
-        my $vcd = new VMware::vButt ( $hostname, $username, $password, $org );
+        my $vcd = new VMware::vCloud ( $hostname, $username, $password, $org );
 
 		# Make sure we got an organization
         if(!$vcd->{raw_login_data}->{Org}->{$org}->{href}) { die "Unable to find organization: \"$org\"\n"; }
