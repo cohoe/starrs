@@ -1385,6 +1385,7 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 	$smtp->mail("starrs-noreply\@$domain");
 	$smtp->recipient("$email");
 	$smtp->data;
+	$smtp->datasend("Date: " . strftime("%a, %d %b %Y %H:%M:%S %z", localtime) . "\n"); 
 	$smtp->datasend("From: starrs-noreply\@$domain\n");
 	$smtp->datasend("To: $email\n");
 	$smtp->datasend("Subject: STARRS Renewal Notification - $address\n");
@@ -1683,10 +1684,10 @@ CREATE OR REPLACE FUNCTION "api"."get_ldap_group_members"(text, text, text, text
 
 $$ LANGUAGE 'plperlu';
 
-CREATE OR REPLACE FUNCTION "api"."get_vcloud_group_members"(text, text, text, text) RETURNS SETOF TEXT AS $$
+CREATE OR REPLACE FUNCTION "api"."get_vbutt_group_members"(text, text, text, text) RETURNS SETOF TEXT AS $$
         use strict;
         use warnings;
-        use VMware::vCloud;
+        use VMware::vButt;
         use Data::Dumper;
 
         # Connection Information
@@ -1696,7 +1697,7 @@ CREATE OR REPLACE FUNCTION "api"."get_vcloud_group_members"(text, text, text, te
         my $password = $_[3] or die "Unable to get password";
 
         # Create Connection
-        my $vcd = new VMware::vCloud ( $hostname, $username, $password, $org );
+        my $vcd = new VMware::vButt ( $hostname, $username, $password, $org );
 
 		# Make sure we got an organization
         if(!$vcd->{raw_login_data}->{Org}->{$org}->{href}) { die "Unable to find organization: \"$org\"\n"; }
