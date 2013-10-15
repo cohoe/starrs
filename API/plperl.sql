@@ -1370,6 +1370,7 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 	use strict;
 	use warnings;
 	use Net::SMTP;
+    use POSIX;
 
 	my $email = shift(@_) or die "Unable to get email";
 	my $address = shift(@_) or die "Unable to get address";
