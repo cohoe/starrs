@@ -345,6 +345,10 @@ CREATE OR REPLACE FUNCTION "api"."validate_domain"(hostname text, domain text) R
 		$domain = "$_[0].$_[1]";
 	}
 
+    if($_[0] eq "0") {
+        return 'TRUE';
+    }
+
 	# Return a boolean value of whether the input forms a valid domain
 	if (is_domain($domain))
 	{
