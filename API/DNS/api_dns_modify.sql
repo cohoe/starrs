@@ -473,7 +473,7 @@ CREATE OR REPLACE FUNCTION "api"."modify_dns_txt"(input_old_hostname text, input
 		END IF;
 
 		-- Lower
-		IF input_zone ~* 'hostname' THEN
+		IF input_new_value ~* 'hostname' THEN
 			input_new_value := lower(input_new_value);
 		END IF;
 
