@@ -269,10 +269,11 @@ CREATE TABLE "dns"."txt"(
 "last_modifier" TEXT NOT NULL DEFAULT api.get_current_user(),
 "hostname" VARCHAR(63) NOT NULL,
 "address" INET NOT NULL,
-"type" TEXT NOT NULL,
+"type" TEXT DEFAULT 'TXT'::text NOT NULL,
 "ttl" INTEGER NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_TTL')::integer,
 "owner" TEXT NOT NULL,
 "zone" TEXT NOT NULL DEFAULT api.get_site_configuration('DNS_DEFAULT_ZONE'),
+CONSTRAINT "dns_txt_type_check" CHECK (type ~* '^TXT$'::text),
 CONSTRAINT "txt_pkey" PRIMARY KEY ("text","hostname","address","zone")
 )
 WITHOUT OIDS;
