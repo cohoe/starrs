@@ -372,7 +372,7 @@ CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	# Check for two parts: the service and the transport
 	if (scalar(@parts) ne 2)
 	{
-		die "Improper number of parts in record\n"
+		die "Improper number of parts in record\n Please use _service._protocol format!\n";
 	}
 
 	# Define parts of the record
@@ -382,13 +382,13 @@ CREATE OR REPLACE FUNCTION "api"."validate_srv"(TEXT) RETURNS BOOLEAN AS $$
 	# Check if transport is valid
 	if ($transport !~ m/_tcp|_udp/i)
 	{
-		return "false";
+		die "Protocol must be _tcp or _udp!";
 	}
 
 	# Check that service is valid
 	if ($service !~ m/^_[\w-]+$/i)
 	{
-		return "false";
+		die "Invalid Service Name! (Did you forget a leading underscore?)";
 	}
 	
 	# Good!
