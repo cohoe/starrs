@@ -1395,7 +1395,7 @@ CREATE OR REPLACE FUNCTION "api"."send_renewal_email"(text, inet, text, text, te
 	$smtp->datasend("To: $email\n");
 	$smtp->datasend("Subject: STARRS Renewal Notification - $address\n");
 	$smtp->datasend("\n");
-	$smtp->datasend("Your registered address $address on system $system will expire in less than 7 days and may be removed from STARRS automatically. You can click $url/addresses/viewrenew to renew your address(s). Alternatively you can navigate to the Interface Address view and click the Renew button. If you have any questions, please see your local system administrator.");
+	$smtp->datasend("Your registered address $address on system $system will expire in fewer than 7 days and may be removed from STARRS automatically. You can click $url/addresses/viewrenew to renew your address(es). Alternatively you can navigate to the Interface Address view and click the Renew button. If you have any questions, please see your local system administrator.");
 
 	$smtp->datasend;
 	$smtp->quit;
