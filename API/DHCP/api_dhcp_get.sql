@@ -224,6 +224,14 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_config"() RETURNS TEXT AS $$
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_config"() IS 'Get the latest DHCPD configuration file';
 
+/* API - get_dhcpd6_config */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd6_config"() RETURNS TEXT AS $$
+	BEGIN
+		RETURN (SELECT "value" FROM "management"."output" WHERE "file"='dhcpd6.conf' ORDER BY "timestamp" DESC LIMIT 1);
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd6_config"() IS 'Get the latest DHCPD6 configuration file';
+
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_shared_networks"() RETURNS SETOF TEXT AS $$
 	BEGIN
 	   	RETURN QUERY (SELECT "name" FROM "network"."vlans" WHERE "datacenter" = api.get_site_configuration('DEFAULT_DATACENTER') ORDER BY "name");
