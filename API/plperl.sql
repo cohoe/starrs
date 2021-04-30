@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}# end DNS keys
-	
+
 	# Zones are added here.
 	sub forward_zones
 	{
@@ -121,7 +121,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}
-	
+
 	# Subnets (for shared networks)
 	sub subnets
 	{
@@ -130,12 +130,12 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		my $query = "select get_dhcpd_shared_network_subnets as subnets, netmask(get_dhcpd_shared_network_subnets) ";
 		$query .= "from api.get_dhcpd_shared_network_subnets('$shared_net')";
 		my $subnets = spi_query($query);
-		
+
 		# $subnet = ip + netmask in slash notation; i.e. 10.21.49.0/24
 		# $net = only the network address; i.e. 10.21.49.0
 		# $mask = netmask in dotted decimal notation; i.e. 255.255.255.0
 		my ($subnet, $net, $mask, $row, $output);
-		
+
 		while (defined($row = spi_fetchrow($subnets)))
 		{
 			$subnet = $row->{subnets};
@@ -157,7 +157,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}
-	
+
 	# Subnet options
 	sub subnet_options
 	{
@@ -172,7 +172,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}
-	
+
 	# Subnet ranges
 	sub subnet_ranges
 	{
@@ -180,7 +180,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 		my $pool = spi_query("SELECT name,first_ip,last_ip,class from api.get_dhcpd_subnet_ranges('$subnet')");
 		my ($range_name, $first_ip, $last_ip, $class, $row, $output);
 		$output="";
-		
+
 		while (defined($row = spi_fetchrow($pool)))
 		{
 			$range_name = $row->{name};
@@ -237,7 +237,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 			$mac = $row->{mac};
 			$owner = $row->{owner};
 			$class = $row->{class};
-			
+
 			$output .= &host_config($hostname, $zone, $mac, undef, $owner, $class);
 		}
 		return $output;
@@ -247,15 +247,15 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd_config"() RETURNS VOID AS $$
 	sub host_config
 	{
 		my ($hostname, $zone, $mac, $address, $owner, $class) = @_;
-		
+
 		my $hostmac = $mac;
 		$hostmac =~ s/://g;
-		
+
 		my $output .= "# $owner\n";
 		if (defined($hostname) && defined($zone))
 		{
 			$output .= "host $hostname.$zone {\n";
-		}else 
+		}else
 		{
 			$output .= "host $hostmac {\n";
 		}
@@ -337,7 +337,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd6_config"() RETURNS VOID AS $$
 		}
 		return $output;
 	}# end DNS keys
-	
+
 	# Zones are added here.
 	sub forward_zones
 	{
@@ -561,15 +561,15 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd6_config"() RETURNS VOID AS $$
 	sub host_config
 	{
 		my ($hostname, $zone, $mac, $address, $owner, $class) = @_;
-		
+
 		my $hostmac = $mac;
 		$hostmac =~ s/://g;
-		
+
 		my $output .= "# $owner\n";
 		if (defined($hostname) && defined($zone))
 		{
 			$output .= "host $hostname.$zone {\n";
-		}else 
+		}else
 		{
 			$output .= "host $hostmac {\n";
 		}
@@ -589,7 +589,7 @@ CREATE OR REPLACE FUNCTION "api"."generate_dhcpd6_config"() RETURNS VOID AS $$
 
 	# lets start with the DHCPd.conf header from the DB
 	my $header = spi_exec_query("SELECT api.get_site_configuration('DHCPD6_HEADER')");
-	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n"; 
+	my $output = $header->{rows}[0]->{get_site_configuration}. "\n\n";
 
 	# add the date to the file
 	my $date = spi_exec_query("SELECT localtimestamp(0)")->{rows}[0]->{timestamp};
