@@ -33,6 +33,24 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_static_hosts"() RETURNS SETOF "dhcp"
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_static_hosts"() IS 'Get all information for a host block of the dhcpd.conf file';
 
+/* API - get_dhcpd6_static_hosts */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd6_static_hosts"() RETURNS SETOF "dhcp"."dhcpd_static_hosts" AS $$
+	BEGIN
+		RETURN QUERY (SELECT "dns"."a"."hostname","dns"."a"."zone",
+		"systems"."interface_addresses"."mac","systems"."interface_addresses"."address","systems"."systems"."owner",
+		"systems"."interface_addresses"."class"
+		FROM "systems"."interface_addresses"
+		LEFT JOIN "dns"."a" ON "dns"."a"."address" = "systems"."interface_addresses"."address"
+		JOIN "systems"."interfaces" ON "systems"."interfaces"."mac" = "systems"."interface_addresses"."mac"
+		JOIN "systems"."systems" ON "systems"."systems"."system_name" = "systems"."interfaces"."system_name"
+		WHERE "systems"."interface_addresses"."config"='dhcpv6'
+		AND NOT "systems"."interface_addresses"."address" << (SELECT cidr(api.get_site_configuration('DYNAMIC_SUBNET')))
+		AND ("dns"."a"."zone" IN (SELECT DISTINCT "zone" FROM "ip"."subnets" WHERE "dhcp_enable" IS TRUE ORDER BY "zone")
+		OR "dns"."a"."zone" IS NULL) ORDER BY "systems"."systems"."owner");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd6_static_hosts"() IS 'Get all information for a host block of the dhcpd6.conf file';
+
 /* API - get_dhcpd_dynamic_hosts */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_dynamic_hosts"() RETURNS SETOF "dhcp"."dhcpd_dynamic_hosts" AS $$
 	BEGIN
@@ -135,6 +153,20 @@ CREATE OR REPLACE FUNCTION "api"."get_dhcpd_reverse_zones"() RETURNS SETOF "dhcp
 	END;
 $$ LANGUAGE 'plpgsql';
 COMMENT ON FUNCTION "api"."get_dhcpd_reverse_zones"() IS 'Get all reverse zone info for dhcpd';
+
+/* API - get_dhcpd6_reverse_zones */
+CREATE OR REPLACE FUNCTION "api"."get_dhcpd6_reverse_zones"() RETURNS SETOF "dhcp"."dhcpd_zones" AS $$
+	BEGIN
+		RETURN QUERY (SELECT DISTINCT api.get_reverse_domain("subnet") AS "zone","dns"."zones"."keyname","address"
+		FROM "ip"."subnets"
+		JOIN "dns"."zones" ON "dns"."zones"."zone" = "ip"."subnets"."zone"
+		JOIN "dns"."ns" ON "dns"."zones"."zone" = "dns"."ns"."zone"
+		WHERE "dns"."ns"."nameserver" IN (SELECT "nameserver" FROM "dns"."soa" WHERE "dns"."soa"."zone" = "ip"."subnets"."zone")
+		AND "dhcp_enable" = TRUE AND family("subnet") = 6
+		ORDER BY api.get_reverse_domain("subnet"),"dns"."zones"."keyname","address");
+	END;
+$$ LANGUAGE 'plpgsql';
+COMMENT ON FUNCTION "api"."get_dhcpd6_reverse_zones"() IS 'Get all reverse zone info for dhcpd6';
 
 /* API - get_dhcpd_classes */
 CREATE OR REPLACE FUNCTION "api"."get_dhcpd_classes"() RETURNS SETOF "dhcp"."dhcpd_classes" AS $$
